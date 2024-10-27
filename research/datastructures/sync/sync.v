@@ -69,14 +69,14 @@ pub fn new_buzhash() BuzHash {
 
 // Update the rolling hash with a new byte
 [direct_array_access; inline]
-pub fn (mut b BuzHash) update(b u8) u32 {
+pub fn (mut b BuzHash) update(b2 u8) u32 {
     if b.full {
         old_byte := b.window[b.pos]
         b.hash = (b.hash << 1) | (b.hash >> 31) // Rotate left by 1
         b.hash ^= b.lookup_table[old_byte]
     }
 
-    b.hash ^= b.lookup_table[b]
+    b.hash ^= b.lookup_table[b2]
     b.window[b.pos] = b
 
     b.pos++
@@ -118,8 +118,8 @@ pub fn get_file_chunk_hashes(file_path string) ![]ChunkHash {
         
         // Calculate BUZHASH for the chunk
         hasher.reset()
-        for b in chunk_data {
-            hasher.update(b)
+        for b2 in chunk_data {
+            hasher.update(b2)
         }
         quick_hash := hasher.hash
         
