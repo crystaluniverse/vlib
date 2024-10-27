@@ -69,15 +69,15 @@ pub fn new_buzhash() BuzHash {
 
 // Update the rolling hash with a new byte
 [direct_array_access; inline]
-pub fn (mut b BuzHash) update(b2 u8) u32 {
+pub fn (mut b BuzHash) update(byte_val u8) u32 {
     if b.full {
         old_byte := b.window[b.pos]
         b.hash = (b.hash << 1) | (b.hash >> 31) // Rotate left by 1
         b.hash ^= b.lookup_table[old_byte]
     }
 
-    b.hash ^= b.lookup_table[b2]
-    b.window[b.pos] = b
+    b.hash ^= b.lookup_table[byte_val]
+    b.window[b.pos] = byte_val
 
     b.pos++
     if b.pos == window_size {
@@ -98,6 +98,15 @@ pub fn (mut b BuzHash) reset() {
     }
 }
 
+// Calculate rolling hash for a chunk of data
+pub fn calculate_rolling_hash(data []u8) u32 {
+    mut hasher := new_buzhash()
+    for b in data {
+        hasher.update(b)
+    }
+    return hasher.hash
+}
+
 // Function to read the file in chunks and return both quick and secure hashes
 pub fn get_file_chunk_hashes(file_path string) ![]ChunkHash {
     mut file := os.open(file_path)!
@@ -106,7 +115,6 @@ pub fn get_file_chunk_hashes(file_path string) ![]ChunkHash {
     mut chunk_hashes := []ChunkHash{}
     mut buffer := []u8{len: chunk_size}
     mut offset := u64(0)
-    mut hasher := new_buzhash()
     
     for {
         read_bytes := file.read(mut buffer) or { break }
@@ -115,15 +123,7 @@ pub fn get_file_chunk_hashes(file_path string) ![]ChunkHash {
         }
         
         chunk_data := unsafe { buffer[..read_bytes] }
-        
-        // Calculate BUZHASH for the chunk
-        hasher.reset()
-        for b2 in chunk_data {
-            hasher.update(b2)
-        }
-        quick_hash := hasher.hash
-        
-        // Calculate MD5 hash
+        quick_hash := calculate_rolling_hash(chunk_data)
         secure_hash := md5.sum(chunk_data).hex()
         
         chunk_hashes << ChunkHash{

@@ -68,7 +68,7 @@ fn generate_test_files(sizemb int) ! {
 // Main function to demonstrate the functionality
 fn do() ! {
     // Run performance test
-    test_hash_performance()!
+    //test_hash_performance()!
 
     generate := false
 
@@ -82,7 +82,7 @@ fn do() ! {
     println("\nHashing files...")
     println("hash start")
     local_hashes := sync.get_file_chunk_hashes(local_file)!
-    println(local_hashes)
+    println(local_hashes[0])
     println("hash end")
     
     // Step 2: Find unmatched segments
