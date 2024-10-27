@@ -12,14 +12,16 @@ pub fn (mut tree Tree) process_defs() ! {
 	for _, mut col in tree.collections {
 		for _, mut page in col.pages {
 			mut p := page
-			tree.process_page_def_actions(mut p, mut col)!
+			mut c := col
+			tree.process_page_def_actions(mut p, mut c)!
 		}
 	}
 
 	for _, mut col in tree.collections {
 		for _, mut page in col.pages {
 			mut p := page
-			tree.replace_page_defs_with_links(mut p, mut col)!
+			mut c := col
+			tree.replace_page_defs_with_links(mut p, mut c)!
 		}
 	}
 }

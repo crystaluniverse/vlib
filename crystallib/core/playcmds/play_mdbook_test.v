@@ -58,7 +58,8 @@ fn test_play_mdbook() {
 
 	s2 := "
 !!doctree.new
-	name: 'info_tfgrid'
+    name: 'info_tfgrid'
+    fail_on_error: false
 
 !!doctree.add 
     name:'info_tfgrid' 
@@ -67,14 +68,14 @@ fn test_play_mdbook() {
 
 !!doctree.export 
     name:'info_tfgrid' 
-    path:'/tmp/export_tree3' 
+    path:'~/hero/var/collections/info_tfgrid' 
 
 
 !!mdbook.export 
     title:'ThreeFold Technology'
     name:'tech'
-    summary:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/books/tech/SUMMARY.md' 
-    collections:'/tmp/export_tree3'
+    summary_url:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/books/tech/SUMMARY.md' 
+    collections:'~/hero/var/collections/info_tfgrid' 
     production:0 //means we put it in summary
 "
 	p.write(s2)!

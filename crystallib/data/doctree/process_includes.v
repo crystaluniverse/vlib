@@ -103,7 +103,7 @@ fn (mut tree Tree) generate_pages_graph() !map[string]map[string]bool {
 				include_page := tree.get_page_with_pointer(page_pointer) or {
 					collection.error(
 						path: current_page.path
-						msg: 'failed to get page for include ${element.action.heroscript()}: ${err}'
+						msg: 'failed to get page for include ${element.action.heroscript()}: ${err.msg()}'
 						cat: .include
 					)!
 					continue

@@ -121,7 +121,8 @@ pub fn (self Link) markdown() !string {
 
 	anchor := if self.anchor != '' { '#${self.anchor}' } else { '' }
 	mut out := ''
-	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image {
+	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image
+		|| self.cat == LinkType.code {
 		if self.filename.contains(':') {
 			return error("should not have ':' in link for image, page or file.\n${self}")
 		}
