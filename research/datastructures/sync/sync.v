@@ -144,7 +144,7 @@ pub fn find_unmatched_segments(remote_path string, local_hashes []ChunkHash) ![]
     defer { file.close() }
 
     mut unmatched_segments := []UnmatchedSegment{}
-    mut buffer := []u8{len: chunk_size * 2} // Double buffer size for rolling window
+    mut buffer := []u8{len: chunk_size * 2} // Double buffer size for rolling window, probably wrong, I can imagine we miss quite some matches this way
     mut pos := u64(0)
     mut unmatched_start := u64(0)
     mut in_unmatched_segment := false
