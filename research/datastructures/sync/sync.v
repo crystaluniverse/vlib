@@ -69,15 +69,15 @@ pub fn new_buzhash() BuzHash {
 
 // Update the rolling hash with a new byte
 [direct_array_access; inline]
-pub fn (mut b BuzHash) update(byte u8) u32 {
+pub fn (mut b BuzHash) update(b u8) u32 {
     if b.full {
         old_byte := b.window[b.pos]
         b.hash = (b.hash << 1) | (b.hash >> 31) // Rotate left by 1
         b.hash ^= b.lookup_table[old_byte]
     }
 
-    b.hash ^= b.lookup_table[byte]
-    b.window[b.pos] = byte
+    b.hash ^= b.lookup_table[b]
+    b.window[b.pos] = b
 
     b.pos++
     if b.pos == window_size {
