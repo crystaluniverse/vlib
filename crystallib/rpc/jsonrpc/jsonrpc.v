@@ -26,7 +26,7 @@ pub mut:
 }
 
 pub fn (j &JsonRpcResponse[D]) to_json() string {
-	return 'json.encode(j)'
+	return json.encode(j)
 }
 
 pub struct JsonRpcError {

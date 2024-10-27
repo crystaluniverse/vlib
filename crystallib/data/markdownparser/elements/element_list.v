@@ -54,14 +54,12 @@ fn (mut self List) determine_list_item_indentation(mut list_item ListItem) ! {
 			if list_item.depth - parent_li.depth < -1 {
 				continue
 			}
-
 			if list_item.depth - parent_li.depth >= -1 && list_item.depth - parent_li.depth < 2 {
 				// same indentation
 				list_item.indent = parent_li.indent
 				if parent_order := parent_li.order {
 					list_item.order = parent_order + 1
 				}
-
 				self.children << list_item
 			} else if list_item.depth - parent_li.depth >= 2
 				&& list_item.depth - parent_li.depth < 6 {
@@ -156,7 +154,67 @@ pub fn (self List) html() !string {
 		}
 	}
 
+	out = parse_lines_to_html(out.split_into_lines())
 	return out
+}
+
+fn parse_lines_to_html(lines []string) string {
+    mut output := ''
+    mut indent_stack := []int{cap: 10} // Tracks indentation levels to manage <ul> and <li>
+    mut previous_indent := 0
+
+    for i, line in lines {
+        indent := count_leading_whitespace(line)
+        clean_line := line.trim_space()
+
+		if i < lines.len - 1 {
+			next_indent := count_leading_whitespace(lines[i+1])
+			if next_indent > indent {
+				// output = output.trim_space().trim_string_right('</li>')
+				output = output.trim_space()
+				output += '<details>'
+				output += '<summary>${line.trim_string_left('<li>').trim_string_left('<li>').trim_string_right('</li>').trim_string_right('</li>')}</summary><ul>'
+			}
+			else if next_indent < indent {
+                output += '</ul></details></li>'
+			}
+		}
+
+        // Check if we need to open or close <ul> based on indentation
+        if indent > previous_indent {
+            // More indented, open a new <ul> inside the previous <li>
+            // output = output.trim_space().trim_string_right('</li>')
+			// output += '<details class="dropdown">'
+            indent_stack << indent
+        } else if indent < previous_indent {
+            // Close previous <ul> and <li> tags when indentation decreases
+            for indent_stack.len > 0 && indent < indent_stack.last() {
+                // output += '</details></li>'
+                indent_stack.pop()
+            }
+        } 
+		// else if indent == previous_indent && indent_stack.len > 0 {
+        //     // Close the previous <li> if we're at the same level of indentation
+        //     output += '</li>'
+        // }
+
+        // Add the cleaned line (the list item) as it is, starting with <li>
+        // output += '<li>' + clean_line
+        output += clean_line
+        previous_indent = indent
+    }
+
+    // Close any remaining open <ul> and <li> tags
+    for _ in indent_stack {
+        output += '</ul></li>'
+    }
+
+    return output
+}
+
+// Helper function to count leading whitespace (indentation)
+fn count_leading_whitespace(line string) int {
+    return line.len - line.trim_left(' ').len
 }
 
 pub fn line_is_list(line string) bool {

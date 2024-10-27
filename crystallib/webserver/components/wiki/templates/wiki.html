@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2.0.6/css/pico.classless.min.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    </head>
+    <style>
+        /* Custom styles to enhance the nav bar */
+
+
+.grid-container {
+        display: grid;
+        grid-template-columns: 10.5rem 6fr 10.5rem;
+        gap: 1rem;
+        padding: 0rem 2rem 2rem 2rem;
+        flex: 1;
+    }
+
+    aside {
+        max-width: 8.5rem;
+        font-size: 16px;
+        color:aliceblue;
+        position: relative;
+    }
+
+    aside > li {
+        text-decoration: none !important;
+        color:antiquewhite !important;
+    }
+
+    aside > nav {
+        position: sticky;
+        top: 0;
+        /* overflow-y: auto; */
+        max-height: 80vh;
+    }
+
+    aside > nav > ul {
+        margin: 0px;
+    }
+
+    ul > li {
+        padding-left: 0px;
+    }
+
+    details > ul {
+        margin-left: calc(var(--pico-nav-element-spacing-horizontal) * 1.5) !important;
+    }
+
+    details > ul > li {
+        padding-top: 0px;
+    }
+
+    li > a {
+        color: white;
+    }
+
+    summary > a {
+        color: white;
+    }
+
+    details {
+        margin-bottom: 0px;
+    }
+    </style>
+    <body>
+        <header></header>
+        <textarea id="markdown-nav" style="display: none">
+<!-- @{layout.summary} -->
+        </textarea>
+
+        <textarea id="markdown-input" style="display: none">
+
+        </textarea>
+        <main class="grid-container">
+            <aside>
+                <nav>
+                    @{layout.sidebar.html()}
+                </nav>
+            </aside>
+            <article id="markdown-output">
+                @{layout.main.html()}
+            </article>
+            <docnav>
+                <br />
+                <h5>Doc</h5>
+                <ul id="content-pointers"></ul>
+            </docnav>
+        </main>
+        <!-- <script>
+            // Define the static_url variable to hold the base URL for static assets and pages
+        
+            // Function to log page views
+            function logPageView(page) {
+        
+                // Construct the log payload
+                const logData = {
+                    event: "view",
+                    subject: "user",
+                    message: JSON.stringify({
+                        page: page,
+                        duration: 0 // Assuming you want to start with a duration of 0
+                    }),
+                };
+        
+                // Send the log via a POST request
+                fetch(logEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(logData),
+                }).then(response => {
+                    if (!response.ok) {
+                        console.error("Failed to log page view");
+                    }
+                }).catch(error => {
+                    console.error("Error sending log:", error);
+                });
+            }
+        
+            function convertMarkdown(inputId, outputId, pointersListId = "") {
+                const markdownInputElement = document.getElementById(inputId);
+                if (!markdownInputElement) return;
+        
+                let markdownInput = markdownInputElement.value;
+                // Prepend static_url to image sources in the markdown if they are relative (not starting with http, /, or ./)
+                markdownInput = markdownInput.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+                
+                // Prepend static_url to relative page links in the markdown if they are relative (not starting with http or /)
+                markdownInput = markdownInput.replace(/\[([^\]]*)\]\((?!http|\/)([^)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+
+                const htmlOutput = marked.parse(markdownInput);
+
+                const htmlOutputElement = document.getElementById(outputId);
+                if (!htmlOutputElement) return;
+                htmlOutputElement.innerHTML = htmlOutput;
+        
+                // Add IDs to headers if they don't have one
+                const headers = htmlOutputElement.querySelectorAll("h1, h2");
+                headers.forEach((header, index) => {
+                    if (!header.id) {
+                        header.id = `header-@{dollar}{index}`;
+                    }
+                });
+        
+                // Generate content pointers if pointersListId is provided
+                if (pointersListId) {
+                    const pointersList = document.getElementById(pointersListId);
+                    if (!pointersList) return;
+                    pointersList.innerHTML = "";
+                    headers.forEach((header) => {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = `#@{dollar}{header.id}`;
+                        a.textContent = header.textContent;
+                        li.appendChild(a);
+                        pointersList.appendChild(li);
+                    });
+
+        
+                    // Add event listener to scroll to the section
+                    pointersList.querySelectorAll("a").forEach((anchor) => {
+                        anchor.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            const targetId = anchor.getAttribute("href").substring(1);
+                            const targetElement = document.getElementById(targetId);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: "smooth" });
+                            }
+                        });
+                    });
+                }
+            }
+        
+            function initializeMarkdownConverter(inputId, outputId, pointersListId) {
+                // Convert markdown immediately on page load
+                convertMarkdown(inputId, outputId, pointersListId);
+        
+                // Add event listener to input for real-time conversion
+                const inputElement = document.getElementById(inputId);
+                if (inputElement) {
+                    inputElement.addEventListener("input", () => {
+                        convertMarkdown(inputId, outputId, pointersListId);
+                    });
+                }
+            }
+        
+            function addSummaryLinkListeners() {
+                const summaryLinks = document.querySelectorAll("mynav a");
+        
+                summaryLinks.forEach(link => {
+                    link.addEventListener("click", function(event) {
+                        event.preventDefault();  // Prevent the default link click behavior
+        
+                        // Mark clicked link as active
+                        summaryLinks.forEach(l => l.classList.remove("active"));
+                        link.classList.add("active");
+        
+                        // Collapse all dropdowns
+                        const allItems = document.querySelectorAll("mynav ul li");
+                        allItems.forEach(item => item.classList.remove("open"));
+        
+                        // Keep the clicked item's parent and ancestors open
+                        let parent = link.closest("li");
+                        while (parent) {
+                            parent.classList.add("open");
+                            parent = parent.closest("ul").closest("li");
+                        }
+        
+                        const markdownFile = link.getAttribute("href");  // Get the markdown file path from the link
+        
+                        // Log the page view
+                        logPageView(markdownFile);
+        
+                        // Fetch the markdown content
+                        fetch(markdownFile)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Failed to fetch markdown file");
+                                }
+                                return response.text();  // Get the markdown content as text
+                            })
+                            .then(markdown => {
+                                // Prepend static_url to image and relative links in the fetched markdown
+                                markdown = prependStaticUrl(markdown);
+        
+                                // Convert the fetched markdown to HTML using marked.js
+                                const htmlContent = marked.parse(markdown);
+        
+                                // Update the main content area with the new HTML
+                                const outputElement = document.getElementById("markdown-output");
+                                outputElement.innerHTML = htmlContent;
+        
+                                // Optionally scroll to the top of the content area after update
+                                outputElement.scrollIntoView({ behavior: "smooth" });
+
+
+                // Add IDs to headers if they don't have one
+                const headers = outputElement.querySelectorAll("h1, h2");
+                headers.forEach((header, index) => {
+                    if (!header.id) {
+                        header.id = `header-@{dollar}{index}`;
+                    }
+                });
+                
+                const pointersListId = "content-pointers"
+                // Generate content pointers if pointersListId is provided
+                if (pointersListId) {
+                    const pointersList = document.getElementById(pointersListId);
+                    if (!pointersList) return;
+                    pointersList.innerHTML = "";
+                    headers.forEach((header) => {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = `#@{dollar}{header.id}`;
+                        a.textContent = header.textContent;
+                        li.appendChild(a);
+                        pointersList.appendChild(li);
+                    });
+
+        
+                    // Add event listener to scroll to the section
+                    pointersList.querySelectorAll("a").forEach((anchor) => {
+                        anchor.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            const targetId = anchor.getAttribute("href").substring(1);
+                            const targetElement = document.getElementById(targetId);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: "smooth" });
+                            }
+                        });
+                    });
+                }
+                                
+                            })
+                            .catch(error => {
+                                console.error("Error fetching the markdown file:", error);
+                            });
+                    });
+                });
+            }
+        
+            function prependStaticUrl(markdown) {
+                // Prepend static_url to image and relative links
+                markdown = markdown.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+                markdown = markdown.replace(/\[([^\]]*)\]\((?!http|\/)(\.\/)?([^)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}3)`);
+                return markdown;
+            }
+        
+            document.addEventListener("DOMContentLoaded", () => {
+                initializeMarkdownConverter("markdown-input", "markdown-output", "content-pointers");
+                initializeMarkdownConverter("markdown-nav", "mynav");  // Ensure to convert markdown in the summary as well
+                addSummaryLinkListeners();
+                addNavEventListeners();  // Ensure nav items behave correctly
+            });
+        
+            function addNavEventListeners() {
+                const navItems = document.querySelectorAll("mynav ul li");
+        
+                navItems.forEach((item) => {
+                    const nestedList = item.querySelector("ul");
+                    if (nestedList) {
+                        // Add a visual cue for items with children
+                        const arrow = document.createElement("span");
+                        arrow.textContent = "▶";
+                        arrow.classList.add("arrow");
+                        item.insertBefore(arrow, item.firstChild);
+        
+                        // Add click event listener to toggle the nested list
+                        item.addEventListener("click", function (event) {
+                            // Prevent collapsing when clicking inside sub-items
+                            if (event.target.tagName === 'A') return;
+        
+                            event.stopPropagation();
+                            item.classList.toggle("open");
+                            arrow.textContent = item.classList.contains("open") ? "▼" : "▶";
+                        });
+                    }
+                });
+        
+                // Ensure parent dropdowns stay open leading to the active page
+                const activeLink = document.querySelector("mynav a.active");
+                if (activeLink) {
+                    let parent = activeLink.closest("li");
+                    while (parent) {
+                        parent.classList.add("open");
+                        parent = parent.closest("ul").closest("li");
+                    }
+                }
+            }
+        </script> -->
+    </body>
+</html>

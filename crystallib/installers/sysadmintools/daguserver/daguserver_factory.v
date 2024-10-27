@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
 
 
-import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.ui.console
 import time
@@ -125,25 +124,26 @@ pub fn play(args_ PlayArgs) ! {
 //////////////////////////# LIVE CYCLE MANAGEMENT FOR INSTALLERS ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-fn startupmanager_get(cat zinit.StartupManagerType) !startupmanager.StartupManager {
+fn startupmanager_get(cat zinit.StartupManagerType) !zinit.ZinitStateless {
     // unknown
     // screen
     // zinit
     // tmux
     // systemd
-    match cat{
-        .zinit{
-            console.print_debug("startupmanager: zinit")
-            return startupmanager.get(cat:.zinit)!
-        }
-        .systemd{
-            console.print_debug("startupmanager: systemd")
-            return startupmanager.get(cat:.systemd)!
-        }else{
-            console.print_debug("startupmanager: auto")
-            return startupmanager.get()!
-        }
-    }
+    // match cat{
+    //     .zinit{
+    //         console.print_debug("startupmanager: zinit")
+    //         return startupmanager.get(cat:.zinit)!
+    //     }
+    //     .systemd{
+    //         console.print_debug("startupmanager: systemd")
+    //         return startupmanager.get(cat:.systemd)!
+    //     }else{
+    //         console.print_debug("startupmanager: auto")
+    //         return startupmanager.get()!
+    //     }
+    // }
+    return zinit.new_stateless()
 }
 
 
@@ -168,7 +168,11 @@ pub fn (mut self DaguInstaller) start() ! {
     configure()!
     start_pre()!
 
-    mut sm:=startupmanager_get(.zinit)!
+    // TODO: fix when solution is decided
+    // code below caused runtime errors
+    // mut sm:=startupmanager_get(.zinit)!
+    mut sm := zinit.new_stateless()!
+
     for zprocess in startupcmd()!{
         console.print_debug('starting daguserver with ${zprocess.startuptype}...')
         sm.new(zprocess)!

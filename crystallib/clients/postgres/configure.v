@@ -17,48 +17,23 @@ pub mut:
 	reset      bool
 }
 
-// return a config object even if from partial info
-pub fn config(args Config) Config {
-	return args
+pub fn configure(instance string, cfg_ Config) !PostgresClient[Config] {
+	mut config := cfg_
+
+	mut server := PostgresClient[Config] {}
+	server.init('postgres', instance, .set, config)!
+	return get(instance)!
 }
 
-// get the configurator
-pub fn configurator(instance string, mut context play.Context) !play.Configurator[Config] {
-	mut c := play.configurator_new[Config](
-		context_name: 'postgresclient'
-		instance: instance
-		context: context
-	)!
-	return c
-}
-
-pub fn play_session(mut session base.Session) ! {
-	for mut action in session.plbook.find(filter: 'postgresclient.define')! {
-		mut p := action.params
-		mut args := config()
-		panic('implement')
-		// args.instance = p.get_default('name','')!
-		// if args.instance == ""{
-		// 	args.instance = p.get_default('instance', 'default')!
-		// }				
-		// args.mail_from = p.get('mail_from')!
-		// args.smtp_addr = p.get('smtp_addr')!
-		// args.smtp_login = p.get('smtp_login')!
-		// args.smtp_passwd = p.get('smtp_passwd')!
-		// args.smpt_port = p.get_int('smpt_port')!		
-		// mut c:=configurator(args.instance,session:session)!
-		// c.set(args)!
-	}
-}
-
-pub fn configure_interactive(mut args Config, mut session base.Session) ! {
+pub fn configure_interactive(args_ Config, mut session base.Session) ! {
+	mut args := args_
 	mut myui := ui.new()!
 
 	console.clear()
 	console.print_debug('\n## Configure Postgres Client')
 	console.print_debug('============================\n\n')
 
-	args.instance = myui.ask_question(
+	instance := myui.ask_question(
 		question: 'name for postgres client'
 		default: args.instance
 	)!
@@ -92,6 +67,25 @@ pub fn configure_interactive(mut args Config, mut session base.Session) ! {
 	)!
 	args.port = port.int()
 
-	mut c := configurator(args.instance, context: session.context)!
-	c.set(args)!
+	mut client := PostgresClient[Config]{}
+	client.init('postgres', instance, .set, args)!
 }
+
+// pub fn play_session(mut session base.Session) ! {
+// 	for mut action in session.plbook.find(filter: 'postgresclient.define')! {
+// 		mut p := action.params
+// 		mut args := config()
+// 		panic('implement')
+// 		// args.instance = p.get_default('name','')!
+// 		// if args.instance == ""{
+// 		// 	args.instance = p.get_default('instance', 'default')!
+// 		// }				
+// 		// args.mail_from = p.get('mail_from')!
+// 		// args.smtp_addr = p.get('smtp_addr')!
+// 		// args.smtp_login = p.get('smtp_login')!
+// 		// args.smtp_passwd = p.get('smtp_passwd')!
+// 		// args.smpt_port = p.get_int('smpt_port')!		
+// 		// mut c:=configurator(args.instance,session:session)!
+// 		// c.set(args)!
+// 	}
+// }

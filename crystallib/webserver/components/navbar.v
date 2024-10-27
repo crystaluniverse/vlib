@@ -15,8 +15,18 @@ pub mut:
     user_label string // the label of the user button
 }
 
+pub struct Nav {
+pub mut:
+    items []IComponent
+}
+
+pub fn (nav Nav) html() string {
+    // return ''
+    return '<nav>${nav.items.map(it.html()).join("\n")}</nav>'
+}
+
 pub struct Sidebar {
-pub:
+pub mut:
     items []NavItem
 }
 

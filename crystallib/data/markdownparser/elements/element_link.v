@@ -165,7 +165,10 @@ pub fn (self Link) markdown() !string {
 }
 
 pub fn (self Link) html() !string {
-	return '<a href=${self.url}>${self.description}</a>'
+	return match self.cat {
+		.image {'<img src="${self.url}" alt="${self.description}" />'}
+	 	else {'<a href="${self.url}">${self.description}</a>'}
+	}
 }
 
 pub fn (self Link) pug() !string {

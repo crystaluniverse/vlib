@@ -89,3 +89,11 @@ pub fn (mut file CodeFile) set_function(function Function) ! {
 	}
 	file.items[index] = function
 }
+
+pub fn (file CodeFile) functions() []Function {
+	return file.items.filter(it is Function).map(it as Function)
+}
+
+pub fn (file CodeFile) structs() []Struct {
+	return file.items.filter(it is Struct).map(it as Struct)
+}

@@ -152,10 +152,10 @@ pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
 	s := locator.path_on_fs()!
 	console.print_debug('repo path ${s.path}')
 
-	osal.exec(
-		cmd: 'git checkout ${myrepo.addr.branch}'
-		work_folder: s.path
-	)!
+	// osal.exec(
+	// 	cmd: 'git checkout ${myrepo.addr.branch}'
+	// 	work_folder: s.path
+	// )!
 	return s.path
 }
 

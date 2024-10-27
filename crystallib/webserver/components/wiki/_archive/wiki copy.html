@@ -226,6 +226,14 @@ docnav ul li {
     max-width: 40ch;
 }
 
+.grid-container {
+        display: grid;
+        grid-template-columns: 1fr 6fr 1fr;
+        gap: 2rem;
+        padding: 0rem 2rem 2rem 2rem;
+        flex: 1;
+    }
+/* 
 @media (max-width: 768px) {
     nav {
         margin-top: 0rem;
@@ -255,20 +263,24 @@ docnav ul li {
         margin-top: 0.5rem;
         justify-content: flex-end; /* Align icons to the right on mobile */
     }
-}
+} */
     </style>
     <body>
         <textarea id="markdown-nav" style="display: none">
-@{layout.summary}
+<!-- @{layout.summary} -->
         </textarea>
 
         <textarea id="markdown-input" style="display: none">
 
         </textarea>
-        <main class="container">
-            <mynav id="mynav"> </mynav>
+        <main class="grid-container">
+            <aside>
+                <nav>
+                    @{layout.sidebar.html()}
+                </nav>
+            </aside>
             <article id="markdown-output">
-                @{layout.main}
+                @{layout.main.html()}
             </article>
             <docnav>
                 <br />

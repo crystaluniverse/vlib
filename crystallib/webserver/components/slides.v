@@ -20,7 +20,6 @@ pub enum SlideFormat {
 pub fn (s Slides) html() string {
 	if s.format == .png {
 		slides_info := json.encode(s.data)
-		println('slides_info ${slides_info}')
 		return $tmpl('templates/slides_png.html')
 	}
 	return $tmpl('templates/slides.html')

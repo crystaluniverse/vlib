@@ -25,7 +25,8 @@ pub fn (actor Actor) generate_openrpc_code() !Module {
 	for object in actor.objects {
 		objects_map[object.structure.name] = object.structure
 	}
-	actor_struct := generate_actor_struct(actor.name)
+	// actor_struct := generate_actor_struct(actor.name)
+	actor_struct := actor.structure
 
 	client_file := openrpc_obj.generate_client_file(objects_map)!
 	client_test_file := openrpc_obj.generate_client_test_file(methods_map, objects_map)!

@@ -1,0 +1,16 @@
+#!/usr/bin/env v -enable-globals run
+
+import freeflowuniverse.crystallib.baobab.actors.accountant
+import vweb
+import freeflowuniverse.crystallib.rpc.openrpc
+import os
+import freeflowuniverse.crystallib.core.pathlib
+
+const openrpc_path = '@{dollar}{os.dir(os.dir(@@FILE))}/openrpc.json'
+const playground_path = '@{dollar}{os.dir(os.dir(@@FILE))}/playground'
+
+pg := openrpc.new_playground(
+	dest: pathlib.get_dir(path: playground_path)!
+	specs: [pathlib.get_file(path:openrpc_path)!]
+)!
+vweb.run(pg, 8080)

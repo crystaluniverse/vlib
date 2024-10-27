@@ -102,7 +102,7 @@
         <script>
             pdfjsLib.GlobalWorkerOptions.workerSrc =
                 "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
+        
             document.addEventListener("DOMContentLoaded", function () {
                 const url = "@{component.pdf_url}";
                 const viewer = document.getElementById("viewer");
@@ -111,10 +111,10 @@
                 const zoomInBtn = document.getElementById("zoomInBtn");
                 const zoomOutBtn = document.getElementById("zoomOutBtn");
                 const loadingSpinner = document.getElementById("loadingSpinner");
-
+        
                 let currentScale = 2;
                 let visiblePages = new Set();
-
+        
                 function sendInteraction(action, data) {
                     fetch("@{component.log_endpoint}", {
                         method: "POST",
@@ -132,14 +132,14 @@
                         .then((data) => console.log("Interaction logged:", data))
                         .catch((error) => console.error("Error logging interaction:", error));
                 }
-
+        
                 function updateVisiblePages() {
                     const currentVisiblePages = new Set(Array.from(visiblePages));
                     sendInteraction("visiblePages", {
                         pages: Array.from(currentVisiblePages),
                     });
                 }
-
+        
                 function renderPage(page) {
                     const viewport = page.getViewport({ scale: currentScale });
                     const canvas = document.createElement("canvas");
@@ -147,14 +147,14 @@
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
                     viewer.appendChild(canvas);
-
+        
                     const renderContext = {
                         canvasContext: context,
                         viewport: viewport,
                     };
-
+        
                     canvas.setAttribute("data-page-number", page.pageNumber);
-
+        
                     const observer = new IntersectionObserver((entries) => {
                         entries.forEach((entry) => {
                             const pageNumber = parseInt(entry.target.getAttribute("data-page-number"));
@@ -166,12 +166,12 @@
                             updateVisiblePages();
                         });
                     }, { threshold: 0.1 });
-
+        
                     observer.observe(canvas);
-
+        
                     return page.render(renderContext);
                 }
-
+        
                 function loadPDF() {
                     loadingSpinner.style.display = 'block';
                     pdfjsLib.getDocument(url).promise.then((pdf) => {
@@ -183,23 +183,25 @@
                     }).catch((error) => {
                         console.error("Error loading PDF:", error);
                         sendInteraction("error", { message: error.message });
+                        window.location.href = '/server_error'; // Redirect on error
                         loadingSpinner.style.display = 'none';
                     });
                 }
-
+        
                 if (viewer) {
                     loadPDF();
                 } else {
                     console.error("Viewer element not found");
+                    window.location.href = '/server_error'; // Redirect if viewer is missing
                 }
-
+        
                 toggleWidthBtn.addEventListener("click", () => {
                     viewerContainer.classList.toggle("fullWidth");
                     sendInteraction("toggleWidth", {
                         isFullWidth: viewerContainer.classList.contains("fullWidth"),
                     });
                 });
-
+        
                 function updateZoom(delta) {
                     currentScale += delta;
                     viewer.innerHTML = "";
@@ -207,7 +209,7 @@
                     loadPDF();
                     sendInteraction("zoom", { newScale: currentScale });
                 }
-
+        
                 zoomInBtn.addEventListener("click", () => updateZoom(0.2));
                 zoomOutBtn.addEventListener("click", () => updateZoom(-0.2));
             });

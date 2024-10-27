@@ -2,8 +2,8 @@ module tfrobot
 
 import freeflowuniverse.crystallib.installers.threefold.tfrobot as tfrobot_installer
 import freeflowuniverse.crystallib.core.base
-// import freeflowuniverse.crystallib.ui
-// import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.ui
+import freeflowuniverse.crystallib.ui.console
 
 pub struct TFRobot[T] {
 	base.BaseConfig[T]
@@ -20,7 +20,7 @@ pub mut:
 }
 
 pub fn get(instance string) !TFRobot[Config] {
-	tfrobot_installer.install(reset: true)!
+	tfrobot_installer.install(reset:true)!
 	mut robot := TFRobot[Config]{}
 	robot.init('tfrobot', instance, .get)!
 	return robot
@@ -50,4 +50,31 @@ pub fn configure(instance string, config_ Config) !TFRobot[Config] {
 // 		cfg.network = p.get('network')!
 // 		cl.config_save()!
 // 	}
+// }
+
+// pub fn (mut self TFRobot[Config]) config_interactive() ! {
+// 	mut myui := ui.new()!
+// 	console.clear()
+// 	console.print_debug('\n## Configure tfrobot')
+// 	console.print_debug('========================\n\n')
+
+// 	mut cfg := self.config()!
+
+// 	self.instance = myui.ask_question(
+// 		question: 'name for tfrobot'
+// 		default: self.instance
+// 	)!
+// 	cfg.mnemonics = myui.ask_question(
+// 		question: 'please enter your mnemonics here'
+// 		minlen: 24
+// 		default: cfg.mnemonics
+// 	)!
+
+// 	envs := ['main', 'qa', 'test', 'dev']
+// 	cfg.network = myui.ask_dropdown(
+// 		question: 'choose environment'
+// 		items: envs
+// 	)!
+
+// 	self.config_save()!
 // }

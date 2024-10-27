@@ -107,9 +107,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
         <script>
             pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
+        
             let db;
-
+        
             const request = indexedDB.open('FileCacheDB', 1);
             request.onupgradeneeded = function(event) {
                 db = event.target.result;
@@ -119,13 +119,16 @@
                 db = event.target.result;
                 initializePDFViewer();
             };
-
+            request.onerror = function() {
+                window.location.href = '/server_error'; // Redirect on DB failure
+            };
+        
             function storeFile(file_id, file_data) {
                 const transaction = db.transaction(['files'], 'readwrite');
                 const store = transaction.objectStore('files');
                 store.put({ file_id: file_id, file_data: file_data });
             }
-
+        
             function getFile(file_id) {
                 return new Promise(function(resolve, reject) {
                     const transaction = db.transaction(['files'], 'readonly');
@@ -139,30 +142,36 @@
                     };
                 });
             }
-
+        
             async function hashFile(file_data) {
                 const buffer = await crypto.subtle.digest('SHA-256', file_data);
                 return Array.from(new Uint8Array(buffer)).map(function(b) {
                     return b.toString(16).padStart(2, '0');
                 }).join('');
             }
-
+        
             async function fetchFile(file_id, url) {
-                const cachedFileData = await getFile(file_id);
-                const cachedHash = cachedFileData ? await hashFile(cachedFileData) : '';
-
-                const response = await fetch(url + "?hash=" + cachedHash);
-                if (response.status === 304) {
-                    return cachedFileData;
-                } else if (response.ok) {
-                    const file_data = await response.arrayBuffer();
-                    storeFile(file_id, file_data);
-                    return file_data;
-                } else {
-                    throw new Error('Failed to fetch file from server');
+                try {
+                    const cachedFileData = await getFile(file_id);
+                    const cachedHash = cachedFileData ? await hashFile(cachedFileData) : '';
+        
+                    const response = await fetch(url + "?hash=" + cachedHash);
+                    if (response.status === 304) {
+                        return cachedFileData;
+                    } else if (response.ok) {
+                        const file_data = await response.arrayBuffer();
+                        storeFile(file_id, file_data);
+                        return file_data;
+                    } else {
+                        throw new Error('Failed to fetch file from server');
+                    }
+                } catch (error) {
+                    console.error("Error fetching file:", error);
+                    window.location.href = '/server_error'; // Redirect on fetch failure
+                    throw error;
                 }
             }
-
+        
             function animateEllipses() {
                 const loadingIndicator = document.getElementById("loadingIndicator");
                 let dots = "";
@@ -171,7 +180,7 @@
                     loadingIndicator.textContent = "Loading PDF" + dots;
                 }, 500);
             }
-
+        
             function initializePDFViewer() {
                 const url = "@{s.url}";
                 const name = "@{s.name}";
@@ -181,11 +190,11 @@
                 const nextBtn = document.getElementById("nextBtn");
                 const pageInfo = document.getElementById("pageInfo");
                 const loadingIndicator = document.getElementById("loadingIndicator");
-
+        
                 let pdf;
                 let currentPage = 1;
                 let totalPages;
-
+        
                 async function loadPDF() {
                     try {
                         loadingIndicator.style.display = 'block'; // Show loading indicator
@@ -198,84 +207,85 @@
                         createThumbnails();
                     } catch (error) {
                         console.error("Error loading PDF:", error);
+                        window.location.href = '/server_error'; // Redirect on PDF load failure
                     } finally {
                         loadingIndicator.style.display = 'none'; // Hide loading indicator
                     }
                 }
-
+        
                 function renderPage(pageNumber) {
                     pdf.getPage(pageNumber).then(function(page) {
                         const scale = 1.5;
                         const viewport = page.getViewport({ scale: scale });
-
+        
                         const canvas = document.createElement("canvas");
                         const context = canvas.getContext("2d");
                         canvas.height = viewport.height;
                         canvas.width = viewport.width;
-
+        
                         const renderContext = {
                             canvasContext: context,
                             viewport: viewport,
                         };
-
+        
                         viewer.innerHTML = "";
                         viewer.appendChild(canvas);
-
+        
                         page.render(renderContext);
                         updatePageInfo();
                         updateActiveThumbnail();
                     });
                 }
-
+        
                 function createThumbnails() {
                     thumbnailContainer.innerHTML = "";
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.getPage(i).then(function(page) {
                             const scale = 0.2;
                             const viewport = page.getViewport({ scale: scale });
-
+        
                             const canvas = document.createElement("canvas");
                             const context = canvas.getContext("2d");
                             canvas.height = viewport.height;
                             canvas.width = viewport.width;
-
+        
                             const renderContext = {
                                 canvasContext: context,
                                 viewport: viewport,
                             };
-
+        
                             page.render(renderContext);
-
+        
                             canvas.className = "thumbnail";
                             canvas.setAttribute("data-page-number", i);
                             canvas.onclick = function() {
                                 currentPage = i;
                                 renderPage(currentPage);
                             };
-
+        
                             thumbnailContainer.appendChild(canvas);
                         });
                     }
                 }
-
+        
                 function updatePageInfo() {
                     pageInfo.textContent = "Page " + currentPage + " of " + totalPages;
                 }
-
+        
                 prevBtn.addEventListener("click", function() {
                     if (currentPage > 1) {
                         currentPage--;
                         renderPage(currentPage);
                     }
                 });
-
+        
                 nextBtn.addEventListener("click", function() {
                     if (currentPage < totalPages) {
                         currentPage++;
                         renderPage(currentPage);
                     }
                 });
-
+        
                 loadPDF();
             }
         </script>
