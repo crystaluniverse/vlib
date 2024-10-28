@@ -79,14 +79,17 @@ struct Field {
 // Parses the struct definition and returns the struct name and fields or an error
 fn parse_struct(struct_def string) !(string, []Field) {
 	// Initialize regex for struct name and fields
-	mut struct_regex := regex.regex_opt(r'struct (\w+)') or { return error('Failed to create struct name regex') }
-	mut field_regex := regex.regex_opt(r'\s+(\w+)\s+([\w\[\]]+)(?:\s*\/\/(.+))?') or { return error('Failed to create field regex') }
+	mut struct_regex := regex.regex_opt(r'struct (\w+)')!
+	mut field_regex := regex.regex_opt(r'\s+(\w+)\s+([\w\[\]]+)(?:\s*\/\/(.+))?')!
 
 	// Find struct name
-	struct_match := struct_regex.find(struct_def)
-	if struct_match.len < 1 {
+	mut struct_name_start, mut struct_name_end := struct_regex.find(struct_def)
+	if struct_name_start < 0 {
 		return error('Struct name not found')
 	}
+	
+	struct_name_start += 'struct '.len
+	
 	struct_name := struct_def[struct_match[0].start..struct_match[0].end].all_after('struct ').trim_space()
 
 	// Find fields in the struct definition
