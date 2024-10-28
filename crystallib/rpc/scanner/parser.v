@@ -90,26 +90,27 @@ fn parse_struct(struct_def string) !(string, []Field) {
 	
 	struct_name_start += 'struct '.len
 	
-	struct_name := struct_def[struct_match[0].start..struct_match[0].end].all_after('struct ').trim_space()
+	struct_name := struct_def[struct_name_start..struct_name_end]
 
 	// Find fields in the struct definition
-	matches := field_regex.find_all(struct_def)
+	pairs := field_regex.find_all(struct_def) // [0,5, 6,7, 9,18]
 	mut fields := []Field{}
 
-	for match in matches {
-		// Split the match result to extract name, type, and description
-		parts := struct_def[match.start..match.end].split(' ')
+	for i:=0; i < pairs.len; i+=2 {
+		start := pairs[i]
+		end := pairs[i + 1]
+		parts := struct_def[start..end].split(' ')
 		if parts.len < 2 {
 			continue
 		}
-		name := parts[1]
-		field_type := parts[2]
-		description := if parts.len > 3 { parts[3..].join(' ').all_after('//').trim_space() } else { '' }
 
+		field_name := parts[0]
+		field_type := parts[1]
+		field_description := if parts.len > 3 { parts[3..].join(' ').all_after('//').trim_space() } else { '' }
 		fields << Field{
-			name: name
+			name: field_name
 			field_type: field_type
-			description: description
+			description: field_description
 		}
 	}
 
