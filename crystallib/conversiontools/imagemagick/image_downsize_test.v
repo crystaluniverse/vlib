@@ -17,7 +17,7 @@ const testpath = os.dir(@FILE) + '/example'
 
 fn test_image_downsize() {
 	mut img_path := pathlib.get('${testpath}/large_png.png')
-	mut image := image_new(mut img_path) or { panic('Cannot get new image:\n ${err}') }
+	mut image := image_new(mut img_path)
 	image.init_() or { panic('Could not initialize image: ${err}') }
 	assert image.size_kbyte > 600
 

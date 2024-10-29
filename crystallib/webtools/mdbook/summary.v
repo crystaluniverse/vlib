@@ -76,21 +76,31 @@ pub fn (mut book MDBook) summary(production bool) !Summary {
 			summary.collections << collection
 		}
 
-		mut path_collection_str := '${book.args.doctree_path}/src/${collection}'.replace('~',
+		mut path_collection_str := '${book.args.build_path}/src/${collection}'.replace('~',
 			os.home_dir())
+
 		mut path_collection := pathlib.get_dir(path: path_collection_str, create: false) or {
 			book.error(
-				msg: "collection find error in summary: '${line}', can't find collection:${path_collection_str} "
+				msg: "collection find error in summary: '${line}', can't find collection: ${path_collection_str} "
 			)
 			continue
 		}
 
-		if !path_collection.file_exists(pagename) {
+		file_path := '${path_collection.path}/${pagename}'
+		if !os.exists(file_path) || !os.is_file(file_path) {
 			book.error(
-				msg: "page find error in summary: '${line}', can't find page: ${pagename} in collection:${path_collection_str}"
+				msg: "page find error in summary: '${line}', can't find page: ${pagename} in collection: ${path_collection_str}"
 			)
 			continue
 		}
+
+		// NOTE: using this returns false because path_collection is a link
+		// if !path_collection.file_exists(pagename) {
+		// book.error(
+		// 	msg: "page find error in summary: '${line}', can't find page: ${pagename} in collection: ${path_collection_str}"
+		// )
+		// continue
+		// }
 
 		summary.items << SummaryItem{
 			level: level

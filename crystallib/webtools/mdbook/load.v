@@ -23,8 +23,8 @@ fn (mut loader FileLoader) load() ! {
 fn loader() !FileLoader {
 	if 'OFFLINE' !in os.environ() {
 		// console.print_debug(" - CHECK INSTALLER")
-		mdbook_installer.install()!
-		imagemagick.install()!
+		// mdbook_installer.install()!
+		// imagemagick.install()!
 	}
 	mut loader := FileLoader{}
 	return loader

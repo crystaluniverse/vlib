@@ -90,7 +90,7 @@ pub fn (mut site ZolaSite) generate() ! {
 		load: true
 	)!
 	tree.process_includes()!
-	tree.export(dest: '${site.path_build.path}/tree')!
+	tree.export(destination: '${site.path_build.path}/tree')!
 
 	mut img_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/tree/src/pages/img'

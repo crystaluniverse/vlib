@@ -1,7 +1,8 @@
 module zola
 
 import freeflowuniverse.crystallib.data.ourtime
-import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.data.doctree.collection.data
 
 // Blog section for Zola site
 pub struct Blog {
@@ -15,8 +16,8 @@ pub:
 	cid         string          @[required]
 	title       string
 	name        string
-	image       ?&doctree.File
-	page        ?&doctree.Page
+	image       ?&data.File
+	page        ?&data.Page
 	date        ourtime.OurTime
 	biography   string
 	description string
@@ -98,7 +99,7 @@ fn (site ZolaSite) check_post_add_args(args_ PostAddArgs) !PostAddArgs {
 	}
 
 	// check collection exists
-	_ = site.tree.collection_get(args.collection) or {
+	_ = site.tree.get_collection(args.collection) or {
 		return error('Collection ${args.collection} not found.')
 	}
 
@@ -110,7 +111,12 @@ fn (site ZolaSite) check_post_add_args(args_ PostAddArgs) !PostAddArgs {
 
 fn (site ZolaSite) get_post(args PostAddArgs) !Post {
 	mut page := site.tree.page_get('${args.pointer}') or { return err }
-	actions := page.doc()!.actions()
+	page_action_elements := page.get_all_actions()!
+	mut actions := []playbook.Action{}
+	for item in page_action_elements {
+		actions << item.action
+	}
+
 	post_definitions := actions.filter(it.name == 'post_define')
 	if post_definitions.len == 0 {
 		return error('specified file does not include a post definition.')
@@ -150,7 +156,7 @@ fn (site ZolaSite) get_post(args PostAddArgs) !Post {
 	if image_ != '' {
 		post = Post{
 			...post
-			image: site.tree.image_get('${args.collection}:${image_}') or { return err }
+			image: site.tree.get_image('${args.collection}:${image_}') or { return err }
 		}
 	}
 

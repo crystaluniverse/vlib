@@ -104,12 +104,12 @@ fn executor_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !
 	if path.is_dir() {
 		return params_
 	}
-	console.print_debug(' image check ${path.path}')
+	// console.print_debug(' image check ${path.path}')
 	mut backupdir := ''
 	if params_.exists('backupdir') {
 		backupdir = params_.get('backupdir') or { panic(error) }
 	}
-	mut image := image_new(mut path)!
+	mut image := image_new(mut path)
 	mut redo := false
 	if params_.exists('redo') {
 		redo = true

@@ -16,7 +16,7 @@ const testpath = os.dir(@FILE) + '/example'
 
 fn test_init_() {
 	mut img_path := pathlib.get('${testpath}/small_png.png')
-	mut image := image_new(mut img_path) or { panic('Cannot get new image:\n ${err}') }
+	mut image := image_new(mut img_path)
 
 	assert image.path.path == img_path.path
 	assert image.size_kbyte == 0

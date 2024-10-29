@@ -1,6 +1,8 @@
 module zola
 
-import freeflowuniverse.crystallib.data.doctree
+// import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.data.doctree.collection.data
+import freeflowuniverse.crystallib.core.playbook
 
 // People section for Zola site
 pub struct People {
@@ -11,12 +13,12 @@ mut:
 
 pub struct Person {
 pub:
-	cid           string         @[required]
+	cid           string      @[required]
 	name          string
 	page_path     string
 	biography     string
-	image         ?&doctree.File
-	page          ?&doctree.Page
+	image         ?&data.File
+	page          ?&data.Page
 	description   string
 	organizations []string
 	categories    []string
@@ -83,7 +85,7 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 		extra: {
 			'imgPath': image.file_name()
 		}
-		document: page.doc()!
+		// document: page.doc()!
 		assets: [image.path]
 	)!
 
@@ -101,7 +103,7 @@ fn (site ZolaSite) get_person(args_ PersonAddArgs) !Person {
 	}
 
 	// check collection exists
-	_ = site.tree.collection_get(args.collection) or {
+	_ = site.tree.get_collection(args.collection) or {
 		return error('Collection ${args.collection} not found.')
 	}
 
@@ -111,7 +113,11 @@ fn (site ZolaSite) get_person(args_ PersonAddArgs) !Person {
 
 	mut page := site.tree.page_get(args.pointer) or { return err }
 
-	actions := page.doc()!.actions()
+	page_action_elements := page.get_all_actions()!
+	mut actions := []playbook.Action{}
+	for item in page_action_elements {
+		actions << item.action
+	}
 
 	person_definitions := actions.filter(it.name == 'person_define')
 	if person_definitions.len == 0 {
@@ -150,7 +156,7 @@ fn (site ZolaSite) get_person(args_ PersonAddArgs) !Person {
 	if image_ != '' {
 		person = Person{
 			...person
-			image: site.tree.image_get('${args.collection}:${image_}') or { return err }
+			image: site.tree.get_image('${args.collection}:${image_}') or { return err }
 		}
 	}
 

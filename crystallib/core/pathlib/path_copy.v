@@ -24,7 +24,7 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		args.rsync = true
 	}
 	path.check()
-	if !path.exists(){
+	if !path.exists() {
 		return error("can't find path for copy operation on ${path.path}")
 	}
 	if args.rsync == true {
@@ -37,7 +37,6 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 			ignore_default: args.ignore_default
 		)!
 	} else {
-
 		mut dest := get(args.dest)
 		if dest.exists() {
 			if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
@@ -56,9 +55,9 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		if !os.exists(dest.path_dir()) {
 			os.mkdir_all(dest.path_dir())!
 		}
-		$if debug {
-			console.print_debug(' copy: ${path.path} ${dest.path}')
-		}
+		// $if debug {
+		// 	console.print_debug(' copy: ${path.path} ${dest.path}')
+		// }
 		os.cp_all(path.path, dest.path, true)! // Always overwite if needed
 
 		dest.check()

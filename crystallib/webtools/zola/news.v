@@ -1,7 +1,8 @@
 module zola
 
 // import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.data.ourtime
 // import freeflowuniverse.crystallib.core.texttools
 
@@ -23,12 +24,12 @@ pub:
 	title       string
 	page_path   string
 	name        string
-	image       ?&doctree.File
+	image       ?&data.File
 	tags        []string
 	authors     []string
 	categories  []string
 	date        ourtime.OurTime
-	page        ?&doctree.Page
+	page        ?&data.Page
 	biography   string
 	description string
 }
@@ -103,7 +104,7 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 	}
 
 	// check collection exists
-	_ = site.tree.collection_get(args.collection) or {
+	_ = site.tree.get_collection(args.collection) or {
 		return error('Collection ${args.collection} not found.')
 	}
 
@@ -113,7 +114,11 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 
 	mut page := site.tree.page_get(args.pointer) or { return err }
 
-	actions := page.doc()!.actions()
+	page_action_elements := page.get_all_actions()!
+	mut actions := []playbook.Action{}
+	for item in page_action_elements {
+		actions << item.action
+	}
 
 	article_definitions := actions.filter(it.name == 'article_define')
 	if article_definitions.len == 0 {
@@ -157,7 +162,7 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 	if image_ != '' {
 		article = Article{
 			...article
-			image: site.tree.image_get('${args.collection}:${image_}') or { return err }
+			image: site.tree.get_image('${args.collection}:${image_}') or { return err }
 		}
 	}
 
