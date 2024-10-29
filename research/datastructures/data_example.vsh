@@ -1,18 +1,18 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import memdb
+import ourdb
 import os
 import rand
 
 fn main() {
 	// Initialize lookup table with 1000 possible entries (using 3 bytes per entry)
-	mut lookup := memdb.new(1000, .m16)
+	mut lookup := ourdb.new(1000, .m16)
 
     os.mkdir_all('/tmp/regiontest')!	
 	
-	// Create new memdb
+	// Create new ourdb
 	db_path := '/tmp/regiontest/test.db'
-	mut db := memdb.new_memdb(db_path, &lookup)!
+	mut db := ourdb.new_memdb(db_path, &lookup)!
 	
 	// Store 10 random-sized records
 	println('Storing random records...')

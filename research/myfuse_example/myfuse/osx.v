@@ -20,12 +20,24 @@ pub type Ino = u64
 pub type FuseReq = voidptr
 pub type FuseBufVec = voidptr
 pub type FuseSession = voidptr
+pub type FuseChan = voidptr
 pub type Dev = u64
 pub type Mode = u32
 pub type Nlink = u32
 pub type Uid = u32
 pub type Gid = u32
 pub type Pid = u32
+
+// FUSE argument structure
+@[typedef]
+pub struct C.fuse_args {
+pub mut:
+    argc int
+    argv &charptr
+    allocated int
+}
+
+pub type FuseArgs = C.fuse_args
 
 // Time specifications
 @[attr]
@@ -228,132 +240,3 @@ pub const (
     einval  = 22   // Invalid argument
     enospc  = 28   // No space left on device
 )
-
-// Function implementations
-pub fn init(ci &ConnInfo, cfg &voidptr) {
-    // Default implementation
-}
-
-pub fn destroy() {
-    // Default implementation
-}
-
-pub fn lookup(req FuseReq, parent Ino, name &char) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn forget(req FuseReq, ino Ino, nlookup u64) {
-    C.fuse_reply_none(req)
-}
-
-pub fn getattr(req FuseReq, ino Ino, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn setattr(req FuseReq, ino Ino, attr &Stat, to_set int, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn readlink(req FuseReq, ino Ino) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn mknod(req FuseReq, parent Ino, name &char, mode Mode, rdev Dev) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn mkdir(req FuseReq, parent Ino, name &char, mode Mode) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn unlink(req FuseReq, parent Ino, name &char) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn rmdir(req FuseReq, parent Ino, name &char) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn symlink(req FuseReq, link &char, parent Ino, name &char) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn rename(req FuseReq, parent Ino, name &char, newparent Ino, newname &char, flags u32) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn link(req FuseReq, ino Ino, newparent Ino, newname &char) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn open(req FuseReq, ino Ino, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn read(req FuseReq, ino Ino, size u64, off i64, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn write(req FuseReq, ino Ino, buf &char, size u64, off i64, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn flush(req FuseReq, ino Ino, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn release(req FuseReq, ino Ino, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn fsync(req FuseReq, ino Ino, datasync int, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn opendir(req FuseReq, ino Ino, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn readdir(req FuseReq, ino Ino, size u64, off i64, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn releasedir(req FuseReq, ino Ino, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn fsyncdir(req FuseReq, ino Ino, datasync int, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn statfs(req FuseReq, ino Ino) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn setxattr(req FuseReq, ino Ino, name &char, value &char, size u64, flags int) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn getxattr(req FuseReq, ino Ino, name &char, size u64) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn listxattr(req FuseReq, ino Ino, size u64) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn removexattr(req FuseReq, ino Ino, name &char) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn access(req FuseReq, ino Ino, mask int) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn create(req FuseReq, parent Ino, name &char, mode Mode, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}
-
-pub fn fallocate(req FuseReq, ino Ino, mode int, offset i64, length i64, fi &FileInfo) {
-    C.fuse_reply_err(req, enoent)
-}

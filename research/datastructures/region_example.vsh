@@ -1,6 +1,6 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import memdb
+import ourdb
 import os
 
 const million = 1000000
@@ -24,14 +24,14 @@ fn main() {
     initial_mem := get_memory_mb()
     println('Initial memory usage: ${initial_mem:.2f} MB')
 
-    mut db := memdb.new(2 * million,.b4)
+    mut db := ourdb.new(2 * million,.b4)
 
 // Measure memory after buffer creation
     after_mem := get_memory_mb()
     println('Memory usage after buffer creation: ${after_mem:.2f} MB')
     println('Memory difference: ${after_mem - initial_mem:.2f} MB')
     
-    mut db2 := memdb.new(2 * million,.b4)    
+    mut db2 := ourdb.new(2 * million,.b4)    
 
     // Set test values at different positions
     test_data := {
