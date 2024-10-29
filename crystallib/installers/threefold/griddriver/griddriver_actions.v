@@ -40,11 +40,15 @@ fn build() ! {
 	mut installer:= golang.get()!
     installer.install()!
 
-	path := gittools.code_get(
+	mut gs := gittools.get()!
+	mut repo := gs.get_repo(
 		url: 'https://github.com/threefoldtech/web3gw/tree/development_integration/griddriver'
 		reset: true
 		pull: true
 	)!
+
+	mut path := repo.get_path()!
+
 	cmd := '
 	set -ex
 	cd ${path}

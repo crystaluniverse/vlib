@@ -46,11 +46,16 @@ pub fn build() ! {
 	if osal.is_linux() {
 		dest_on_os = '/usr/local/bin'
 	}
-	path := gittools.code_get(
+
+	mut gs := gittools.get()!
+	mut repo := gs.get_repo(
 		url: 'https://github.com/threefoldtech/tfgrid-sdk-go'
 		reset: true
 		pull: true
 	)!
+
+	mut path := repo.get_path()!
+
 	cmd := '
 	cd ${path}
 	cd tfrobot

@@ -19,12 +19,12 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 
 	if args.git_url.len > 0 {
 		mut gs := gittools.get()!
-		args.path = gs.code_get(
+		mut repo := gs.get_repo(
 			url: args.git_url
-			branch: args.git_branch
 			pull: args.git_pull
 			reset: args.git_reset
 		)!
+		args.path = repo.get_path()!
 	}
 
 	// walk over directory

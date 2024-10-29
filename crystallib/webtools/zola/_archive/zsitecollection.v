@@ -43,8 +43,8 @@ import freeflowuniverse.crystallib.develop.gittools
 // 	mut locator := gs.locator_new(self.url)!
 // 	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
 // 	mut gitrepos := gitrepos_.clone()
-// 	gitrepos[repo.key()] = repo
-// 	self.gitrepokey = repo.key()
+// 	gitrepos[repo.get_key()] = repo
+// 	self.gitrepokey = repo.get_key()
 // 	self.path = locator.path_on_fs()!
 // 	self.path.link('${self.site.path_build.path}/src/${self.name}', true)!
 // }

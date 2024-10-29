@@ -67,12 +67,14 @@ fn play_slides(mut plbook playbook.PlayBook) !SlidesViewData {
 		reset:=p.get_default_false("reset")
 		mut path:=p.get_default("path","")!
 		if url.len > 0 {
-			path = gs.code_get(
+			mut repo := gs.get_repo(
 				pull: pull
 				reset: reset
 				url: url
 				reload: true
 			)!
+
+			path = repo.get_path()!
 		}
 		if ! os.exists(path){
 			return error("can't find path ${path} for slides ${plbook}")

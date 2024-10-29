@@ -47,10 +47,14 @@ Peers:
 	if args.reset {
 		golang.install()!
 		console.print_header('install yggdrasil')
-		path := gittools.code_get(
+		mut gs := gittools.get(coderoot: '${os.home_dir()}/_code')!
+		mut repo := gs.get_repo(
 			url: 'https://github.com/yggdrasil-network/yggdrasil-go.git'
 			reset: false
 		)!
+
+		mut path := repo.get_path()!
+
 		osal.exec(cmd: 'cd ${path} && PATH=\$PATH:/usr/local/go/bin ./build')!
 
 		osal.cmd_add(

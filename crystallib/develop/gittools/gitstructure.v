@@ -1,182 +1,156 @@
 module gittools
 
-// import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.core.base
+
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.base
 import os
 
+// GitStructureConfig defines configuration settings for a GitStructure instance.
+@[params]
+pub struct GitStructureConfig {
+pub mut:
+	coderoot string // Root directory where code is checked out, comes from context if not specified
+	light    bool = true // If true, clones only the last history for all branches (clone with only 1 level deep)
+	log      bool = true // If true, logs git commands/statements
+	debug    bool = true
+}
+
+// GitStructure holds information about repositories within a specific code root.
+// This structure keeps track of loaded repositories, their configurations, and their status.
 @[heap]
 pub struct GitStructure {
 pub mut:
-	config   GitStructureConfig // configuration settings
-	rootpath pathlib.Path = pathlib.get('${os.home_dir()}/code') // path to root code directory
-	repos    []&GitRepo // repositories in gitstructure
-	loaded   bool
+	key      string                // Unique key representing the git structure (default is hash of $home/code).
+	config   GitStructureConfig    // Configuration settings for the git structure.
+	coderoot pathlib.Path          // Root directory where repositories are located.
+	repos    map[string]&GitRepo   // Map of repositories, keyed by their unique names.
+	loaded   bool                  // Indicates if the repositories have been loaded into memory.
 }
 
-fn (gs GitStructure) cache_key() string {
-	return gitstructure_cache_key(gs.name())
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+@[params]
+pub struct StatusUpdateArgs {
+	reload bool
 }
 
-pub fn (gs GitStructure) name() string {
-	return gs.config.name
+// Loads all repository information from the filesystem and updates from remote if necessary.
+// Use the reload argument to force reloading from the disk.
+//
+// Args:
+// - args (StatusUpdateArgs): Arguments controlling the reload behavior.
+pub fn (mut gitstructure GitStructure) load(args StatusUpdateArgs) ! {
+	mut processed_paths := []string{}
+	gitstructure.load_recursive(gitstructure.coderoot.path, args, mut processed_paths)!
+	gitstructure.init()!
 }
 
-// remove cache
-pub fn (gs GitStructure) cache_reset() ! {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	key_check := gs.cache_key()
-	keys := redis.keys(key_check + ':*')!
+//just some initialization mechanism
+pub fn (mut gitstructure GitStructure) init() ! {
+	if gitstructure.config.debug{
+		gitstructure.config.log = true
+	}
+}
+
+
+// Recursively loads repositories from the provided path, updating their statuses.
+//
+// Args:
+// - path (string): The path to search for repositories.
+// - args (StatusUpdateArgs): Controls the status update and reload behavior.
+// - processed_paths ([]string): List of already processed paths to avoid duplication.
+fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdateArgs, mut processed_paths []string) ! {
+	console.print_debug('Recursively loading gitstructure from: ${path}')
+
+	path_object := pathlib.get(path)
+	relpath := path_object.path_relative(gitstructure.coderoot.path)!
+
+	// Limit the recursion depth to avoid deep directory traversal.
+	if relpath.count('/') > 4 {
+		return
+	}
+
+	items := os.ls(path) or { return error('Cannot load gitstructure because directory not found: ${path}') }
+
+	for item in items {
+		current_path := os.join_path(path, item)
+
+		if os.is_dir(current_path) {
+			if os.exists(os.join_path(current_path, '.git')) {
+				// Initialize the repository from the current path.
+				mut repo := gitstructure.repo_init_from_path_(current_path)!
+				repo.status_update()!
+
+				key_ := repo.get_key()
+				path_ := repo.get_path()!
+
+				if processed_paths.contains(key_) || processed_paths.contains(path_) {
+					return error('Duplicate repository detected.\nPath: ${path_}\nKey: ${key_}')
+				}
+
+				processed_paths << path_
+				processed_paths << key_
+				gitstructure.repos[key_] = &repo
+				continue
+			}
+			if item.starts_with('.') || item.starts_with('_') {
+				continue
+			}
+			// Recursively search in subdirectories.
+			gitstructure.load_recursive(current_path, args, mut processed_paths)!
+		}
+	}
+}
+
+// Resets the cache for the current Git structure, removing cached data from Redis.
+pub fn (mut gitstructure GitStructure) cachereset() ! {
+	mut context := base.context()!
+	mut redis := context.redis()!
+	keys := redis.keys('git:repos:${gitstructure.key}:**')!
+
 	for key in keys {
 		redis.del(key)!
 	}
 }
 
-pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) ! {
-	// texttools.print_clear()
-	console.print_debug(' #### overview of repositories:')
-	console.print_debug('')
-	gitstructure.repos_print(args)!
-	console.print_debug('')
-}
-
-fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
-	// find parent with .git
-	// console.print_debug(" - load from path: $path")
+// Initializes a Git repository from a given path by locating the parent directory with `.git`.
+//
+// Args:
+// - path (string): Path to initialize the repository from.
+//
+// Returns:
+// - GitRepo: Reference to the initialized repository.
+//
+// Raises:
+// - Error: If `.git` is not found in the parent directories.
+fn (mut gitstructure GitStructure) repo_init_from_path_(path string) !GitRepo {
 	mypath := pathlib.get_dir(path: path, create: false)!
-	mut parentpath := mypath.parent_find('.git') or {
-		return error('cannot find .git in parent starting from: ${path}')
+	mut parent_path := mypath.parent_find('.git') or {
+		return error('Cannot find .git in parent directories starting from: ${path}')
 	}
-	if parentpath.path == '' {
-		return error('cannot find .git in parent starting from: ${path}')
+
+	if parent_path.path == '' {
+		return error('Cannot find .git in parent directories starting from: ${path}')
 	}
-	mut ga := GitAddr{
-		gsconfig: &gitstructure.config
+
+	// Retrieve GitLocation from the path.
+	gl := gitstructure.gitlocation_from_path(mypath.path)!
+
+	// Initialize and return a GitRepo struct.
+	mut r:= GitRepo{
+		gs:            &gitstructure
+		status_remote: GitRepoStatusRemote{}
+		status_local:  GitRepoStatusLocal{}
+		config:        GitRepoConfig{}
+		provider:      gl.provider
+		account:       gl.account
+		name:          gl.name
 	}
-	mut r := GitRepo{
-		gs: &gitstructure
-		addr: &ga
-		path: parentpath
-	}
-	r.load_from_path()!
+	r.status_update()!
 	return r
 }
 
-// add repository to gitstructure
-pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
-	// console.print_debug('repo_add:${args}')
-	if args.path.len > 0 {
-		mut repo := gs.repo_from_path(args.path)!
-		gs.repo_add_(&repo)!
-		return &repo
-	}
-	mut locator := gs.locator_new(args.url)!
-	if args.branch.len > 0 {
-		// repo.branch_switch(args.branch)!
-		locator.addr.branch = args.branch
-	}
-	// console.print_debug('got locator ${locator}')
-	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
-	// console.print_debug('got repo ${repo}')
-	if args.sshkey.len > 0 {
-		repo.ssh_key_set(args.sshkey)!
-	}
-	if args.reload {
-		repo.load()!
-	}
-	if args.reset {
-		repo.remove_changes()!
-	}
-	if args.pull {
-		repo.pull()!
-	}
-	gs.repo_add_(&repo)!
-	return &repo
-}
-
-pub struct GSCodeGetFromUrlArgs {
-pub mut:
-	path   string
-	url    string
-	branch string
-	sshkey string
-	pull   bool // will pull if this is set
-	reset  bool // this means will pull and reset all changes
-	reload bool // reload the cache	
-}
-
-// will get repo starting from url, if the repo does not exist, only then will pull .
-// if pull is set on true, will then pull as well .
-// url examples: .
-// ```
-// https://github.com/threefoldtech/tfgrid-sdk-ts
-// https://github.com/threefoldtech/tfgrid-sdk-ts.git
-// git@github.com:threefoldtech/tfgrid-sdk-ts.git
-//
-// # to specify a branch and a folder in the branch
-// https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
-//
-// args:
-// path   string
-// url    string
-// branch string
-// sshkey string
-// pull   bool // will pull if this is set
-// reset  bool // this means will pull and reset all changes
-// reload bool // reload the cache
-// ```
-pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
-	mut args := args_
-	console.print_header('code get url:${args.url} or path:${args.path}')
-	mut myrepo := gs.repo_add(args)!
-	// console.print_debug(args.str())
-	if myrepo.addr.remote_url.len > 0 {
-		console.print_debug('repo url ${myrepo.addr.remote_url}')
-	} else {
-		console.print_debug('repo obj\n${myrepo.addr}')
-	}
-
-	if args.reset {
-		myrepo.remove_changes()!
-	}
-	if args.pull || args.reset {
-		myrepo.pull()!
-	}
-
-	mut locator := gs.locator_new(args.url)!
-	// console.print_debug('got locator ${locator}')
-
-	s := locator.path_on_fs()!
-	console.print_debug('repo path ${s.path}')
-
-	// osal.exec(
-	// 	cmd: 'git checkout ${myrepo.addr.branch}'
-	// 	work_folder: s.path
-	// )!
-	return s.path
-}
-
-pub fn (mut gitstructure GitStructure) check() ! {
-	mut done := []string{}
-	for r in gitstructure.keys() {
-		if r in done {
-			return error('found double repo with key:${r}')
-		}
-		done << r
-	}
-}
-
-fn (mut gs GitStructure) keys() []string {
-	mut repokeys := gs.repos.map(it.addr.key())
-	return repokeys
-}
-
-fn (mut gs GitStructure) repo_add_(repo &GitRepo) ! {
-	if repo.key() in gs.keys() {
-		return
-	}
-	gs.repos << repo
-}

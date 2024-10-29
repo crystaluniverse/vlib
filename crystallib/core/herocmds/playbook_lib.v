@@ -129,12 +129,14 @@ pub fn plbook_code_get(cmd Command) !string {
 
 	mut gs := gittools.get(coderoot: coderoot)!
 	if url.len > 0 {
-		path = gs.code_get(
+		mut repo := gs.get_repo(
 			pull: pull
 			reset: reset
 			url: url
 			reload: true
 		)!
+
+		path = repo.get_path()!
 	}
 
 	return path
@@ -174,7 +176,8 @@ fn plbook_edit_sourcetree(cmd Command) !(&playbook.PlayBook, string) {
 		// repo.sourcetree()!
 		sourcetree.open(path: path)!
 	} else if edit {
-		vscode.open(path: path)!
+		mut vscode_ := vscode.new(path)
+		vscode_.open()!
 	}
 
 	return plbook, path

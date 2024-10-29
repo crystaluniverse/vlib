@@ -45,8 +45,8 @@ import os
 // 	// mut gs := sites.gitstructure
 // 	// mut locator := gs.locator_new(args.url)!
 // 	// mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
-// 	// sites.gitrepos[repo.key()] = repo
-// 	// site.gitrepokey = repo.key()
+// 	// sites.gitrepos[repo.get_key()] = repo
+// 	// site.gitrepokey = repo.get_key()
 // 	// mut path_site_dir := locator.path_on_fs()!
 
 // 	return &site

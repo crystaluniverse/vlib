@@ -78,7 +78,7 @@ fn build() ! {
 
 	// console.print_header('build ${args.name}')
 
-	// gitpath := gittools.code_get(coderoot: '/tmp/builder', url: url, reset: true, pull: true)!
+	// gitpath := gittools.get_repo(coderoot: '/tmp/builder', url: url, reset: true, pull: true)!
 
 	// cmd := '
 	// cd ??{gitpath}

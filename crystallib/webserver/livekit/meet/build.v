@@ -23,9 +23,12 @@ pub:
 }
 
 pub fn build(config BuildConfig) ! {
-	path := gittools.code_get(
+	mut gs := gittools.new()!
+	mut repo := gs.get_repo(
 		url: config.repo_url
 	)!
+
+	path := repo.get_path()!
 	
 	dollar := '$'
 	mut config_file := pathlib.get_file(path: '${path}/next.config.js')!
