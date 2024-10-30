@@ -8,7 +8,7 @@ const mbyte_=1000000
 @[heap]
 pub struct OurDB {
 pub mut:
-	path    string
+	path    string //is the directory in which we will have the lookup db as well as all the backend
 	lookup  &LookupTable
 	file    os.File
 	file_nr u16 //the file which is open 
@@ -32,13 +32,6 @@ pub:
 pub fn new(args OurDBConfig) !OurDB {
 
 
-// pub struct LookupConfig {
-// pub:
-//     size u32      // size of the table
-//     keysize u8    // size of each entry in bytes (2-8)
-//     lookuppath string // if set, use disk-based lookup
-// }
-
   	mut keysize:=u8(4)
 
 	if args.record_nr_max<65536{
@@ -51,20 +44,27 @@ pub fn new(args OurDBConfig) !OurDB {
 		return error("max supported records is 4294967296 in OurDB")
 	}
 
-	mut multifile := false //means we will store in multiple backend files, which means we need to keep the nr of the file as well
-
 	if f64(args.record_size_max*args.record_nr_max)/2 > mbyte_ * 10 {
-
+		keysize=6 //will use multiple files
 	}
 
-	mut l:=new_lookup(size:args.size,)!
+	//WILL NOT USE lookuppath YET
 
+	// pub struct LookupConfig {
+	// pub:
+	//     size u32      // size of the table
+	//     keysize u8    // size of each entry in bytes (2-8)
+	//     lookuppath string // if set, use disk-based lookup
+	// }
+	mut l:=new_lookup(size:args.size,keysize:keysize)!
 
-
-
-	return OurDB{
+	mut db:= OurDB{
 		path: path
 		lookup: &l
-		file: file
-	}
+	}	
+
+	db.load()!
+
+	return db
+
 }

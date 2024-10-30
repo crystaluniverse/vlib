@@ -35,9 +35,9 @@ fn (mut db OurDB) db_file_select(file_nr u16) !{
 }
 
 // set stores data at position x
-pub fn (mut db OurDB) set(x_ u64, data []u8) ! {
+pub fn (mut db OurDB) set_(location Location, data []u8) ! {
 	// Convert u64 to Location
-	location := db.lookup.u64_to_location(x_)!
+
 	db.db_file_select(location.file_nr)!
 
 	// Get current file position for lookup
@@ -207,6 +207,6 @@ fn (mut db OurDB) condense() ! {
 }
 
 // close closes the database file
-fn (mut db OurDB) close() {
+fn (mut db OurDB) close_() {
 	db.file.close()
 }
