@@ -3,20 +3,20 @@ module ourdb
 const test_dir = '/tmp/ourdb'
 
 fn test_basic_operations() {
-
 	mut db := new(
-    	record_nr_max:16777216 - 1    // max size of records
-		record_size_max:1024
-		path: test_dir
+		record_nr_max: 16777216 - 1 // max size of records
+		record_size_max: 1024
+		path: ourdb.test_dir
 	)!
 
 	defer {
-		db.destroy()
+		db.destroy() or { panic('failed to destroy db: ${err}') }
 	}
 
 	// Test set and get
 	test_data := 'Hello, World!'.bytes()
 	db.set(1, test_data)!
+
 	retrieved := db.get(1)!
 	assert retrieved == test_data
 
@@ -29,13 +29,13 @@ fn test_basic_operations() {
 
 fn test_history_tracking() {
 	mut db := new(
-    	record_nr_max:16777216 - 1    // max size of records
-		record_size_max:1024
-		path: test_dir
+		record_nr_max: 16777216 - 1 // max size of records
+		record_size_max: 1024
+		path: ourdb.test_dir
 	)!
 
 	defer {
-		db.destroy()
+		db.destroy() or { panic('failed to destroy db: ${err}') }
 	}
 
 	// Create multiple versions of data
@@ -58,20 +58,20 @@ fn test_history_tracking() {
 
 fn test_delete_operation() {
 	mut db := new(
-    	record_nr_max:16777216 - 1    // max size of records
-		record_size_max:1024
-		path: test_dir
+		record_nr_max: 16777216 - 1 // max size of records
+		record_size_max: 1024
+		path: ourdb.test_dir
 	)!
 
 	defer {
-		db.destroy()
+		db.destroy() or { panic('failed to destroy db: ${err}') }
 	}
 
 	// Set and then delete data
 	test_data := 'Test data'.bytes()
 	key := u32(1)
 	db.set(key, test_data)!
-	
+
 	// Verify data exists
 	retrieved := db.get(key)!
 	assert retrieved == test_data
@@ -89,15 +89,14 @@ fn test_delete_operation() {
 
 fn test_error_handling() {
 	mut db := new(
-    	record_nr_max:16777216 - 1    // max size of records
-		record_size_max:1024
-		path: test_dir
+		record_nr_max: 16777216 - 1 // max size of records
+		record_size_max: 1024
+		path: ourdb.test_dir
 	)!
 
 	defer {
-		db.destroy()
+		db.destroy() or { panic('failed to destroy db: ${err}') }
 	}
-
 
 	// Test getting non-existent key
 	result := db.get(999) or {

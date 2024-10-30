@@ -1,6 +1,6 @@
 module ourdb
+
 import os
-import hash.crc32
 
 // OurDB is a simple key-value database implementation that provides:
 // - Efficient key-value storage with history tracking
@@ -18,7 +18,7 @@ import hash.crc32
 // and maintains a linked list of previous values for history tracking
 pub fn (mut db OurDB) set(x u32, data []u8) ! {
 	location := db.lookup.get(x)! // Get location from lookup table
-	db.set_(location,data)!
+	db.set_(x, location, data)!
 }
 
 // get retrieves data stored at the specified key position
@@ -34,20 +34,20 @@ pub fn (mut db OurDB) get(x u32) ![]u8 {
 pub fn (mut db OurDB) get_history(x u32, depth u8) ![][]u8 {
 	mut result := [][]u8{}
 	mut current_location := db.lookup.get(x)! // Start with current location
-	
+
 	// Traverse the history chain up to specified depth
 	for i := u8(0); i < depth; i++ {
 		// Get current value
 		data := db.get_(current_location)!
 		result << data
-		
+
 		// Try to get previous location
 		current_location = db.get_prev_pos_(current_location) or { break }
 		if current_location.position == 0 {
 			break
 		}
 	}
-	
+
 	return result
 }
 
@@ -56,37 +56,33 @@ pub fn (mut db OurDB) get_history(x u32, depth u8) ![][]u8 {
 // Use condense() to reclaim space from deleted records (happens in step after)
 pub fn (mut db OurDB) delete(x u32) ! {
 	location := db.lookup.get(x)! // Get location from lookup table
-	db.delete_(location)!
+	db.delete_(x, location)!
 }
-
 
 // close closes the database file
 fn (mut db OurDB) lookup_dump_path() string {
-	return "${db.path}/lookup_dump.db"
+	return '${db.path}/lookup_dump.db'
 }
 
-//load metadata i exists
-fn (mut db OurDB) load() {	
-	if os.exists(db.lookup_dump_path()){
-		db.import_sparse(db.lookup_dump_path())!
+// load metadata i exists
+fn (mut db OurDB) load() ! {
+	if os.exists(db.lookup_dump_path()) {
+		db.lookup.import_sparse(db.lookup_dump_path())!
 	}
 }
 
-//make sure we have the metata stored on disk
-fn (mut db OurDB) save() {
-	//make sure we remember the data
-	db.export_sparse(db.lookup_dump_path())!
+// make sure we have the metata stored on disk
+fn (mut db OurDB) save() ! {
+	// make sure we remember the data
+	db.lookup.export_sparse(db.lookup_dump_path())!
 }
 
 // close closes the database file
-fn (mut db OurDB) close() {
-	db.save()
+fn (mut db OurDB) close() ! {
+	db.save()!
 	db.close_()
 }
 
-fn (mut db OurDB) destroy() {
-	panic("implement rm all self.path")
+fn (mut db OurDB) destroy() ! {
+	os.rmdir_all(db.path)!
 }
-
-
-

@@ -5,15 +5,15 @@ import os
 const test_dir = '/tmp/lookuptest'
 
 fn testsuite_begin() {
-	if os.exists(test_dir) {
-		os.rmdir_all(test_dir)!
+	if os.exists(ourdb.test_dir) {
+		os.rmdir_all(ourdb.test_dir)!
 	}
-	os.mkdir_all(test_dir)!
+	os.mkdir_all(ourdb.test_dir)!
 }
 
 fn testsuite_end() {
-	if os.exists(test_dir) {
-		os.rmdir_all(test_dir)!
+	if os.exists(ourdb.test_dir) {
+		os.rmdir_all(ourdb.test_dir)!
 	}
 }
 
@@ -32,12 +32,12 @@ fn test_new_lookup() {
 	disk_config := LookupConfig{
 		size: 100
 		keysize: 2
-		lookuppath: os.join_path(test_dir, 'test.lut')
+		lookuppath: os.join_path(ourdb.test_dir, 'test.lut')
 	}
 	disk_lut := new_lookup(disk_config)!
 	assert disk_lut.keysize == 2
-	assert disk_lut.lookuppath == os.join_path(test_dir, 'test.lut')
-	assert os.exists(os.join_path(test_dir, 'test.lut'))
+	assert disk_lut.lookuppath == os.join_path(ourdb.test_dir, 'test.lut')
+	assert os.exists(os.join_path(ourdb.test_dir, 'test.lut'))
 
 	// Test invalid keysize
 	invalid_config := LookupConfig{
@@ -79,7 +79,7 @@ fn test_disk_set_get() {
 	config := LookupConfig{
 		size: 100
 		keysize: 2
-		lookuppath: os.join_path(test_dir, 'test.lut')
+		lookuppath: os.join_path(ourdb.test_dir, 'test.lut')
 	}
 	mut lut := new_lookup(config)!
 
@@ -144,7 +144,7 @@ fn test_export_import() {
 	lut.set(1, loc2)!
 
 	// Export and then import to new table
-	export_path := os.join_path(test_dir, 'export.lut')
+	export_path := os.join_path(ourdb.test_dir, 'export.lut')
 	lut.export_data(export_path)!
 	mut lut2 := new_lookup(config)!
 	lut2.import_data(export_path)!
@@ -178,7 +178,7 @@ fn test_export_import_sparse() {
 	lut.set(50, loc2)! // Create a gap
 
 	// Export and import sparse
-	sparse_path := os.join_path(test_dir, 'sparse.lut')
+	sparse_path := os.join_path(ourdb.test_dir, 'sparse.lut')
 	lut.export_sparse(sparse_path)!
 	mut lut2 := new_lookup(config)!
 	lut2.import_sparse(sparse_path)!
