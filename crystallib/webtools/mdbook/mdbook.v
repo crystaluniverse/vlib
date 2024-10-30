@@ -2,7 +2,7 @@ module mdbook
 
 import freeflowuniverse.crystallib.osal
 import os
-import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.data.doctree.collection
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
@@ -12,11 +12,11 @@ import freeflowuniverse.crystallib.develop.gittools
 pub struct MDBook {
 pub mut:
 	name         string
-	books        &MDBooks[Config]          @[skip; str: skip]
+	books        &MDBooks[Config]             @[skip; str: skip]
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	args         MDBookArgs
-	errors       []doctree.CollectionError
+	errors       []collection.CollectionError
 }
 
 @[params]
@@ -29,11 +29,12 @@ pub mut:
 	printbook    bool
 	summary_url  string // url of the summary.md file
 	summary_path string // can also give the path to the summary file (can be the dir or the summary itself)
-	doctree_url  string
-	doctree_path string
+	// doctree_url  string
+	// doctree_path string
 	publish_path string
 	build_path   string
 	production   bool
+	collections  []string
 }
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
@@ -58,39 +59,42 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	r.expire('mdbook:${args.name}:build', 3600 * 12)! // expire after 12h
 	r.expire('mdbook:${args.name}:publish', 3600 * 12)!
 
-	mut context := base.context()!
 	mut gs := gittools.get()!
 
 	if args.summary_url.len > 0 {
 		mut locator1 := gs.locator_new(args.summary_url)!
 		gs.repo_get(locator: locator1, reset: false, pull: false)!
-		mut path_summary := locator1.path_on_fs()!
-		if !path_summary.exists() {
-			return error('cannot find path for summary: ${path_summary.path}')
+
+		mut summary_dir := locator1.path_on_fs()!
+
+		summary_file_path := summary_dir.file_get_ignorecase('summary.md') or {
+			summary_dir = summary_dir.parent()!
+			p := summary_dir.file_get_ignorecase('summary.md') or {
+				return error('summary from git needs to be dir or file')
+			}
+			p
 		}
-		if path_summary.is_file() {
-			args.summary_path = path_summary.path
-		} else if path_summary.is_dir() {
-			path_summary_path := path_summary.file_get_ignorecase('summary.md')!
-			args.summary_path = path_summary_path.path
-		} else {
-			return error('summary from git needs to be dir or file')
+
+		args.summary_path = summary_file_path.path
+	}
+
+	mut src_path := pathlib.get_dir(path: '${args.build_path}/src', create: true)!
+	_ := pathlib.get_dir(path: '${args.build_path}/.edit', create: true)!
+	mut collection_set := map[string]bool{}
+	for col_path in args.collections {
+		// link collections from col_path to src
+		mut p := pathlib.get_dir(path: col_path)!
+		mut entries := p.list(dirs_only: true, recursive: false)!
+		for mut entry in entries.paths {
+			if _ := collection_set[entry.name()] {
+				return error('collection with name ${entry.name()} already exists')
+			}
+
+			collection_set[entry.name()] = true
+			entry.link('${src_path.path}/${entry.name()}', true)!
 		}
 	}
 
-	if args.doctree_url.len > 0 {
-		mut locator2 := gs.locator_new(args.doctree_url)!
-		gs.repo_get(locator: locator2, reset: false, pull: false)!
-		mut path_doctree := locator2.path_on_fs()!
-		if !path_doctree.exists() {
-			return error('cannot find path for doctree: ${path_doctree.path}')
-		}
-		if path_doctree.is_dir() {
-			args.doctree_path = path_doctree.path
-		} else {
-			return error('doctree from git needs to be dir. ${path_doctree.path}')
-		}
-	}
 	mut book := MDBook{
 		args: args
 		path_build: pathlib.get_dir(path: args.build_path, create: true)!
@@ -99,6 +103,48 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	}
 
 	mut summary := book.summary(args_.production)!
+
+	mut dir_list := src_path.list(dirs_only: true, include_links: true, recursive: false)!
+	for mut collection_dir_path in dir_list.paths {
+		collectionname := collection_dir_path.path.all_after_last('/')
+		// should always work because done in summary
+		// check if there are errors, if yes add to summary
+		if os.exists('${collection_dir_path.path}/errors.md') {
+			summary.add_error_page(collectionname, 'errors.md')
+		}
+		// // now link the collection into the build dir
+		collection_dirbuild_str := '${book.path_build.path}/src/${collectionname}'.replace('~',
+			os.home_dir())
+		if !pathlib.path_equal(collection_dirbuild_str, collection_dir_path.path) {
+			collection_dir_path.link(collection_dirbuild_str, true)!
+		}
+
+		if !os.exists('${collection_dir_path.path}/.linkedpages') {
+			continue
+		}
+
+		mut linked_pages := pathlib.get_file(path: '${collection_dir_path.path}/.linkedpages')!
+		lpagescontent := linked_pages.read()!
+		for lpagestr in lpagescontent.split_into_lines().filter(it.trim_space() != '') {
+			// console.print_green('find linked page: ${lpagestr}')
+			// format $collection:$pagename.md
+			splitted := lpagestr.split(':')
+			assert splitted.len == 2
+			summary.add_page_additional(splitted[0], splitted[1])
+		}
+
+		// if collection_dir_path.file_exists('.linkedpages') {
+		// 	mut lpages := collection_dir_path.file_get('.linkedpages')!
+		// 	lpagescontent := lpages.read()!
+		// 	for lpagestr in lpagescontent.split_into_lines().filter(it.trim_space() != '') {
+		// 		// console.print_green('find linked page: ${lpagestr}')
+		// 		// format $collection:$pagename.md
+		// 		splitted := lpagestr.split(':')
+		// 		assert splitted.len == 2
+		// 		summary.add_page_additional(splitted[0], splitted[1])
+		// 	}
+		// }
+	}
 
 	// create the additional collection (is a system collection)
 	addpath := '${book.path_build.path}/src/additional'
@@ -125,34 +171,6 @@ Be the mother for our errors.
 You can ignore these pages, they are just to get links to work.
 
 	')!
-	mut src_path := pathlib.get_dir(path: '${book.path_build.path}/src')!
-	mut dir_list := src_path.list(dirs_only: true, recursive: false)!
-	for mut collection_dir_path in dir_list.paths {
-		collectionname := collection_dir_path.path.all_after_last('/')
-
-		// should always work because done in summary
-		// check if there are errors, if yes add to summary
-		if collection_dir_path.file_exists('errors.md') {
-			summary.add_error_page(collectionname, 'errors.md')
-		}
-		// // now link the collection into the build dir
-		collection_dirbuild_str := '${book.path_build.path}/src/${collectionname}'.replace('~',
-			os.home_dir())
-		if !pathlib.path_equal(collection_dirbuild_str, collection_dir_path.path) {
-			collection_dir_path.link(collection_dirbuild_str, true)!
-		}
-		if collection_dir_path.file_exists('.linkedpages') {
-			mut lpages := collection_dir_path.file_get('.linkedpages')!
-			lpagescontent := lpages.read()!
-			for lpagestr in lpagescontent.split_into_lines().filter(it.trim_space() != '') {
-				// console.print_green('find linked page: ${lpagestr}')
-				// format $collection:$pagename.md
-				splitted := lpagestr.split(':')
-				assert splitted.len == 2
-				summary.add_page_additional(splitted[0], splitted[1])
-			}
-		}
-	}
 
 	if book.errors.len > 0 {
 		book.errors_report()!
@@ -195,12 +213,12 @@ pub struct ErrorArgs {
 pub mut:
 	path string
 	msg  string
-	cat  doctree.CollectionErrorCat
+	cat  collection.CollectionErrorCat
 }
 
 pub fn (mut book MDBook) error(args ErrorArgs) {
 	path2 := pathlib.get(args.path)
-	e := doctree.CollectionError{
+	e := collection.CollectionError{
 		path: path2
 		msg: args.msg
 		cat: args.cat

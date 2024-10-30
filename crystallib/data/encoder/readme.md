@@ -13,7 +13,7 @@ example
 
 ```go
 
-import encoder
+import import freeflowuniverse.crystallib.data.encoder
 
 mut e := encoder.new()
 a := AStruct{
@@ -21,17 +21,8 @@ a := AStruct{
     nr: 10
     privkey: []u8{len: 5, init: u8(0xf8)}
 }
-e.add_list_string(a.items)
-e.add_int(a.nr)
-_, privkey := ed25519.generate_key()!
-e.add_bytes(privkey)
 
-println(e.data)
-mut d := encoder.decoder_new(e.data)
-mut aa := AStruct{}
-aa.items = d.get_list_string()
-aa.nr = d.get_int()
-aa.privkey = d.get_bytes()
+.. TODO
 
 assert a == aa
 ```

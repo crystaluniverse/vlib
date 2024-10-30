@@ -13,7 +13,9 @@ pub fn install() ! {
 	if !osal.done_exists('install_rfs') || !osal.cmd_exists('rfs') {
 		osal.package_install('musl-dev,musl-tools')!
 
-		path := gittools.code_get(url: 'https://github.com/threefoldtech/rfs', reset: true)!
+		mut gs := gittools.new()!
+		mut repo := gs.get_repo(url: 'https://github.com/threefoldtech/rfs', reset: true)! 
+		path := repo.get_path()!
 		cmd := '
 		cd ${path}
 		rustup target add x86_64-unknown-linux-musl

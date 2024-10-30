@@ -1,27 +1,19 @@
-#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.osal
+import time
 
-// resets all for all git configs & caches
-// gittools.reset()!
 
-mut gs_default := gittools.get()!
+mut gs_default := gittools.new()!
 
-gs_default.list()!
-// println(gs_default)
+println(gs_default)
 
-// coderoot := '/tmp/code_test'
-// mut gs := gittools.get(coderoot: coderoot)!
+// // Initializes the Git structure with the coderoot path.
+// coderoot := '/tmp/code'
+// mut gs_tmo := gittools.new(coderoot: coderoot)!
 
-// // println(gs)
+// // Retrieve the specified repository.
+// mut repo := gs_default.get_repo(name: 'crystallib')!
 
-// mut path := gittools.code_get(
-// 	coderoot: coderoot
-// 	url:      'https://github.com/despiegk/ourworld_data'
-// )!
-
-// gs_default.list()!
-// gs.list()!
-
-// println(path)
-// this will show the exact path of the manual
+// println(repo)

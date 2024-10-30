@@ -4,7 +4,7 @@ import v.ast
 import v.parser
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
+import freeflowuniverse.crystallib.core.codemodel { Module, CodeFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -86,6 +86,7 @@ pub fn parse_file(path string, vparser VParser) !CodeFile {
 	mut table := ast.new_table()
 	items := vparser.parse_vfile(file.path, mut table)
 	return CodeFile{
+		name: file.name().trim_string_right('.v')
 		imports: parse_imports(file.read()!)
 		consts: parse_consts(file.read()!)!
 		items: items
@@ -184,7 +185,7 @@ fn (vparser VParser) parse_vfile(path string, mut table ast.Table) []CodeItem {
 }
 
 // parse_vfile parses and returns code items from a v code file
-pub fn parse_module(path_ string, vparser VParser) ![]CodeFile {
+pub fn parse_module(path_ string, vparser VParser) !Module {
 	mut path := pathlib.get(path_)
 	if !path.exists() {
 		return error('Path `${path.path}` doesn\'t exist.')
@@ -195,10 +196,16 @@ pub fn parse_module(path_ string, vparser VParser) ![]CodeFile {
 	// fpref := &pref.Preferences{ // preferences for parsing
 	// 	is_fmt: true
 	// }
+	mut mod := Module {
+		name: path.name()
+	}
 	if path.is_dir() {
 		dir_is_excluded := vparser.exclude_dirs.any(path.path.ends_with(it))
 		if dir_is_excluded {
-			return code
+			return Module {
+				...mod
+				files: code
+			}
 		}
 
 		if vparser.recursive {
@@ -215,14 +222,20 @@ pub fn parse_module(path_ string, vparser VParser) ![]CodeFile {
 		file_is_excluded := vparser.exclude_files.any(path.path.ends_with(it))
 		// todo: use pathlib list regex param to filter non-v files
 		if file_is_excluded || !path.path.ends_with('.v') {
-			return code
+			return Module{
+				...mod
+				files:code
+			}
 		}
 		code << parse_file(path.path, vparser)!
 	} else {
 		return error('Path being parsed must either be a directory or a file.')
 	}
 	// codemodel.inflate_types(mut code)
-	return code
+	return Module{
+		...mod
+		files: code
+	}
 }
 
 @[params]

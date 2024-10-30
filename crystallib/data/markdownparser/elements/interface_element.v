@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.core.playbook
 // import freeflowuniverse.crystallib.data.paramsparser
 
 @[heap]
-interface Element {
+pub interface Element {
 	markdown() !string
 	html() !string
 	pug() !string

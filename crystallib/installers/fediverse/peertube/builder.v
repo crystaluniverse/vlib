@@ -25,12 +25,12 @@ pub fn build(args BuildArgs) ! {
 	console.print_header('build peertube')
 
 	mut gs := gittools.get()!
-
-	mut dest := gittools.code_get(
+	mut repo := gs.get_repo(
 		url: 'https://github.com/Chocobozzz/PeerTube.git'
 		pull: true
 		reset: true
 	)!
+	dest := repo.get_path()!
 
 	// cmd := '
 	// source ${osal.profile_path()} //source the go path

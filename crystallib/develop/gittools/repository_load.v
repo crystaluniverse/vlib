@@ -1,84 +1,69 @@
 module gittools
+import time
+import freeflowuniverse.crystallib.ui.console
 
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.core.base
-import json
+// Load repo information
+fn (mut repo GitRepo) load() ! {
+	console.print_debug('load ${repo.get_key()}')
+	repo.init()!
+	repo.exec('git fetch --all') or {
+		return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
+	}
+	repo.load_branches()!
+	repo.load_tags()!
+	repo.last_load = int(time.now().unix())
+	repo.cache_set()!
+}
 
-fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
-	// $if debug {
-	// 	console.print_debug('load git config on fs: ${path}')
+// Helper to load remote tags
+fn (mut repo GitRepo) load_branches() ! {
+	
+	tags_result := repo.exec("git for-each-ref --format='%(objectname) %(refname:short)' refs/heads refs/remotes/origin")!
+	for line in tags_result.split('\n') {
+		if line.trim_space() != '' {
+			parts := line.split(' ')
+			if parts.len == 2 {
+				commit_hash := parts[0].trim_space()
+				mut name := parts[1].trim_space()
+				if name.contains("_archive"){
+					continue
+				} else if name == "origin"{
+					repo.status_remote.ref_default = commit_hash
+				} else if name.starts_with("origin"){
+					name = name.all_after('origin/').trim_space()
+					// Update remote tags info
+					repo.status_remote.branches[name] = commit_hash
+				}else{
+					repo.status_local.branches[name] = commit_hash
+				}
+			}
+		}
+	}
+
+	mybranch := repo.exec("git branch --show-current")!.split_into_lines().filter(it.trim_space() != '')
+	if mybranch.len==1{
+		repo.status_local.branch = mybranch[0].trim_space()
+	}
+	// Could be a tag.
+	// else{
+	// 	panic("bug: git branch does not give branchname")
 	// }
+}
 
-	mut st := GitRepoStatus{}
+// Helper to load remote tags
+fn (mut repo GitRepo) load_tags() ! {
+	tags_result := repo.exec('git tag --list')!
 
-	cmd := 'cd ${path} && git config --get remote.origin.url'
-	// console.print_debug(cmd)
-	st.remote_url = osal.execute_silent(cmd) or {
-		return error('Cannot get remote origin url: ${path}. Error was ${err}')
-	}
-	st.remote_url = st.remote_url.trim(' \n')
+	for line in tags_result.split('\n') {
+		if line.trim_space() != '' {
+			parts := line.split(' ')
+			if parts.len == 2 {
+				commit_hash := parts[0].trim_space()
+				tag_name := parts[1].all_after('refs/tags/').trim_space()
 
-	if st.remote_url == '' {
-		return error('cannot fetch info from ${path}, url not specified')
-	}
-
-	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-	// console.print_debug(cmd2)
-	st.branch = osal.execute_silent(cmd2) or {
-		return error('Cannot get branch: ${path}. Error was ${err}')
-	}
-	st.branch = st.branch.trim(' \n')
-
-	if st.branch == '' {
-		return error('could not find branch for.\n${cmd2}')
-	}
-	cmd3 := 'cd ${path} &&  git status'
-	mut status_str := osal.execute_silent(cmd3) or {
-		return error('Cannot get status for repo: ${path}. Error was ${err}')
-	}
-	status_str = status_str.to_lower()
-
-	// check if commit is needed
-	check := ['untracked files', 'changes not staged for commit', 'to be committed']
-	for tocheck in check {
-		if status_str.to_lower().contains(tocheck) {
-			st.need_commit = true
+				// Update remote tags info
+				repo.status_remote.tags[tag_name] = commit_hash
+			}
 		}
 	}
-
-	// check if push is needed
-	check2 := ['to publish your local commits', 'your branch is ahead of']
-	for tocheck in check2 {
-		if status_str.to_lower().contains(tocheck) {
-			st.need_push = true
-		}
-	}
-
-	// check if pull is needed
-	check3 := ['branch is behind']
-	for tocheck in check3 {
-		if status_str.to_lower().contains(tocheck) {
-			st.need_pull = true
-		}
-	}
-
-	locator := locator_new(addr.gsconfig, st.remote_url)!
-	addr = locator.addr
-	addr.branch = st.branch
-
-	// console.print_debug(st)
-	// console.print_debug(addr)
-
-	// $if debug {
-	// 	console.print_header(' loaded repo ${path}     --------')
-	// }
-
-	jsondata := json.encode(st)
-	mut c := base.context()!
-	mut redis := c.redis()!
-	redis.set(addr.cache_key_status(), jsondata)!
-	redis.set(addr.cache_key_path(path), addr.cache_key_status())! // remember the key in redis starting from path
-	redis.expire(addr.cache_key_status(), 3600 * 24 * 7)!
-	redis.expire(addr.cache_key_path(path), 3600 * 24 * 7)!
-	return st
 }

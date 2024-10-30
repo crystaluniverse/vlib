@@ -26,12 +26,13 @@ pub fn build(args BuildArgs) ! {
 	// install conduit if it was already done will return true
 	console.print_header('build conduit')
 
-	gitpath := gittools.code_get(
-		coderoot: '/tmp/builder'
+	mut gs := gittools.new(coderoot: '/tmp/builder')!
+	mut repo := gs.get_repo(
 		url: conduit.url
 		reset: true
 		pull: true
 	)!
+	gitpath := repo.get_path()!
 
 	cmd := '
 	source ${osal.profile_path()} //source the go path

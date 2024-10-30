@@ -31,16 +31,22 @@ pub fn install(args InstallArgs) ! {
 
 	mut gs := gittools.get()!
 	gs.config.light = true // means we clone depth 1
-	mut path1 := gittools.code_get(
+
+	mut repo := gs.get_repo(
 		pull: args.git_pull
 		reset: args.git_reset
 		url: 'https://github.com/freeflowuniverse/crystallib/tree/development/crystallib'
 	)!
-	mut path2 := gittools.code_get(
+
+	mut repo2 := gs.get_repo(
 		pull: args.git_pull
 		reset: args.git_reset
 		url: 'https://github.com/freeflowuniverse/webcomponents/tree/main/webcomponents'
 	)!
+
+	mut path1 := repo.get_path()!
+	mut path2 := repo2.get_path()!
+
 	mut path1p := pathlib.get_dir(path: path1, create: false)!
 	mut path2p := pathlib.get_dir(path: path2, create: false)!
 	path1p.link('${os.home_dir()}/.vmodules/freeflowuniverse/crystallib', true)!

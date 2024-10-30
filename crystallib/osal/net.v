@@ -2,7 +2,7 @@ module osal
 
 import net
 import time
-// import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.ui.console
 
 pub enum PingResult {
 	ok
@@ -30,13 +30,14 @@ pub fn ping(args PingArgs) !PingResult {
 		cmd = 'ping6'
 	}
 	if platform_ == .osx {
-		cmd += ' -c ${args.count} ${args.address}'
+		cmd += ' -c ${args.count} -i ${args.timeout} ${args.address}'
 	} else if platform_ == .ubuntu {
 		cmd += ' -c ${args.count} -w ${args.timeout} ${args.address}'
 	} else {
 		return error ('Unsupported platform for ping')
 	}
-	r := exec(cmd: cmd, retry: args.retry, timeout: 0, stdout: false) or {
+	console.print_debug(cmd)
+	_ := exec(cmd: cmd, retry: args.retry, timeout: 0, stdout: false) or {
 		//println("ping failed.error.\n${err}")
 		if err.code() == 9999 {
 			return .timeout

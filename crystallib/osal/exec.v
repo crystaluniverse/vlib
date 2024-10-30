@@ -64,7 +64,7 @@ pub mut:
 	ignore_error_codes []int
 	scriptpath         string // is the path where the script will be put which is executed
 	scriptkeep         bool   // means we don't remove the script
-	debug              bool   // if debug will put +ex in the script which is being executed and will make sure script stays
+	debug              bool    // if debug will put +ex in the script which is being executed and will make sure script stays
 	shell              bool   // means we will execute it in a shell interactive
 	retry              int
 	interactive        bool = true
@@ -151,7 +151,7 @@ pub fn exec(cmd Command) !Job {
 
 	if job.cmd.debug {
 		job.cmd.stdout = true
-		console.print_header(' execute: \n${job.cmd}')
+		console.print_header(' execute: ${job.cmd.cmd}')
 	}
 
 	if cmd.shell {

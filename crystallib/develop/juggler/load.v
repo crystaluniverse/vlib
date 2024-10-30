@@ -100,11 +100,12 @@ fn code_get(cfg Config) !string {
 
 	mut gs := gittools.get(coderoot: args.coderoot)!
 	if args.url.len > 0 {
-		return gs.code_get(
+		repo := gs.get_repo(
 			pull: false
 			reset: false
 			url: cfg.url
 		)!
+		return repo.get_path()!
 	}
 
 	return error('URL must be provided to configure juggler')

@@ -48,7 +48,7 @@ pub fn build(args BuildArgs) ! {
 
 	// mut gs := gittools.get()!
 
-	// mut gitpath := gittools.code_get(
+	// mut gitpath := gittools.get_repo(
 	// 	url: "https://github.com/xxxx/yyy"
 	// 	pull: true
 	// 	reset: true

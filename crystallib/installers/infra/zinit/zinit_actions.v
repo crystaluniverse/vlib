@@ -66,7 +66,13 @@ fn build() ! {
 	// install zinit if it was already done will return true
 	console.print_header('build zinit')
 
-	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: 'https://github.com/threefoldtech/zinit', reset: true, pull: true)!
+	mut gs := gittools.get(coderoot: '/tmp/builder')!
+	mut repo := gs.get_repo(
+		url: 'https://github.com/threefoldtech/zinit',
+		reset: true,
+		pull: true
+	)!
+	gitpath := repo.get_path()!
 
 	// source ${osal.profile_path()}
 

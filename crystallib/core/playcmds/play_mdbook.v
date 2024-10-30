@@ -14,7 +14,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 	mut pull := false
 
 	// check if any actions for doctree, if not then nothing to do here
-	//dtactions := plbook.find(filter: 'doctree.')!
+	// dtactions := plbook.find(filter: 'doctree.')!
 	// if dtactions.len == 0 {
 	// 	console.print_debug("can't find doctree.add statements, nothing to do")
 	// 	return
@@ -41,48 +41,67 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		config_actions[0].done = true
 	}
 
-	mut tree := doctree.new(
-		name: 'main'
-	)!
+	mut trees := map[string]&doctree.Tree{}
+	for mut action in plbook.find(filter: 'doctree:new')! {
+		mut p := action.params
+		name := p.get('name')!
+		fail_on_error := p.get_default_false('fail_on_error')
+		println('fail on error: ${fail_on_error}')
+		if name in trees {
+			return error('tree with name ${name} already exists')
+		}
+
+		tree := doctree.new(name: name, fail_on_error: fail_on_error)!
+		trees[name] = tree
+	}
 
 	for mut action in plbook.find(filter: 'doctree:add')! {
 		mut p := action.params
 		url := p.get_default('url', '')!
 		path := p.get_default('path', '')!
+		name := p.get('name')!
+
+		mut tree := trees[name] or { return error('tree ${name} not found') }
+
 		tree.scan(
-			path:      path
-			git_url:   url
+			path: path
+			git_url: url
 			git_reset: reset
-			git_root:  coderoot
-			git_pull:  pull
+			git_root: coderoot
+			git_pull: pull
 		)!
 		action.done = true
 	}
 
-	for mut action in plbook.find(filter: 'book:export')! {
+	for mut action in plbook.find(filter: 'doctree:export')! {
 		mut p := action.params
 		build_path := p.get('path')!
-		toreplace := p.get_default('replace', "")!
+		toreplace := p.get_default('replace', '')!
 		reset2 := p.get_default_false('reset')
-		production2 := p.get_default_true('production')
-		tree.export(dest: build_path, reset: reset2, production: production2,toreplace:toreplace)!
+		name := p.get('name')!
+		mut tree := trees[name] or { return error('tree: ${name} not found') }
+
+		tree.export(
+			destination: build_path
+			reset: reset2
+			toreplace: toreplace
+		)!
 		action.done = true
 	}
 
-	for mut action in plbook.find(filter: 'book:generate')! {
+	for mut action in plbook.find(filter: 'mdbook:export')! {
 		mut p := action.params
 		name := p.get('name')!
-		url := p.get('url')!
+		summary_url := p.get_default('summary_url', '')!
+		summary_path := p.get_default('summary_path', '')!
 		title := p.get_default('title', name)!
-		toreplace := p.get_default('replace', "")!
 		publish_path := p.get_default('publish_path', '${publishroot}/${name}')!
 		build_path := p.get_default('build_path', '${buildroot}/${name}')!
 		printbook := p.get_default_false('printbook')
 		foldlevel := p.get_int_default('foldlevel', 0)!
 		production := p.get_default_false('production')
 		reset3 := p.get_default_true('reset')
-
-		tree.export(dest: build_path, reset: reset3,toreplace:toreplace)!
+		collections := p.get_list_default('collections', [])!
 
 		mut mdbooks := mdbook.get()!
 
@@ -91,15 +110,16 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		cfg.path_publish = publishroot
 
 		mdbooks.generate(
-			doctree_path: build_path
-			name:         name
-			title:        title
-			summary_url:  url
+			name: name
+			title: title
+			summary_url: summary_url
+			summary_path: summary_path
 			publish_path: publish_path
-			build_path:   build_path
-			printbook:    printbook
-			foldlevel:    foldlevel
-			production:   production
+			build_path: build_path
+			printbook: printbook
+			foldlevel: foldlevel
+			production: production
+			collections: collections
 		)!
 		action.done = true
 	}

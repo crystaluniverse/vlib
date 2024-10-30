@@ -3,20 +3,19 @@ module tfrobot
 import os
 import freeflowuniverse.crystallib.osal
 
+
 const testdata_dir = '${os.dir(@FILE)}/testdata'
 
 fn testsuite_begin() ! {
-	osal.load_env_file('${tfrobot.testdata_dir}/.env')!
+	osal.load_env_file('${testdata_dir}/.env')!
 }
 
 fn test_vm_deploy() ! {
-	mnemonics := os.getenv('TFGRID_MNEMONIC')
+	mneumonics := os.getenv('MNEUMONICS')
 	ssh_key := os.getenv('SSH_KEY')
 
-	println('debbb ${ssh_key}')
-
-	mut robot := configure('testrobot',
-		mnemonics: mnemonics
+	mut robot := configure('testrobot', 
+		mnemonics: mneumonics
 		network: 'main'
 	)!
 	result := robot.vm_deploy(

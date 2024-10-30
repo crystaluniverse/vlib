@@ -2,8 +2,11 @@ module backend
 
 import json
 import db.sqlite
+import db.pg
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.clients.postgres
+import orm
 
 pub struct Indexer {
 	db sqlite.DB
@@ -51,98 +54,64 @@ pub fn (mut backend Indexer) delete_table[T]() ! {
 
 // new creates a new root object entry in the root_objects table,
 // and the table belonging to the type of root object with columns for index fields
-pub fn (mut backend Indexer) new[T](obj T) ! {
-	table_name := get_table_name[T]()
-
-	row := RootObject{
-		table: table_name
-	}
-
-	sql backend.db {
-		insert row into RootObject
-	}!
-
-	// id := backend.db.last_id()
+pub fn (mut backend Indexer) new(object RootObject) ! {
+	table_name := get_table_name(object)
 
 	// create table for root object if it doesn't exist
-	backend.create_root_struct_table[T]()!
-
-	obj_encoded := json.encode(obj)
-	// insert root object into its table
-	mut indices := ['data']
-	obj_val := "'${obj_encoded.replace("'", "''")}'"
-	mut values := [obj_val]
-	$for field in T.fields {
-		$if field.name == 'id' {
-			indices << '${field.name}'
-			val := obj.$(field.name)
-			values << "'${val}'"
-		}
-		$if field.typ is string {
-			if field.attrs.contains('index') {
-				indices << '${field.name}'
-				val := obj.$(field.name)
-				values << "'${val}'"
-			}
-		}
-	}
-	insert_query := 'insert into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
-	backend.db.exec(insert_query) or {
-		return error('Error inserting object ${obj} into table ${table_name}\n${err}')
-	}
-
-	// return id
+	backend.create_root_object_table(object, .postgres)!
+	backend.db.insert(object)!
+	// indices, values := object.sql_indices_values()
+	// insert_query := 'INSERT into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
+	// backend.db.exec(insert_query) or {
+	// 	return error('Error inserting object ${object} into table ${table_name}\n${err}')
+	// }
 }
 
 // save the session to redis & mem
-pub fn (mut backend Indexer) set[T](obj T) ! {
-	table_name := get_table_name[T]()
-	obj_encoded := json.encode(obj)
+pub fn (mut backend Indexer) set(obj RootObject) ! {
+	table_name := get_table_name(obj)
+	indices, values := obj.sql_indices_values()
 	// todo: check table and entry exists
-	backend.db.exec("update ${table_name} set data='${obj_encoded}' where id=${obj.id}")!
+
+	mut sql_stmts := []string{}
+	for i in 0 .. indices.len {
+		sql_stmts << '${indices[i]}=${values[i]}'
+	}
+	backend.db.exec("update ${table_name} set ${sql_stmts.join(' ')} where id=${obj.id}")!
 }
 
 // save the session to redis & mem
-pub fn (mut backend Indexer) delete[T](id u32) ! {
-	table_name := get_table_name[T]()
+pub fn (mut backend Indexer) delete(id string, obj RootObject) ! {
+	table_name := get_table_name(obj)
 	// todo: check table and entry exists
 	backend.db.exec('delete from ${table_name} where id=${id}')!
-	backend.db.exec('delete from root_objects where id=${id}')!
 }
 
-// save the session to redis & mem
-pub fn (mut backend Indexer) get[T](id string) !T {
-	table_name := get_table_name[T]()
+pub fn (mut backend Indexer) get(id string, obj RootObject) !RootObject {
+	json_value := backend.get_json(id, obj)!
+	return root_object_from_json(json_value)
+}
+
+pub fn (mut backend Indexer) get_json(id string, obj RootObject) !string {
+	table_name := get_table_name(obj)
 
 	// check root object and table exists
-	result0 := backend.db.exec('select * from ${table_name} where id=${id}')!
-	if result0.len == 0 {
-		return error('Root object not found')
-	} else if result0.len > 1 {
-		panic('More than one result with same id found. This should never happen.')
-	}
-
-	responses := backend.db.exec('select * from ${table_name} where id=${id}') or { panic(err) }
+	responses := backend.db.exec('select * from ${table_name} where id=${id}')!
 	if responses.len == 0 {
-		panic('Root object found in root objects but not in object table. This should never happen.')
-	}
-	if responses.len > 1 {
+		return error('Root object not found')
+	} else if responses.len > 1 {
 		panic('More than one result with same id found. This should never happen.')
 	}
 
-	return json.decode(T, responses[0].vals[1])
+	return responses[0].vals[1]
 }
 
-// save the session to redis & mem
-pub fn (mut backend Indexer) list[T]() ![]T {
-	if !is_root_struct[T]() {
-		return error('List method can only be used for root structs')
-	}
-
-	table_name := get_table_name[T]()
+pub fn (mut backend Indexer) list(obj RootObject) ![]string {
+	table_name := get_table_name(obj)
 
 	responses := backend.db.exec('select * from ${table_name}') or { panic(err) }
-	return responses.map(json.decode(T, it.vals[1]) or { panic('JSON decode failed.') })
+	ids := responses.map(it.vals[0])
+	return ids.map(it.str())
 }
 
 // from and to for int f64 time etc.
@@ -155,13 +124,17 @@ pub struct FilterParams {
 }
 
 // filter lists root objects of type T that match provided index parameters and params.
-pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]u32 {
-	table_name := get_table_name[T]()
+pub fn (mut backend Indexer) filter(filter RootObject, params FilterParams) ![]string {
+	table_name := get_table_name(filter)
+
+	if !backend.table_exists(table_name)! {
+		return []string{}
+	}
 	table_indices := backend.get_table_indices(table_name) or { panic(err) }
 
-	$for field in D.fields {
+	for field in filter.fields {
 		if field.name !in table_indices {
-			return error('Index ${field.name} not found for root struct ${typeof[T]()}')
+			return error('Index ${field.name} not found for root struct ${filter.name}')
 		}
 	}
 	mut select_stmt := 'select * from ${table_name}'
@@ -170,9 +143,12 @@ pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]u32 
 	select_stmt += ' where'
 
 	mut matchers := []string{}
-	$for field in D.fields {
-		val := filter.$(field.name)
-		matchers << "${field.name} == '${val}'"
+	for field in filter.fields {
+		if field.typ == .text {
+			matchers << "${field.name} == '${field.value}'"
+		} else if field.typ == .number {
+			matchers << "${field.name} == ${field.value}"
+		}
 	}
 	matchers_str := if params.matches_all {
 		matchers.join(' AND ')
@@ -180,57 +156,60 @@ pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]u32 
 		matchers.join(' OR ')
 	}
 	select_stmt += ' ${matchers_str}'
-	// }
 
-	// console.print_debug(select_stmt)
+	println(select_stmt)
 	responses := backend.db.exec(select_stmt) or { panic(err) }
 	ids := responses.map(it.vals[0])
 	// objects := responses.map(json.decode(T, it.vals[1]) or { panic(err) })
-	return if params.limit == 0 { ids.map(it.u32()) } else { ids.map(it.u32())[..params.limit] }
+	return if params.limit == 0 { ids.map(it.str()) } else { ids.map(it.str())[..params.limit] }
 }
 
 // create_root_struct_table creates a table for a root_struct with columns for each index field
-fn (mut backend Indexer) create_root_struct_table[T]() ! {
-	table_name := get_table_name[T]()
-	mut columns := ['id integer primary key AUTOINCREMENT', 'data TEXT']
+fn (mut backend Indexer) create_root_object_table(object RootObject, db_type DatabaseType) ! {
+	mut columns := if db_type == .sqlite {
+		['id integer primary key AUTOINCREMENT', 'data TEXT']
+	} else {
+		['id SERIAL PRIMARY KEY', 'data JSONB']
+	}
 
 	// create columns for fields marked as index
-	$for field in T.fields {
-		if field.attrs.contains('index') {
-			columns << '${field.name} TEXT'
+	for field in object.fields {
+		if field.is_index {
+			columns << '${field.name} ${field.sql_type()}'
 		}
 	}
+	table_name := get_table_name(object)
 	create_query := 'create table if not exists ${table_name} (${columns.join(',')})'
-	backend.db.exec(create_query)!
+	backend.db.exec(create_query) or {panic('errz ${err}')}
+}
+
+// deletes an indexer table belonging to a root object
+fn (mut backend Indexer) delete_table(object RootObject)! {
+	table_name := get_table_name(object)
+	delete_query := 'delete table ${table_name}'
+	backend.db.exec(delete_query)!
 }
 
 fn (mut backend Indexer) get_table_indices(table_name string) ![]string {
 	table_info := backend.db.exec('pragma table_info(${table_name});')!
+	if table_info.len == 0 {
+		return error('table doesnt exist')
+	}
 	return table_info[1..].map(it.vals[1])
 }
 
-// get_table_name returns the name of the table belonging to a root struct
-fn get_table_name[T]() string {
-	mut table_name := ''
-	$for attr in T.attributes {
-		if attr.name == 'table' && attr.arg.len > 0 {
-			table_name = attr.arg
-		}
+fn (mut backend Indexer) table_exists(table_name string) !bool {
+	table_info := backend.db.exec('pragma table_info(${table_name});')!
+	println('debugzore ${table_info} ${table_name}')
+	if table_info.len == 0 {
+		return false
 	}
-	if table_name == '' {
-		table_name = typeof[T]()
-	}
-	table_name = texttools.name_fix(table_name)
-	table_name = table_name.replace('.', '_')
-	return table_name
+	return true
 }
 
-// is_root_struct returns whether a given generic is a root struct
-fn is_root_struct[T]() bool {
-	$for attr in T.attributes {
-		if attr.name == 'root_struct' {
-			return true
-		}
-	}
-	return false
+// get_table_name returns the name of the table belonging to a root struct
+fn get_table_name(object RootObject) string {
+	mut table_name := texttools.name_fix(object.name)
+	table_name = table_name.replace('.', '_')
+	return table_name
 }

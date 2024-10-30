@@ -110,12 +110,13 @@ fn juggler_code_get(cmd Command) !string {
 
 	mut gs := gittools.get(coderoot: coderoot)!
 	if url.len > 0 {
-		path = gs.code_get(
+		mut repo := gs.get_repo(
 			pull: pull
 			reset: reset
 			url: url
 			reload: true
 		)!
+		return repo.get_path()!
 	}
 
 	return path

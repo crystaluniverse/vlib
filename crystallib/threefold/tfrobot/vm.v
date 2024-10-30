@@ -3,7 +3,7 @@ module tfrobot
 // import os
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.sysadmintools.daguserver as dagu
+import freeflowuniverse.crystallib.servers.daguserver as dagu
 import freeflowuniverse.crystallib.clients.daguclient as dagu_client
 import freeflowuniverse.crystallib.ui.console
 import time
@@ -28,7 +28,7 @@ pub mut:
 	ip4       bool = true
 	ip6       bool = true
 	planetary bool = true
-	mycelium  bool = true
+	mycelium bool = true
 	timeout   int  = 120 // timeout in sec
 }
 

@@ -6,9 +6,16 @@ import os
 
 pub fn configure(args_ InstallArgs) ! {
 	mut args := args_
+	mut gs := gittools.get()!
+	mut repo_path := ''
 
 	if args.config_url.len > 0 {
-		args.config_path = gittools.code_get(url: args.config_url)!
+		mut repo := gs.get_repo(
+			url: args.config_url
+		)!
+		repo_path = repo.get_path()!
+
+		args.config_path = repo_path
 	}
 
 	if args.config_path.len == 0 {
@@ -16,7 +23,11 @@ pub fn configure(args_ InstallArgs) ! {
 	}
 
 	if args.dnszones_url.len > 0 {
-		args.dnszones_path = gittools.code_get(url: args.dnszones_url)!
+		mut repo := gs.get_repo(
+			url: args.dnszones_url
+		)!
+		repo_path = repo.get_path()!
+		args.dnszones_path = repo_path
 	}
 
 	if args.dnszones_path.len == 0 {

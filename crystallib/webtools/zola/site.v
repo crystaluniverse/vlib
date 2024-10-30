@@ -53,9 +53,10 @@ pub mut:
 // reset  bool // this means will pull and reset all changes
 // reload bool // reload the cache
 //```
-pub fn (mut site ZolaSite) template_add(args gittools.GSCodeGetFromUrlArgs) ! {
+pub fn (mut site ZolaSite) template_add(args gittools.ReposGetArgs) ! {
 	mut gs := gittools.get()!
-	mypath := gs.code_get(args)!
+	
+	mypath := gs.get_repo(args)!
 	for i in ['css', 'static', 'templates'] {
 		os.cp_all('${mypath}/${i}', '${site.path_build.path}/${i}', true)!
 	}
@@ -71,16 +72,19 @@ pub fn (mut site ZolaSite) template_add(args gittools.GSCodeGetFromUrlArgs) ! {
 // reset  bool // this means will pull and reset all changes
 // reload bool // reload the cache
 //```
-pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
+pub fn (mut site ZolaSite) content_add(args gittools.ReposGetArgs) ! {
 	site.tree.scan(git_url: args.url, git_reset: args.reset, git_pull: args.pull, load: true)!
 	mut gs := gittools.get()!
-	mut mypath := gs.code_get(args)!
-	if os.exists('${mypath}/content') {
-		mypath = '${mypath}/content'
+	mut repo := gs.get_repo(args)!
+	mut repo_path := repo.get_path()!
+
+	if os.exists('${repo_path}/content') {
+		repo_path = '${repo_path}/content'
 	}
+
 	content_dest := '${site.path_build.path}/content'
 	mut content_dir := pathlib.get_dir(path: content_dest)!
-	os.cp_all('${mypath}', content_dest, true)!
+	os.cp_all('${repo_path}', content_dest, true)!
 }
 
 // add collections from doctree
@@ -93,7 +97,7 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 // reset  bool // this means will pull and reset all changes
 // reload bool // reload the cache
 //```
-pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
+pub fn (mut site ZolaSite) doctree_add(args gittools.ReposGetArgs) ! {
 	site.tree.scan(git_url: args.url, git_reset: args.reset, git_pull: args.pull, load: args.reload)!
 	doctree_dest := '${site.path_build.path}/doctree'
 	mut doctree_dir := pathlib.get_dir(path: doctree_dest)!

@@ -24,12 +24,12 @@ pub fn install(args Config) ! {
 	}
 
 	mut gs := gittools.get()!
-
-	mut path := gittools.code_get(
+	mut repo := gs.get_repo(
 		url: 'https://github.com/mediacms-io/mediacms'
 		pull: true
 		reset: true
 	)!
+	path := repo.get_path()!
 
 	mut ti := []TemplateItem{}
 	dest := 'frontend/src/templates/config/installation'

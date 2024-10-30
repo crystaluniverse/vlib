@@ -1,424 +1,329 @@
 module gittools
 
-import os
-import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.develop.vscode
-import freeflowuniverse.crystallib.develop.sourcetree
-import json
+import freeflowuniverse.crystallib.osal
+import os
+import time
+import crypto.md5
 
-@[heap]
+// GitRepo holds information about a single Git repository.
 pub struct GitRepo {
-	id int
 pub mut:
-	gs   &GitStructure @[skip; str: skip]
-	addr &GitAddr
-	path pathlib.Path
+	gs            &GitStructure @[skip;str: skip] // Reference to the parent GitStructure
+	provider      string              // e.g., github.com, shortened to 'github'
+	account       string              // Git account name
+	name          string              // Repository name
+	status_remote GitRepoStatusRemote // Remote repository status
+	status_local  GitRepoStatusLocal  // Local repository status
+	status_wanted  GitRepoStatusWanted  // what is the status we want?
+	config        GitRepoConfig       // Repository-specific configuration
+	last_load    int               // Epoch timestamp of the last load from reality
+	deploysshkey string //to use with git
 }
 
-pub struct GitRepoStatus {
+// this is the status we want, we need to work towards off
+pub struct GitRepoStatusWanted {
 pub mut:
-	need_commit bool
-	need_push   bool
-	need_pull   bool
-	branch      string
-	remote_url  string
+	branch   string
+	tag 	 string
+	url      string            // Remote repository URL, is basically the one we want	
+	readonly bool			   // if read only then we cannot push or commit, all changes will be reset when doing pull
 }
 
-pub fn (repo GitRepo) key() string {
-	return repo.addr.key()
+// GitRepoStatusRemote holds remote status information for a repository.
+pub struct GitRepoStatusRemote {
+pub mut:
+	ref_default 		string //is the default branch hash
+	branches      map[string]string // Branch name -> commit hash
+	tags          map[string]string // Tag name -> commit hash
 }
 
-fn (repo GitRepo) cache_delete() ! {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	redis.del(repo.addr.cache_key_status())!
-	redis.del(repo.cache_key_path())!
+// GitRepoStatusLocal holds local status information for a repository.
+pub struct GitRepoStatusLocal {
+pub mut:
+	branches   map[string]string // Branch name -> commit hash
+	branch 	   string //the current branch
+	tag        string // If the local branch is not set, the tag may be set
 }
 
-fn (repo GitRepo) cache_key_path() string {
-	return repo.addr.cache_key_path(repo.path.path)
+// GitRepoConfig holds repository-specific configuration options.
+pub struct GitRepoConfig {
+pub mut:
+	remote_check_period int // Seconds to wait between remote checks (0 = check every time)
 }
 
-pub fn (mut repo GitRepo) load() !GitRepoStatus {
-	repo.path.check() // could be that path changed
-	if !repo.path.exists() {
-		return error("cannot load from path, doesn't exist for '${repo.path.path}'")
+
+
+//just some initialization mechanism
+pub fn (mut gitstructure GitStructure) repo_new_from_gitlocation(git_location GitLocation) !&GitRepo {
+	mut repo := GitRepo{
+		provider: git_location.provider
+		name: git_location.name
+		account: git_location.account
+		gs: &gitstructure
+		status_remote: GitRepoStatusRemote{}
+		status_local: GitRepoStatusLocal{}
+		status_wanted: GitRepoStatusWanted{}				
 	}
 
-	// TODO: fix
-	// mut c := base.context()!
-	// mut redis := c.redis()!
-	// mut isvalid := redis.get(repo.addr.cache_key_status() + '_') or { '' }
-	// if isvalid != '' {
-	// 	return repo.status()!
-	// }
-	mut st := repo_load(mut repo.addr, repo.path.path)!
-	repo.status_set(st)!
+	gitstructure.repos[repo.name] = &repo
 
-	p2 := repo.addr.path()!
-	if p2.path != repo.path.path {
-		return error("path conflict, doesn't exist for '${p2.path}' and '${repo.path.path}'")
-	}
-	// console.print_header(' status:\n${st}')
-	// redis.set(repo.addr.cache_key_status() + '_', '1')!
-	// redis.expire(repo.addr.cache_key_status() + '_', 5)! // 5 seconds, to not have these double gets
-	return st
+	return &repo
+
 }
 
-fn (repo GitRepo) status_exists() !bool {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	mut data := redis.get(repo.addr.cache_key_status()) or { return false }
-	if data.len == 0 {
-		return false
-	}
-	return true
-}
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 
-fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
-	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
-		|| repo.addr.branch == '' {
-		locator := repo.gs.locator_new(st.remote_url)!
-		repo.addr = locator.addr
-		repo.addr.branch = st.branch
-		// console.print_debug(repo)
-	}
-}
 
-pub fn (mut repo GitRepo) status() !GitRepoStatus {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	mut cache_key := ''
-	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
-		|| repo.addr.branch == '' {
-		// means we don't know the addr data yet, need to see in redis if we can find the key
-		cache_key = redis.get(repo.cache_key_path())!
-	} else {
-		// we can calculate the key
-		cache_key = repo.addr.cache_key_status()
-	}
-	// console.print_debug("cache_key: $cache_key")
-	mut data := ''
-	if cache_key.len > 0 {
-		data = redis.get(cache_key)!
-	}
-	// console.print_debug("data: $data")
-	if data.len == 0 {
-		repo.load()!
-		data = redis.get(repo.addr.cache_key_status())!
-		if data == '' {
-			panic('bug, redis should not be empty now.\n${repo.addr.cache_key_status()}')
+
+// Commit the staged changes with the provided commit message.
+pub fn (mut repo GitRepo) commit(msg string) ! {
+	repo.status_update()!
+	if repo.need_commit()! {
+		if msg == '' {
+			return error('Commit message is empty.')
 		}
+		repo_path := repo.get_path()!
+		repo.exec('git add . -A') or { 
+				return error('Cannot add to repo: ${repo_path}. Error: ${err}') }
+		repo.exec('git commit -m "${msg}"') or { 
+				return error('Cannot commit repo: ${repo_path}. Error: ${err}') }
+		console.print_green('Changes committed successfully.')
+	} else {
+		console.print_debug('No changes to commit.')
 	}
-	st := json.decode(GitRepoStatus, data)!
-	repo.status_set(st)!
-	return st
+	repo.load()!
 }
 
-pub fn (mut repo GitRepo) need_pull() !bool {
-	s := repo.status()!
-	return s.need_pull
-}
 
-// relative path inside the gitstructure, pointing to the repo
-pub fn (repo GitRepo) path_relative() string {
-	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
-}
 
-// pulls remote content in, will reset changes
-pub fn (mut repo GitRepo) pull_reset(args_ ActionArgs) ! {
-	mut args := args_
-	if args.reload {
+
+// Push local changes to the remote repository.
+pub fn (mut repo GitRepo) push() ! {
+	repo.status_update()!
+	if repo.need_push_or_pull()! {		
+		url := repo.get_repo_url()!
+		console.print_header('Pushing changes to ${url}')
+		// We may need to push the locally created branches
+		repo.exec('git push --set-upstream origin ${repo.status_local.branch}')!
+		console.print_green('Changes pushed successfully.')
 		repo.load()!
-		args.reload = false
+	} else {
+		console.print_header('Everything is up to date.')
+		repo.load()!
 	}
-	repo.remove_changes(args)!
-	repo.pull(args)!
 }
+
 
 @[params]
-pub struct ActionArgs {
+pub struct PullCheckoutArgs {
 pub mut:
-	reload bool = true
-	msg    string // only relevant for commit
-	branch string
-	recursive bool
+	submodules bool //if we want to pull for submodules
 }
 
-// commit the changes, message is needed, pull from remote, push to remote
-pub fn (mut repo GitRepo) commit_pull_push(args_ ActionArgs) ! {
-	mut args := args_
-	if args.reload {
-		repo.load()!
-		args.reload = false
-	}
-	repo.commit(args)!
-	repo.pull(args)!
-	repo.push(args)!
-}
-
-// commit the changes, message is needed, pull from remote
-pub fn (mut repo GitRepo) commit_pull(args_ ActionArgs) ! {
-	mut args := args_
-	if args.reload {
-		repo.load()!
-		args.reload = false
-	}
-	repo.commit(args)!
-	repo.pull(args)!
-}
-
-// pulls remote content in, will fail if there are local changes
-pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
-	$if debug {
-		console.print_debug('  pull: ${repo.url_get(true)} (branch: ${args_.branch})')
-	}
-	// repo.ssh_key_load()!
-	// defer {
-	// 	repo.ssh_key_forget() or { panic("bug") }
-	// }
-
-	mut args := args_
-	if args.reload {
-		repo.load()!
-		args.reload = false
+// Pull remote content into the repository.
+pub fn (mut repo GitRepo) pull(args_ PullCheckoutArgs) ! {
+	repo.status_update()!
+	if repo.need_checkout() {
+		repo.checkout()!
 	}
 
-	
-	if args.branch != '' {
-		//console.print_debug(" - branch detected: '${repo.addr.branch}'")
-		if args.branch != repo.addr.branch  {
-			console.print_header(' branch switch ${repo.addr.branch} -> ${args.branch} for ${repo.addr.remote_url}')
-			repo.branch_switch(args.branch)!
-		}
-	}
-	// } else {
-	// 	print_backtrace()
-	// 	return error('branch should have been known for ${repo.addr.remote_url}')
+	repo.exec('git pull') or { return error('Cannot pull repo: ${repo.get_path()!}. Error: ${err}') }
 
-	// st := repo.status()!
-	// if st.need_commit {
-	// 	return error('Cannot pull repo: ${repo.path.path}, a commit is needed.\n${st}')
-	// }
-	// pull can't see the status
-	cmd2 := 'cd ${repo.path.path} && git pull'
-	osal.execute_silent(cmd2) or {
-		console.print_debug(' GIT PULL FAILED: ${cmd2}')
-		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
+	if args_.submodules {
+		repo.update_submodules()!
 	}
-	if args.recursive{
-		cmd3:="cd ${repo.path.path} && git submodule update --init --recursive"
-		osal.execute_silent(cmd3) or {
-			console.print_debug(' GIT RECURSIVE PULL FAILED: ${cmd3}')
-			return error('Cannot pull repo: ${repo.path}. Error was ${err}')
-		}		
-	}
+
 	repo.load()!
-
-	// repo.ssh_key_forget()!
+	console.print_green('Changes pulled successfully.')
 }
 
-pub fn (mut repo GitRepo) rev() !string {
-	// $if debug {
-	// 	console.print_debug('   - REV: ${repo.url_get(true)}')
-	// }
-	cmd2 := 'cd ${repo.path.path} && git rev-parse HEAD'
-	res := osal.execute_silent(cmd2) or {
-		console.print_debug(' GIT REV FAILED: ${cmd2}')
-		return error('Cannot rev repo: ${repo.path}. Error was ${err}')
+// Checkout a branch in the repository.
+pub fn (mut repo GitRepo) checkout() ! {
+	repo.status_update()!	
+	if repo.status_wanted.readonly{
+		repo.reset()!
+	}	
+	if repo.need_commit()! {
+		return error('Cannot checkout branch due to uncommitted changes in ${repo.get_path()!}.')
 	}
-	return res.trim_space()
+	if repo.status_wanted.tag.len>0{
+		repo.exec('git checkout tags/${repo.status_wanted.tag}')!
+	}
+	if repo.status_wanted.branch.len>0{
+		repo.exec('git checkout ${repo.status_wanted.tag}')!		
+	}
 }
 
-pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
-	mut args := args_
-	if args.reload {
-		repo.load()!
-		args.reload = false
-	}
-	st := repo.status()!
-	if st.need_commit {
-		if args.msg == '' {
-			return error('Cannot commit, message is empty for ${repo}')
-		}
-		cmd := "
-		cd ${repo.path.path}
-		set +e
-		git add . -A
-		git commit -m \"${args.msg}\"
-		echo "
-		osal.execute_silent(cmd) or {
-			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
-		}
-	} else {
-		console.print_debug('     > no change')
-	}
-	repo.load()!
-}
-
-// remove all changes of the repo, be careful
-pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
-	mut args := args_
-	if args.reload {
-		repo.load()!
-		args.reload = false
-	}
-	st := repo.status()!
-	if st.need_commit {
-		console.print_header(' remove change ${repo.path.path}')
-		cmd := '
-		cd ${repo.path.path}
-		rm -f .git/index
-		#git fetch --all
-		git reset HEAD --hard
-		git clean -xfd		
-		git checkout . -f
-		echo ""
-		'
-		res := osal.exec(cmd: cmd, raise_error: false)!
-		console.print_debug(cmd)
-		// console.print_debug(res)
-		if res.exit_code > 0 {
-			console.print_header(' could not remove changes, will re-clone ${repo.path.path}')
-			repo.path.delete()! // remove path, this will re-clone the full thing
-			repo.load_from_url()!
-		}
-	}
-	repo.load()!
-}
-
-pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
-	mut args := args_
-	if args.reload {
-		repo.load()!
-		args.reload = false
-	}
-	$if debug {
-		console.print_debug('   - PUSH: ${repo.url_get(true)} on ${repo.path.path}')
-	}
-	// repo.ssh_key_load()!
-	// defer {
-	// 	repo.ssh_key_forget() or { panic(err) }
-	// }
-	st := repo.status()!
-	if st.need_push {
-		console.print_debug('    - PUSH THE CHANGES')
-		cmd := 'cd ${repo.path.path} && git push'
-		osal.execute_silent(cmd) or {
-			return error('Cannot push repo: ${repo.path.path}. Error was ${err}')
-		}
-	}
-	repo.load()!
-	// repo.ssh_key_forget()!
+// Create a new branch in the repository.
+pub fn (mut repo GitRepo) branch_create(branchname string) ! {
+	repo.exec('git branch -c ${branchname}') or { return error('Cannot Create branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
+	console.print_green('Branch ${branchname} created successfully.')
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
-	if repo.gs.config.multibranch {
-		return error('cannot do a branch switch if we are using multibranch strategy.')
-	}
-	repo.load()!
-	st := repo.status()!
-	if st.need_commit || st.need_push {
-		return error('Cannot branch switch repo: ${repo.path.path} because there are changes in the dir.')
-	}
-	// Fetch repo before checkout, in case a new branch added.
-	repo.fetch_all()!
-	cmd := 'cd ${repo.path.path} && git checkout ${branchname}'
-	osal.execute_silent(cmd) or {
-		// console.print_debug('GIT CHECKOUT FAILED: $cmd_checkout')
-		return error('Cannot branch switch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
-	}
-	// console.print_debug(cmd)
-	repo.pull(reload: true)!
+	repo.exec('git switch ${branchname}') or { return error('Cannot switch branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
+	console.print_green('Branch ${branchname} switched successfully.')
+	repo.status_local.branch = branchname
+	repo.status_local.tag = ''
+	repo.pull()!
 }
 
-pub fn (mut repo GitRepo) fetch_all() ! {
-	// repo.ssh_key_load()!
-	// defer {
-	// 	repo.ssh_key_forget() or { panic(err) }
-	// }
-	cmd := 'cd ${repo.path.path} && git fetch --all'
-	osal.execute_silent(cmd) or {
-		// console.print_debug('GIT FETCH FAILED: $cmd_checkout')
-		return error('Cannot fetch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
-	}
-	repo.load()!
-	// repo.ssh_key_forget()!
+
+// Create a new branch in the repository.
+pub fn (mut repo GitRepo) tag_create(tagname string) ! {
+	repo_path := repo.get_path()!
+	repo.exec('git tag ${tagname}') or { return error('Cannot create tag: ${repo_path}. Error: ${err}') }
+	console.print_green('Tag ${tagname} created successfully.')
 }
 
-// deletes git repository
+pub fn (mut repo GitRepo) tag_switch(tagname string) ! {
+	repo.exec('git checkout ${tagname}') or { 
+			return error('Cannot switch to tag: ${tagname}. Error: ${err}') 
+		}
+	console.print_green('Tag ${tagname} activated.')
+	repo.status_local.branch = ''
+	repo.status_local.tag = tagname
+	repo.pull()!
+}
+
+// Create a new branch in the repository.
+pub fn (mut repo GitRepo) tag_exists(tag string) !bool {
+	repo.exec('git show ${tag}') or { return false }
+	return true
+}
+
+// Deletes the Git repository
 pub fn (mut repo GitRepo) delete() ! {
-	$if debug {
-		console.print_debug('   - DELETE: ${repo.url_get(true)}')
-	}
-	if !os.exists(repo.path.path) {
-		return
-	} else {
-		panic('implement')
-	}
+	repo_path := repo.get_path()!
 	repo.cache_delete()!
+	osal.rm(repo_path)!
+	repo.load()!
 }
 
-//////////////////////////KEY MGMT
-//////////////////////////////////
+// Create GitLocation from the path within the Git repository
+pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
+	if path.starts_with('/') || path.starts_with('~') {
+		return error('Path must be relative, cannot start with / or ~')
+	}
 
-// set the key (private ssh key)
-pub fn (repo GitRepo) ssh_key_set(key string) ! {
-	mut p := pathlib.get_file(path: repo.ssh_key_path(), create: true)!
-	p.write(key)!
+	//TODO: check that path is inside gitrepo
+	//TODO: get relative path in relation to root of gitrepo
+
+	mut git_path := gs.patho()!
+	if !os.exists(git_path.path) {
+		return error('Path does not exist inside the repository: ${git_path.path}')
+	}
+
+	mut branch_or_tag := gs.status_wanted.branch
+	if gs.status_wanted.tag.len>0{
+		branch_or_tag = gs.status_wanted.tag 
+	}
+
+	return GitLocation{
+		provider: gs.provider
+		account:  gs.account
+		name:     gs.name
+		branch_or_tag:   branch_or_tag
+		path:     path //relative path in relation to git repo
+	}
 }
 
-fn (repo GitRepo) ssh_key_path() string {
-	return '${os.home_dir()}/.ssh/${repo.key()}'
+// Check if repo path exists and validate fields
+pub fn (mut repo GitRepo) init() ! {
+	path_string := repo.get_path()!
+	if repo.gs.coderoot.path == '' {
+		return error('Coderoot cannot be empty')
+	}
+	if repo.provider == '' {
+		return error('Provider cannot be empty')
+	}
+	if repo.account == '' {
+		return error('Account cannot be empty')
+	}
+	if repo.name == '' {
+		return error('Name cannot be empty')
+	}
+
+	if !os.exists(path_string) {
+		return error('Path does not exist: ${path_string}')
+	}
+
+	//TODO: check deploy key has been set in repo
+	// if not do git config core.sshCommand "ssh -i /path/to/deploy_key"
+	if repo.deploysshkey.len == 0 {
+		repo.set_sshkey()!
+	}
+	//TODO: check tag or branch set on wanted, and not both
 }
 
-//////////////////////////EDIT CODE MGMT
-//////////////////////////////////
+// Set the ssh key on the repo
+fn (mut repo GitRepo) set_sshkey() ! {
+	// TODO: We need to check what should be done here.
+	key := repo.exec('git config core.sshcommand') or {""}
 
-// open sourcetree for the git repo
-pub fn (repo GitRepo) sourcetree() ! {
-	sourcetree.open(path: repo.path.path)!
+	hashed_key := md5.hexhash(key)
+	file_name := '${hashed_key}.pub'
+	sshkeys_path := os.join_path(os.home_dir(), 'hero/cfg/sshkeys')
+
+	if !os.exists(sshkeys_path) {
+		os.mkdir_all(sshkeys_path)!
+	}
+
+	osal.exec(cmd: "echo ${key} > ${sshkeys_path}/${file_name}")!
+	repo.deploysshkey = key
 }
 
-// open visual studio code for repo
-pub fn (repo GitRepo) vscode() ! {
-	vscode.open(path: repo.path.path)!
+
+// Removes all changes from the repo; be cautious
+pub fn (mut repo GitRepo) remove_changes() ! {
+	repo.status_update()!
+	if repo.has_changes()! {
+		console.print_header('Removing changes in ${repo.get_path()!}')
+		repo.exec('git reset HEAD --hard && git clean -xfd') or {
+			return error("can't remove changes on repo: ${repo.get_path()!}.\n${err}")
+			// TODO: we can do this fall back later
+			// console.print_header('Could not remove changes; will re-clone ${repo.get_path()!}')
+			// mut p := repo.patho()!
+			// p.delete()! // remove path, this will re-clone the full thing
+			// repo.load_from_url()!
+		}
+		repo.load()!
+	}	
 }
 
-// // check if sshkey for a repo exists in the homedir/.ssh
-// // we check on name, if nameof repo is same as name of key we will load
-// // will return true if the key did exist, which means we need to connect over ssh !!!
-// fn (repo GitRepo) ssh_key_load() !bool {
-// 	key_path := repo.ssh_key_path()
-// 	if !os.exists(key_path) {
-// 		// tried local path to where we are, no key as well
-// 		return false
-// 	}
-// 	// panic('implement')
-// 	// exists means the key has been loaded
-// 	// nrkeys is how many keys were loaded in sshagent in first place
-// 	// exists, nrkeys := sshagent.key_loaded(repo.addr.name)
-// 	// // console.print_debug(' >>> $repo.addr.name $nrkeys, $exists')
+//alias for remove changes
+pub fn (mut repo GitRepo) reset() ! {
+	return repo.remove_changes()
+}
 
-// 	// if (!exists) || nrkeys > 0 {
-// 	// 	// means we did not find the key but there were other keys loaded
-// 	// 	// only choice we have now is to reset and use this key
-// 	// 	sshagent.reset()!
-// 	// 	sshagent.key_load(key_path)!
-// 	// 	return true
-// 	// } else if exists && nrkeys == 1 {
-// 	// 	// means the right key was loaded
-// 	// 	return true
-// 	// } else {
-// 	// 	// did not find the key nothing to do
-// 	// 	return false
-// 	// }
-// 	return true
-// }
+// Update submodules
+fn (mut repo GitRepo) update_submodules() ! {
+	repo.exec('git submodule update --init --recursive') or {
+		return error('Cannot update submodules for repo: ${repo.get_path()!}. Error: ${err}')
+	}
+}
 
-// pub fn (repo GitRepo) ssh_key_forget() ! {
-// 	// sshagent.key_unload(repo.ssh_key_path())!
-// }
+
+
+fn (repo GitRepo) exec(cmd_ string) !string {
+	repo_path := repo.get_path()!
+	cmd:="cd ${repo_path} && ${cmd_}"
+	if repo.gs.config.log{
+		console.print_green(cmd)
+	}
+	r:=osal.exec(cmd:cmd, debug:repo.gs.config.debug)!
+	return r.output
+}
+
+pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
+	// Check current time vs last check, if needed (check period) then load
+	repo.cache_get()! // Ensure we have the situation from redis
+	repo.init()!
+	current_time := int(time.now().unix())
+	if args.reload || repo.last_load == 0
+		|| current_time - repo.last_load >= repo.config.remote_check_period {
+		repo.load()!
+	}
+}

@@ -22,7 +22,7 @@ fn (mut image Image) init_() ! {
 	}
 }
 
-pub fn image_new(mut path pathlib.Path) !Image {
+pub fn image_new(mut path pathlib.Path) Image {
 	mut i := Image{
 		path: path
 	}

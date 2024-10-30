@@ -37,17 +37,14 @@ pub fn install(args_ InstallArgs) ! {
 
 	base.develop()!
 
-	mut gs := gittools.new(
-		name: 'vlang'
-		root: '${os.home_dir()}/_code'
-		light: true
-		singlelayer: true
-	)!
-	mut path1 := gs.code_get(
+	mut gs := gittools.get(coderoot: '${os.home_dir()}/_code')!
+	mut repo := gs.get_repo(
 		pull: true
 		reset: true
 		url: 'https://github.com/vlang/v/tree/master'
 	)!
+
+	mut path1 := repo.get_path()!
 
 	mut extra := ''
 	if osal.is_linux() {

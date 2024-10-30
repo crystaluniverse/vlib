@@ -46,7 +46,14 @@ fn build() ! {
     console.print_header('build youki')
 
     //, tag:'v0.4.1'
-    gitpath := gittools.code_get(coderoot: '/tmp/youki', url: url, reset: true, pull: true)!
+    mut gs := gittools.new(coderoot: '/tmp/youki')!
+	mut repo := gs.get_repo(
+		url: url
+		reset: true
+		pull: true
+	)!
+
+	mut gitpath := repo.get_path()!
 
     cmd := '
     cd ${gitpath}

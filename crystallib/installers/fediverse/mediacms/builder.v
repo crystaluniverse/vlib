@@ -17,12 +17,12 @@ pub fn build(myargs Config) ! {
 	docker.install()!
 
 	mut gs := gittools.get()!
-
-	mut dest := gittools.code_get(
+	mut repo := gs.get_repo(
 		url: 'https://github.com/mediacms-io/mediacms'
 		pull: true
 		reset: true
 	)!
+	dest := repo.get_path()!
 
 	pathlib.template_write($tmpl('templates/Dockerfile.py'), '${dest}/Dockerfile.py',
 		myargs.reset)!
@@ -43,7 +43,7 @@ pub fn build(myargs Config) ! {
 
 	cmd := '
     source ${osal.profile_path()} //source the go path
-    cd ${gitpath}
+    cd ${dest}
     docker-compose build
 
 

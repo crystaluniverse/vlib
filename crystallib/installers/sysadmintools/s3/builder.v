@@ -25,7 +25,15 @@ pub fn build(args BuildArgs) ! {
 
 	osal.package_install('libssl-dev,pkg-config')!
 
-	path := gittools.code_get(url: 'https://github.com/leesmet/s3-cas', reset: false, pull: true)!
+	mut gs := gittools.get()!
+	mut repo := gs.get_repo(
+		url: 'https://github.com/leesmet/s3-cas',
+		reset: false,
+		pull: true
+	)!
+
+	mut path := repo.get_path()!
+
 	cmd := '
 	set -ex
 	cd ${path}

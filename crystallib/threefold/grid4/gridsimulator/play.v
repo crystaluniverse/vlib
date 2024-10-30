@@ -2,10 +2,8 @@ module gridsimulator
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.threefold.grid4.cloudslices
-import freeflowuniverse.crystallib.ui.console
 
 pub fn play(mut plbook PlayBook) ! {
-	console.print_header('playbook for gridsim')
 	// first make sure we find a run action to know the name
 	mut my_actions := plbook.actions_find(actor: 'tfgrid_simulator')!
 

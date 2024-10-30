@@ -26,7 +26,14 @@ pub fn build(args BuildArgs) ! {
 	// install restic if it was already done will return true
 	console.print_header('build restic')
 
-	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: restic.url, reset: true, pull: true)!
+	mut gs := gittools.get(coderoot: '/tmp/builder')!
+	mut repo := gs.get_repo(
+		url: restic.url,
+		reset: true,
+		pull: true
+	)!
+
+	mut gitpath := repo.get_path()!
 
 	cmd := '
 	source ~/.cargo/env

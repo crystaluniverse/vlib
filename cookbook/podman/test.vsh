@@ -28,7 +28,7 @@ c.rust_install()!
 c.v_install()!
 c.node_install()!
 
-c.code_get(reset:true, url:...)! //see gitstructure path = gs.code_get(reset: reset, pull: pull, url: url)!  use herscript underneith to do it
+c.get_repo(reset:true, url:...)! //see gitstructure path = gs.get_repo(reset: reset, pull: pull, url: url)!  use herscript underneith to do it
 
 c.add(...) //add content
 

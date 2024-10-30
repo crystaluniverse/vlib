@@ -66,7 +66,7 @@ fn cmd_mdbook_execute(cmd Command) ! {
 
 		// get name from the book.generate action
 		if name == '' {
-			mut a := plbook.action_get(actor: 'book', name: 'generate')!
+			mut a := plbook.action_get(actor: 'mdbook', name: 'export')!
 			name = a.params.get('name') or { '' }
 		}
 	} else {

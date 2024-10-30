@@ -7,36 +7,6 @@ import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree,cd'
 
-pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
-
-	mut r := [][]string{}
-	for mut g in gitstructure.repos_get(args) {
-		st := g.status()!
-		pr := g.path.shortpath()
-		mut s := ''
-		if st.need_commit {
-			s += 'COMMIT,'
-		}
-		if st.need_pull {
-			s += 'PULL,'
-		}
-		if st.need_push {
-			s += 'PUSH,'
-		}
-		s = s.trim(',')
-		r << [' - ${pr}', '[${g.addr.branch}]', s]
-	}
-	console.clear()
-	console.print_lf(1)
-	if args.str().len > 0 {
-		console.print_header('repositories on coderoot: ${gitstructure.config.root} [${args.str()}]')
-	} else {
-		console.print_header('repositories on coderoot: ${gitstructure.config.root}')
-	}
-	console.print_lf(1)
-	console.print_array(r, '  ', true)
-	console.print_lf(5)
-}
 
 @[params]
 pub struct ReposActionsArgs {
@@ -78,10 +48,10 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
 		mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
 		if parentpath.path != '' {
-			r0 := gs.repo_from_path(parentpath.path)!
-			args.repo = r0.addr.name
-			args.account = r0.addr.account
-			args.provider = r0.addr.provider
+			r0 := gs.repo_init_from_path_(parentpath.path)!
+			args.repo = r0.name
+			args.account = r0.account
+			args.provider = r0.provider
 		}
 	}
 
@@ -90,8 +60,8 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	mut ui := gui.new()!
 
 	if args.cmd == 'reload' {
-		console.print_header(' - reload gitstructure ${gs.name()}')
-		gs.reload()!
+		console.print_header(' - reload gitstructure ${gs.key}')
+		gs.load()!
 		return ''
 	}
 
@@ -105,42 +75,36 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		return ''
 	}
 
-	mut repos := gs.repos_get(
+	mut repos := gs.get_repos(
 		filter: args.filter
 		name: args.repo
 		account: args.account
 		provider: args.provider
-	)
+	)!
 
 	if args.url.len > 0 {
-		mut locator := gs.locator_new(args.url)!
-		if args.branch.len>0{
-			locator.addr.branch=args.branch
-		}
-		//console.print_debug(locator)
-		mut g := gs.repo_get(locator: locator)!
+		mut g := gs.get_repo(url: args.url)!
 		g.load()!
 		if args.cmd == 'cd' {
-			return g.addr.path()!.path
+			return g.get_path()!
 		}
 		if args.reset {
 			g.remove_changes()!
 		}		
 		if args.cmd == 'pull' || args.pull {
-			g.pull(branch:args.branch,recursive:args.recursive)!
+			g.pull()!
 		}
 		if args.cmd == 'push' {
-			st := g.status()!
-			if st.need_commit {
+			if g.need_commit()! {
 				if args.msg.len == 0 {
 					return error('please specify message with -m ...')
 				}
-				g.commit(msg: args.msg)!
+				g.commit(args.msg)!
 			}
 			g.push()!
 		}
 		if args.cmd == 'pull' || args.cmd == 'clone' || args.cmd == 'push' {
-			gpath:=g.addr.path()!.path
+			gpath:=g.get_path()!
 			console.print_debug('git do ok, on path ${gpath}')				
 			return gpath
 		}
@@ -156,7 +120,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		}
 		for r in repos {
 			if args.cmd == 'edit' {
-				r.vscode()!
+				r.open_vscode()!
 			}
 			if args.cmd == 'sourcetree' {
 				r.sourcetree()!
@@ -185,14 +149,13 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		// check on repos who needs what
 		for mut g in repos {
 			g.load()!
-			st := g.status()!
 			// console.print_debug(st)
-			need_commit = st.need_commit || need_commit
+			need_commit = g.need_commit()! || need_commit
 			if args.cmd == 'push' && need_commit {
 				need_push = true
 			}
 			need_pull = args.cmd in 'pull,push'.split(',') // always do pull when push and pull
-			need_push = args.cmd == 'push' && (st.need_push || need_push)
+			need_push = args.cmd == 'push' && (g.need_push_or_pull()! || need_push)
 		}
 
 		mut ok := false
@@ -232,11 +195,10 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		mut changed := false
 
 		for mut g in repos {
-			st := g.status()!
-			need_commit_repo := (st.need_commit || need_commit)
+			need_commit_repo := (g.need_commit()! || need_commit)
 				&& args.cmd in 'commit,pull,push'.split(',')
 			need_pull_repo := args.cmd in 'pull,push'.split(',') // always do pull when push and pull
-			need_push_repo := args.cmd in 'push'.split(',') && (st.need_push || need_push)
+			need_push_repo := args.cmd in 'push'.split(',') && (g.need_push_or_pull()! || need_push)
 			// console.print_debug(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
 
 			if need_commit_repo {
@@ -246,24 +208,24 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 						return error('message needs to be specified for commit.')
 					}
 					msg = ui.ask_question(
-						question: 'commit message for repo: ${g.addr.account}/${g.addr.name} '
+						question: 'commit message for repo: ${g.account}/${g.name} '
 					)!
 				}
-				console.print_header(' - commit ${g.addr.account}/${g.addr.name}')
-				g.commit(msg: msg, reload: true)!
+				console.print_header(' - commit ${g.account}/${g.name}')
+				g.commit(msg)!
 				changed = true
 			}
 			if need_pull_repo {
 				if args.reset {
-					console.print_header(' - remove changes ${g.addr.account}/${g.addr.name}')
+					console.print_header(' - remove changes ${g.account}/${g.name}')
 					g.remove_changes()!
 				}
-				console.print_header(' - pull ${g.addr.account}/${g.addr.name}')
+				console.print_header(' - pull ${g.account}/${g.name}')
 				g.pull()!
 				changed = true
 			}
 			if need_push_repo {
-				console.print_header(' - push ${g.addr.account}/${g.addr.name}')
+				console.print_header(' - push ${g.account}/${g.name}')
 				g.push()!
 				changed = true
 			}

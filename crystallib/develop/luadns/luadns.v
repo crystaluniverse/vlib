@@ -5,10 +5,9 @@ import freeflowuniverse.crystallib.develop.gittools
 
 // returns the directory of the git repository for the dns
 pub fn (dns LuaDNS) directory() !pathlib.Path {
-	repo_path := gittools.code_get(
-		url: dns.url
-		pull: true
-	)!
+	mut gs := gittools.new()!
+	mut repo := gs.get_repo(url: dns.url, pull: true)!
+	repo_path := repo.get_path()!
 	return pathlib.get_dir(path: repo_path)!
 }
 
@@ -17,11 +16,10 @@ pub fn (dns LuaDNS) domain_file(domain string) !pathlib.Path {
 }
 
 // returns the git repository for the dns
-pub fn (dns LuaDNS) repository() !gittools.GitRepo {
-	return gittools.repo_get(
-		url: dns.url
-		pull: true
-	)!
+pub fn (dns LuaDNS) repository() !&gittools.GitRepo {
+	mut gs := gittools.new()!
+	repo := gs.get_repo(url: dns.url, pull: true)!
+	return repo
 }
 
 pub fn (mut dns LuaDNS) set_domain(domain string, ip string) ! {
@@ -110,5 +108,7 @@ fn (dns LuaDNS) save_config(config DNSConfig) ! {
 	}
 
 	file.write(content)!
-	repo.commit_pull_push(msg: 'Update DNS records')!
+	repo.commit(msg: 'Update DNS records')!
+	repo.pull()!
+	repo.push()!
 }
