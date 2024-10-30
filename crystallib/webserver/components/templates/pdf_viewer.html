@@ -13,21 +13,22 @@
                 padding: 0;
                 height: 100%;
                 font-family: Arial, sans-serif;
-                background-color: #f0f0f0;
+                background-color: #121212;
+                color: #e0e0e0;
             }
-
+        
             #viewerContainer {
                 width: 90%;
                 margin: 20px auto;
-                border: 1px solid #ccc;
-                background: #fff;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border: 1px solid #333;
+                background: #1e1e1e;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
                 border-radius: 8px;
                 overflow-y: auto;
                 height: 90vh;
                 transition: width 0.3s ease;
             }
-
+        
             #viewerContainer.fullWidth {
                 width: 100%;
                 border-radius: 0;
@@ -43,10 +44,10 @@
                 max-width: 100%;
                 height: auto !important;
                 margin-bottom: 20px;
-                border: 1px solid #ddd;
+                border: 1px solid #444;
                 border-radius: 4px;
             }
-
+        
             .control-panel {
                 position: fixed;
                 top: 20px;
@@ -54,12 +55,12 @@
                 z-index: 1000;
                 display: flex;
                 gap: 10px;
-                background: rgba(255, 255, 255, 0.9);
+                background: rgba(48, 48, 48, 0.9);
                 padding: 10px;
                 border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             }
-
+        
             .control-panel button {
                 padding: 10px;
                 border: none;
@@ -70,11 +71,11 @@
                 font-size: 14px;
                 transition: background 0.3s;
             }
-
+        
             .control-panel button:hover {
                 background: #0056b3;
             }
-
+        
             .loading-spinner {
                 position: absolute;
                 top: 50%;
