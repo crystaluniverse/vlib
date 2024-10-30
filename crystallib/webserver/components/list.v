@@ -3,26 +3,28 @@ module components
 import net.html
 
 // Define HTML element structs implementing the IComponent interface
-struct Anchor {
+pub struct Anchor {
+pub:
     href string
-    text string
-}
-
-struct Paragraph {
     content string
 }
 
-struct ListItem {
+pub struct Paragraph {
+pub:
+    content string
+}
+
+pub struct ListItem {
     children []IComponent
 }
 
-struct UnorderedList {
+pub struct UnorderedList {
     children []IComponent
 }
 
 // Implement html() for Anchor
 fn (a Anchor) html() string {
-    return '<a href="${a.href}">${a.text}</a>'
+    return '<a href="${a.href}">${a.content}</a>'
 }
 
 // Implement html() for Paragraph
@@ -78,7 +80,7 @@ fn parse_html_tag(tag &html.Tag) !IComponent {
         'a' {
             return Anchor{
                 href: tag.attributes['href'] or { '' },
-                text: tag.content
+                content: tag.content
             }
         }
         'p' {
