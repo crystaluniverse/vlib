@@ -12,6 +12,9 @@ pub mut:
 	lookup  &LookupTable
 	file    os.File
 	file_nr u16 // the file which is open
+
+	file_size         u32 = 500 * (1 << 20) // 500MB
+	last_used_file_nr u16
 }
 
 const header_size = 12
@@ -21,6 +24,7 @@ pub struct OurDBConfig {
 pub:
 	record_nr_max   u32 = 16777216 - 1 // max size of records
 	record_size_max u32 = 1024 * 4 // max size in bytes of a record, is 4 KB default
+	file_size       u32 = 500 * (1 << 20) // 500MB
 	path            string // directory where we will stor the DB
 }
 
@@ -42,20 +46,12 @@ pub fn new(args OurDBConfig) !OurDB {
 		keysize = 6 // will use multiple files
 	}
 
-	// WILL NOT USE lookuppath YET
-
-	// pub struct LookupConfig {
-	// pub:
-	//     size u32      // size of the table
-	//     keysize u8    // size of each entry in bytes (2-8)
-	//     lookuppath string // if set, use disk-based lookup
-	// }
-
 	mut l := new_lookup(size: args.record_nr_max, keysize: keysize)!
 	os.mkdir_all(args.path)!
 	mut db := OurDB{
 		path: args.path
 		lookup: &l
+		file_size: args.file_size
 	}
 
 	db.load()!
