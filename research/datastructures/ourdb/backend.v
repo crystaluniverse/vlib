@@ -25,12 +25,11 @@ fn (mut db OurDB) db_file_select(file_nr u16) ! {
 	if db.file_nr == file_nr {
 		// make sure file is opened
 		if !db.file.is_opened {
-			mut file := os.open_file(path, 'r+') or {
-				// Create if doesn't exist with read/write permissions
-				mut f := os.create(path)!
-				f.write([u8(0)])! // to make all positions start from 1
-				f
+			if !os.exists(path) {
+				db.create_new_db_file(file_nr)!
 			}
+
+			mut file := os.open_file(path, 'r+')!
 			db.file = file
 		}
 		return
@@ -40,32 +39,52 @@ fn (mut db OurDB) db_file_select(file_nr u16) ! {
 		db.file.close()
 	}
 
-	mut file := os.open_file(path, 'r+') or {
-		// Create if doesn't exist with read/write permissions
-		mut f := os.create(path)!
-		f.write([u8(0)])! // to make all positions start from 1
-		f
+	if !os.exists(path) {
+		db.create_new_db_file(file_nr)!
 	}
+	mut file := os.open_file(path, 'r+')!
 
 	db.file = file
 	db.file_nr = file_nr
 }
 
+fn (mut db OurDB) create_new_db_file(file_nr u16) ! {
+	new_file_path := '${db.path}/${file_nr}.db'
+	mut f := os.create(new_file_path)!
+	f.write([u8(0)])! // to make all positions start from 1
+	f.close()
+}
+
+fn (mut db OurDB) get_file_nr() !u16 {
+	path := '${db.path}/${db.last_used_file_nr}.db'
+	if !os.exists(path) {
+		db.create_new_db_file(db.last_used_file_nr)!
+		return db.last_used_file_nr
+	}
+
+	stat := os.stat(path)!
+	if stat.size >= db.file_size {
+		db.last_used_file_nr += 1
+		db.create_new_db_file(db.last_used_file_nr)!
+	}
+
+	return db.last_used_file_nr
+}
+
 // set stores data at position x
 pub fn (mut db OurDB) set_(x u32, old_location Location, data []u8) ! {
 	// Convert u64 to Location
+	file_nr := db.get_file_nr()!
+
 	// TODO: can't file_nr change between two revisions?
-	db.db_file_select(old_location.file_nr)!
+	db.db_file_select(file_nr)!
 
 	// Get current file position for lookup
 	db.file.seek(0, .end)!
 	new_location := Location{
-		file_nr: old_location.file_nr
+		file_nr: file_nr
 		position: u32(db.file.tell()!)
 	}
-
-	// // Get previous position if exists
-	// prev_location := db.lookup.get(x)!
 
 	// Calculate CRC of data
 	crc := calculate_crc(data)
@@ -95,8 +114,8 @@ pub fn (mut db OurDB) set_(x u32, old_location Location, data []u8) ! {
 
 	// Write actual data
 	db.file.write(data)!
+	db.file.flush()
 
-	// TODO: how to update position?
 	// Update lookup table with new position
 	db.lookup.set(x, new_location)!
 }
@@ -105,7 +124,6 @@ pub fn (mut db OurDB) set_(x u32, old_location Location, data []u8) ! {
 fn (mut db OurDB) get_(location Location) ![]u8 {
 	db.db_file_select(location.file_nr)!
 
-	// TODO: what if data really starts from position 0???
 	if location.position == 0 {
 		return error('Record not found')
 	}
@@ -148,38 +166,40 @@ fn (mut db OurDB) get_prev_pos_(location Location) !Location {
 		return error('Record not found')
 	}
 
-	// Seek to position
-	db.file.seek(i64(location.position), .start)!
-
 	// Skip size and CRC (6 bytes)
 	db.file.seek(i64(location.position + 6), .start)!
 
 	// Read previous location (6 bytes)
-	prev_bytes := db.file.read_bytes(6)
+	mut prev_bytes := []u8{len: 6}
+	read_bytes := db.file.read(mut prev_bytes)!
+	if read_bytes != 6 {
+		return error('failed to read previous location bytes: read ${read_bytes} while expected to read 6 bytes')
+	}
+
 	return db.lookup.location_new(prev_bytes)!
 }
 
-// delete zeros out the record at specified location
-fn (mut db OurDB) delete_(x u32, location Location) ! {
-	if location.position == 0 {
-		return error('Record not found')
-	}
+// // delete zeros out the record at specified location
+// fn (mut db OurDB) delete_(x u32, location Location) ! {
+// 	if location.position == 0 {
+// 		return error('Record not found')
+// 	}
 
-	// Seek to position
-	db.file.seek(i64(location.position), .start)!
+// 	// Seek to position
+// 	db.file.seek(i64(location.position), .start)!
 
-	// Read size first
-	size_bytes := db.file.read_bytes(2)
-	size := u16(size_bytes[0]) | (u16(size_bytes[1]) << 8)
+// 	// Read size first
+// 	size_bytes := db.file.read_bytes(2)
+// 	size := u16(size_bytes[0]) | (u16(size_bytes[1]) << 8)
 
-	// Write zeros for the entire record (header + data)
-	zeros := []u8{len: int(size) + header_size, init: 0}
-	db.file.seek(i64(location.position), .start)!
-	db.file.write(zeros)!
+// 	// Write zeros for the entire record (header + data)
+// 	zeros := []u8{len: int(size) + header_size, init: 0}
+// 	db.file.seek(i64(location.position), .start)!
+// 	db.file.write(zeros)!
 
-	// Clear lookup entry
-	db.lookup.delete(x)!
-}
+// 	// Clear lookup entry
+// 	db.lookup.delete(x)!
+// }
 
 // condense removes empty records and updates positions
 fn (mut db OurDB) condense() ! {
