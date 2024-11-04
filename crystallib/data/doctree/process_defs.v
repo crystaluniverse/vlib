@@ -13,7 +13,8 @@ pub fn (mut tree Tree) process_defs() ! {
 		println("debugzo1${col.fail_on_error}")
 		for _, mut page in col.pages {
 			mut p := page
-			tree.process_page_def_actions(mut p, mut col)!
+			mut c := col
+			tree.process_page_def_actions(mut p, mut c)!
 		}
 	}
 

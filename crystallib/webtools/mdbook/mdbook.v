@@ -64,33 +64,19 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	if args.summary_url.len > 0 {
 		mut locator1 := gs.locator_new(args.summary_url)!
 		gs.repo_get(locator: locator1, reset: false, pull: false)!
-		mut path_summary := locator1.path_on_fs()!
-		if !path_summary.exists() {
-			return error('cannot find path for summary: ${path_summary.path}')
-		}
-		if path_summary.is_file() {
-			args.summary_path = path_summary.path
-		} else if path_summary.is_dir() {
-			path_summary_path := path_summary.file_get_ignorecase('summary.md')!
-			args.summary_path = path_summary_path.path
-		} else {
-			return error('summary from git needs to be dir or file')
-		}
-	}
 
-	// if args.doctree_url.len > 0 {
-	// 	mut locator2 := gs.locator_new(args.doctree_url)!
-	// 	gs.repo_get(locator: locator2, reset: false, pull: false)!
-	// 	mut path_doctree := locator2.path_on_fs()!
-	// 	if !path_doctree.exists() {
-	// 		return error('cannot find path for doctree: ${path_doctree.path}')
-	// 	}
-	// 	if path_doctree.is_dir() {
-	// 		args.doctree_path = path_doctree.path
-	// 	} else {
-	// 		return error('doctree from git needs to be dir. ${path_doctree.path}')
-	// 	}
-	// }
+		mut summary_dir := locator1.path_on_fs()!
+
+		summary_file_path := summary_dir.file_get_ignorecase('summary.md') or {
+			summary_dir = summary_dir.parent()!
+			p := summary_dir.file_get_ignorecase('summary.md') or {
+				return error('summary from git needs to be dir or file')
+			}
+			p
+		}
+
+		args.summary_path = summary_file_path.path
+	}
 
 	mut src_path := pathlib.get_dir(path: '${args.build_path}/src', create: true)!
 	_ := pathlib.get_dir(path: '${args.build_path}/.edit', create: true)!
@@ -212,7 +198,6 @@ You can ignore these pages, they are just to get links to work.
 
 // write errors.md in the collection, this allows us to see what the errors are
 fn (book MDBook) errors_report() ! {
-	println('reporting book errors: ${book.errors}')
 	errors_path_str := '${book.path_build.path}/src/additional/errors_mdbook.md'
 	mut dest := pathlib.get_file(path: errors_path_str, create: true)!
 	if book.errors.len == 0 {

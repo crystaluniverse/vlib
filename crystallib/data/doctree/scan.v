@@ -94,7 +94,7 @@ mut:
 }
 
 // get a new collection
-pub fn (mut tree Tree) add_collection(args_ CollectionNewArgs) !&collection.Collection {
+pub fn (mut tree Tree) add_collection(args_ CollectionNewArgs) ! {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 
@@ -103,19 +103,14 @@ pub fn (mut tree Tree) add_collection(args_ CollectionNewArgs) !&collection.Coll
 	}
 
 	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist
-	mut new_collection := &collection.Collection{
+	mut new_collection := collection.new(
 		name: args.name
-		// tree: tree
-		path: pp
+		path: pp.path
 		heal: args.heal
 		fail_on_error: args.fail_on_error
-	}
-	if args.load {
-		new_collection.scan()!
-	}
+	)!
 
-	tree.collections[new_collection.name] = new_collection
-	return new_collection
+	tree.collections[new_collection.name] = &new_collection
 }
 
 // returns true if directory should be ignored while scanning

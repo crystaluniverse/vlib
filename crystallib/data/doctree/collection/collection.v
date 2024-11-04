@@ -19,7 +19,7 @@ pub mut:
 
 @[params]
 pub struct CollectionNewArgs {
-mut:
+pub mut:
 	name          string @[required]
 	path          string @[required]
 	heal          bool = true // healing means we fix images, if selected will automatically load, remove stale links

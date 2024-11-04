@@ -2,7 +2,6 @@ module collection
 
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.data.doctree.collection.data
 
 pub enum CollectionErrorCat {
 	unknown
@@ -32,20 +31,11 @@ pub fn (e CollectionError) msg() string {
 }
 
 pub fn (mut collection Collection) error(args CollectionError) ! {
-	ce := CollectionError{
-		path: args.path
-		msg: args.msg
-		cat: args.cat
-	}
-
 	if collection.fail_on_error {
-		return ce
+		return args
 	}
 
-	if ce !in collection.errors {
-		collection.errors << ce
-	}
-
+	collection.errors << args
 	console.print_stderr(args.msg)
 }
 
@@ -58,7 +48,7 @@ pub:
 }
 
 pub fn (err ObjNotFound) msg() string {
-	return '"Could not find object with name ${err.name} in collection:${err.collection}.\n${err.info}'
+	return 'Could not find object with name ${err.name} in collection ${err.collection}: ${err.info}'
 }
 
 // write errors.md in the collection, this allows us to see what the errors are
