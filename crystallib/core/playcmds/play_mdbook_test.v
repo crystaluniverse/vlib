@@ -73,7 +73,7 @@ fn test_play_mdbook() {
 !!mdbook.export 
     title:'ThreeFold Technology'
     name:'tech'
-    summary:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/books/tech/SUMMARY.md' 
+    summary_url:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/books/tech/SUMMARY.md' 
     collections:'/tmp/export_tree3'
     production:0 //means we put it in summary
 "

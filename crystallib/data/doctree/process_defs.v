@@ -1,6 +1,6 @@
 module doctree
 
-import freeflowuniverse.crystallib.data.doctree.collection
+import freeflowuniverse.crystallib.data.doctree.collection {CollectionError}
 import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.ui.console
 
@@ -10,6 +10,7 @@ pub fn (mut tree Tree) process_defs() ! {
 	console.print_green('Processing tree defs')
 
 	for _, mut col in tree.collections {
+		println("debugzo1${col.fail_on_error}")
 		for _, mut page in col.pages {
 			mut p := page
 			tree.process_page_def_actions(mut p, mut col)!
@@ -17,9 +18,13 @@ pub fn (mut tree Tree) process_defs() ! {
 	}
 
 	for _, mut col in tree.collections {
-		for _, mut page in col.pages {
+		for _, mut page in mut col.pages {
 			mut p := page
-			tree.replace_page_defs_with_links(mut p, mut col)!
+			errors := tree.replace_page_defs_with_links(mut p)!
+			// report accrued errors when replacing defs with links
+			for err in errors {
+				col.error(err)!
+			}
 		}
 	}
 }
@@ -53,18 +58,22 @@ fn (mut tree Tree) process_page_def_actions(mut p data.Page, mut c collection.Co
 	}
 }
 
-fn (mut tree Tree) replace_page_defs_with_links(mut p data.Page, mut c collection.Collection) ! {
+fn (mut tree Tree) replace_page_defs_with_links(mut p data.Page) ![]CollectionError {
 	defs := p.get_def_names()!
 
 	mut def_data := map[string][]string{}
+	mut errors := []CollectionError{}
 	for def in defs {
-		referenced_page := tree.defs[def] or {
-			c.error(path: p.path, msg: 'def ${def} is not defined', cat: .def)!
+		if referenced_page := tree.defs[def] {
+			def_data[def] = [referenced_page.key(), referenced_page.alias]
+		} else {
+			// accrue errors that occur
+			errors << CollectionError{path: p.path, msg: 'def ${def} is not defined', cat: .def}
 			continue
 		}
-
-		def_data[def] = [referenced_page.key(), referenced_page.alias]
 	}
 
 	p.set_def_links(def_data)!
+	// return accrued collection errors for collection to handle
+	return errors
 }

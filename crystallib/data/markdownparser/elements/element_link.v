@@ -121,7 +121,7 @@ pub fn (self Link) markdown() !string {
 
 	anchor := if self.anchor != '' { '#${self.anchor}' } else { '' }
 	mut out := ''
-	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image {
+	if self.cat == LinkType.page || self.cat == LinkType.code || self.cat == LinkType.file || self.cat == LinkType.image {
 		if self.filename.contains(':') {
 			return error("should not have ':' in link for image, page or file.\n${self}")
 		}
@@ -143,24 +143,9 @@ pub fn (self Link) markdown() !string {
 	} else if self.cat == LinkType.html || self.cat == LinkType.email {
 		out = '[${description}](${self.url}${anchor})'
 	} else {
-		panic('bug')
+		panic('bug, LinkType ${self.cat} to markdown not implemented')
 	}
-
-	// if self.cat == LinkType.page {
-
-	// 	// if self.include {
-	// 	// 	link_filename = '@${link_filename}'
-	// 	// }
-	// 	// if self.newtab {
-	// 	// 	link_filename = '!${link_filename}'
-	// 	// }
-	// 	// if self.moresites {
-	// 	// 	link_filename = '*${link_filename}'
-	// 	// }
-
-	// 	out = '[${self.description}](${link_filename})'
-	// }
-
+	
 	return out
 }
 
