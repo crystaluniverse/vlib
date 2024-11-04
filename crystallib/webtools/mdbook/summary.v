@@ -25,7 +25,7 @@ pub mut:
 
 pub fn (mut book MDBook) summary(production bool) !Summary {
 	if !os.exists(book.args.summary_path) {
-		panic("summary file doesn't exist")
+		panic("summary file ${book.args.summary_path} doesn't exist")
 	}
 	mut summary := Summary{
 		production: production
