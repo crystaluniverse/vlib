@@ -103,6 +103,10 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		reset3 := p.get_default_true('reset')
 		collections := p.get_list_default('collections', [])!
 
+		if summary_url == '' && summary_path == '' {
+			return error('Both summary url and path cannot be empty at the same time')
+		}
+
 		mut mdbooks := mdbook.get()!
 
 		mut cfg := mdbooks.config()!
