@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../crystallib/clients/httpconnection"
+		}
+	],
+	"settings": {}
+}
