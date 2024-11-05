@@ -32,13 +32,14 @@ pub mut:
 pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	mut args := args_
 	if args.git_url.len > 0 {
-		args.path = gittools.code_get(
-			coderoot: args.git_root
+		mut gs := gittools.get(coderoot: args.git_root)!
+	 	mut repo := gs.get_repo(
 			url: args.git_url
 			pull: args.git_pull
 			reset: args.git_reset
 			reload: false
 		)!
+		args.path = repo.get_path()!
 	}
 
 	if args.path.len == 0 {
