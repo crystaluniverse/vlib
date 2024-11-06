@@ -1,4 +1,4 @@
-module webdav
+module main
 
 import vweb
 import freeflowuniverse.crystallib.core.pathlib
