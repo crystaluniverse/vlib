@@ -55,8 +55,11 @@ pub fn (mut db OurDB) get_history(x u32, depth u8) ![][]u8 {
 // This operation zeros out the record but maintains the space in the file
 // Use condense() to reclaim space from deleted records (happens in step after)
 pub fn (mut db OurDB) delete(x u32) ! {
-	location := db.lookup.get(x)! // Get location from lookup table
-	db.delete_(x, location)!
+	db.lookup.delete(x)!
+
+	// TODO: do we actually need to erase data?
+	// location := db.lookup.get(x)! // Get location from lookup table
+	// db.delete_(x, location)!
 }
 
 // close closes the database file
