@@ -1,77 +1,74 @@
 module meilisearch
 
-import freeflowuniverse.crystallib.clients.httpconnection { HTTPConnection, Request }
+import freeflowuniverse.crystallib.clients.httpconnection
 import x.json2
+import json
 
 // health checks if the server is healthy
 pub fn (mut client MeiliClient) health() !Health {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'health'
 	}
-	response := client.http.get_json_dict(req)!
-	
-	return Health{
-		status: response['status'].str()
-	}
+	response := client.http.get_json(req)!
+	return json2.decode[Health](response)
 }
 
 // version gets the version of the Meilisearch server
 pub fn (mut client MeiliClient) version() !Version {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'version'
 	}
-	response := client.http.get_json_dict(req)!
-	
-	return Version{
-		pkg_version: response['pkgVersion'].str()
-		commit_sha: response['commitSha'].str()
-		build_date: response['buildDate'].str()
-	}
+	response := client.http.get_json(req)!
+	return json2.decode[Version](response)
 }
 
 // create_index creates a new index with the given UID
-pub fn (mut client MeiliClient) create_index(uid string) !string {
-	req := Request{
+pub fn (mut client MeiliClient) create_index(args CreateIndexArgs) !CreateIndexResponse {
+	req := httpconnection.Request{
 		prefix: 'indexes'
 		method: .post
-		data: json2.encode({
-			'uid': uid
-		})
+		data:   json2.encode(args)
 	}
-	return client.http.post_json_str(req)
+
+	response := client.http.post_json_str(req)!
+	return json2.decode[CreateIndexResponse](response)
 }
 
 // get_index retrieves information about an index
-pub fn (mut client MeiliClient) get_index(uid string) !string {
-	req := Request{
+pub fn (mut client MeiliClient) get_index(uid string) !GetIndexResponse {
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}'
 	}
-	return client.http.get_json(req)
+	response := client.http.get_json(req)!
+	return json2.decode[GetIndexResponse](response)
 }
 
 // list_indexes retrieves all indexes
-pub fn (mut client MeiliClient) list_indexes() !string {
-	req := Request{
-		prefix: 'indexes'
+pub fn (mut client MeiliClient) list_indexes(args ListIndexArgs) ![]GetIndexResponse {
+	req := httpconnection.Request{
+		prefix: 'indexes?limit=${args.limit}&offset=${args.offset}'
 	}
-	return client.http.get_json(req)
+	response := client.http.get_json(req)!
+	list_response := json.decode(ListResponse[GetIndexResponse], response)!
+	return list_response.results
 }
 
 // delete_index deletes an index
-pub fn (mut client MeiliClient) delete_index(uid string) !string {
-	req := Request{
+pub fn (mut client MeiliClient) delete_index(uid string) !DeleteIndexResponse {
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}'
 	}
-	return client.http.delete(req)
+	response := client.http.delete(req)!
+	return json2.decode[DeleteIndexResponse](response)
 }
 
 // get_settings retrieves all settings of an index
 pub fn (mut client MeiliClient) get_settings(uid string) !IndexSettings {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings'
 	}
 	response := client.http.get_json_dict(req)!
-	
+
 	mut settings := IndexSettings{}
 	if ranking_rules := response['rankingRules'] {
 		settings.ranking_rules = ranking_rules.arr().map(it.str())
@@ -94,41 +91,23 @@ pub fn (mut client MeiliClient) get_settings(uid string) !IndexSettings {
 	if sortable_attributes := response['sortableAttributes'] {
 		settings.sortable_attributes = sortable_attributes.arr().map(it.str())
 	}
-	
+
 	return settings
 }
 
 // update_settings updates all settings of an index
 pub fn (mut client MeiliClient) update_settings(uid string, settings IndexSettings) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings'
 		method: .patch
-		data: json2.encode({
-			'rankingRules': settings.ranking_rules
-			'distinctAttribute': settings.distinct_attribute
-			'searchableAttributes': settings.searchable_attributes
-			'displayedAttributes': settings.displayed_attributes
-			'stopWords': settings.stop_words
-			'synonyms': settings.synonyms
-			'filterableAttributes': settings.filterable_attributes
-			'sortableAttributes': settings.sortable_attributes
-			'typoTolerance': {
-				'enabled': settings.typo_tolerance.enabled
-				'minWordSizeForTypos': {
-					'oneTypo': settings.typo_tolerance.min_word_size_for_typos.one_typo
-					'twoTypos': settings.typo_tolerance.min_word_size_for_typos.two_typos
-				}
-				'disableOnWords': settings.typo_tolerance.disable_on_words
-				'disableOnAttributes': settings.typo_tolerance.disable_on_attributes
-			}
-		})
+		data:   json2.encode(settings)
 	}
 	return client.http.post_json_str(req)
 }
 
 // reset_settings resets all settings of an index to default values
 pub fn (mut client MeiliClient) reset_settings(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings'
 		method: .delete
 	}
@@ -137,19 +116,19 @@ pub fn (mut client MeiliClient) reset_settings(uid string) !string {
 
 // get_ranking_rules retrieves ranking rules of an index
 pub fn (mut client MeiliClient) get_ranking_rules(uid string) ![]string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/ranking-rules'
 	}
 	response := client.http.get_json_dict(req)!
-	return response['rankingRules'].arr().map(it.str())
+	return response['rankingRules']!.arr().map(it.str())
 }
 
 // update_ranking_rules updates ranking rules of an index
 pub fn (mut client MeiliClient) update_ranking_rules(uid string, rules []string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/ranking-rules'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'rankingRules': rules
 		})
 	}
@@ -158,7 +137,7 @@ pub fn (mut client MeiliClient) update_ranking_rules(uid string, rules []string)
 
 // reset_ranking_rules resets ranking rules of an index to default values
 pub fn (mut client MeiliClient) reset_ranking_rules(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/ranking-rules'
 		method: .delete
 	}
@@ -167,19 +146,19 @@ pub fn (mut client MeiliClient) reset_ranking_rules(uid string) !string {
 
 // get_distinct_attribute retrieves distinct attribute of an index
 pub fn (mut client MeiliClient) get_distinct_attribute(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/distinct-attribute'
 	}
 	response := client.http.get_json_dict(req)!
-	return response['distinctAttribute'].str()
+	return response['distinctAttribute']!.str()
 }
 
 // update_distinct_attribute updates distinct attribute of an index
 pub fn (mut client MeiliClient) update_distinct_attribute(uid string, attribute string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/distinct-attribute'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'distinctAttribute': attribute
 		})
 	}
@@ -188,7 +167,7 @@ pub fn (mut client MeiliClient) update_distinct_attribute(uid string, attribute 
 
 // reset_distinct_attribute resets distinct attribute of an index
 pub fn (mut client MeiliClient) reset_distinct_attribute(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/distinct-attribute'
 		method: .delete
 	}
@@ -197,19 +176,19 @@ pub fn (mut client MeiliClient) reset_distinct_attribute(uid string) !string {
 
 // get_searchable_attributes retrieves searchable attributes of an index
 pub fn (mut client MeiliClient) get_searchable_attributes(uid string) ![]string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/searchable-attributes'
 	}
 	response := client.http.get_json_dict(req)!
-	return response['searchableAttributes'].arr().map(it.str())
+	return response['searchableAttributes']!.arr().map(it.str())
 }
 
 // update_searchable_attributes updates searchable attributes of an index
 pub fn (mut client MeiliClient) update_searchable_attributes(uid string, attributes []string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/searchable-attributes'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'searchableAttributes': attributes
 		})
 	}
@@ -218,7 +197,7 @@ pub fn (mut client MeiliClient) update_searchable_attributes(uid string, attribu
 
 // reset_searchable_attributes resets searchable attributes of an index
 pub fn (mut client MeiliClient) reset_searchable_attributes(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/searchable-attributes'
 		method: .delete
 	}
@@ -227,19 +206,19 @@ pub fn (mut client MeiliClient) reset_searchable_attributes(uid string) !string 
 
 // get_displayed_attributes retrieves displayed attributes of an index
 pub fn (mut client MeiliClient) get_displayed_attributes(uid string) ![]string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/displayed-attributes'
 	}
 	response := client.http.get_json_dict(req)!
-	return response['displayedAttributes'].arr().map(it.str())
+	return response['displayedAttributes']!.arr().map(it.str())
 }
 
 // update_displayed_attributes updates displayed attributes of an index
 pub fn (mut client MeiliClient) update_displayed_attributes(uid string, attributes []string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/displayed-attributes'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'displayedAttributes': attributes
 		})
 	}
@@ -248,7 +227,7 @@ pub fn (mut client MeiliClient) update_displayed_attributes(uid string, attribut
 
 // reset_displayed_attributes resets displayed attributes of an index
 pub fn (mut client MeiliClient) reset_displayed_attributes(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/displayed-attributes'
 		method: .delete
 	}
@@ -257,19 +236,19 @@ pub fn (mut client MeiliClient) reset_displayed_attributes(uid string) !string {
 
 // get_stop_words retrieves stop words of an index
 pub fn (mut client MeiliClient) get_stop_words(uid string) ![]string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/stop-words'
 	}
 	response := client.http.get_json_dict(req)!
-	return response['stopWords'].arr().map(it.str())
+	return response['stopWords']!.arr().map(it.str())
 }
 
 // update_stop_words updates stop words of an index
 pub fn (mut client MeiliClient) update_stop_words(uid string, words []string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/stop-words'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'stopWords': words
 		})
 	}
@@ -278,7 +257,7 @@ pub fn (mut client MeiliClient) update_stop_words(uid string, words []string) !s
 
 // reset_stop_words resets stop words of an index
 pub fn (mut client MeiliClient) reset_stop_words(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/stop-words'
 		method: .delete
 	}
@@ -287,12 +266,12 @@ pub fn (mut client MeiliClient) reset_stop_words(uid string) !string {
 
 // get_synonyms retrieves synonyms of an index
 pub fn (mut client MeiliClient) get_synonyms(uid string) !map[string][]string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/synonyms'
 	}
 	response := client.http.get_json_dict(req)!
 	mut synonyms := map[string][]string{}
-	for key, value in response['synonyms'].as_map() {
+	for key, value in response['synonyms']!.as_map() {
 		synonyms[key] = value.arr().map(it.str())
 	}
 	return synonyms
@@ -300,10 +279,10 @@ pub fn (mut client MeiliClient) get_synonyms(uid string) !map[string][]string {
 
 // update_synonyms updates synonyms of an index
 pub fn (mut client MeiliClient) update_synonyms(uid string, synonyms map[string][]string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/synonyms'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'synonyms': synonyms
 		})
 	}
@@ -312,7 +291,7 @@ pub fn (mut client MeiliClient) update_synonyms(uid string, synonyms map[string]
 
 // reset_synonyms resets synonyms of an index
 pub fn (mut client MeiliClient) reset_synonyms(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/synonyms'
 		method: .delete
 	}
@@ -321,19 +300,19 @@ pub fn (mut client MeiliClient) reset_synonyms(uid string) !string {
 
 // get_filterable_attributes retrieves filterable attributes of an index
 pub fn (mut client MeiliClient) get_filterable_attributes(uid string) ![]string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/filterable-attributes'
 	}
 	response := client.http.get_json_dict(req)!
-	return response['filterableAttributes'].arr().map(it.str())
+	return response['filterableAttributes']!.arr().map(it.str())
 }
 
 // update_filterable_attributes updates filterable attributes of an index
 pub fn (mut client MeiliClient) update_filterable_attributes(uid string, attributes []string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/filterable-attributes'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'filterableAttributes': attributes
 		})
 	}
@@ -342,7 +321,7 @@ pub fn (mut client MeiliClient) update_filterable_attributes(uid string, attribu
 
 // reset_filterable_attributes resets filterable attributes of an index
 pub fn (mut client MeiliClient) reset_filterable_attributes(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/filterable-attributes'
 		method: .delete
 	}
@@ -351,19 +330,19 @@ pub fn (mut client MeiliClient) reset_filterable_attributes(uid string) !string 
 
 // get_sortable_attributes retrieves sortable attributes of an index
 pub fn (mut client MeiliClient) get_sortable_attributes(uid string) ![]string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/sortable-attributes'
 	}
 	response := client.http.get_json_dict(req)!
-	return response['sortableAttributes'].arr().map(it.str())
+	return response['sortableAttributes']!.arr().map(it.str())
 }
 
 // update_sortable_attributes updates sortable attributes of an index
 pub fn (mut client MeiliClient) update_sortable_attributes(uid string, attributes []string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/sortable-attributes'
 		method: .put
-		data: json2.encode({
+		data:   json2.encode({
 			'sortableAttributes': attributes
 		})
 	}
@@ -372,7 +351,7 @@ pub fn (mut client MeiliClient) update_sortable_attributes(uid string, attribute
 
 // reset_sortable_attributes resets sortable attributes of an index
 pub fn (mut client MeiliClient) reset_sortable_attributes(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/sortable-attributes'
 		method: .delete
 	}
@@ -381,50 +360,40 @@ pub fn (mut client MeiliClient) reset_sortable_attributes(uid string) !string {
 
 // get_typo_tolerance retrieves typo tolerance settings of an index
 pub fn (mut client MeiliClient) get_typo_tolerance(uid string) !TypoTolerance {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/typo-tolerance'
 	}
+
 	response := client.http.get_json_dict(req)!
-	
+	min_word_size_for_typos := json2.decode[MinWordSizeForTypos](response['minWordSizeForTypos']!.json_str())!
 	mut typo_tolerance := TypoTolerance{
-		enabled: response['enabled'].bool()
-		min_word_size_for_typos: MinWordSizeForTypos{
-			one_typo: response['minWordSizeForTypos']['oneTypo'].int()
-			two_typos: response['minWordSizeForTypos']['twoTypos'].int()
-		}
+		enabled:                 response['enabled']!.bool()
+		min_word_size_for_typos: min_word_size_for_typos
 	}
-	
+
 	if disable_on_words := response['disableOnWords'] {
 		typo_tolerance.disable_on_words = disable_on_words.arr().map(it.str())
 	}
 	if disable_on_attributes := response['disableOnAttributes'] {
 		typo_tolerance.disable_on_attributes = disable_on_attributes.arr().map(it.str())
 	}
-	
+
 	return typo_tolerance
 }
 
 // update_typo_tolerance updates typo tolerance settings of an index
 pub fn (mut client MeiliClient) update_typo_tolerance(uid string, typo_tolerance TypoTolerance) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/typo-tolerance'
 		method: .patch
-		data: json2.encode({
-			'enabled': typo_tolerance.enabled
-			'minWordSizeForTypos': {
-				'oneTypo': typo_tolerance.min_word_size_for_typos.one_typo
-				'twoTypos': typo_tolerance.min_word_size_for_typos.two_typos
-			}
-			'disableOnWords': typo_tolerance.disable_on_words
-			'disableOnAttributes': typo_tolerance.disable_on_attributes
-		})
+		data:   json2.encode(typo_tolerance)
 	}
 	return client.http.post_json_str(req)
 }
 
 // reset_typo_tolerance resets typo tolerance settings of an index
 pub fn (mut client MeiliClient) reset_typo_tolerance(uid string) !string {
-	req := Request{
+	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/typo-tolerance'
 		method: .delete
 	}
