@@ -26,10 +26,6 @@ fn new_lookup(config LookupConfig) !LookupTable {
 		return error('keysize must be 2,3,4 or 6')
 	}
 
-	// if config.keysize < 2 || config.keysize > 6 {
-	// 	return error('keysize must be between 2 and 6 bytes')
-	// }
-
 	if config.lookuppath.len > 0 {
 		// For disk-based lookup, create empty file if it doesn't exist
 		if !os.exists(config.lookuppath) {

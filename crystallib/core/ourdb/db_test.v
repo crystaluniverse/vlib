@@ -1,5 +1,7 @@
 module ourdb
 
+import os
+
 const test_dir = '/tmp/ourdb'
 
 fn test_basic_operations() {
@@ -110,4 +112,28 @@ fn test_error_handling() {
 		assert err.msg() == 'Record not found'
 		return
 	}
+}
+
+fn test_file_switching() {
+	mut db := new(
+		record_nr_max: 16777216 - 1 // max size of records
+		record_size_max: 1024
+		path: ourdb.test_dir
+		file_size: 10
+	)!
+
+	defer {
+		db.destroy() or { panic('failed to destroy db: ${err}') }
+	}
+
+	test_data1 := 'Test data'.bytes()
+	key := u32(1)
+	db.set(key, test_data1)!
+	stat := os.stat('${db.path}/${db.last_used_file_nr}.db')!
+
+	test_data2 := 'Test data 2222'.bytes()
+	db.set(u32(2), test_data2)!
+
+	location := db.lookup.get(u32(2))!
+	assert location.file_nr == 1
 }
