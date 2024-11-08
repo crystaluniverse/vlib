@@ -1,5 +1,7 @@
 module meet
 
+import time
+
 pub struct Meet {}
 
 pub fn (meet Meet) html() string {
@@ -9,7 +11,13 @@ pub fn (meet Meet) html() string {
 
 pub struct Room {
 pub:
-	name string
+	url string
+	id           string
+	name         string
+	creation_time time.Time
+	num_participants int
+	is_active    bool
+	metadata     string
 }
 
 pub fn (room Room) html() string {

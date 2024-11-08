@@ -17,7 +17,7 @@ pub struct ConnectionDetails {
 }
 
 // GET endpoint to handle participant token generation
-@['/api/connection-details'; get]
+@['/connection-details'; get]
 pub fn (app &App) participant_endpoint(mut ctx Context) veb.Result {
 	// Extract query parameters
 	room_name := ctx.query['roomName'] or {

@@ -1,6 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html class="dark" lang="en">
+<style>
+    /* Reset styles in `.no-pico` to prevent PicoCSS from applying */
+.no-pico, .no-pico * {
+    all: unset; /* Remove all inherited styles */
+    display: revert; /* Reset display properties */
+    font-family: inherit; /* Reapply default font */
+}
+</style>
 @{view.head.html()}
 @{view.layout.html()}
 

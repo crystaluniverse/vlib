@@ -78,12 +78,28 @@
             flex-direction: column;
         }
 
-        /* Ensure the table section fits within the available space and allows scrolling */
-        #table-section {
-            flex: 1;
-            max-height: 60vh; /* Adjust height as needed */
-            overflow-y: auto;
+
+    /* Ensure the table section fits within the available space and allows scrolling */
+    #table-section {
+        flex: 1;
+        max-height: 60vh; /* Adjust height as needed */
+        overflow-y: auto;
+        overflow-x: auto; /* Allow horizontal scrolling */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        table {
+            display: block; /* Treat table as a block element */
+            width: 100%;
+            overflow-x: auto; /* Horizontal scrolling for the table */
         }
+        
+        /* Adjust table headers and cells for smaller screens */
+        th, td {
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+    }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
