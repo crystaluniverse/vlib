@@ -17,14 +17,14 @@ pub mut:
 	description          ?string
 	country_of_residence CountryID
 
-	salary_outstanding ?SalaryOutsdanding
+	salary_outstanding ?SalaryOutstanding
 	shares             ?Shares
 	tokens             []Tokens
 	loan_outstanding   []LoanOutstanding
 	remuneration       ?Remuneration
 }
 
-pub struct SalaryOutsdanding {
+pub struct SalaryOutstanding {
 pub mut:
 	company string
 	amount  string
@@ -314,7 +314,7 @@ fn (mut self HRData) add_salary_outstandings(mut session base.Session) {
 	}
 }
 
-fn (mut self HRData) extract_salary_outstanding_information(mut action playbook.Action) !(string, SalaryOutsdanding) {
+fn (mut self HRData) extract_salary_outstanding_information(mut action playbook.Action) !(string, SalaryOutstanding) {
 	mut p := action.params
 	username := p.get('person_name')!
 	company := p.get('company')!
@@ -322,7 +322,7 @@ fn (mut self HRData) extract_salary_outstanding_information(mut action playbook.
 	comment := p.get_default('comment', '')!.trim_space()
 	url := p.get_default('url', '')!.trim_space()
 
-	salary := SalaryOutsdanding{
+	salary := SalaryOutstanding{
 		company: company
 		amount: amount
 		comment: if comment != '' { comment } else { none }

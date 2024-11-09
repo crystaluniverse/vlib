@@ -1,4 +1,5 @@
 
+> this module tries to re-implement z-stor in V, its not ready for production yet.
 
 ## compression / encryption 
 
