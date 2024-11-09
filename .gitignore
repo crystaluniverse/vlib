@@ -24,3 +24,4 @@ zdb-index
 dump.rdb
 output/
 *.db
+vdocs/

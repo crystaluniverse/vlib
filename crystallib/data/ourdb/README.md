@@ -2,6 +2,33 @@
 
 OurDB is a lightweight, efficient key-value database implementation in V that provides data persistence with history tracking capabilities. It's designed for scenarios where you need fast key-value storage with the ability to track changes over time.
 
+## Usage Example
+
+```v
+
+//record_nr_max u32 = 16777216 - 1    // max number of records
+//record_size_max u32 = 1024*4        // max record size (4KB default)
+//file_size u32 = 500 * (1 << 20)     // file size (500MB default)
+//path string                         // storage directory
+
+import crystallib.data.ourdb
+
+mut db := ourdb.new(path:"/tmp/mydb")!
+
+// Store data (note: set() takes []u8 as value)
+db.set(1, 'Hello World'.bytes())!
+
+// Retrieve data
+data := db.get(1)! // Returns []u8
+
+// Get history
+history := db.get_history(1, 5)! // Get last 5 versions
+
+// Delete data
+db.delete(1)!
+```
+
+
 ## Features
 
 - Efficient key-value storage
@@ -66,42 +93,6 @@ OurDB consists of three main components working together in a layered architectu
      - Actual data
    - Automatically handles file selection and management
 
-## Configuration
-
-The database can be configured through `OurDBConfig`:
-```v
-pub struct OurDBConfig {
-pub:
-    record_nr_max u32 = 16777216 - 1    // max number of records
-    record_size_max u32 = 1024*4        // max record size (4KB default)
-    path string                         // storage directory
-}
-```
-
-## Usage Example
-
-```v
-// Initialize database
-config := OurDBConfig{
-    record_nr_max: 1000000
-    record_size_max: 4096
-    path: 'mydb'
-}
-mut db := ourdb.new(config)!
-
-// Store data
-db.set(1, 'Hello World'.bytes())!
-
-// Retrieve data
-data := db.get(1)!
-
-// Get history
-history := db.get_history(1, 5)! // Get last 5 versions
-
-// Delete data
-db.delete(1)!
-```
-
 ## Implementation Details
 
 ### Record Format
@@ -119,5 +110,6 @@ The lookup table automatically optimizes its key size based on:
 
 ### File Management
 - Supports splitting data across multiple files when needed
-- Each file is limited to 65536 records
+- Each file is limited to 500MB by default (configurable)
 - Automatic file selection based on record location
+- Files are created as needed with format: `${path}/${file_nr}.db`
