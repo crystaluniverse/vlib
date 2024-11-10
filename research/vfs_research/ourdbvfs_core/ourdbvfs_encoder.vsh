@@ -2,7 +2,7 @@
 
 import os
 import freeflowuniverse.crystallib.data.encoder
-import vfs
+import freeflowuniverse.crystallib.vfs.vfsourdb_core
 
 fn test_encode_decode() ! {
 	println('Starting encode/decode test...')
@@ -17,7 +17,7 @@ fn test_encode_decode() ! {
 	os.rmdir_all(meta_dir) or {}
 
 	// Initialize VFS
-	mut fs := vfs.new(
+	mut fs := vfsourdb_core.new(
 		data_dir: data_dir
 		metadata_dir: meta_dir
 	)!
@@ -32,8 +32,8 @@ fn test_encode_decode() ! {
 	println('Added test file')
 
 	// Create symlink
-	mut symlink := vfs.Symlink{
-		metadata: vfs.Metadata{
+	mut symlink := vfsourdb_core.Symlink{
+		metadata: vfsourdb_core.Metadata{
 			id: 3
 			name: 'link'
 			file_type: .symlink
@@ -70,7 +70,7 @@ fn test_encode_decode() ! {
 
 	// Decode back to directory
 	println('\nDecoding data...')
-	mut decoded := vfs.decode_directory(encoded) or {
+	mut decoded := vfsourdb_core.decode_directory(encoded) or {
 		println('Failed to decode: ${err}')
 		return err
 	}
@@ -93,7 +93,7 @@ fn test_encode_decode() ! {
 	// Verify symlink
 	mut children := root.children(false)!
 	for child in children {
-		if child is vfs.Symlink {
+		if child is vfsourdb_core.Symlink {
 			assert child.target == '/target/path'
 			println('Symlink verification passed')
 			break

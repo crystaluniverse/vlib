@@ -1,6 +1,8 @@
-# Virtual Filesystem (VFS)
+# Virtual Filesystem (VFS) as implemented on top of ourdb
 
 A Virtual Filesystem implementation in V that provides an abstraction layer over a key-value store database. The VFS manages files and directories using unique identifiers (u32) as keys and binary data ([]u8) as values.
+
+This is the underlying VFS for the other vfsourdb, which is in line to interface of the vfscore
 
 ## Architecture
 

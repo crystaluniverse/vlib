@@ -1,4 +1,4 @@
-module vfs
+module vfsourdb_core
 import freeflowuniverse.crystallib.data.ourdb
 
 // VFS represents the virtual filesystem

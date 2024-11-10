@@ -1,6 +1,6 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import vfs
+import freeflowuniverse.crystallib.vfs.vfsourdb_core
 import os
 import time
 
@@ -11,7 +11,7 @@ fn main() {
 	metadata_dir := os.join_path(base_dir, 'metadata')
 
 	// Create new VFS instance with proper database paths
-	mut fs := vfs.new(
+	mut fs := vfsourdb_core.new(
 		data_dir: data_dir
 		metadata_dir: metadata_dir
 	) or { panic(err) }
@@ -43,8 +43,8 @@ fn main() {
 	docs_dir.write('report.pdf', 'Sample PDF content') or { panic(err) }
 
 	// Create a symlink
-	mut symlink := vfs.Symlink{
-		metadata: vfs.Metadata{
+	mut symlink := vfsourdb_core.Symlink{
+		metadata: vfsourdb_core.Metadata{
 			id: u32(time.now().unix())
 			name: 'latest_report'
 			file_type: .symlink

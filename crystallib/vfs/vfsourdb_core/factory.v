@@ -1,7 +1,6 @@
-module vfs
+module vfsourdb_core
 
 import os
-import time { now }
 import freeflowuniverse.crystallib.data.ourdb
 
 
@@ -22,7 +21,7 @@ pub fn new(params VFSParams) !&VFS {
 		os.mkdir(params.metadata_dir) or { return error('Failed to create metadata directory: ${err}') }
 	}
 
-	mut db_meta := ourdb.new(path: '${params.metadata_dir}/vfs.db_meta')!
+	mut db_meta := ourdb.new(path: '${params.metadata_dir}/vfsourdb_core.db_meta')!
 	mut db_data := ourdb.new(path: '${params.data_dir}/vfs_metadata.db_meta')!
 
 	mut fs := &VFS{
