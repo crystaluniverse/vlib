@@ -11,13 +11,8 @@ pub mut:
 }
 
 // Set up a test client instance
-fn setup_client() !MeilisearchClient {
-	config := ClientConfig{
-		host:    'http://localhost:7700'
-		api_key: 'be61fdce-c5d4-44bc-886b-3a484ff6c531'
-	}
-	factory := new_factory(config)
-	mut client := factory.get()!
+fn setup_client() !&MeilisearchClient {
+	mut client := get()!
 	return client
 }
 
@@ -198,6 +193,85 @@ fn test_search() {
 	mut doc_ := client.search[MeiliDocument](index_name, q: 'Coldplay')!
 
 	assert doc_.hits[0].id == 3
+}
+
+fn test_facet_search() {
+	mut client := setup_client()!
+	index_name := rand.string(5)
+
+	documents := [
+		MeiliDocument{
+			id:      1
+			title:   'Life'
+			content: 'Two men in 1930s Mississippi become friends after being sentenced to life in prison together for a crime they did not commit.'
+		},
+		MeiliDocument{
+			id:      2
+			title:   'Life'
+			content: 'In 1955, young photographer Dennis Stock develops a close bond with actor James Dean while shooting pictures of the rising Hollywood star.'
+		},
+		MeiliDocument{
+			id:      3
+			title:   'Coldplay'
+			content: 'Coldplay is a british rock band.'
+		},
+	]
+
+	mut doc := client.add_documents(index_name, documents)!
+	assert doc.index_uid == index_name
+	assert doc.type_ == 'documentAdditionOrUpdate'
+
+	time.sleep(500 * time.millisecond)
+	res := client.update_filterable_attributes(index_name, ['title'])!
+
+	time.sleep(500 * time.millisecond)
+	settings := client.get_settings(index_name)!
+
+	assert ['title'] == settings.filterable_attributes
+
+	mut doc_ := client.facet_search(
+		index_name,
+		facet_name: 'title',
+		filter: 'title = life'
+	)!
+	assert doc_.facet_hits[0].count == 2
+}
+
+fn test_similar_documents() {
+	mut client := setup_client()!
+	index_name := rand.string(5)
+
+	documents := [
+		MeiliDocument{
+			id:      1
+			title:   'Life'
+			content: 'Two men in 1930s Mississippi become friends after being sentenced to life in prison together for a crime they did not commit.'
+		},
+		MeiliDocument{
+			id:      2
+			title:   'Life'
+			content: 'In 1955, young photographer Dennis Stock develops a close bond with actor James Dean while shooting pictures of the rising Hollywood star.'
+		},
+		MeiliDocument{
+			id:      3
+			title:   'Coldplay'
+			content: 'Coldplay is a british rock band.'
+		},
+	]
+
+	mut doc := client.add_documents(index_name, documents)!
+	assert doc.index_uid == index_name
+	assert doc.type_ == 'documentAdditionOrUpdate'
+
+	time.sleep(500 * time.millisecond)
+
+	mut doc_ := client.similar_documents(
+		index_name,
+		id: 1,
+	)!
+	// TODO: Check the meilisearch.SimilarDocumentsResponse error
+	println('doc_: ${doc_}')
+	// assert doc_.facet_hits[0].count == 2
 }
 
 // Delete all created indexes

@@ -2,7 +2,7 @@ module s3
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import json
 import rand

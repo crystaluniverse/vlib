@@ -2,7 +2,7 @@ module base
 
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 // import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import freeflowuniverse.crystallib.ui

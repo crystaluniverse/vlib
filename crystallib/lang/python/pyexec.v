@@ -1,7 +1,7 @@
 module python
 
 import freeflowuniverse.crystallib.osal
-// import freeflowuniverse.crystallib.core.dbfs
+// import freeflowuniverse.crystallib.data.dbfs
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import os

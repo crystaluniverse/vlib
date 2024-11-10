@@ -3,7 +3,7 @@ module backend
 import os
 import db.sqlite
 import db.pg
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 import freeflowuniverse.crystallib.data.encoderhero
 
 pub struct Backend {
