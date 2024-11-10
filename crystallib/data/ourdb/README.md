@@ -11,7 +11,7 @@ OurDB is a lightweight, efficient key-value database implementation in V that pr
 //file_size u32 = 500 * (1 << 20)     // file size (500MB default)
 //path string                         // storage directory
 
-import crystallib.data.ourdb
+import freeflowuniverse.crystallib.data.ourdb
 
 mut db := ourdb.new(path:"/tmp/mydb")!
 

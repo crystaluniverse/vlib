@@ -16,9 +16,11 @@ import os
 // set stores data at the specified key position
 // The data is stored with a CRC32 checksum for integrity verification
 // and maintains a linked list of previous values for history tracking
-pub fn (mut db OurDB) set(x u32, data []u8) ! {
-	location := db.lookup.get(x)! // Get location from lookup table
+// Returns the ID used (either x if specified, or auto-incremented if x=0)
+pub fn (mut db OurDB) set(x u32, data []u8) !u32 {
+	location := db.lookup.get(x) or { Location{} } // Get location from lookup table if exists
 	db.set_(x, location, data)!
+	return db.lookup.set(x, location)!
 }
 
 // get retrieves data stored at the specified key position

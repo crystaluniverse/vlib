@@ -11,16 +11,16 @@ A Virtual Filesystem implementation in V that provides an abstraction layer over
 ```v
 import crystallib.data.ourdb
 
-mut db := ourdb.new(path:"/tmp/mydb")!
+mut db_meta := ourdb.new(path:"/tmp/mydb")!
 
 // Store data
-db.set(1, 'Hello World'.bytes())!
+db_meta.set(1, 'Hello World'.bytes())!
 
 // Retrieve data
-data := db.get(1)! // Returns []u8
+data := db_meta.get(1)! // Returns []u8
 
 // Delete data
-db.delete(1)!
+db_meta.delete(1)!
 ```
 
 ### Core Components
@@ -134,3 +134,19 @@ pub enum FileType {
    - Error handling
    - Performance optimizations
    - Concurrency support
+
+
+
+
+
+
+use @encoder dir to see how to encode/decode
+
+make an efficient encoder for Directory
+add a id u32 to directory this will be the key of the keyvalue stor used
+
+try to use as few as possible bytes when doing the encoding
+
+the first byte is a version nr, so we know if we change the encoding format we can still decode
+
+we will only store directories

@@ -29,6 +29,35 @@ fn test_basic_operations() {
 	assert retrieved2 == new_data
 }
 
+fn test_auto_increment() {
+	mut db := new(
+		record_nr_max: 16777216 - 1 // max size of records
+		record_size_max: 1024
+		path: ourdb.test_dir
+	)!
+
+	defer {
+		db.destroy() or { panic('failed to destroy db: ${err}') }
+	}
+
+	// Create 5 objects with no ID specified (x=0)
+	mut ids := []u32{}
+	for i in 0..5 {
+		data := 'Object ${i + 1}'.bytes()
+		id := db.set(0, data)!
+		ids << id
+	}
+
+	// Verify IDs are incremental
+	assert ids.len == 5
+	for i in 0..5 {
+		assert ids[i] == u32(i + 1)
+		// Verify data can be retrieved
+		data := db.get(ids[i])!
+		assert data == 'Object ${i + 1}'.bytes()
+	}
+}
+
 fn test_history_tracking() {
 	mut db := new(
 		record_nr_max: 16777216 - 1 // max size of records

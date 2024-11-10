@@ -28,12 +28,11 @@ fn (lookuptable LookupTable) location_new(b_ []u8) !Location {
 
 	// Create padded b
 	mut b := []u8{len: int(lookuptable.keysize), init: 0}
-	start_idx := int(lookuptable.keysize) - b_.len // TODO: shouldn't this always equal zero???
+	start_idx := int(lookuptable.keysize) - b_.len
 	if start_idx < 0 {
 		return error('input bytes exceed keysize')
 	}
 
-	// TODO: won't this access memory out of b's bounds?
 	for i := 0; i < b_.len; i++ {
 		b[start_idx + i] = b_[i]
 	}
@@ -95,7 +94,6 @@ fn (lookuptable LookupTable) location_new(b_ []u8) !Location {
 	return new_location
 }
 
-// Convert Location to byte array in big endian format
 fn (self Location) to_bytes() ![]u8 {
 	mut bytes := []u8{len: 6}
 

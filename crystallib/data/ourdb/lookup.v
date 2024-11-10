@@ -16,7 +16,8 @@ pub struct LookupTable {
 	keysize    u8
 	lookuppath string
 mut:
-	data []u8
+	data        []u8
+	incremental u32 // tracks the last used incremental value
 }
 
 // Method to create a new lookup table
@@ -31,11 +32,17 @@ fn new_lookup(config LookupConfig) !LookupTable {
 		if !os.exists(config.lookuppath) {
 			data := []u8{len: int(config.size * config.keysize), init: 0}
 			os.write_file(config.lookuppath, data.bytestr())!
+			// Create a separate file for storing the incremental value
+			os.write_file(config.lookuppath + '.inc', '0')!
 		}
+		// Read the incremental value from file
+		inc_str := os.read_file(config.lookuppath + '.inc')!
+		incremental := inc_str.u32()
 		return LookupTable{
 			data: []u8{}
 			keysize: config.keysize
 			lookuppath: config.lookuppath
+			incremental: incremental
 		}
 	}
 
@@ -43,6 +50,7 @@ fn new_lookup(config LookupConfig) !LookupTable {
 		data: []u8{len: int(config.size * config.keysize), init: 0}
 		keysize: config.keysize
 		lookuppath: ''
+		incremental: 0
 	}
 }
 
@@ -63,9 +71,10 @@ fn (lut LookupTable) get(x u32) !Location {
 		defer { file.close() }
 
 		file.seek(start_pos, .start)!
-		data := file.read_bytes(entry_size)
-		if data.len < entry_size {
-			return error('Incomplete read: expected ${entry_size} bytes but got ${data.len}')
+		mut data := []u8{len: entry_size}
+		bytes_read := file.read(mut data)!
+		if bytes_read < entry_size {
+			return error('Incomplete read: expected ${entry_size} bytes but got ${bytes_read}')
 		}
 		return lut.location_new(data)!
 	}
@@ -79,21 +88,37 @@ fn (lut LookupTable) get(x u32) !Location {
 }
 
 // Method to set a value at a specific position
-fn (mut lut LookupTable) set(x u32, location Location) ! {
+// Returns the ID used (either x if specified, or incremental if x=0)
+fn (mut lut LookupTable) set(x u32, location Location) !u32 {
 	entry_size := int(lut.keysize)
+	
+	mut id := x
+	// Only increment if x is 0
+	if x == 0 {
+		lut.incremental++
+		id = lut.incremental
+		if lut.lookuppath.len > 0 {
+			// Update incremental value in file
+			os.write_file(lut.lookuppath + '.inc', lut.incremental.str())!
+		}
+	}
 
+	// Always store at the ID position
 	if lut.lookuppath.len > 0 {
 		// Check file size first
 		file_size := os.file_size(lut.lookuppath)
-		start_pos := x * entry_size
+		start_pos := id * entry_size
 
 		if start_pos + entry_size > file_size {
-			return error('Invalid read for get in lut: ${lut.lookuppath}: ${start_pos + entry_size} would exceed file size ${file_size}')
+			return error('Invalid write position: ${start_pos + entry_size} would exceed file size ${file_size}')
 		}
 
 		// Write directly to file for disk-based lookup
-		mut file := os.open_file(lut.lookuppath, 'r+')!
-		defer { file.close() }
+		mut file := os.open_file(lut.lookuppath, 'w+')!
+		defer { 
+			file.flush()
+			file.close() 
+		}
 
 		file.seek(start_pos, .start)!
 
@@ -102,19 +127,20 @@ fn (mut lut LookupTable) set(x u32, location Location) ! {
 		if bytes_written < entry_size {
 			return error('Incomplete write: expected ${entry_size} bytes but wrote ${bytes_written}')
 		}
-		return
+		return id
 	}
 
-	if x * u32(entry_size) >= u32(lut.data.len) {
+	if id * u32(entry_size) >= u32(lut.data.len) {
 		return error('Index out of bounds')
 	}
 
-	start := int(x) * entry_size
+	start := int(id) * entry_size
 	bytes := location.to_bytes()!
 
 	for i in 0 .. entry_size {
 		lut.data[start + i] = bytes[6 - entry_size + i] // Only use the required bytes based on keysize
 	}
+	return id
 }
 
 // Method to delete an entry (set bytes to 0)
@@ -131,8 +157,11 @@ fn (mut lut LookupTable) delete(x u32) ! {
 		}
 
 		// Write zeros directly to file for disk-based lookup
-		mut file := os.open_file(lut.lookuppath, 'r+')!
-		defer { file.close() }
+		mut file := os.open_file(lut.lookuppath, 'w+')!
+		defer { 
+			file.flush()
+			file.close() 
+		}
 
 		file.seek(start_pos, .start)!
 		zeros := []u8{len: entry_size, init: 0}
@@ -156,11 +185,13 @@ fn (mut lut LookupTable) delete(x u32) ! {
 // Method to export the lookup table to a file
 fn (lut LookupTable) export_data(path string) ! {
 	if lut.lookuppath.len > 0 {
-		// For disk-based lookup, just copy the file
+		// For disk-based lookup, copy both the main file and incremental value
 		os.cp(lut.lookuppath, path)!
+		os.cp(lut.lookuppath + '.inc', path + '.inc')!
 		return
 	}
 	os.write_file(path, lut.data.bytestr())!
+	os.write_file(path + '.inc', lut.incremental.str())!
 }
 
 // Method to export the table in a sparse format
@@ -220,16 +251,25 @@ fn (lut LookupTable) export_sparse(path string) ! {
 		}
 	}
 	os.write_file(path, output.bytestr())!
+	// Also export the incremental value
+	os.write_file(path + '.inc', lut.incremental.str())!
 }
 
 // Method to import a lookup table from a file
 fn (mut lut LookupTable) import_data(path string) ! {
 	if lut.lookuppath.len > 0 {
-		// For disk-based lookup, just copy the file
+		// For disk-based lookup, copy both files
 		os.cp(path, lut.lookuppath)!
+		os.cp(path + '.inc', lut.lookuppath + '.inc')!
+		// Update the incremental value in memory
+		inc_str := os.read_file(path + '.inc')!
+		lut.incremental = inc_str.u32()
 		return
 	}
 	lut.data = os.read_bytes(path)!
+	// Import the incremental value
+	inc_str := os.read_file(path + '.inc')!
+	lut.incremental = inc_str.u32()
 }
 
 // Method to import a sparse lookup table
@@ -253,4 +293,8 @@ fn (mut lut LookupTable) import_sparse(path string) ! {
 
 		lut.set(position, location)!
 	}
+	
+	// Import the incremental value
+	inc_str := os.read_file(path + '.inc')!
+	lut.incremental = inc_str.u32()
 }
