@@ -1,0 +1,7 @@
+
+!!hero_code.generate_client
+    name:'meilisearch'
+    classname:'MeilisearchClient'
+    singleton:0
+    default:1
+    reset:0

@@ -8,7 +8,8 @@ __global (
 )
 
 // Set up a test client instance
-fn setup_client() !MeiliClient {
+fn setup_client() !MeilisearchClient {
+	//TODO: use he configured entity
 	factory := new_factory(host:'http://localhost:7700', api_key:'be61fdce-c5d4-44bc-886b-3a484ff6c531')
 	mut client := factory.get()!
 	return client

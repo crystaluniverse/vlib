@@ -2,15 +2,15 @@ module meilisearch
 
 import freeflowuniverse.crystallib.clients.httpconnection
 
-// MeiliClient is the main client for interacting with Meilisearch
-pub struct MeiliClient {
+// MeilisearchClient is the main client for interacting with Meilisearch
+pub struct MeilisearchClient {
 pub:
 	config ClientConfig
 mut:
 	http &httpconnection.HTTPConnection
 }
 
-// ClientConfig holds configuration for MeiliClient
+// ClientConfig holds configuration for MeilisearchClient
 pub struct ClientConfig {
 pub:
 	host      string // Base URL of Meilisearch server (e.g., "http://localhost:7700")

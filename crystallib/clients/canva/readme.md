@@ -1,22 +1,27 @@
-# meilisearch
+# canva
+
 
 
 To get started
 
 ```vlang
 
-import freeflowuniverse.crystallib.clients.meilisearch
 
-mut client:= meilisearch.get()!
+import freeflowuniverse.crystallib.clients. canva
+
+mut client:= canva.get()!
 
 client...
+
+
+
 
 ```
 
 ## example heroscript
 
 ```hero
-!!meilisearch.configure
+!!canva.configure
     secret: '...'
     host: 'localhost'
     port: 8888
