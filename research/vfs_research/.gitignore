@@ -2,3 +2,6 @@ encoded.bin
 *.bin
 vfs_do
 vfs_encoder
+mywebdav
+localvfs
+nestedvfs

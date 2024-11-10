@@ -1,4 +1,4 @@
-module main
+module webdav
 
 import vweb
 import encoding.base64
