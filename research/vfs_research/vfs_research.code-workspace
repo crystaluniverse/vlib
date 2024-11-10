@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../crystallib/data/encoder"
+		},
+		{
+			"path": "../../crystallib/data/ourdb"
+		}
+	],
+	"settings": {}
+}

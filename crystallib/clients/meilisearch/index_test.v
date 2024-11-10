@@ -9,7 +9,7 @@ __global (
 
 // Set up a test client instance
 fn setup_client() !MeiliClient {
-	factory := new_factory(host:'http://localhost:7700', api_key:'avrSXQvFdYMbX6MxgWsEmiZYJ3hIGYluUE2blCZzk1U')
+	factory := new_factory(host:'http://localhost:7700', api_key:'be61fdce-c5d4-44bc-886b-3a484ff6c531')
 	mut client := factory.get()!
 	return client
 }

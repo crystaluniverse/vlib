@@ -14,7 +14,7 @@ pub mut:
 fn setup_client() !MeiliClient {
 	config := ClientConfig{
 		host:    'http://localhost:7700'
-		api_key: 'avrSXQvFdYMbX6MxgWsEmiZYJ3hIGYluUE2blCZzk1U'
+		api_key: 'be61fdce-c5d4-44bc-886b-3a484ff6c531'
 	}
 	factory := new_factory(config)
 	mut client := factory.get()!
