@@ -37,17 +37,16 @@ Our client implementation aims to:
 
 To implement the Meilisearch client, we need:
 
-1. Meilisearch server:
-   ```bash
-   # Using Docker
-   docker run -p 7700:7700 getmeili/meilisearch:latest
-   ```
+Meilisearch server:
 
-2. Dependencies:
-   - HTTP client for API communication
-   - JSON serialization/deserialization
-   - Error handling utilities
-   - Testing framework
+```bash
+# Using Docker
+docker run -p 7700:7700 getmeili/meilisearch:latest
+```
+
+on e.g. osx you can just install meilisearch and run it, it will show a master key
+
+
 
 ## Implementation Steps
 
@@ -96,7 +95,7 @@ To implement the Meilisearch client, we need:
 
 ## API Structure
 
-The client will expose the following main interfaces:
+The client exposes the following main interfaces:
 
 ```rust
 // Example API structure (subject to change)
@@ -152,6 +151,7 @@ let results = movies
     .execute()
     .await?;
 ```
+
 
 
 ### Usage Index
