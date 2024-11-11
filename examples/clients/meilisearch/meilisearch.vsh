@@ -9,9 +9,7 @@ pub mut:
 	content string
 }
 
-factory := new_factory(host:'http://localhost:7700', api_key:'be61fdce-c5d4-44bc-886b-3a484ff6c531')
-mut client := factory.get()!
-
-version := client.version()
+mut client := meilisearch.get()!
+version := client.version()!
 println('version: ${version}')
 
