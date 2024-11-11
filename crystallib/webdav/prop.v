@@ -1,4 +1,4 @@
-module main
+module webdav
 
 import encoding.xml
 import os
