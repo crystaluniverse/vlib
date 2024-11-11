@@ -42,6 +42,7 @@ pub fn new_app(args AppArgs) !&App {
 
 @[params]
 pub struct RunArgs {
+pub mut:
 	spawn_ bool
 }
 
