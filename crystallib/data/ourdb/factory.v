@@ -13,8 +13,9 @@ pub mut:
 	file    os.File
 	file_nr u16 // the file which is open
 
-	file_size         u32 = 500 * (1 << 20) // 500MB
-	last_used_file_nr u16
+	file_size         	u32 = 500 * (1 << 20) // 500MB
+	last_used_file_nr 	u16
+	incremental_mode    bool = true
 }
 
 const header_size = 12
