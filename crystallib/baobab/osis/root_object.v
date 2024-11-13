@@ -1,4 +1,4 @@
-module backend
+module osis
 
 import x.json2
 
@@ -110,8 +110,14 @@ pub fn (object RootObject) to_generic[T]() T {
 
 	$for field in T.fields {
 		field_descrs := object.fields.filter(it.name == field.name)
-		if field_descriptions.len == 1 {
-			t.$(field.name) = field_descrs[0].value
+		if field_descrs.len == 1 {
+			$if field.typ is int {
+				t.$(field.name) = field_descrs[0].value.int()
+			} $else $if field.is_enum {
+				t.$(field.name) = field_descrs[0].value.int()
+			} $else {
+				t.$(field.name) = field_descrs[0].value
+			}
 		}
 	}
 	return t

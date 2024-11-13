@@ -1,4 +1,4 @@
-module backend
+module osis
 
 import json
 import db.sqlite
@@ -12,31 +12,14 @@ pub struct Indexer {
 	db sqlite.DB
 }
 
-@[table: 'root_objects']
-pub struct RootObject {
-	id    int    @[primary; sql: serial] // unique serial root object id
-	table string // name of table root object is in
-}
-
 @[params]
 pub struct IndexerConfig {
+	db_path string
 	reset bool
 }
 
-pub fn new_indexer(db_path string, config IndexerConfig) !Indexer {
-	if config.reset {
-		reset(db_path)!
-	}
-
-	mut backend := Indexer{
-		db: sqlite.connect(db_path)!
-	}
-
-	sql backend.db {
-		create table RootObject
-	}!
-
-	return backend
+pub fn new_indexer(config IndexerConfig) !Indexer {
+	return Indexer{}
 }
 
 // deletes an indexer table belonging to a base object
@@ -45,26 +28,20 @@ pub fn reset(path string) ! {
 	db_file.delete()!
 }
 
-// deletes an indexer table belonging to a base object
-pub fn (mut backend Indexer) delete_table[T]() ! {
-	table_name := get_table_name[T]()
-	delete_query := 'delete table ${table_name}'
-	backend.db.exec(delete_query)!
-}
-
 // new creates a new root object entry in the root_objects table,
 // and the table belonging to the type of root object with columns for index fields
-pub fn (mut backend Indexer) new(object RootObject) ! {
+pub fn (mut backend Indexer) new(object RootObject) !u32 {
 	table_name := get_table_name(object)
 
 	// create table for root object if it doesn't exist
-	backend.create_root_object_table(object, .postgres)!
-	backend.db.insert(object)!
-	// indices, values := object.sql_indices_values()
-	// insert_query := 'INSERT into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
-	// backend.db.exec(insert_query) or {
-	// 	return error('Error inserting object ${object} into table ${table_name}\n${err}')
-	// }
+	backend.create_root_object_table(object)!
+	indices, values := object.sql_indices_values()
+	insert_query := 'INSERT into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
+	backend.db.exec(insert_query) or {
+		return error('Error inserting object ${object} into table ${table_name}\n${err}')
+	}
+
+	return 0
 }
 
 // save the session to redis & mem
@@ -106,12 +83,12 @@ pub fn (mut backend Indexer) get_json(id string, obj RootObject) !string {
 	return responses[0].vals[1]
 }
 
-pub fn (mut backend Indexer) list(obj RootObject) ![]string {
+pub fn (mut backend Indexer) list(obj RootObject) ![]u32 {
 	table_name := get_table_name(obj)
 
 	responses := backend.db.exec('select * from ${table_name}') or { panic(err) }
-	ids := responses.map(it.vals[0])
-	return ids.map(it.str())
+	ids := responses.map(it.vals[0].u32())
+	return ids
 }
 
 // from and to for int f64 time etc.
@@ -165,22 +142,8 @@ pub fn (mut backend Indexer) filter(filter RootObject, params FilterParams) ![]s
 }
 
 // create_root_struct_table creates a table for a root_struct with columns for each index field
-fn (mut backend Indexer) create_root_object_table(object RootObject, db_type DatabaseType) ! {
-	mut columns := if db_type == .sqlite {
-		['id integer primary key AUTOINCREMENT', 'data TEXT']
-	} else {
-		['id SERIAL PRIMARY KEY', 'data JSONB']
-	}
-
-	// create columns for fields marked as index
-	for field in object.fields {
-		if field.is_index {
-			columns << '${field.name} ${field.sql_type()}'
-		}
-	}
-	table_name := get_table_name(object)
-	create_query := 'create table if not exists ${table_name} (${columns.join(',')})'
-	backend.db.exec(create_query) or {panic('errz ${err}')}
+fn (mut backend Indexer) create_root_object_table(object RootObject) ! {
+	panic('implement')
 }
 
 // deletes an indexer table belonging to a root object

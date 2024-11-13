@@ -19,7 +19,7 @@ fn (mut j Juggler) load(config_path string) ! {
 	}
 }
 
-// loads a repository defined in itenv into juggler backend
+// loads a repository defined in itenv into juggler osis
 // returns repository objects id
 fn (mut j Juggler) load_repository(path string, itenv_path string) !u32 {
 	relpath := path.trim_string_left(itenv_path).trim('/')
@@ -36,7 +36,7 @@ fn (mut j Juggler) load_repository(path string, itenv_path string) !u32 {
 }
 
 fn (mut j Juggler) load_trigger(repo_id u32, script_ids []u32) ! {
-	repo := j.backend.get[Repository](repo_id)!
+	repo := j.osis.generic_get[Repository](repo_id)!
 	git_trigger := Trigger{
 		name: 'git push ${repo.name} [${repo.branch}]'
 		description: 'git push ${repo.name} [${repo.branch}]'
@@ -172,5 +172,5 @@ pub fn (mut j Juggler) load_script_from_path(path_ pathlib.Path) !u32 {
 		path: path.path
 	}
 
-	return j.backend.new[Script](script)!
+	return j.osis.generic_new[Script](script)!
 }

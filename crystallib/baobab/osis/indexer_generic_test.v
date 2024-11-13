@@ -1,4 +1,4 @@
-module backend
+module osis
 
 import os
 import freeflowuniverse.crystallib.core.pathlib

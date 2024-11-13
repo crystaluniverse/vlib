@@ -17,21 +17,21 @@ pub fn (j &Juggler) index(mut ctx Context) veb.Result {
 }
 
 pub fn (mut j Juggler) scripts(mut ctx Context) veb.Result {
-	scripts := j.backend.list[Script]() or { panic('this should never happen ${error}') }
+	scripts := j.osis.generic_list[Script]() or { panic('this should never happen ${error}') }
 	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/scripts.html'))
 }
 
 // This is how endpoints are defined in veb. This is the index route
 pub fn (mut j Juggler) triggers(mut ctx Context) veb.Result {
-	triggers := j.backend.list[Trigger]() or { panic('this shouldnt happen') }
+	triggers := j.osis.generic_list[Trigger]() or { panic('this shouldnt happen') }
 	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/triggers.html'))
 }
 
 // This is how endpoints are defined in veb. This is the index route
 pub fn (mut j Juggler) activity(mut ctx Context) veb.Result {
 	j.update_plays() or { return ctx.server_error('Failed to update play statuses') }
-	plays := j.backend.list[Play]() or { return ctx.server_error('Unable to list plays ${err}') }.reverse()
-	events := j.backend.list[Event]() or { return ctx.server_error('Unable to list plays ${err}') }
+	plays := j.osis.generic_list[Play]() or { return ctx.server_error('Unable to list plays ${err}') }.reverse()
+	events := j.osis.generic_list[Event]() or { return ctx.server_error('Unable to list plays ${err}') }
 	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/activity.html'))
 }
 
@@ -47,7 +47,7 @@ pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 	// get and register event
 	event := j.get_event(ctx.req) or { return ctx.request_error('error ${err}') }
 
-	event_id := j.backend.new[Event](event) or { panic('this shouldnt happen ${err}') }
+	event_id := j.osis.generic_new[Event](event) or { panic('this shouldnt happen ${err}') }
 	triggers := j.get_triggers(event) or { panic('this hopefully wont happen') }
 
 	if triggers.len == 0 {
@@ -72,7 +72,7 @@ pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 			output: 'job.output'
 			status: .starting
 		}
-		play.id = j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
+		play.id = j.osis.generic_new[Play](play) or { panic('this shouldnt happen ${err}') }
 
 		j.run_play(play) or { ctx.server_error('failed to run play ${play.id}') }
 		response += '\n- Play ${play.id}: https://juggler.protocol.me/play/${play.id}'
@@ -83,11 +83,11 @@ pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 
 @['/script/:id']
 pub fn (mut j Juggler) script(mut ctx Context, id string) veb.Result {
-	mut script := j.backend.get[Script](id.u32()) or {
+	mut script := j.osis.generic_get[Script](id.u32()) or {
 		return ctx.server_error('script with id <${id}> not found')
 	}
 
-	plays := j.backend.list[Play]() or {
+	plays := j.osis.generic_list[Play]() or {
 		return ctx.server_error('script with id <${id}> not found')
 	}
 
@@ -124,13 +124,13 @@ pub fn (mut j Juggler) script(mut ctx Context, id string) veb.Result {
 
 @['/script/:id/play']
 pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
-	trigger_id := j.backend.new[Trigger](Trigger{
+	trigger_id := j.osis.generic_new[Trigger](Trigger{
 		name: 'Custom push'
 		description: 'Trigger to customly play event'
 		script_ids: [id.u32()]
 	}) or { return ctx.server_error('Failed to create trigger') }
 
-	event_id := j.backend.new[Event](Event{
+	event_id := j.osis.generic_new[Event](Event{
 		subject: 'admin'
 		object_id: id.u32()
 		action: .manual
@@ -145,7 +145,7 @@ pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 		status: .starting
 	}
 
-	play.id = j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
+	play.id = j.osis.generic_new[Play](play) or { panic('this shouldnt happen ${err}') }
 
 	j.run_play(play) or { ctx.server_error('failed to run play ${play.id}') }
 
@@ -153,7 +153,7 @@ pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 }
 
 pub fn (mut j Juggler) run_play(play Play) ! {
-	mut script := j.backend.get[Script](play.script_id) or {
+	mut script := j.osis.generic_get[Script](play.script_id) or {
 		return error('script with id <${play.script_id}> not found')
 	}
 
@@ -200,7 +200,7 @@ pub fn (mut j Juggler) run_play(play Play) ! {
 
 @['/play/:id']
 pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
-	mut play := j.backend.get[Play](id.u32()) or {
+	mut play := j.osis.generic_get[Play](id.u32()) or {
 		return ctx.server_error('play with id <${id}> not found')
 	}
 
@@ -223,15 +223,15 @@ pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
 		.error { 'red-500' }
 	}
 
-	j.backend.set[Play](play) or { panic(err) }
+	j.osis.generic_set[Play](play) or { panic(err) }
 
-	script := j.backend.get[Script](play.script_id) or {
+	script := j.osis.generic_get[Script](play.script_id) or {
 		return ctx.server_error('Script with id <${play.script_id}> not found')
 	}
-	trigger := j.backend.get[Trigger](play.trigger_id) or {
+	trigger := j.osis.generic_get[Trigger](play.trigger_id) or {
 		return ctx.server_error('trigger with id <${play.trigger_id}> not found')
 	}
-	mut event := j.backend.get[Event](play.event_id) or {
+	mut event := j.osis.generic_get[Event](play.event_id) or {
 		return ctx.server_error('event with id <${play.event_id}> not found')
 	}
 
@@ -254,7 +254,7 @@ pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
 		}
 	}
 
-	repository := j.backend.get[Repository](event.object_id) or {
+	repository := j.osis.generic_get[Repository](event.object_id) or {
 		Repository{
 			name: ''
 			owner: 'null'
@@ -302,7 +302,7 @@ pub fn (j &Juggler) scripts_create(mut ctx Context) veb.Result {
 
 @['/scripts/create']
 pub fn (mut j Juggler) trigger_row(trigger Trigger) string {
-	mut scripts := j.backend.list[Script]() or { return '' }
+	mut scripts := j.osis.generic_list[Script]() or { return '' }
 	scripts = scripts.filter(it.id in trigger.script_ids)
 	return $tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/trigger_row.html')
 }
