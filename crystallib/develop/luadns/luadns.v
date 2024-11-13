@@ -108,7 +108,7 @@ fn (dns LuaDNS) save_config(config DNSConfig) ! {
 	}
 
 	file.write(content)!
-	repo.commit(msg: 'Update DNS records')!
+	repo.commit('Update DNS records')!
 	repo.pull()!
 	repo.push()!
 }

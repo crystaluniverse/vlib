@@ -154,3 +154,15 @@ fn (mut gitstructure GitStructure) repo_init_from_path_(path string) !GitRepo {
 	return r
 }
 
+// returns the git repository of the working directory by locating the parent directory with `.git`.
+//
+// Returns:
+// - GitRepo: Reference to the initialized repository.
+//
+// Raises:
+// - None: If `.git` is not found in the parent directories.
+pub fn (mut gitstructure GitStructure) get_working_repo() ?GitRepo {
+	curdir := pathlib.get_wd()
+	return gitstructure.repo_init_from_path_(curdir.path) or { none }
+}
+
