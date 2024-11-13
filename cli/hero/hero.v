@@ -79,7 +79,7 @@ fn do() ! {
 	herocmds.cmd_luadns(mut cmd)
 	herocmds.cmd_caddy(mut cmd)
 	herocmds.cmd_zola(mut cmd)
-	herocmds.cmd_juggler(mut cmd)
+	// herocmds.cmd_juggler(mut cmd)
 	herocmds.cmd_generator(mut cmd)
 
 	cmd.setup()
