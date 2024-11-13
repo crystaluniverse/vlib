@@ -1,6 +1,6 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.db.redis as redis_installer
 import freeflowuniverse.crystallib.installers.infra.coredns as coredns_installer

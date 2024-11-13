@@ -3,7 +3,7 @@ module herocmds
 import freeflowuniverse.crystallib.clients.mail
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import cli { Command, Flag }
 import os
