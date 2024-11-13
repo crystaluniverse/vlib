@@ -17,10 +17,19 @@ import os
 // The data is stored with a CRC32 checksum for integrity verification
 // and maintains a linked list of previous values for history tracking
 // Returns the ID used (either x if specified, or auto-incremented if x=0)
-pub fn (mut db OurDB) set(x u32, data []u8) !u32 {
-	location := db.lookup.get(x) or { Location{} } // Get location from lookup table if exists
-	db.set_(x, location, data)!
-	return db.lookup.set(x, location)!
+@[params]
+struct OurDBSetArgs {
+	id ?u32
+	data []u8 @[required]
+}
+
+pub fn (mut db OurDB) set(args OurDBSetArgs) !u32 {
+	if !db.incremental_mode && args.id == none { return error('cannot set id when incremental is disabled') }
+	if db.incremental_mode && args.id != none { return error('cannot set id when incremental is enabled') }
+
+	location := db.lookup.get(args.id) or { Location{} } // Get location from lookup table if exists
+	db.set_(args.id, location, data)!
+	return db.lookup.set(args.id, location)!
 }
 
 // get retrieves data stored at the specified key position
