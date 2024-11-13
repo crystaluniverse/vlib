@@ -22,10 +22,29 @@ pub fn (table Table) html() string {
 	return '
 	<!-- Table Section -->
   <style>
-    /* Table container for scroll */
-    #table-section {
-      flex: 1;
-      overflow-y: auto;
+
+
+    /* Ensure the table section fits within the available space and allows scrolling */
+    table {
+        display: block;
+        height: 100%; /* Adjust height as needed */
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: auto; /* Allow horizontal scrolling */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        table {
+            display: block; /* Treat table as a block element */
+            width: 100%;
+            overflow-x: auto; /* Horizontal scrolling for the table */
+        }
+        
+        /* Adjust table headers and cells for smaller screens */
+        th, td {
+            white-space: nowrap; /* Prevent text wrapping */
+        }
     }
 
     /* Style for the dropdown menu */

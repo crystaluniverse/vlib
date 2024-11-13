@@ -32,6 +32,7 @@ pub struct VideoGrant {
 pub mut:
 		room       string
 		room_join  bool @[json: 'roomJoin']
+		room_list  bool @[json: 'roomList']
 		can_publish bool @[json: 'canPublish']
 		can_publish_data bool @[json: 'canPublishData']
 		can_subscribe bool @[json: 'canSubscribe']

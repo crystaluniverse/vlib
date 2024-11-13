@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2/css/pico.min.css"
+    >
+</head>
+<body>
+    <main class="container">
+        <hgroup>
+            <h1>Chat</h1>
+            <p>with Alice</p>
+        </hgroup>
+        <div class="chat grid">
+            <aside>
+                <nav>
+                    <ul>
+                        <li href="/calendar">Calendar</li>
+                        <li href="/calendar">Calendar</li>
+                        <li href="/calendar">Calendar</li>
+                        <li href="/calendar">Calendar</li>
+                        <li href="/calendar">Calendar</li>
+                        <li href="/calendar">Calendar</li>
+                    </ul>
+                </nav>
+        </aside>
+            <div>
+                <div class="chat-container">
+                    @for message in chat.messages 
+                        @if message.sender == 'Alice'
+                            <div class="message sender-alice">
+                        @else 
+                            <div class="message sender-bob">
+                        @end
+                        <small>@{message.sender}</small>
+                        <p data-tooltip="@{message.timestamp}" data-placement="right">@{message.content}</p>
+                        </div>
+                    @end
+                </div>
+                <!-- Message Input Form -->
+                <form method="post" role="group" action="/send_message">
+                    <input type="text" name="content" placeholder="Type your message here..." required/>
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <style>
+        .chat {
+            grid-template-columns: 1fr 3fr;
+        }
+        .chat-container {
+            margin: auto;
+            margin-bottom: 1rem;
+            max-height: 550px;
+            overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 0.5rem;
+        }
+        .message > p {
+            max-width: min(50vw, 400px);
+            border: solid aliceblue 1px;
+            padding: 10px;
+            width: fit-content;
+            border-radius: 10px;
+        }
+        .sender-alice {
+            text-align: left;
+            color: #007BFF;
+        }
+        .sender-bob {
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-content: end;
+            justify-content: end;
+            align-items: end;
+        }
+    </style>
+</body>
+</html>

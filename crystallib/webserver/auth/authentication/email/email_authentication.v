@@ -20,16 +20,19 @@ pub mut:
 }
 
 pub struct AuthenticationMail {
+	RedirectURLs
 pub:
 	to string // email address being authentcated
  	from    string = 'email_authenticator@crystallib.tf'
  	subject string = 'Verify your email'
  	body    string = 'Please verify your email by clicking the link below'
 	callback string // callback url of authentication link
+	success_url string // where the user will be redirected upon successful authentication
+	failure_url string // where the user will be redirected upon failed authentication
 }
 
 pub fn (mut a StatelessAuthenticator) send_authentication_mail(mail AuthenticationMail) ! {
-	link := a.new_authentication_link(mail.to, mail.callback)!
+	link := a.new_authentication_link(mail.to, mail.callback, mail.RedirectURLs)!
 	button := '<a href="${link}" style="display:inline-block; padding:10px 20px; font-size:16px; color:white; background-color:#4CAF50; text-decoration:none; border-radius:5px;">Verify Email</a>'
 
  	// send email with link in body
@@ -42,10 +45,23 @@ pub fn (mut a StatelessAuthenticator) send_authentication_mail(mail Authenticati
 	) or { return error('Error resolving email address $err') }
 }
 
-fn (a StatelessAuthenticator) new_authentication_link(email string, callback string) !string {
+@[params]
+pub struct RedirectURLs {
+pub:
+	success_url string
+	failure_url string
+}
+
+fn (a StatelessAuthenticator) new_authentication_link(email string, callback string, urls RedirectURLs) !string {
+	if urls.failure_url != '' {
+		panic('implement')
+	}
+
 	// sign email address and expiration of authentication link
 	expiration := time.now().add(5 * time.minute)
  	data := '${email}.${expiration}' // data to be signed
+
+	// QUESTION? should success url also be signed for security?
  	signature := hmac.new(
  		hex.decode(a.secret)!,
  		data.bytes(),
@@ -53,7 +69,12 @@ fn (a StatelessAuthenticator) new_authentication_link(email string, callback str
  		sha256.block_size
  	)
  	encoded_signature := base64.url_encode(signature.bytestr().bytes())
-	return "${callback}/${email}/${expiration.unix_time()}/${encoded_signature}"
+	mut queries := ''
+	if urls.success_url != '' {
+		encoded_url := base64.url_encode(urls.success_url.bytes())
+		queries += '?success_url=${encoded_url}'
+	}
+	return "${callback}/${email}/${expiration.unix_time()}/${encoded_signature}${queries}"
 }
 
 pub struct AuthenticationAttempt {
