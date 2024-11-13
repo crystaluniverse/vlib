@@ -87,16 +87,64 @@ fn (lut LookupTable) get(x u32) !Location {
 	return lut.location_new(lut.data[start..start + entry_size])!
 }
 
+// returns next free entry after incremental id
+fn (mut lut LookupTable) get_next_free_entry() !u32 {
+	table_size := lut.data.len / lut.keysize
+	for i := lut.incremental + 1; i < table_size; i++ {
+		if lut.is_entry_empty(i)! {
+			return i
+		}
+	}
+
+	return error('failed to find free space in look up table')
+}
+
+// check if entry (id) is empty
+fn (mut lut LookupTable) is_entry_empty(id int) !bool {
+	start_pos := id * lut.keysize
+	if lut.lookuppath.len > 0 {
+		mut file := os.open_file(lut.lookuppath, 'r')!
+		file.seek(start_pos, .start)!
+		key_bytes := file.read_bytes(lut.keysize)
+		if key_bytes.len != lut.keysize {
+			return error('key does not exist in lookup table file: ${id}')
+		}
+
+		for b in key_bytes {
+			if b != 0 {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	for i := start_pos; i < start_pos + lut.keysize; i++ {
+		if i == lut.data.len {
+			return error('key does not exist in lookup table data: ${id}')
+		}
+
+		if lut.data[i] != 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Method to set a value at a specific position
 // Returns the ID used (either x if specified, or incremental if x=0)
 fn (mut lut LookupTable) set(x u32, location Location) !u32 {
 	entry_size := int(lut.keysize)
-	
+
 	mut id := x
 	// Only increment if x is 0
 	if x == 0 {
-		lut.incremental++
-		id = lut.incremental
+		// check if position is empty
+
+		id = lut.get_next_free_entry()!
+		lut.incremental = id
+
 		if lut.lookuppath.len > 0 {
 			// Update incremental value in file
 			os.write_file(lut.lookuppath + '.inc', lut.incremental.str())!
@@ -115,9 +163,9 @@ fn (mut lut LookupTable) set(x u32, location Location) !u32 {
 
 		// Write directly to file for disk-based lookup
 		mut file := os.open_file(lut.lookuppath, 'w+')!
-		defer { 
+		defer {
 			file.flush()
-			file.close() 
+			file.close()
 		}
 
 		file.seek(start_pos, .start)!
@@ -158,9 +206,9 @@ fn (mut lut LookupTable) delete(x u32) ! {
 
 		// Write zeros directly to file for disk-based lookup
 		mut file := os.open_file(lut.lookuppath, 'w+')!
-		defer { 
+		defer {
 			file.flush()
-			file.close() 
+			file.close()
 		}
 
 		file.seek(start_pos, .start)!
@@ -293,7 +341,7 @@ fn (mut lut LookupTable) import_sparse(path string) ! {
 
 		lut.set(position, location)!
 	}
-	
+
 	// Import the incremental value
 	inc_str := os.read_file(path + '.inc')!
 	lut.incremental = inc_str.u32()

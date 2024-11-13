@@ -59,9 +59,8 @@ pub fn (mut db OurDB) get_history(x u32, depth u8) ![][]u8 {
 pub fn (mut db OurDB) delete(x u32) ! {
 	db.lookup.delete(x)!
 
-	// TODO: do we actually need to erase data?
-	// location := db.lookup.get(x)! // Get location from lookup table
-	// db.delete_(x, location)!
+	location := db.lookup.get(x)! // Get location from lookup table
+	db.delete_(x, location)!
 }
 
 // close closes the database file
