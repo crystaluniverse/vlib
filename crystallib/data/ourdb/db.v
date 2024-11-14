@@ -19,17 +19,37 @@ import os
 // Returns the ID used (either x if specified, or auto-incremented if x=0)
 @[params]
 struct OurDBSetArgs {
-	id ?u32
+	id   ?u32
 	data []u8 @[required]
 }
 
 pub fn (mut db OurDB) set(args OurDBSetArgs) !u32 {
-	if !db.incremental_mode && args.id == none { return error('cannot set id when incremental is disabled') }
-	if db.incremental_mode && args.id != none { return error('cannot set id when incremental is enabled') }
+	if db.incremental_mode {
+		// if id points to an empty location, return an error
+		// else, overwrite data
+		if id := args.id {
+			// this is an update
+			location := db.lookup.get(id)!
+			if location.position == 0 {
+				return error('cannot set id for insertions when incremental mode is enabled')
+			}
 
-	location := db.lookup.get(args.id) or { Location{} } // Get location from lookup table if exists
-	db.set_(args.id, location, data)!
-	return db.lookup.set(args.id, location)!
+			db.set_(id, location, args.data)!
+			db.lookup.set(id, location)! // TODO: maybe not needed
+			return id
+		}
+
+		// this is an insert
+		id := db.lookup.get_next_id()!
+		db.set_(id, Location{}, args.data)!
+		return id
+	}
+
+	// using key-value mode
+	id := args.id or { return error('id must be provided when incremental is disabled') }
+	location := db.lookup.get(id)! // Get location from lookup table if exists
+	db.set_(id, location, args.data)!
+	return id
 }
 
 // get retrieves data stored at the specified key position
@@ -66,10 +86,9 @@ pub fn (mut db OurDB) get_history(x u32, depth u8) ![][]u8 {
 // This operation zeros out the record but maintains the space in the file
 // Use condense() to reclaim space from deleted records (happens in step after)
 pub fn (mut db OurDB) delete(x u32) ! {
-	db.lookup.delete(x)!
-
 	location := db.lookup.get(x)! // Get location from lookup table
 	db.delete_(x, location)!
+	db.lookup.delete(x)!
 }
 
 // close closes the database file
