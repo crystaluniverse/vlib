@@ -426,8 +426,10 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 	}
 	p.check()
 
-	if p.cat != .dir || !p.exists() {
-		return error('Cannot do path_relative()! if source is not a dir and exists. Now:${source_}')
+	if p.cat != .dir && p.cat != .linkdir  {
+		return error('Cannot do path_relative()! if source is not a dir Now:${source_} is ${p.cat}')
+	} else if !p.exists() {
+		return error('Cannot do path_relative()! if source doesnt exist. Now:${source_}')
 	}
 
 	common := find_simple_common_ancestor([source, linkpath])
