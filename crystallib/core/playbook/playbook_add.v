@@ -117,7 +117,7 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 				action.comments = comments.join('\n')
 				comments = []string{}
 				paramsdata = []string{}
-				mut actionname := line
+				mut actionname := line_strip
 				if line_strip.contains(' ') {
 					actionname = line_strip.all_before(' ').trim_space()
 					paramsdata << line_strip.all_after_first(' ').trim_space()
