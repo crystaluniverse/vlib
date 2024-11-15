@@ -252,27 +252,23 @@ pub fn (mut repo GitRepo) init() ! {
 
 	//TODO: check deploy key has been set in repo
 	// if not do git config core.sshCommand "ssh -i /path/to/deploy_key"
-	if repo.deploysshkey.len == 0 {
-		repo.set_sshkey()!
+	if repo.deploysshkey.len > 0 {
+		repo.set_sshkey(repo.deploysshkey)!
 	}
 	//TODO: check tag or branch set on wanted, and not both
 }
 
 // Set the ssh key on the repo
-fn (mut repo GitRepo) set_sshkey() ! {
-	// TODO: We need to check what should be done here.
-	key := repo.exec('git config core.sshcommand') or {""}
-
-	hashed_key := md5.hexhash(key)
-	file_name := '${hashed_key}.pub'
-	sshkeys_path := os.join_path(os.home_dir(), 'hero/cfg/sshkeys')
-
-	if !os.exists(sshkeys_path) {
-		os.mkdir_all(sshkeys_path)!
+fn (mut repo GitRepo) set_sshkey(key_name string) ! {
+	// will use this dir to find and set key from
+	ssh_dir := os.join_path(os.home_dir(), '.ssh')
+	key := osal.get_ssh_key(key_name, directory: ssh_dir) or {
+		return error('SSH Key with name ${key_name} not found.')
 	}
 
-	osal.exec(cmd: "echo ${key} > ${sshkeys_path}/${file_name}")!
-	repo.deploysshkey = key
+	private_key := key.private_key_path()!
+	cmd := 'git config core.sshcommand "ssh -i ~/.ssh/${private_key.path}"'
+	repo.deploysshkey = key_name
 }
 
 

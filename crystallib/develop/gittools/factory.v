@@ -38,8 +38,8 @@ pub struct GitStructureNewArgs {
 pub mut:
 	coderoot string // Root directory for the code
 	reload   bool   // If true, reloads the GitStructure from disk
+	ssh_key_name string // name of ssh key to be used when loading the gitstructure
 }
-
 
 // Create a new GitStructure instance based on the provided arguments.
 pub fn new(args_ GitStructureNewArgs) !&GitStructure {
@@ -97,7 +97,10 @@ pub fn get(args_ GitStructureNewArgs) !&GitStructure {
 		config:   config
 		coderoot: pathlib.get_dir(path: args.coderoot, create: true)!
 	}
-	gs.load()!
+	
+	gs.load(
+		ssh_key_name: args.ssh_key_name
+	)!
 
 	lock gsinstances {
 		gsinstances[gs.key] = gs

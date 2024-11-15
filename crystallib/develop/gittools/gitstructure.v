@@ -36,6 +36,7 @@ pub mut:
 @[params]
 pub struct StatusUpdateArgs {
 	reload bool
+	ssh_key_name string // name of ssh key to be used when loading
 }
 
 // Loads all repository information from the filesystem and updates from remote if necessary.
@@ -117,6 +118,11 @@ pub fn (mut gitstructure GitStructure) cachereset() ! {
 	}
 }
 
+@[params]
+pub struct RepoInitParams {
+	ssh_key_name string // name of ssh key to be used in repo
+}
+
 // Initializes a Git repository from a given path by locating the parent directory with `.git`.
 //
 // Args:
@@ -127,7 +133,7 @@ pub fn (mut gitstructure GitStructure) cachereset() ! {
 //
 // Raises:
 // - Error: If `.git` is not found in the parent directories.
-fn (mut gitstructure GitStructure) repo_init_from_path_(path string) !GitRepo {
+fn (mut gitstructure GitStructure) repo_init_from_path_(path string, params RepoInitParams) !GitRepo {
 	mypath := pathlib.get_dir(path: path, create: false)!
 	mut parent_path := mypath.parent_find('.git') or {
 		return error('Cannot find .git in parent directories starting from: ${path}')
@@ -149,6 +155,7 @@ fn (mut gitstructure GitStructure) repo_init_from_path_(path string) !GitRepo {
 		provider:      gl.provider
 		account:       gl.account
 		name:          gl.name
+		deploysshkey:  params.ssh_key_name
 	}
 	r.status_update()!
 	return r
