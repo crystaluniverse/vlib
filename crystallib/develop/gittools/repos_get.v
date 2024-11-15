@@ -35,6 +35,7 @@ pub mut:
 // - []&GitRepo: A list of repository references that match the criteria.
 pub fn (mut gitstructure GitStructure) get_repos(args_ ReposGetArgs) ![]&GitRepo {
 	mut args := args_
+	
 	mut res := []&GitRepo{}
 
 	for _, repo in gitstructure.repos {
@@ -45,6 +46,13 @@ pub fn (mut gitstructure GitStructure) get_repos(args_ ReposGetArgs) ![]&GitRepo
 			continue
 		}
 
+		if args.url.len > 0 {
+			// if being mathed from url load repo info
+			git_location := gitstructure.gitlocation_from_url(args.url)!
+			args.account = git_location.account
+			args.provider = git_location.provider
+			args.name = git_location.name
+		}
 		if repo_match_check(repo, args) {
 			res << repo
 		}
@@ -104,7 +112,7 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 	}
 
 	if repositories.len > 1 {
-		repos := repositories.map('- ${it.account}.${it.name}').join_lines()
+		repos := repositories.map('- ${it} ${it.account}.${it.name}').join_lines()
 		return error('Found more than one repository for \n${args}\n${repos}')
 	}
 
