@@ -33,11 +33,13 @@
 
       <!-- Other Room Cards -->
       @for room in lobby.rooms
-      <article class="room-card">
-        <h3>@{room.name}</h3>
+      <a href="@{room.url}" role="button" class="outline room-card">
+        <hgroup>
+          <h3>@{room.name}</h3>
+          <p>@{room.creation_time.format()}</p>
+        </hgroup>
         <p>Participants: 3</p>
-        <p>Started: 10:00 AM</p>
-      </article>
+      </a>
       @end
     </section>
 

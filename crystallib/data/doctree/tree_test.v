@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.data.doctree.collection
 import os
 
-const collections_path = os.dir(@FILE) + '/testdata'
+const collections_path = os.dir(@FILE) + '/testdata/tree_test'
 const tree_name = 'tree_test_tree'
 
 fn test_write_tree() {

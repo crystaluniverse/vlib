@@ -129,3 +129,11 @@ pub fn get_link(args_ GetArgs) !Path {
 	}
 	return p2
 }
+
+
+// gets working directory
+pub fn get_wd() Path {
+	return get_dir(path: os.getwd()) or {
+		panic('This should never happen')
+	}
+}

@@ -32,6 +32,6 @@ pub fn book_edit(name string) ! {
 	if !os.exists(edit_path) {
 		return error("can't find book edit path in ${edit_path}, was it generated properly.")
 	}
-	// console.print_debug('open: ${edit_path}')
-	vscode.open(path: edit_path)!
+	vscode_helper := vscode.new(edit_path)
+	vscode_helper.open()!
 }

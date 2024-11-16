@@ -1,12 +1,12 @@
 module components
 
-struct Swimlane {
+pub struct Swimlane {
     pub:
         name  string
         color ColorEnum
 }
 
-struct Event {
+pub struct Event {
 pub:
     swimlane string
     subject  string
@@ -18,7 +18,7 @@ pub:
     labels   string //comma separated
 }
 
-enum PriorityEnum {
+pub enum PriorityEnum {
     critical
     urgent
     normal
@@ -37,7 +37,7 @@ fn priority_colorenum(prio PriorityEnum) ColorEnum {
 }
 
 
-struct KanbanViewData {
+pub struct KanbanViewData {
 pub:
     swimlanes []Swimlane
     events    []Event

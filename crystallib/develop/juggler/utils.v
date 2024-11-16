@@ -36,7 +36,7 @@ pub fn (mut j Juggler) get_gitea_event(data string) !Event {
 		branch: event.ref.all_after_last('/')
 	}
 
-	repos := j.backend.list[Repository]()!
+	repos := j.osis.generic_list[Repository]()!
 	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host
 		&& it.branch == repo.branch)
 	if repo_lst.len < 1 {
@@ -70,7 +70,7 @@ pub fn (mut j Juggler) get_github_event(data string) !Event {
 		branch: payload.ref.all_after_last('/')
 	}
 
-	repos := j.backend.list[Repository]()!
+	repos := j.osis.generic_list[Repository]()!
 	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host
 		&& it.branch == repo.branch)
 	if repo_lst.len < 1 {

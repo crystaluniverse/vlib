@@ -53,7 +53,7 @@ pub fn configure(cfg Config) !&Juggler {
 	}
 
 	if cfg.reset {
-		j.backend.reset_all()!
+		j.osis.reset_all()!
 	}
 
 	j.load(config_path)!

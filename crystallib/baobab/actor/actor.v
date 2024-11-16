@@ -1,18 +1,18 @@
 module actor
 
-import freeflowuniverse.crystallib.baobab.backend
+import freeflowuniverse.crystallib.baobab.osis
 
 pub struct Actor {
 pub mut:
-	backend backend.Backend
+	osis osis.OSIS
 }
 
 pub struct ActorConfig {
-	backend.BackendConfig
+	osis.OSISConfig
 }
 
 pub fn new(config ActorConfig) !Actor {
 	return Actor{
-		backend: backend.new(config.BackendConfig)!
+		osis: osis.new(config.OSISConfig)!
 	}
 }

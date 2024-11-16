@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed</title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2/css/pico.min.css"
+    >
+</head>
+<body>
+    <main class="container">
+        <section>
+            <h1>Feed</h1>
+            <div class="feed-container">
+                @for post in feed.feed
+                    <article class="post ${post.typ}">
+                        <header>
+                            <h2>${post.user}</h2>
+                            <small>${post.timestamp[..10]} ${post.timestamp[11..16]}</small>
+                        </header>
+                        
+                        @if post.typ == "text"
+                            <p>${post.content}</p>
+                        @else if post.typ == "news" 
+                            <p><strong>News:</strong> ${post.content}</p>
+                        @else if post.typ == "image" 
+                            <figure>
+                                <img src="${post.content}" alt="${post.description}">
+                                <figcaption>${post.description}</figcaption>
+                            </figure>
+                        @end
+                    </article>
+                @end
+            </div>
+        </section>
+    </main>
+    <style>
+        .feed-container {
+            margin: auto;
+            padding: 1rem;
+        }
+        .post {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .post header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .post img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</body>
+</html>

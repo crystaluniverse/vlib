@@ -13,6 +13,7 @@ pub mut:
 }
 
 pub fn (view View) html() string {
+    // println(view.layout)
     return $tmpl('./templates/view.html')
 }
 
