@@ -15,7 +15,7 @@ How to use
 import os
 import import freeflowuniverse.crystallib.conversiontools.docsorter
 
-pdfcleaner.new(
+docsorter.sort(
     path: '/Users/despiegk1/Downloads/pdfcleaner'
     export_path: '/tmp/export'
 )!
@@ -35,6 +35,8 @@ the first is the id, 2nd is name of the collection, the 3e is the name, and 4e i
 
 ## usage through heroscript
 
+> NOT IMPLEMENTED YET
+
 ```yaml
 
 !!docsorter.settings collections_path:'' 
@@ -43,10 +45,5 @@ the first is the id, 2nd is name of the collection, the 3e is the name, and 4e i
 !!docsorter.pdf_copy id:'aaa' name:'ourworld_investment_memo' type:'pdf' collection:'ourworld'
     url:'https://docs.google.com/document/d/1sjh2K6iay86H9Gd83gY04bVDSj4brxADEWQMVmDq0SQ'
     description:'OurWorld Investment Memo Nov 2024'
-
-//the following will download the doc from google drive, will only work if doc is public available
-!!docsorter.canva_export id:'aab' name:'ourworld_investment_memo' type:'pdf' collection:'ourworld'
-    url:'https://docs.google.com/document/d/1sjh2K6iay86H9Gd83gY04bVDSj4brxADEWQMVmDq0SQ'
-    description:'OurWorld Investment Memo Nov 2024'
-
+!!docsorter.canva_export ...
 ```

@@ -1,6 +1,8 @@
 module docsorter
-
+import freeflowuniverse.crystallib.ui.console
 import os
+import json
+import freeflowuniverse.crystallib.lang.python
 
 @[heap]
 pub struct Doc {
@@ -16,6 +18,7 @@ pub struct DocSorter {
 pub mut:
     docs []&Doc
     args Params 
+    py   ?python.PythonEnv @[skip]
 }
 
 @[params]
@@ -24,9 +27,11 @@ pub mut:
     path            string
     instructions    string 
     export_path     string
+    reset bool
+    slides bool //if we exctract slides out of the pdfs
 }
 
-pub fn new(_args Params)! DocSorter {
+pub fn sort(_args Params)! DocSorter {
     mut p := _args
 
 	if p.instructions == ""{
@@ -39,16 +44,23 @@ pub fn new(_args Params)! DocSorter {
     if !os.exists(p.instructions) {
         return error('Instructions file: ${p.instructions} does not exist.')
     }
+    
 
     mut cl:= DocSorter{
         docs: []&Doc{}
         args: p
     }
+
+    if p.slides{
+        cl.py = python.new(name: 'slides')! // a python env with name test
+        mut mypython := cl.py or { panic("can't find python env, was not initializaed") }
+        mypython.pip('ipython,pymupdf')!
+    }
+
+    console.print_debug("args:\n${p}")
     cl.instruct()!
     cl.do()!
-    cl.export()!
     return cl
-
 }
 
 fn (mut pc DocSorter) instruct()! {
@@ -76,7 +88,9 @@ fn (mut pc DocSorter) instruct()! {
         }
 
         pc.docs << &doc
+        //console.print_debug(pc.docs)
     }
+    
 }
 
 fn (mut pc DocSorter) doc_get(id string)! &Doc {
@@ -86,6 +100,18 @@ fn (mut pc DocSorter) doc_get(id string)! &Doc {
         }
     }
     return error('Document with id ${id} not found.')
+}
+
+pub fn (pc DocSorter) doc_exists(id string) bool {
+    //console.print_debug('Checking if document with ID "${id}" exists')
+    for doc in pc.docs {
+        if doc.id == id {
+            //console.print_debug('Found document with ID "${id}"')
+            return true
+        }
+    }
+    //console.print_debug('Document with ID "${id}" not found')
+    return false
 }
 
 fn (mut pc DocSorter) do()! {
@@ -98,6 +124,10 @@ fn (mut pc DocSorter) do()! {
             continue
         }
         id := pc.extract_id(base)!
+        if !pc.doc_exists(id) {
+            console.print_stderr('Skipping file ${file} - no matching document found for ID ${id}')
+            continue
+        }
         mut doc := pc.doc_get(id)!
         doc.path = file
     }
@@ -125,17 +155,36 @@ fn (pc DocSorter) extract_id(filename string)! string {
     return id_with_closing.all_before_last(']')
 }
 
-fn (pc DocSorter) export()! {
+fn (mut pc DocSorter) export()! {
+
+    // If reset is true, remove the collection directory if it exists
+    if pc.args.reset && os.exists(pc.args.export_path) {
+        os.rmdir_all(pc.args.export_path)!
+    }
+            
     for doc in pc.docs {
         if doc.path == '' {
             continue  // Skip docs without path
         }
 
         collection_dir := os.join_path(pc.args.export_path, doc.collection_name)
+        
+
         os.mkdir_all(collection_dir)!
 
         new_name := doc.name + '.pdf'
         new_path := os.join_path(collection_dir, new_name)
         os.cp(doc.path, new_path)!
+        console.print_green('Copy ${doc.path} -> ${new_path}')
+
+        // Create JSON file with Doc content
+        json_content := json.encode(doc)
+        json_path := os.join_path(collection_dir, doc.name + '.json')
+        os.write_file(json_path, json_content)!
+
+        // Check if filename starts with slide_ and call slides_process if it does
+        if pc.args.slides && doc.name.starts_with('slide') {
+            pc.slides_process(new_path)!
+        }
     }
 }
