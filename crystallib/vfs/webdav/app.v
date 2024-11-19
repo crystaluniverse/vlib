@@ -10,6 +10,7 @@ struct App {
 	user_db  map[string]string @[required]
 	root_dir pathlib.Path      @[vweb_global]
 pub mut:
+	lock_manager LockManager
 	server_port int
 	middlewares map[string][]vweb.Middleware
 }
@@ -39,12 +40,12 @@ pub fn new_app(args AppArgs) !&App {
 @[params]
 pub struct RunArgs {
 pub mut:
-	spawn_ bool
+	background bool
 }
 
 pub fn (mut app App) run(args RunArgs) {
 	console.print_green('Running the server on port: ${app.server_port}')
-	if args.spawn_ {
+	if args.background {
 		spawn vweb.run(app, app.server_port)
 	} else {
 		vweb.run(app, app.server_port)

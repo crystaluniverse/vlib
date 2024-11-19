@@ -7,6 +7,55 @@ import encoding.xml
 import freeflowuniverse.crystallib.ui.console
 import net.urllib
 
+
+@['/:path...'; LOCK]
+fn (mut app App) lock_handler(path string) vweb.Result {
+	// Not yet working
+	// TODO: Test with multiple clients
+    resource := app.req.url
+    owner := app.get_header('Owner')
+    if owner.len == 0 {
+        app.set_status(400, 'Bad Request')
+        return app.text('Owner header is required.')
+    }
+
+    depth := if app.get_header('Depth').len > 0 { app.get_header('Depth').int() } else { 0 }
+    timeout := if app.get_header('Timeout').len > 0 { app.get_header('Timeout').int() } else { 3600 }
+
+    token := app.lock_manager.lock(resource, owner, depth, timeout) or {
+        app.set_status(423, 'Locked')
+        return app.text('Resource is already locked.')
+    }
+
+    app.set_status(200, 'OK')
+    app.add_header('Lock-Token', token)
+    return app.text('Lock granted with token: $token')
+}
+
+
+@['/:path...'; UNLOCK]
+fn (mut app App) unlock_handler(path string) vweb.Result {
+	// Not yet working
+	// TODO: Test with multiple clients
+    resource := app.req.url
+    token := app.get_header('Lock-Token')
+	if token.len == 0 {
+		console.print_stderr('Unlock failed: `Lock-Token` header required.')
+		app.set_status(400, 'Bad Request')
+		return app.text('Lock failed: `Owner` header missing.')
+	}
+
+	if app.lock_manager.unlock_with_token(resource, token) {
+		app.set_status(204, 'No Content')
+		return app.text('Lock successfully released')
+	}
+
+	console.print_stderr('Resource is not locked or token mismatch.')
+    app.set_status(409, 'Conflict')
+    return app.text('Resource is not locked or token mismatch')
+}
+
+
 @['/:path...'; get]
 fn (mut app App) get_file(path string) vweb.Result {
 	mut file_path := pathlib.get_file(path: app.root_dir.path + path) or { return app.not_found() }
@@ -146,8 +195,8 @@ fn (mut app App) move(path string) vweb.Result {
 fn (mut app App) mkcol(path string) vweb.Result {
 	mut p := pathlib.get(app.root_dir.path + path)
 	if p.exists() {
-		app.set_status(405, 'Method Not Allowed')
-		return app.text('HTTP 405: Method Not Allowed on existing entry')
+		app.set_status(400, 'Bad Request')
+		return app.text('Another collection exists at ${p.path}')
 	}
 
 	p = pathlib.get_dir(path: p.path, create: true) or {
@@ -164,11 +213,11 @@ fn (mut app App) mkcol(path string) vweb.Result {
 fn (mut app App) options(path string) vweb.Result {
 	app.set_status(200, 'OK')
 	app.add_header('DAV', '1,2')
-	app.add_header('Allow', 'OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, POST, PUT, DELETE, COPY, MOVE')
+	app.add_header('Allow', 'OPTIONS, PROPFIND, MKCOL, GET, HEAD, POST, PUT, DELETE, COPY, MOVE')
 	app.add_header('MS-Author-Via', 'DAV')
 	app.add_header('Access-Control-Allow-Origin', '*')
-	app.add_header('Access-Control-Allow-Methods', 'OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, POST, PUT, DELETE, COPY, MOVE')
-	app.add_header('Access-Control-Allow-Headers', 'Depth, Authorization, Content-Type, Lock-Token, If')
+	app.add_header('Access-Control-Allow-Methods', 'OPTIONS, PROPFIND, MKCOL, GET, HEAD, POST, PUT, DELETE, COPY, MOVE')
+	app.add_header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
 	return app.text('')
 }
 

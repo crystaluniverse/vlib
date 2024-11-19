@@ -19,7 +19,7 @@ mut app := webdav.new_app(root_dir: root_dir, user_db: {username: password}) or 
   exit(1)
 }
 
-app.run(spawn_: true)
+app.run(background: true)
 time.sleep(500 * time.millisecond)
 
 

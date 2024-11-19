@@ -26,7 +26,7 @@ fn test_get() {
 			'mario': '123'
 		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 	time.sleep(1 * time.second)
 	file_name := 'newfile.txt'
 	mut p := pathlib.get_file(path: '${root_dir}/${file_name}', create: true)!
@@ -50,7 +50,7 @@ fn test_put() {
 			'mario': '123'
 		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 	time.sleep(1 * time.second)
 	file_name := 'newfile_put.txt'
 
@@ -86,7 +86,7 @@ fn test_copy() {
 			'mario': '123'
 		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	file_name1, file_name2 := 'newfile_copy1.txt', 'newfile_copy2.txt'
@@ -116,7 +116,7 @@ fn test_move() {
 			'mario': '123'
 		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	file_name1, file_name2 := 'newfile_move1.txt', 'newfile_move2.txt'
@@ -145,7 +145,7 @@ fn test_delete() {
 			'mario': '123'
 		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	file_name := 'newfile_delete.txt'
@@ -169,7 +169,7 @@ fn test_mkcol() {
 			'mario': '123'
 		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	dir_name := 'newdir'
@@ -193,7 +193,7 @@ fn test_propfind() {
 			'mario': '123'
 		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	dir_name := 'newdir'
