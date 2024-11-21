@@ -90,4 +90,7 @@ print(json_string)
 
 ## remark
 
-This is a slow way how to execute python, is about 2 per second on a fast machine, need to implement something where we keep the python in mem and reading from a queue e.g. redis this will go much faster
+This is a slow way how to execute python, is about 2 per second on a fast machine, need to implement something where we keep the python in mem and reading from a queue e.g. redis this will go much faster, but ok for now.
+
+see also examples dir, there is a working example
+
