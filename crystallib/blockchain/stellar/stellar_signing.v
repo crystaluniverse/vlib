@@ -2,23 +2,33 @@ module stellar
 
 import os
 
+pub struct SignerAddress {
+	address string
+	weight  int = 1
+}
+
 @[params]
-pub struct SignersAddArgs {
-pub mut:
-	name    string // name to get source account from
-	pubkeys []string
+pub struct AddSignersArgs {
+pub:
+	source_account_name ?string
+	signers             []SignerAddress
+}
+
+pub fn (mut client StellarClient) add_signers(args AddSignersArgs) ! {
+	for signer in args.signers {
+		client.add_signer(source_account_name: args.source_account_name, signer: signer)!
+	}
 }
 
 @[params]
 pub struct AddSignerArgs {
 pub:
 	source_account_name ?string
-	address             string
-	weight              int = 1
+	signer              SignerAddress
 }
 
 pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
-	if args.weight == 0 {
+	if args.signer.weight == 0 {
 		return error('a signer weight of 0 will remove signer. use remove_signer method to remove signer')
 	}
 
@@ -29,7 +39,7 @@ pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
 	}
 
 	account_keys := client.account_keys_get(account_name)!
-	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.address} --signer-weight ${args.weight} --network ${client.network}'
+	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.signer.address} --signer-weight ${args.signer.weight} --network ${client.network}'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('transaction failed: ${result.output}')
@@ -56,6 +66,13 @@ pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) ! {
 	if result.exit_code != 0 {
 		return error('transaction failed: ${result.output}')
 	}
+}
+
+@[params]
+pub struct SignersAddArgs {
+pub mut:
+	name    string // name to get source account from
+	pubkeys []string
 }
 
 pub fn (mut client StellarClient) signers_add(args SignersAddArgs) ! {

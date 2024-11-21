@@ -2,6 +2,12 @@ module stellar
 
 import os
 
+const mainnet_passphrase = 'Public Global Stellar Network ; September 2015'
+const mainnet_rpc_url = 'https://soroban-rpc.mainnet.stellar.gateway.fm'
+
+const testnet_passphrase = 'Test SDF Network ; September 2015'
+const testnet_rpc_url = 'https://soroban-rpc.testnet.stellar.gateway.fm'
+
 pub struct StellarAccountKeys {
 pub:
 	name       string
@@ -116,25 +122,69 @@ pub fn (mut client StellarClient) default_assetid_get() !string {
 
 @[params]
 pub struct SendPaymentParams {
-	default_assetid string
-	default_from    string
-	to              string
-	amount          f64
+	network        ?string
+	asset          string = 'native'
+	source_account ?string // secret of source account
+	to             string  @[required]
+	amount         f64     @[required]
+
+	signers []string
 }
 
-pub fn (mut client StellarClient) payment_send(params SendPaymentParams) !string {
-	asset_id := if params.default_assetid == '' {
-		client.default_assetid
+pub fn (mut client StellarClient) payment_send(args SendPaymentParams) ! {
+	source_account := if v := args.source_account {
+		v
 	} else {
-		params.default_assetid
+		account_keys := client.account_keys_get(client.default_account)!
+		account_keys.secret_key
 	}
-	default_from := if params.default_from == '' { client.default_from } else { params.default_from }
-	cmd := 'stellar contract invoke --id ${asset_id} --source-account ${default_from} --network ${client.network} -- transfer --to ${params.to} --default_from ${default_from} --amount ${params.amount}'
+
+	network_name := if v := args.network {
+		v
+	} else {
+		client.network
+	}
+
+	rpc_url, passphrase := match network_name {
+		'mainnet' {
+			stellar.mainnet_rpc_url, stellar.mainnet_passphrase
+		}
+		'testnet' {
+			stellar.testnet_rpc_url, stellar.testnet_passphrase
+		}
+		else {
+			return error('invalid network ${network_name}')
+		}
+	}
+
+	cmd := 'stellar tx new payment --asset ${args.asset} --source-account ${source_account} --destination ${args.to} --amount ${args.amount} --build-only --network ${network_name} --rpc-url ${rpc_url} --network-passphrase "${passphrase}"'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('Failed to send payment: ${result.output}')
 	}
-	return result.output.trim_space()
+	mut tx := result.output.trim_space()
+
+	source_address := client.get_address(source_account)!
+	mut signer_address_secret := map[string]string{}
+	signer_address_secret[client.get_address(source_account)!] = source_account
+	for signer in args.signers {
+		signer_address_secret[client.get_address(source_account)!] = signer
+	}
+
+	source_acc := new_horizon_client(network_name)!.get_account(source_address)!
+	mut current_threshold := 0
+	threshold := source_acc.thresholds.med_threshold
+	for signer in source_acc.signers {
+		secret := signer_address_secret[signer.key] or { continue }
+
+		tx = client.sign_tx(tx, secret, network_name)!
+		current_threshold += signer.weight
+		if current_threshold >= threshold {
+			break
+		}
+	}
+
+	client.send_tx(tx, network_name)!
 }
 
 @[params]
@@ -172,5 +222,57 @@ pub fn (mut client StellarClient) merge_accounts(args MergeArgs) ! {
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('Failed to add keys: ${result.output}')
+	}
+}
+
+fn (mut client StellarClient) get_address(secret string) !string {
+	cmd := 'stellar keys address ${secret} --quiet'
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('Failed to get address: ${result.output}')
+	}
+
+	return result.output.trim_space()
+}
+
+fn (mut client StellarClient) sign_tx(tx string, signer string, network string) !string {
+	rpc_url, passphrase := match network {
+		'mainnet' {
+			stellar.mainnet_rpc_url, stellar.mainnet_passphrase
+		}
+		'testnet' {
+			stellar.testnet_rpc_url, stellar.testnet_passphrase
+		}
+		else {
+			return error('invalid network ${network}')
+		}
+	}
+
+	cmd := 'echo "${tx}" | stellar tx sign --sign-with-key ${signer} --network ${network} --rpc-url "${rpc_url}" --network-passphrase "${passphrase}"'
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('Failed to sign transaction: ${result.output}')
+	}
+
+	return result.output.trim_space()
+}
+
+fn (mut client StellarClient) send_tx(tx string, network string) ! {
+	rpc_url, passphrase := match network {
+		'mainnet' {
+			stellar.mainnet_rpc_url, stellar.mainnet_passphrase
+		}
+		'testnet' {
+			stellar.testnet_rpc_url, stellar.testnet_passphrase
+		}
+		else {
+			return error('invalid network ${network}')
+		}
+	}
+
+	cmd := 'echo "${tx} | stellar tx send --network ${network} --rpc-url ${rpc_url} --network-passphrase "${passphrase}"'
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('Failed to send transaction: ${result.output}')
 	}
 }
