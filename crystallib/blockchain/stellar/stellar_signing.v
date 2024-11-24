@@ -18,17 +18,16 @@ pub:
 
 pub fn (mut client StellarClient) add_signers(args AddSignersArgs) ! {
 	mut account_name := client.account_name
-	if v:= args.source_account_name {
+	if v := args.source_account_name {
 		account_name = v
 	}
 
 	for signer in args.signers {
-		tx := client.add_signer(
-			source_account_name: account_name,
-			signer: signer,
-			build_only: true,
+		client.add_signer(
+			source_account_name: account_name
+			signer: signer
 		)!
-		client.sign_tx
+		// client.sign_tx
 	}
 }
 
@@ -37,7 +36,6 @@ pub struct AddSignerArgs {
 pub:
 	source_account_name ?string
 	signer              SignerAddress @[required]
-	build_only bool
 }
 
 pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
@@ -53,9 +51,6 @@ pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
 
 	account_keys := get_account_keys(account_name)!
 	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.signer.address} --signer-weight ${args.signer.weight} --network ${client.network}'
-	if args.build_only {
-		cmd += ' --build-only'
-	}
 
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
