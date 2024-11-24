@@ -2,7 +2,9 @@ module stellar
 
 import os
 
+@[params]
 pub struct SignerAddress {
+pub mut:
 	address string
 	weight  int = 1
 }
@@ -108,16 +110,16 @@ pub fn (mut client StellarClient) signers_add(args SignersAddArgs) ! {
 	'
 	xdrpath := '/tmp/add-multiple-signers.xdr'
 	os.write_file(xdrpath, jsondata)!
-	result := os.execute('stellar xdr from-json --input add-multiple-signers.json --output ${xdrpath}  --network ${client.network}')
+	result := os.execute('stellar xdr from-json --input add-multiple-signers.json --output ${xdrpath}  --network ${client.network} --quiet')
 	if result.exit_code != 0 {
 		return error('Failed to convert JSON to XDR: ${result.output}')
 	}
-	result2 := os.execute('stellar tx sign --input ${xdrpath} --secret SECRET_KEY --output signed-${xdrpath} --network ${client.network}')
+	result2 := os.execute('stellar tx sign --input ${xdrpath} --secret SECRET_KEY --output signed-${xdrpath} --network ${client.network} --quiet')
 	if result2.exit_code != 0 {
 		return error('Failed to sign transaction: ${result2.output}')
 	}
 
-	result3 := os.execute('stellar tx submit --input signed-${xdrpath} --network ${client.network}')
+	result3 := os.execute('stellar tx submit --input signed-${xdrpath} --network ${client.network} --quiet')
 	if result3.exit_code != 0 {
 		return error('Failed to submit transaction: ${result3.output}')
 	}
