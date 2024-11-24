@@ -9,16 +9,13 @@ pub mut:
 }
 
 // TODO: this needs to be configured to work on both networks
-pub fn new_horizon_client(network string) !HorizonClient {
+pub fn new_horizon_client(network StellarNetwork) !HorizonClient {
 	url := match network {
-		'mainnet' {
+		.mainnet {
 			'https://horizon.stellar.org'
 		}
-		'testnet' {
+		.testnet {
 			'https://horizon-testnet.stellar.org/'
-		}
-		else {
-			return error('network must be mainnet or testnet')
 		}
 	}
 

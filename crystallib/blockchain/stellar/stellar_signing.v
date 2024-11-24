@@ -17,8 +17,18 @@ pub:
 }
 
 pub fn (mut client StellarClient) add_signers(args AddSignersArgs) ! {
+	mut account_name := client.account_name
+	if v:= args.source_account_name {
+		account_name = v
+	}
+
 	for signer in args.signers {
-		client.add_signer(source_account_name: args.source_account_name, signer: signer)!
+		tx := client.add_signer(
+			source_account_name: account_name,
+			signer: signer,
+			build_only: true,
+		)!
+		client.sign_tx
 	}
 }
 
@@ -26,7 +36,8 @@ pub fn (mut client StellarClient) add_signers(args AddSignersArgs) ! {
 pub struct AddSignerArgs {
 pub:
 	source_account_name ?string
-	signer              SignerAddress
+	signer              SignerAddress @[required]
+	build_only bool
 }
 
 pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
@@ -34,14 +45,18 @@ pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
 		return error('a signer weight of 0 will remove signer. use remove_signer method to remove signer')
 	}
 
-	mut account_name := client.default_account
+	mut account_name := client.account_name
 
 	if v := args.source_account_name {
 		account_name = v
 	}
 
-	account_keys := client.account_keys_get(account_name)!
+	account_keys := get_account_keys(account_name)!
 	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.signer.address} --signer-weight ${args.signer.weight} --network ${client.network}'
+	if args.build_only {
+		cmd += ' --build-only'
+	}
+
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('transaction failed: ${result.output}')
@@ -56,13 +71,12 @@ pub:
 }
 
 pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) ! {
-	mut account_name := client.default_account
-
+	mut account_name := client.account_name
 	if v := args.source_account_name {
 		account_name = v
 	}
 
-	account_keys := client.account_keys_get(account_name)!
+	account_keys := get_account_keys(account_name)!
 	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.address} --signer-weight 0 --network ${client.network}'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
