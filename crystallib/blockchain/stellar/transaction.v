@@ -41,8 +41,9 @@ pub mut:
 
 pub struct OperationBody {
 pub mut:
-	set_options ?SetOptions
-	payment     ?PaymentOptions
+	set_options 	?SetOptions
+	create_account 	?TXCreateAccount
+	payment     	?PaymentOptions
 }
 
 pub struct TransactionOperation {
@@ -94,11 +95,15 @@ pub mut:
 
 fn (mut tx TransactionEnvelope) add_operation(source_account ?string, op OperationBody) ! {
 	mut ops := 0
-	if _ := op.set_options {
+	if op.set_options != none {
 		ops += 1
 	}
 
 	if op.payment != none {
+		ops += 1
+	}
+
+	if op.create_account != none {
 		ops += 1
 	}
 
@@ -151,4 +156,21 @@ fn (tx TransactionEnvelope) xdr() !string {
 	})
 
 	return encode_tx_to_xdr(json_encoding)!
+}
+
+@[params]
+// Struct for the "create_account" request
+pub struct TXCreateAccount {
+pub mut:
+  destination      	string	@[required] // The public key of the account to create
+  starting_balance 	u64 	@[required] // Use f64 for the raw balance (in this case, 100.0)
+}
+
+fn (mut tx TransactionEnvelope) add_create_account_op(source_account ?string, args TXCreateAccount) ! {
+	body := OperationBody{
+		create_account: args
+	}
+
+	tx.add_operation(source_account, body)!
+	tx.tx.fee += 100
 }

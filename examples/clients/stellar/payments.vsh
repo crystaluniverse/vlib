@@ -14,16 +14,22 @@ mut client := stellar.new_client(
 mut hash := client.update_threshold(med_threshold: 6)!
 println('update threshold tx hash: ${hash}')
 
-hash = client.add_signers(signers: [stellar.TXSigner{
-	key: 'GBSQW44E3AHYFF5G2M7T64R3F25SUW3B64OXCTAGWS2J2ZWV67WGAI5V'
+signer1 := stellar.new_signer(
+	key: "GBSQW44E3AHYFF5G2M7T64R3F25SUW3B64OXCTAGWS2J2ZWV67WGAI5V",
 	weight: 3
-}, stellar.TXSigner{
-	key: 'GAXPE7LWNHKD4QKWJYCS5H4GZJHCYTLG45JOU3KRDZR65XSZTQK7OYLG'
+)
+
+signer2 := stellar.new_signer(
+	key: "GAXPE7LWNHKD4QKWJYCS5H4GZJHCYTLG45JOU3KRDZR65XSZTQK7OYLG",
 	weight: 4
-}, stellar.TXSigner{
-	key: 'GANUFHCJIDAI347KLXHC6OK3H3Z7YRJQLH6IRBOHLRZ56KJ27LLTXOD7'
+)
+
+signer3 := stellar.new_signer(
+	key: "GANUFHCJIDAI347KLXHC6OK3H3Z7YRJQLH6IRBOHLRZ56KJ27LLTXOD7",
 	weight: 5
-}])!
+)
+
+mut hash := client.add_signers(signers: [signer1, signer2, signer3])!
 println('add signer tx hash: ${hash}')
 
 hash = client.payment_send(

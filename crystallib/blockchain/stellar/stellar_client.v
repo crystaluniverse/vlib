@@ -8,13 +8,6 @@ const mainnet_rpc_url = 'https://soroban-rpc.mainnet.stellar.gateway.fm'
 const testnet_passphrase = 'Test SDF Network ; September 2015'
 const testnet_rpc_url = 'https://soroban-rpc.testnet.stellar.gateway.fm'
 
-pub struct StellarAccountKeys {
-pub:
-	name       string
-	public_key string
-	secret_key string
-}
-
 pub enum StellarNetwork {
 	mainnet
 	testnet
@@ -49,6 +42,8 @@ pub fn new_client(config NewStellarClientArgs) !StellarClient {
 	// Cache the account keys
 	if config.cache {
 		cl.add_keys()!
+	} else {
+		remove_cached_keys(name: cl.account_name, network: cl.network)!
 	}
 
 	return cl
@@ -68,39 +63,18 @@ pub fn get_client(config GetStellarClientArgs) !StellarClient {
 	}
 
 	mut keys := get_account_keys(cl.account_name)!
-	cl.account_secret = keys.secret_key
-	cl.account_address = keys.public_key
+	cl.account_secret = keys.secret
+	cl.account_address = keys.address
 
 	return cl
 }
 
-pub fn (mut client StellarClient) add_keys() ! {
+fn (mut client StellarClient) add_keys() ! {
 	cmd := 'SOROBAN_SECRET_KEY=${client.account_secret} stellar keys add ${client.account_name} --secret-key --quiet'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('Failed to add keys: ${result.output}')
 	}
-}
-
-pub fn (mut client StellarClient) account_new(name string) !StellarAccountKeys {
-	// Generate the keys
-	result := os.execute('stellar keys generate ${name} --network ${client.network} --quiet')
-	if result.exit_code != 0 {
-		return error('Failed to generate keys: ${result.output}')
-	}
-
-	return get_account_keys(name)
-}
-
-pub fn (mut client StellarClient) account_fund(name string) !u64 {
-	result := os.execute('stellar keys fund ${name} --network ${client.network} --quiet')
-	if result.exit_code != 0 {
-		return error('Failed to fund account, maybe you are not on testnet: ${result.output}')
-	}
-
-	// TODO: check funding is there and return
-
-	return 0
 }
 
 pub fn (mut client StellarClient) default_assetid_get() !string {
@@ -131,7 +105,7 @@ pub fn (mut client StellarClient) payment_send(args SendPaymentParams) !string {
 		v
 	} else {
 		account_keys := get_account_keys(client.account_name)!
-		account_keys.secret_key
+		account_keys.secret
 	}
 
 	network_config := get_network_config(client.network)!
@@ -197,7 +171,7 @@ pub fn (mut client StellarClient) merge_accounts(args MergeArgs) ! {
 	}
 
 	account_keys := get_account_keys(account_name)!
-	cmd := 'stellar tx new account-merge --source-account ${account_keys.secret_key} --account ${args.address} --network ${client.network} --quiet'
+	cmd := 'stellar tx new account-merge --source-account ${account_keys.secret} --account ${args.address} --network ${client.network} --quiet'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('Failed to add keys: ${result.output}')
@@ -228,4 +202,24 @@ fn (mut client StellarClient) send_tx(tx string) !string {
 	mut horizon_client := new_horizon_client(client.network)!
 	tx_info := horizon_client.get_last_transaction(client.account_address)!
 	return tx_info.embedded.records[0].hash
+}
+
+@[params]
+pub struct StellarCreateAccountArgs {
+pub mut:
+	address          string
+	starting_balance u64
+}
+
+pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) !string {
+	mut tx := client.new_transaction_envelope(client.account_address)!
+	tx.add_create_account_op(
+		client.account_address,
+		destination: args.address,
+		starting_balance: args.starting_balance
+	)!
+
+	mut xdr := tx.xdr()!
+	xdr = client.sign_tx(xdr, client.account_secret)!
+	return client.send_tx(xdr)!
 }
