@@ -38,7 +38,21 @@ pub fn (self HorizonClient) get_account(pubkey string) !StellarAccount {
 		return error('Failed to create StellarAccount: error: ${result}')
 	}
 
-	// println(a)
-
 	return a
+}
+
+pub fn (self HorizonClient) get_last_transaction(address string) !TransactionInfo {
+	mut client := httpconnection.new(name: 'horizon', url: self.url)!
+
+	result := client.get_json(
+		prefix: 'accounts/${address}/transactions?limit=1&order=desc'
+		debug: true
+		cache_disable: false
+	)!
+
+	tx := json.decode(TransactionInfo, result) or {
+		return error('Failed to decode TransactionInfo: error: ${result}')
+	}
+
+	return tx
 }

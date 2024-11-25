@@ -1,61 +1,72 @@
 module stellar
 
-import os
-
-@[params]
-pub struct SignerAddress {
-pub mut:
-	address string
-	weight  int = 1
-}
-
 @[params]
 pub struct AddSignersArgs {
 pub:
 	source_account_name ?string
-	signers             []SignerAddress
+	signers             []TXSigner
 }
 
-pub fn (mut client StellarClient) add_signers(args AddSignersArgs) ! {
+pub fn (mut client StellarClient) add_signers(args AddSignersArgs) !string {
 	mut account_name := client.account_name
 	if v := args.source_account_name {
 		account_name = v
 	}
+	account_keys := get_account_keys(account_name)!
 
+	mut tx := client.new_transaction_envelope(account_keys.public_key)!
 	for signer in args.signers {
-		client.add_signer(
-			source_account_name: account_name
+		if signer.key == tx.tx.source_account {
+			tx.add_set_options_op(
+				set_options: SetOptions{
+					master_weight: signer.weight
+				}
+			)!
+			continue
+		}
+
+		tx.add_signer(
 			signer: signer
 		)!
-		// client.sign_tx
 	}
+
+	mut xdr := tx.xdr()!
+	xdr = client.sign_tx(xdr, account_keys.secret_key)!
+	return client.send_tx(xdr)!
 }
 
 @[params]
-pub struct AddSignerArgs {
-pub:
+pub struct UpdateThresholdArgs {
+pub mut:
 	source_account_name ?string
-	signer              SignerAddress @[required]
+	low_threshold       ?int
+	med_threshold       ?int
+	high_threshold      ?int
 }
 
-pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
-	if args.signer.weight == 0 {
-		return error('a signer weight of 0 will remove signer. use remove_signer method to remove signer')
+pub fn (mut client StellarClient) update_threshold(args UpdateThresholdArgs) !string {
+	if args.low_threshold == none && args.med_threshold == none && args.high_threshold == none {
+		return error('at least one threshold must be set')
 	}
 
 	mut account_name := client.account_name
-
 	if v := args.source_account_name {
 		account_name = v
 	}
-
 	account_keys := get_account_keys(account_name)!
-	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.signer.address} --signer-weight ${args.signer.weight} --network ${client.network}'
 
-	result := os.execute(cmd)
-	if result.exit_code != 0 {
-		return error('transaction failed: ${result.output}')
-	}
+	mut tx := client.new_transaction_envelope(account_keys.public_key)!
+	tx.add_set_options_op(
+		set_options: SetOptions{
+			low_threshold: args.low_threshold
+			med_threshold: args.med_threshold
+			high_threshold: args.high_threshold
+		}
+	)!
+
+	mut xdr := tx.xdr()!
+	xdr = client.sign_tx(xdr, account_keys.secret_key)!
+	return client.send_tx(xdr)!
 }
 
 @[params]
@@ -65,76 +76,24 @@ pub:
 	address             string
 }
 
-pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) ! {
+pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) !string {
 	mut account_name := client.account_name
 	if v := args.source_account_name {
 		account_name = v
 	}
-
 	account_keys := get_account_keys(account_name)!
-	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.address} --signer-weight 0 --network ${client.network}'
-	result := os.execute(cmd)
-	if result.exit_code != 0 {
-		return error('transaction failed: ${result.output}')
-	}
-}
 
-@[params]
-pub struct SignersAddArgs {
-pub mut:
-	name    string // name to get source account from
-	pubkeys []string
-}
-
-pub fn (mut client StellarClient) signers_add(args SignersAddArgs) ! {
-	jsondata := '
-	{
-		"source_account": "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DRQSV5HRTJNBGKZ2G24AN4IQS",
-		"operations": [
-			{
-			"type": "setOptions",
-			"signer": {
-				"ed25519PublicKey": "GCFDZK7XWETBVW7LYP2NNCFTELIG44QJJN6O7Q7VRP6WUIXTD6NVZ2GS",
-				"weight": 1
+	mut tx := client.new_transaction_envelope(account_keys.public_key)!
+	tx.add_set_options_op(
+		set_options: SetOptions{
+			signer: TXSigner{
+				key: args.address
+				weight: 0
 			}
-			},
-			{
-			"type": "setOptions",
-			"signer": {
-				"ed25519PublicKey": "GBAQ3GILDSCFDJFGWSHDTXPOJL4FGSKGK3HDJZPZWIR7LU3JMPCRH2W7",
-				"weight": 1
-			}
-			}
-		],
-		"fee": 200,
-		"sequence_number": "123456789",
-		"memo": {
-			"type": "none"
-		},
-		"time_bounds": {
-			"min_time": 0,
-			"max_time": 0
 		}
-	}
-	'
-	xdrpath := '/tmp/add-multiple-signers.xdr'
-	os.write_file(xdrpath, jsondata)!
-	result := os.execute('stellar xdr from-json --input add-multiple-signers.json --output ${xdrpath}  --network ${client.network} --quiet')
-	if result.exit_code != 0 {
-		return error('Failed to convert JSON to XDR: ${result.output}')
-	}
-	result2 := os.execute('stellar tx sign --input ${xdrpath} --secret SECRET_KEY --output signed-${xdrpath} --network ${client.network} --quiet')
-	if result2.exit_code != 0 {
-		return error('Failed to sign transaction: ${result2.output}')
-	}
+	)!
 
-	result3 := os.execute('stellar tx submit --input signed-${xdrpath} --network ${client.network} --quiet')
-	if result3.exit_code != 0 {
-		return error('Failed to submit transaction: ${result3.output}')
-	}
-
-	// TODO: now check the status of the account to see if the signing has been added
-
-	os.rm(xdrpath)!
-	os.rm('signed-${xdrpath}')!
+	mut xdr := tx.xdr()!
+	xdr = client.sign_tx(xdr, account_keys.secret_key)!
+	return client.send_tx(xdr)!
 }

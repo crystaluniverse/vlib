@@ -1,4 +1,5 @@
 module stellar
+
 import os
 
 pub fn get_address(secret string) !string {
@@ -37,14 +38,24 @@ pub fn get_account_keys(name string) !StellarAccountKeys {
 pub fn get_network_config(network StellarNetwork) !NetworkConfig {
 	rpc_url, passphrase := match network {
 		.mainnet {
-			stellar.mainnet_rpc_url, stellar.mainnet_passphrase
+			mainnet_rpc_url, mainnet_passphrase
 		}
 		.testnet {
-			stellar.testnet_rpc_url, stellar.testnet_passphrase
+			testnet_rpc_url, testnet_passphrase
 		}
 	}
 	return NetworkConfig{
 		url: rpc_url
 		passphrase: passphrase
 	}
+}
+
+pub fn encode_tx_to_xdr(json_encoding string) !string {
+	cmd := "echo '${json_encoding}' | stellar xdr encode --type TransactionEnvelope"
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('failed to encode tx: ${result.output}')
+	}
+
+	return result.output.trim_space()
 }

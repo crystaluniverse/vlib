@@ -23,25 +23,25 @@ pub enum StellarNetwork {
 pub struct StellarClient {
 pub mut:
 	network         StellarNetwork
-	account_name	string
-	account_secret 	string
+	account_name    string
+	account_secret  string
 	account_address string
 }
 
 @[params]
 pub struct NewStellarClientArgs {
 pub:
-	network         StellarNetwork = .testnet
-	account_name	string
-	account_secret 	string @[required]
-	cache 			bool = true // If you do not want to cache account keys, set to false. If it is true and you send the same account name twice, the saved keys will be overwritten.
+	network        StellarNetwork = .testnet
+	account_name   string
+	account_secret string         @[required]
+	cache          bool = true // If you do not want to cache account keys, set to false. If it is true and you send the same account name twice, the saved keys will be overwritten.
 }
 
 pub fn new_client(config NewStellarClientArgs) !StellarClient {
 	account_address := get_address(config.account_secret)!
 	mut cl := StellarClient{
-		network: config.network,
-		account_name: config.account_name,
+		network: config.network
+		account_name: config.account_name
 		account_secret: config.account_secret
 		account_address: account_address
 	}
@@ -57,14 +57,14 @@ pub fn new_client(config NewStellarClientArgs) !StellarClient {
 @[params]
 pub struct GetStellarClientArgs {
 pub:
-	network         StellarNetwork = .testnet
-	account_name	string
+	network      StellarNetwork = .testnet
+	account_name string
 }
 
 pub fn get_client(config GetStellarClientArgs) !StellarClient {
 	mut cl := StellarClient{
-		network: config.network,
-		account_name: config.account_name,
+		network: config.network
+		account_name: config.account_name
 	}
 
 	mut keys := get_account_keys(cl.account_name)!
@@ -114,19 +114,19 @@ pub fn (mut client StellarClient) default_assetid_get() !string {
 @[params]
 pub struct SendPaymentParams {
 pub mut:
-	asset          			string = 'native'
-	source_account_secret 	?string // secret of source account
-	to             			string  @[required]
-	amount         			int     @[required]
-	signers 				[]string // secret of signers
+	asset                 string = 'native'
+	source_account_secret ?string // secret of source account
+	to                    string   @[required]
+	amount                int      @[required]
+	signers               []string // secret of signers
 }
 
 pub struct NetworkConfig {
-	url string
+	url        string
 	passphrase string
 }
 
-pub fn (mut client StellarClient) payment_send(args SendPaymentParams) ! {
+pub fn (mut client StellarClient) payment_send(args SendPaymentParams) !string {
 	source_account := if v := args.source_account_secret {
 		v
 	} else {
@@ -162,7 +162,7 @@ pub fn (mut client StellarClient) payment_send(args SendPaymentParams) ! {
 		}
 	}
 
-	client.send_tx(tx)!
+	return client.send_tx(tx)!
 }
 
 // TODO: Check what is wrong with this method.
@@ -216,7 +216,7 @@ fn (mut client StellarClient) sign_tx(tx string, signer string) !string {
 	return result.output.trim_space()
 }
 
-fn (mut client StellarClient) send_tx(tx string) ! {
+fn (mut client StellarClient) send_tx(tx string) !string {
 	network_config := get_network_config(client.network)!
 
 	cmd := 'echo "${tx}" | stellar tx send --network ${client.network} --rpc-url ${network_config.url} --network-passphrase "${network_config.passphrase}" --filter-logs=ERROR'
@@ -224,4 +224,8 @@ fn (mut client StellarClient) send_tx(tx string) ! {
 	if result.exit_code != 0 {
 		return error('Failed to send transaction: ${result.output}')
 	}
+
+	mut horizon_client := new_horizon_client(client.network)!
+	tx_info := horizon_client.get_last_transaction(client.account_address)!
+	return tx_info.embedded.records[0].hash
 }

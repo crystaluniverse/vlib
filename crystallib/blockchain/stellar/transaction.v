@@ -1,24 +1,27 @@
 module stellar
 
-import json
-import os
+import x.json2
 
-struct TimeBounds {
+pub struct TimeBounds {
+pub:
 	min_time u64
 	max_time u64
 }
 
-struct Condition {
+pub struct Condition {
+pub:
 	time TimeBounds
 }
 
-struct TXSigner {
+@[params]
+pub struct TXSigner {
 pub:
 	key    string
 	weight int = 1
 }
 
-struct SetOptions {
+pub struct SetOptions {
+pub mut:
 	inflation_dest ?string
 	clear_flags    ?int
 	set_flags      ?int
@@ -31,24 +34,27 @@ struct SetOptions {
 }
 
 // a placeholder.
-struct PaymentOptions {
+pub struct PaymentOptions {
+pub mut:
 	to string
 }
 
-struct OperationBody {
+pub struct OperationBody {
+pub mut:
 	set_options ?SetOptions
 	payment     ?PaymentOptions
 }
 
-struct TransactionOperation {
+pub struct TransactionOperation {
+pub mut:
 	source_account ?string
 	body           OperationBody
 }
 
-struct Transaction {
+pub struct Transaction {
 pub mut:
 	source_account string
-	fee            int = 100
+	fee            int
 	seq_num        u64
 	cond           Condition
 	memo           string = 'none'
@@ -57,7 +63,7 @@ pub mut:
 }
 
 // @[params]
-// struct NewTransactionArgs{
+pub // struct NewTransactionArgs{
 //     source_account string @[required]
 //     fee
 // }
@@ -76,8 +82,8 @@ fn (mut c StellarClient) new_transaction_envelope(source_account_address string)
 	}
 }
 
-struct TransactionEnvelope {
-mut:
+pub struct TransactionEnvelope {
+pub mut:
 	tx         Transaction
 	signatures []string
 }
@@ -107,7 +113,8 @@ fn (mut tx TransactionEnvelope) add_operation(source_account ?string, op Operati
 }
 
 @[params]
-struct TXAddSignerArgs {
+pub struct TXAddSignerArgs {
+pub:
 	source_account ?string
 	signer         TXSigner
 }
@@ -120,10 +127,11 @@ fn (mut tx TransactionEnvelope) add_signer(args TXAddSignerArgs) ! {
 	}
 
 	tx.add_operation(args.source_account, body)!
+	tx.tx.fee += 100
 }
 
 @[params]
-struct TXAddSetOptionsOperationArgs {
+pub struct TXAddSetOptionsOperationArgs {
 	source_account ?string
 	set_options    SetOptions
 }
@@ -134,18 +142,13 @@ fn (mut tx TransactionEnvelope) add_set_options_op(args TXAddSetOptionsOperation
 	}
 
 	tx.add_operation(args.source_account, body)!
+	tx.tx.fee += 100
 }
 
-fn (tx TransactionEnvelope) encode() !string {
-	json_encoding := json.encode({
+fn (tx TransactionEnvelope) xdr() !string {
+	json_encoding := json2.encode({
 		'tx': tx
 	})
 
-	cmd := "echo '${json_encoding}' | stellar xdr encode --type TransactionEnvelope"
-	result := os.execute(cmd)
-	if result.exit_code != 0 {
-		return error('failed to encode tx: ${result.output}')
-	}
-
-	return result.output.trim_space()
+	return encode_tx_to_xdr(json_encoding)!
 }

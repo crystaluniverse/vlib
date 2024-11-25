@@ -11,10 +11,7 @@ mut client := stellar.new_client(
 
 // mut client := stellar.get_client(account_name:"default", network: .testnet)!
 
-mut hash := client.update_threshold(med_threshold: 6)!
-println('update threshold tx hash: ${hash}')
-
-hash = client.add_signers(signers: [stellar.TXSigner{
+mut hash := client.add_signers(signers: [stellar.TXSigner{
 	key: 'GBSQW44E3AHYFF5G2M7T64R3F25SUW3B64OXCTAGWS2J2ZWV67WGAI5V'
 	weight: 3
 }, stellar.TXSigner{
@@ -26,12 +23,5 @@ hash = client.add_signers(signers: [stellar.TXSigner{
 }])!
 println('add signer tx hash: ${hash}')
 
-hash = client.payment_send(
-	to: "GBSQW44E3AHYFF5G2M7T64R3F25SUW3B64OXCTAGWS2J2ZWV67WGAI5V",
-	amount: int(200),
-	signers: [
-		"SBUG7WNI6EACVNFQBWE74JDBB2PI5FSEMPMHQJSFZTLWO2XORDSIW6PV",
-		"SDFN5S2WBCFBZR675KZJM4FKYQ5WGNTPRUP4H3NR5DMHL753UBLUDDGF",
-	]
-)!
-println('payment tx hash: ${hash}')
+hash = client.remove_signer(address: 'GBSQW44E3AHYFF5G2M7T64R3F25SUW3B64OXCTAGWS2J2ZWV67WGAI5V')!
+println('remove signer tx hash: ${hash}')
