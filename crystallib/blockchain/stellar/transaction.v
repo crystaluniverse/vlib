@@ -39,11 +39,13 @@ pub mut:
 	to string
 }
 
+@[noinit]
 pub struct OperationBody {
 pub mut:
-	set_options 	?SetOptions
-	create_account 	?TXCreateAccount
-	payment     	?PaymentOptions
+	set_options    ?SetOptions
+	create_account ?TXCreateAccount
+	payment        ?PaymentOptions
+	change_trust   ?ChangeTrust
 }
 
 pub struct TransactionOperation {
@@ -63,11 +65,57 @@ pub mut:
 	ext            string = 'v0'
 }
 
-// @[params]
-pub // struct NewTransactionArgs{
-//     source_account string @[required]
-//     fee
-// }
+pub struct ChangeTrust {
+pub mut:
+	line  ChangeTrustLine
+	limit ?u64
+}
+
+fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
+	if args.asset_code.len > 12 {
+		return error('asset code must be less than 12 bytes')
+	}
+
+	asset := Asset{
+		asset_code: args.asset_code
+		issuer: args.issuer
+	}
+
+	mut change_trust_line := ChangeTrustLine{}
+	if args.asset_code.len <= 4 {
+		change_trust_line.credit_alphanum4 = asset
+	} else {
+		change_trust_line.credit_alphanum12 = asset
+	}
+
+	body := OperationBody{
+		change_trust: ChangeTrust{
+			line: change_trust_line
+			limit: args.limit
+		}
+	}
+
+	tx.add_operation(args.source_account, body)!
+	tx.tx.fee += 100
+}
+
+@[noinit]
+pub struct ChangeTrustLine {
+pub mut:
+	credit_alphanum4  ?Asset
+	credit_alphanum12 ?Asset
+}
+
+pub enum AssetType {
+	credit_alphanum4
+	credit_alphanum12
+}
+
+pub struct Asset {
+pub mut:
+	asset_code string
+	issuer     string
+}
 
 fn (mut c StellarClient) new_transaction_envelope(source_account_address string) !TransactionEnvelope {
 	hcl := new_horizon_client(c.network)!
@@ -93,20 +141,15 @@ pub mut:
 // 	operation
 // }
 
+// TODO: rewrite operations checking
 fn (mut tx TransactionEnvelope) add_operation(source_account ?string, op OperationBody) ! {
 	mut ops := 0
-	if op.set_options != none {
-		ops += 1
-	}
 
-	if op.payment != none {
-		ops += 1
+	$for field in op.fields {
+		if op.$(field.name) != none {
+			ops += 1
+		}
 	}
-
-	if op.create_account != none {
-		ops += 1
-	}
-
 	if ops != 1 {
 		return error('only one operation type must be added per operation, found ${ops}')
 	}
@@ -158,12 +201,12 @@ fn (tx TransactionEnvelope) xdr() !string {
 	return encode_tx_to_xdr(json_encoding)!
 }
 
-@[params]
 // Struct for the "create_account" request
+@[params]
 pub struct TXCreateAccount {
 pub mut:
-  destination      	string	@[required] // The public key of the account to create
-  starting_balance 	u64 	@[required] // Use f64 for the raw balance (in this case, 100.0)
+	destination      string @[required] // The public key of the account to create
+	starting_balance u64    @[required]    // Use f64 for the raw balance (in this case, 100.0)
 }
 
 fn (mut tx TransactionEnvelope) add_create_account_op(source_account ?string, args TXCreateAccount) ! {

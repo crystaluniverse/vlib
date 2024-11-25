@@ -213,9 +213,8 @@ pub mut:
 
 pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) !string {
 	mut tx := client.new_transaction_envelope(client.account_address)!
-	tx.add_create_account_op(
-		client.account_address,
-		destination: args.address,
+	tx.add_create_account_op(client.account_address,
+		destination: args.address
 		starting_balance: args.starting_balance
 	)!
 
@@ -223,3 +222,29 @@ pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) 
 	xdr = client.sign_tx(xdr, client.account_secret)!
 	return client.send_tx(xdr)!
 }
+
+@[params]
+pub struct AddChangeTrustArgs {
+pub mut:
+	asset_code     string  @[required]
+	issuer         string  @[required]
+	limit          u64 = (u64(1) << 63) - 1
+	source_account ?string
+}
+
+pub fn (mut client StellarClient) add_trust_line(args AddChangeTrustArgs) !string {
+	mut tx := client.new_transaction_envelope(client.account_address)!
+	tx.add_change_trust_op(
+		asset_code: args.asset_code
+		issuer: args.issuer
+		limit: args.limit
+		source_account: args.source_account
+	)!
+
+	mut xdr := tx.xdr()!
+	xdr = client.sign_tx(xdr, client.account_secret)!
+	return client.send_tx(xdr)!
+}
+
+// pub fn(mut client StellarClient) make_sell_offer()!
+// pub fn(mut client StellarClient) make_buy_offer()!
