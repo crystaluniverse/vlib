@@ -26,16 +26,16 @@ pub struct NewStellarClientArgs {
 pub:
 	network        StellarNetwork = .testnet
 	account_name   string
-	account_secret string         @[required]
+	account_secret string @[required]
 	cache          bool = true // If you do not want to cache account keys, set to false. If it is true and you send the same account name twice, the saved keys will be overwritten.
 }
 
 pub fn new_client(config NewStellarClientArgs) !StellarClient {
 	account_address := get_address(config.account_secret)!
 	mut cl := StellarClient{
-		network: config.network
-		account_name: config.account_name
-		account_secret: config.account_secret
+		network:         config.network
+		account_name:    config.account_name
+		account_secret:  config.account_secret
 		account_address: account_address
 	}
 
@@ -58,7 +58,7 @@ pub:
 
 pub fn get_client(config GetStellarClientArgs) !StellarClient {
 	mut cl := StellarClient{
-		network: config.network
+		network:      config.network
 		account_name: config.account_name
 	}
 
@@ -90,8 +90,8 @@ pub struct SendPaymentParams {
 pub mut:
 	asset                 string = 'native'
 	source_account_secret ?string // secret of source account
-	to                    string   @[required]
-	amount                int      @[required]
+	to                    string @[required]
+	amount                int    @[required]
 	signers               []string // secret of signers
 }
 
@@ -136,7 +136,8 @@ pub fn (mut client StellarClient) payment_send(args SendPaymentParams) !string {
 		}
 	}
 
-	return client.send_tx(tx)!
+	tx_info := client.send_tx(tx)!
+	return tx_info.hash
 }
 
 // TODO: Check what is wrong with this method.
@@ -190,7 +191,7 @@ fn (mut client StellarClient) sign_tx(tx string, signer string) !string {
 	return result.output.trim_space()
 }
 
-fn (mut client StellarClient) send_tx(tx string) !string {
+fn (mut client StellarClient) send_tx(tx string) !TransactionRecord {
 	network_config := get_network_config(client.network)!
 
 	cmd := 'echo "${tx}" | stellar tx send --network ${client.network} --rpc-url ${network_config.url} --network-passphrase "${network_config.passphrase}" --filter-logs=ERROR'
@@ -201,7 +202,7 @@ fn (mut client StellarClient) send_tx(tx string) !string {
 
 	mut horizon_client := new_horizon_client(client.network)!
 	tx_info := horizon_client.get_last_transaction(client.account_address)!
-	return tx_info.embedded.records[0].hash
+	return tx_info.embedded.records[0]
 }
 
 @[params]
@@ -214,37 +215,63 @@ pub mut:
 pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) !string {
 	mut tx := client.new_transaction_envelope(client.account_address)!
 	tx.add_create_account_op(client.account_address,
-		destination: args.address
+		destination:      args.address
 		starting_balance: args.starting_balance
 	)!
 
 	mut xdr := tx.xdr()!
 	xdr = client.sign_tx(xdr, client.account_secret)!
-	return client.send_tx(xdr)!
+	tx_info := client.send_tx(xdr)!
+	return tx_info.hash
 }
 
 @[params]
 pub struct AddChangeTrustArgs {
 pub mut:
-	asset_code     string  @[required]
-	issuer         string  @[required]
+	asset_code     string @[required]
+	issuer         string @[required]
 	limit          u64 = (u64(1) << 63) - 1
 	source_account ?string
 }
 
 pub fn (mut client StellarClient) add_trust_line(args AddChangeTrustArgs) !string {
 	mut tx := client.new_transaction_envelope(client.account_address)!
-	tx.add_change_trust_op(
-		asset_code: args.asset_code
-		issuer: args.issuer
-		limit: args.limit
-		source_account: args.source_account
-	)!
+	tx.add_change_trust_op(args)!
+
+	// TODO: Check the source account.
+	// source_account := args.source_account
+	// if source_account == none {
+	// 	source_account = client.account_name
+	// }
 
 	mut xdr := tx.xdr()!
 	xdr = client.sign_tx(xdr, client.account_secret)!
-	return client.send_tx(xdr)!
+	tx_info := client.send_tx(xdr)!
+	return tx_info.hash
 }
 
-// pub fn(mut client StellarClient) make_sell_offer()!
-// pub fn(mut client StellarClient) make_buy_offer()!
+@[required]
+pub struct OfferArgs {
+pub mut:
+	sell           bool
+	buy            bool
+	source_account ?string
+	selling        Asset
+	buying         Asset
+	amount         u64 @[required]
+	price          f32 @[required] // Price of 1 unit of selling in terms of buying
+}
+
+pub fn (mut client StellarClient) make_offer(args OfferArgs) !u64 {
+	if args.sell == args.buy {
+		return error('You must either sell or buy at the same time')
+	}
+
+	mut tx := client.new_transaction_envelope(client.account_address)!
+	tx.make_offer_op(offer: args, sell: args.sell, buy: args.buy)!
+	mut xdr := tx.xdr()!
+	xdr = client.sign_tx(xdr, client.account_secret)!
+	tx_info := client.send_tx(xdr)!
+	offer_id := get_offer_id_from_result_xdr(tx_info.result_xdr)!
+	return offer_id
+}

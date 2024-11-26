@@ -91,12 +91,12 @@ pub:
 
 pub struct Embedded {
 pub:
-	records []Record
+	records []TransactionRecord
 }
 
-pub struct Record {
+pub struct TransactionRecord {
 pub:
-	links                   RecordLinks   @[json: '_links']
+	links                   RecordLinks @[json: '_links']
 	id                      string
 	paging_token            string
 	successful              bool

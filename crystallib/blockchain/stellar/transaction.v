@@ -42,10 +42,12 @@ pub mut:
 @[noinit]
 pub struct OperationBody {
 pub mut:
-	set_options    ?SetOptions
-	create_account ?TXCreateAccount
-	payment        ?PaymentOptions
-	change_trust   ?ChangeTrust
+	set_options       ?SetOptions
+	create_account    ?TXCreateAccount
+	payment           ?PaymentOptions
+	change_trust      ?ChangeTrust
+	manage_sell_offer ?Offer
+	manage_buy_offer  ?Offer
 }
 
 pub struct TransactionOperation {
@@ -67,8 +69,25 @@ pub mut:
 
 pub struct ChangeTrust {
 pub mut:
-	line  ChangeTrustLine
+	line  AssetType
 	limit ?u64
+}
+
+pub struct ManageSellOfferPrice {
+	n int
+	d int
+}
+
+type ManageSellOfferAssetType = string | AssetType
+
+pub struct Offer {
+pub mut:
+	selling    ManageSellOfferAssetType
+	buying     ManageSellOfferAssetType
+	amount     ?u64
+	buy_amount ?u64
+	price      ManageSellOfferPrice
+	offer_id   u64
 }
 
 fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
@@ -78,10 +97,10 @@ fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
 
 	asset := Asset{
 		asset_code: args.asset_code
-		issuer: args.issuer
+		issuer:     args.issuer
 	}
 
-	mut change_trust_line := ChangeTrustLine{}
+	mut change_trust_line := AssetType{}
 	if args.asset_code.len <= 4 {
 		change_trust_line.credit_alphanum4 = asset
 	} else {
@@ -90,7 +109,7 @@ fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
 
 	body := OperationBody{
 		change_trust: ChangeTrust{
-			line: change_trust_line
+			line:  change_trust_line
 			limit: args.limit
 		}
 	}
@@ -100,15 +119,10 @@ fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
 }
 
 @[noinit]
-pub struct ChangeTrustLine {
+pub struct AssetType {
 pub mut:
 	credit_alphanum4  ?Asset
 	credit_alphanum12 ?Asset
-}
-
-pub enum AssetType {
-	credit_alphanum4
-	credit_alphanum12
 }
 
 pub struct Asset {
@@ -126,7 +140,7 @@ fn (mut c StellarClient) new_transaction_envelope(source_account_address string)
 	return TransactionEnvelope{
 		tx: Transaction{
 			source_account: source_account_address
-			seq_num: sequence_number
+			seq_num:        sequence_number
 		}
 	}
 }
@@ -156,7 +170,7 @@ fn (mut tx TransactionEnvelope) add_operation(source_account ?string, op Operati
 
 	tx.tx.operations << TransactionOperation{
 		source_account: source_account
-		body: op
+		body:           op
 	}
 }
 
@@ -206,7 +220,7 @@ fn (tx TransactionEnvelope) xdr() !string {
 pub struct TXCreateAccount {
 pub mut:
 	destination      string @[required] // The public key of the account to create
-	starting_balance u64    @[required]    // Use f64 for the raw balance (in this case, 100.0)
+	starting_balance u64    @[required] // Use f64 for the raw balance (in this case, 100.0)
 }
 
 fn (mut tx TransactionEnvelope) add_create_account_op(source_account ?string, args TXCreateAccount) ! {
@@ -215,5 +229,58 @@ fn (mut tx TransactionEnvelope) add_create_account_op(source_account ?string, ar
 	}
 
 	tx.add_operation(source_account, body)!
+	tx.tx.fee += 100
+}
+
+fn get_offer_asset_type(asset Asset) ManageSellOfferAssetType {
+	if asset.asset_code == 'native' {
+		return 'native'
+	}
+
+	mut asset_type := AssetType{}
+
+	if asset.asset_code.len > 4 {
+		asset_type.credit_alphanum12 = asset
+	} else {
+		asset_type.credit_alphanum4 = asset
+	}
+
+	return asset_type
+}
+
+@[params]
+pub struct MakeOfferOpArgs {
+	offer OfferArgs
+	sell  bool
+	buy   bool
+}
+
+fn (mut tx TransactionEnvelope) make_offer_op(args MakeOfferOpArgs) ! {
+	if args.sell == args.buy {
+		return error('You must either sell or buy at the same time')
+	}
+
+	selling_asset_type := get_offer_asset_type(args.offer.selling)
+	buying_asset_type := get_offer_asset_type(args.offer.buying)
+
+	mut offer := Offer{
+		selling:  selling_asset_type
+		buying:   buying_asset_type
+		price:    get_offer_price(args.offer.price)
+		offer_id: 0
+	}
+	args.offer.amount
+
+	mut body := OperationBody{}
+
+	if args.sell {
+		offer.amount = args.offer.amount
+		body.manage_sell_offer = offer
+	} else {
+		offer.buy_amount = args.offer.amount
+		body.manage_buy_offer = offer
+	}
+
+	tx.add_operation(args.offer.source_account, body)!
 	tx.tx.fee += 100
 }
