@@ -23,7 +23,7 @@ mut hash2 := client.add_trust_line(
 println('hash2: ${hash2}')
 
 // Make sell offer
-mut sell_offer_id := client.make_offer(
+sell_offer_args := stellar.OfferArgs{
 	selling: stellar.Asset{
 		asset_code: 'native'
 		// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
@@ -35,12 +35,13 @@ mut sell_offer_id := client.make_offer(
 	sell:    true
 	amount:  50
 	price:   10
-)!
+}
+mut sell_offer_id := client.create_offer(sell_offer_args)!
 
 println('sell_offer_id: ${sell_offer_id}')
 
 // Make buy offer
-mut buy_offer_id := client.make_offer(
+mut buy_offer_args := stellar.OfferArgs{
 	selling: stellar.Asset{
 		asset_code: 'native'
 		// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
@@ -52,6 +53,16 @@ mut buy_offer_id := client.make_offer(
 	buy:     true
 	amount:  50
 	price:   10
-)!
+}
+
+mut buy_offer_id := client.create_offer(buy_offer_args)!
 
 println('buy_offer_id: ${buy_offer_id}')
+
+buy_offer_args.amount = 100
+client.update_offer(buy_offer_id, buy_offer_args)!
+println('offer ${buy_offer_id} is update')
+
+
+client.delete_offer(sell_offer_id, sell_offer_args)!
+println('sell offer ${sell_offer_id} is deleted')

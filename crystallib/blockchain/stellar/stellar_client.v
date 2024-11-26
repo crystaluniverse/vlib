@@ -26,16 +26,16 @@ pub struct NewStellarClientArgs {
 pub:
 	network        StellarNetwork = .testnet
 	account_name   string
-	account_secret string @[required]
+	account_secret string         @[required]
 	cache          bool = true // If you do not want to cache account keys, set to false. If it is true and you send the same account name twice, the saved keys will be overwritten.
 }
 
 pub fn new_client(config NewStellarClientArgs) !StellarClient {
 	account_address := get_address(config.account_secret)!
 	mut cl := StellarClient{
-		network:         config.network
-		account_name:    config.account_name
-		account_secret:  config.account_secret
+		network: config.network
+		account_name: config.account_name
+		account_secret: config.account_secret
 		account_address: account_address
 	}
 
@@ -58,7 +58,7 @@ pub:
 
 pub fn get_client(config GetStellarClientArgs) !StellarClient {
 	mut cl := StellarClient{
-		network:      config.network
+		network: config.network
 		account_name: config.account_name
 	}
 
@@ -90,8 +90,8 @@ pub struct SendPaymentParams {
 pub mut:
 	asset                 string = 'native'
 	source_account_secret ?string // secret of source account
-	to                    string @[required]
-	amount                int    @[required]
+	to                    string   @[required]
+	amount                int      @[required]
 	signers               []string // secret of signers
 }
 
@@ -215,7 +215,7 @@ pub mut:
 pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) !string {
 	mut tx := client.new_transaction_envelope(client.account_address)!
 	tx.add_create_account_op(client.account_address,
-		destination:      args.address
+		destination: args.address
 		starting_balance: args.starting_balance
 	)!
 
@@ -228,10 +228,12 @@ pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) 
 @[params]
 pub struct AddChangeTrustArgs {
 pub mut:
-	asset_code     string @[required]
-	issuer         string @[required]
+	asset_code     string  @[required]
+	issuer         string  @[required]
 	limit          u64 = (u64(1) << 63) - 1
 	source_account ?string
+
+	signers []string
 }
 
 pub fn (mut client StellarClient) add_trust_line(args AddChangeTrustArgs) !string {
@@ -258,20 +260,34 @@ pub mut:
 	source_account ?string
 	selling        Asset
 	buying         Asset
-	amount         u64 @[required]
-	price          f32 @[required] // Price of 1 unit of selling in terms of buying
+	amount         u64     @[required]
+	price          f32     @[required] // Price of 1 unit of selling in terms of buying
 }
 
-pub fn (mut client StellarClient) make_offer(args OfferArgs) !u64 {
+fn (mut client StellarClient) make_offer(offer_id u64, args OfferArgs) !TransactionRecord {
 	if args.sell == args.buy {
 		return error('You must either sell or buy at the same time')
 	}
 
 	mut tx := client.new_transaction_envelope(client.account_address)!
-	tx.make_offer_op(offer: args, sell: args.sell, buy: args.buy)!
+	tx.make_offer_op(offer_id: offer_id, offer: args, sell: args.sell, buy: args.buy)!
 	mut xdr := tx.xdr()!
 	xdr = client.sign_tx(xdr, client.account_secret)!
-	tx_info := client.send_tx(xdr)!
-	offer_id := get_offer_id_from_result_xdr(tx_info.result_xdr)!
-	return offer_id
+	return client.send_tx(xdr)!
+}
+
+pub fn (mut client StellarClient) create_offer(args OfferArgs) !u64 {
+	tx_record := client.make_offer(0, args)!
+	cur_offer_id := get_offer_id_from_result_xdr(tx_record.result_xdr)!
+	return cur_offer_id
+}
+
+pub fn (mut client StellarClient) update_offer(offer_id u64, args OfferArgs) ! {
+	client.make_offer(offer_id, args)!
+}
+
+pub fn (mut client StellarClient) delete_offer(offer_id u64, args_ OfferArgs) ! {
+	mut args := args_
+	args.amount = 0
+	client.make_offer(offer_id, args)!
 }
