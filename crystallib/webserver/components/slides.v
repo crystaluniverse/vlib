@@ -18,6 +18,7 @@ pub enum SlideFormat {
 }
 
 pub fn (s Slides) html() string {
+	dollar := '$'
 	if s.format == .png {
 		slides_info := json.encode(s.data)
 		return $tmpl('templates/slides_png.html')

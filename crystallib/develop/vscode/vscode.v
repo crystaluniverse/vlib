@@ -10,18 +10,17 @@ pub struct VSCodeHelper {
 }
 
 pub fn new(path string) VSCodeHelper {
+	
 	return VSCodeHelper{
-		path: path
+		path: if path == '' {
+			os.getwd()
+		} else {path}
 	}
 }
 
 // Open Visual Studio Code at the specified path.
 // If the path is not provided, it defaults to the current working directory.
-pub fn (mut self VSCodeHelper) open() ! {
-	if self.path == '' {
-		self.path = os.getwd()
-	}
-
+pub fn (self VSCodeHelper) open() ! {
 	self.check_installation()!
 
 	if !os.exists(self.path) {
@@ -33,7 +32,7 @@ pub fn (mut self VSCodeHelper) open() ! {
 }
 
 // Get the executable binary for Visual Studio Code.
-fn (mut self VSCodeHelper) get_executable_binary() string {
+fn (self VSCodeHelper) get_executable_binary() string {
 	if self.is_installed() {
 		if osal.cmd_exists('vscode') {
 			return 'vscode'
@@ -44,13 +43,13 @@ fn (mut self VSCodeHelper) get_executable_binary() string {
 }
 
 // Check if Visual Studio Code is installed.
-pub fn (mut self VSCodeHelper) is_installed() bool {
+pub fn (self VSCodeHelper) is_installed() bool {
 	return osal.cmd_exists('vscode') || osal.cmd_exists('code')
 }
 
 // Check the installation status of Visual Studio Code.
 // If not installed and the flag is set, attempt to install it.
-pub fn (mut self VSCodeHelper) check_installation() ! {
+pub fn (self VSCodeHelper) check_installation() ! {
 	if !self.is_installed() {
 		if self.install_if_not_exists {
 			// Uncomment and implement the installation logic if needed

@@ -70,12 +70,32 @@
         flex: 1;
         max-height: 60vh; /* Adjust height as needed */
         overflow-y: auto;
+        overflow-x: auto; /* Allow horizontal scrolling */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        table {
+            display: block; /* Treat table as a block element */
+            width: 100%;
+            overflow-x: auto; /* Horizontal scrolling for the table */
+        }
+        
+        /* Adjust table headers and cells for smaller screens */
+        th, td {
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        body > header {
+            padding: 0rem 1rem;
+        }
     }
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .grid-container {
             grid-template-columns: 1fr;
+            padding: 0rem 1rem 1rem 1rem;
+            gap: 0.5rem;
         }
     }
 

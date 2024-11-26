@@ -25,8 +25,8 @@ pub fn (mut gitstructure GitStructure) clone(args GitCloneArgs) !&GitRepo {
 	mut repo := gitstructure.repo_new_from_gitlocation(git_location)!
 	repo.status_wanted.url = args.url
 
-	if args.sshkey.len>0{
-		repo.set_sshkey()!
+	if args.sshkey.len > 0{
+		repo.set_sshkey(args.sshkey)!
 	}
 
 	parent_dir := repo.get_parent_dir(create: true)!

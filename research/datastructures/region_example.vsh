@@ -1,6 +1,6 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import ourdb
+import crystallib.data.ourdb
 import os
 
 const million = 1000000
@@ -18,7 +18,7 @@ fn get_memory_mb() f64 {
 
 fn main() {
     // Create output directory
-    os.mkdir_all('/tmp/regiontest')!
+    os.mkdir_all('/tmp/regiontest') or { return error('Failed to create directory: ${err}') }
 
     // Measure initial memory
     initial_mem := get_memory_mb()
@@ -26,7 +26,7 @@ fn main() {
 
     mut db := ourdb.new(2 * million,.b4)
 
-// Measure memory after buffer creation
+    // Measure memory after buffer creation
     after_mem := get_memory_mb()
     println('Memory usage after buffer creation: ${after_mem:.2f} MB')
     println('Memory difference: ${after_mem - initial_mem:.2f} MB')
@@ -47,30 +47,29 @@ fn main() {
 
     // Set values
     for pos, val in test_data {
-        db.set(pos, val)!
+        db.set(pos, val) or { return error('Failed to set value: ${err}') }
         println('Set value ${val} at position ${pos}')
     }
 
     // Verify initial values
     println('\nVerifying initial values:')
     for pos, expected in test_data {
-        val := db.get(pos)!
+        val := db.get(pos) or { return error('Failed to get value: ${err}') }
         println('Position ${pos}: expected=${expected}, got=${val}')
         assert val == expected
     }
 
     // Export in sparse format
-    db.export_sparse('/tmp/regiontest/buffer_sparse.bin')!
+    db.export_sparse('/tmp/regiontest/buffer_sparse.bin') or { return error('Failed to export: ${err}') }
     println('\nExported sparse buffer to /tmp/regiontest/buffer_sparse.bin')
 
-
-    db2.import_sparse('/tmp/regiontest/buffer_sparse.bin')!
+    db2.import_sparse('/tmp/regiontest/buffer_sparse.bin') or { return error('Failed to import: ${err}') }
     println('Imported sparse buffer')
 
     // Verify all imported values
     println('\nVerifying imported values:')
     for pos, expected in test_data {
-        val := db2.get(pos)!
+        val := db2.get(pos) or { return error('Failed to get imported value: ${err}') }
         println('Position ${pos}: expected=${expected}, got=${val}')
         assert val == expected
     }
@@ -79,7 +78,7 @@ fn main() {
     println('\nVerifying zero values between test points:')
     check_positions := [u32(0), 1500, 3000, 7500, 25000, 75000, 250000, 750000]
     for pos in check_positions {
-        val := db2.get(pos)!
+        val := db2.get(pos) or { return error('Failed to get zero value: ${err}') }
         println('Position ${pos}: expected=0, got=${val}')
         assert val == 0
     }

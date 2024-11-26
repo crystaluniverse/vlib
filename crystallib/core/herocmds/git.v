@@ -238,9 +238,7 @@ fn cmd_git_execute(cmd Command) ! {
 
 	mut gs := gittools.get()!
 	if coderoot.len > 0 {
-		// when other coderoot, need to make sure we get a new name and make unique instance
-		name := md5.hexhash(coderoot)
-		gs = gittools.new(name: name, root: coderoot)!
+		gs = gittools.new(coderoot: coderoot)!
 	}
 
 	// create the filter for doing group actions, or action on 1 repo
@@ -254,14 +252,10 @@ fn cmd_git_execute(cmd Command) ! {
 	if cmd.name != "cd"{
 		// check if we are in a git repo
 		if repo == '' && account == '' && provider == '' && filter == '' {
-			curdir := os.getwd()
-			mut curdiro := pathlib.get_dir(path: curdir, create: false)!
-			mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
-			if parentpath.path != '' {
-				r0 := gs.repo_add(path: parentpath.path)!
-				repo = r0.addr.name
-				account = r0.addr.account
-				provider = r0.addr.provider
+			if r0 := gs.get_working_repo() { 
+				repo = r0.name
+				account = r0.account
+				provider = r0.provider
 			}
 		}
 	}

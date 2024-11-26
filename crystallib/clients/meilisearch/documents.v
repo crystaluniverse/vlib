@@ -5,7 +5,7 @@ import x.json2
 import json
 
 // add_documents adds documents to an index
-pub fn (mut client MeiliClient) add_documents[T](uid string, documents []T) !AddDocumentResponse {
+pub fn (mut client MeilisearchClient) add_documents[T](uid string, documents []T) !AddDocumentResponse {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/documents'
 		method: .post
@@ -26,7 +26,7 @@ pub mut:
 }
 
 // get_document retrieves one document by its id
-pub fn (mut client MeiliClient) get_document[T](args GetDocumentArgs) !T {
+pub fn (mut client MeilisearchClient) get_document[T](args GetDocumentArgs) !T {
 	mut params := map[string]string{}
 	if args.fields.len > 0 {
 		params['fields'] = args.fields.join(',')
@@ -44,7 +44,7 @@ pub fn (mut client MeiliClient) get_document[T](args GetDocumentArgs) !T {
 }
 
 // get_documents retrieves documents with optional parameters
-pub fn (mut client MeiliClient) get_documents[T](uid string, query DocumentsQuery) ![]T {
+pub fn (mut client MeilisearchClient) get_documents[T](uid string, query DocumentsQuery) ![]T {
 	mut params := map[string]string{}
 	params['limit'] = query.limit.str()
 	params['offset'] = query.offset.str()
@@ -77,7 +77,7 @@ pub mut:
 }
 
 // delete_document deletes one document by its id
-pub fn (mut client MeiliClient) delete_document(args DeleteDocumentArgs) !DeleteDocumentResponse {
+pub fn (mut client MeilisearchClient) delete_document(args DeleteDocumentArgs) !DeleteDocumentResponse {
 	req := httpconnection.Request{
 		prefix: 'indexes/${args.uid}/documents/${args.document_id}'
 		method: .delete
@@ -88,7 +88,7 @@ pub fn (mut client MeiliClient) delete_document(args DeleteDocumentArgs) !Delete
 }
 
 // delete_all_documents deletes all documents in an index
-pub fn (mut client MeiliClient) delete_all_documents(uid string) !DeleteDocumentResponse {
+pub fn (mut client MeilisearchClient) delete_all_documents(uid string) !DeleteDocumentResponse {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/documents'
 		method: .delete
@@ -99,7 +99,7 @@ pub fn (mut client MeiliClient) delete_all_documents(uid string) !DeleteDocument
 }
 
 // update_documents updates documents in an index
-pub fn (mut client MeiliClient) update_documents(uid string, documents string) !TaskInfo {
+pub fn (mut client MeilisearchClient) update_documents(uid string, documents string) !TaskInfo {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/documents'
 		method: .put
@@ -141,7 +141,7 @@ pub mut:
 }
 
 // search performs a search query on an index
-pub fn (mut client MeiliClient) search[T](uid string, args SearchArgs) !SearchResponse[T] {
+pub fn (mut client MeilisearchClient) search[T](uid string, args SearchArgs) !SearchResponse[T] {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/search'
 		method: .post

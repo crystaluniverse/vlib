@@ -6,13 +6,17 @@ import freeflowuniverse.crystallib.ui.console
 fn (mut repo GitRepo) load() ! {
 	console.print_debug('load ${repo.get_key()}')
 	repo.init()!
-	repo.exec('git fetch --all') or {
-		return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
+	
+	repo.cache_get()!
+	if time.since(time.unix(repo.last_load)) > 24 * time.hour {
+		repo.exec('git fetch --all') or {
+			return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
+		}
+		repo.load_branches()!
+		repo.load_tags()!
+		repo.last_load = int(time.now().unix())
+		repo.cache_set()!
 	}
-	repo.load_branches()!
-	repo.load_tags()!
-	repo.last_load = int(time.now().unix())
-	repo.cache_set()!
 }
 
 // Helper to load remote tags

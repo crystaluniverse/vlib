@@ -2,7 +2,7 @@ module meilisearch
 
 import freeflowuniverse.crystallib.clients.httpconnection
 
-// Factory creates new instances of MeiliClient
+// Factory creates new instances of MeilisearchClient
 pub struct Factory {
 mut:
 	config ClientConfig
@@ -15,8 +15,8 @@ pub fn new_factory(config ClientConfig) Factory {
 	}
 }
 
-// get returns a new configured MeiliClient instance
-pub fn (f Factory) get() !MeiliClient {
+// get returns a new configured MeilisearchClient instance
+pub fn (f Factory) get() !MeilisearchClient {
 	mut http_conn := httpconnection.new(
 		name:  'meilisearch'
 		url:   f.config.host
@@ -28,7 +28,7 @@ pub fn (f Factory) get() !MeiliClient {
 		http_conn.default_header.add(.authorization, 'Bearer ${f.config.api_key}')
 	}
 
-	return MeiliClient{
+	return MeilisearchClient{
 		config: f.config
 		http:   http_conn
 	}

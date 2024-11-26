@@ -182,7 +182,51 @@
                     loadingIndicator.textContent = "Loading PDF" + dots;
                 }, 500);
             }
-        
+
+            function logPDFPageView(pageNumber) {
+                console.log("Logging page view for page:", pageNumber);
+                const logEndpoint = `/log/@{s.name}`;
+                const logData = {
+                    event: "view",
+                    subject: "user",
+                    object: "@{s.name}",
+                    message: JSON.stringify({
+                        page: pageNumber,
+                        duration: 0 // Assuming duration tracking starts from 0
+                    }),
+                };
+
+                // Recursive function with exponential backoff for retries
+                function attemptLog(retryCount = 1) {
+                    fetch(logEndpoint, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(logData),
+                    }).then(response => {
+                        if (!response.ok) {
+                            console.error(`Failed to log page view on attempt @{dollar}{retryCount}`);
+                            retryLog(retryCount);
+                        }
+                    }).catch(error => {
+                        console.error(`Error sending log on attempt @{dollar}{retryCount}:`, error);
+                        retryLog(retryCount);
+                    });
+                }
+
+                // Retry with exponential backoff
+                function retryLog(retryCount) {
+                    const delay = Math.min(5000, 500 * 2 ** retryCount); // cap at 5 seconds
+                    setTimeout(() => {
+                        attemptLog(retryCount + 1);
+                    }, delay);
+                }
+
+                // Start logging attempt
+                attemptLog();
+            }
+
             function initializePDFViewer() {
                 const url = "@{s.url}";
                 const name = "@{s.name}";
@@ -199,8 +243,8 @@
         
                 async function loadPDF() {
                     try {
-                        loadingIndicator.style.display = 'block'; // Show loading indicator
-                        animateEllipses(); // Start the ellipses animation
+                        loadingIndicator.style.display = 'block';
+                        animateEllipses();
                         const file_data = await fetchFile(name, url);
                         const loadingTask = pdfjsLib.getDocument({ data: file_data });
                         pdf = await loadingTask.promise;
@@ -209,15 +253,15 @@
                         createThumbnails();
                     } catch (error) {
                         console.error("Error loading PDF:", error);
-                        window.location.href = '/server_error'; // Redirect on PDF load failure
+                        window.location.href = '/server_error';
                     } finally {
-                        loadingIndicator.style.display = 'none'; // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
                     }
                 }
         
                 function renderPage(pageNumber) {
                     pdf.getPage(pageNumber).then(function(page) {
-                        const scale = 1.5;
+                        const scale = 2;
                         const viewport = page.getViewport({ scale: scale });
         
                         const canvas = document.createElement("canvas");
@@ -235,7 +279,11 @@
         
                         page.render(renderContext);
                         updatePageInfo();
+                        // Log the page view
+                        logPDFPageView(pageNumber);
+
                         updateActiveThumbnail();
+
                     });
                 }
         

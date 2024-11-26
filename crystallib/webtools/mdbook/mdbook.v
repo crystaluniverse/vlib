@@ -62,10 +62,10 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	mut gs := gittools.get()!
 
 	if args.summary_url.len > 0 {
-		mut locator1 := gs.locator_new(args.summary_url)!
-		gs.repo_get(locator: locator1, reset: false, pull: false)!
+		repo := gs.get_repo(url:args.summary_url, reset: false, pull: false)!
 
-		mut summary_dir := locator1.path_on_fs()!
+		repo_path := repo.get_path()!
+		mut summary_dir := pathlib.get_dir(path: repo_path)!
 
 		summary_file_path := summary_dir.file_get_ignorecase('summary.md') or {
 			summary_dir = summary_dir.parent()!

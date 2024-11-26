@@ -27,10 +27,10 @@ pub fn (mut j Juggler) is_triggered(trigger Trigger, event Event) bool {
 
 pub fn (mut j Juggler) new_trigger(t_ Trigger) !u32 {
 	mut t := t_
-	return j.backend.new[Trigger](t)!
+	return j.osis.generic_new[Trigger](t)!
 }
 
 pub fn (mut j Juggler) new_repository(repo_ Repository) !u32 {
 	mut repo := repo_
-	return j.backend.new[Repository](repo)!
+	return j.osis.generic_new[Repository](repo)!
 }

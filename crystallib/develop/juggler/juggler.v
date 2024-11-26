@@ -73,12 +73,12 @@ pub fn (j Juggler) info() string {
 }
 
 pub fn (mut j Juggler) get_triggers(e Event) ![]Trigger {
-	triggers := j.backend.list[Trigger]()!
+	triggers := j.osis.generic_list[Trigger]()!
 	return triggers.filter(j.is_triggered(it, e))
 }
 
 pub fn (mut j Juggler) get_scripts(t Trigger) ![]Script {
-	scripts := j.backend.list[Script]()!
+	scripts := j.osis.generic_list[Script]()!
 	mut triggered_scripts := []Script{}
 	for _, script in scripts {
 		if script.id in t.script_ids {
@@ -100,7 +100,7 @@ pub enum ScriptCategory {
 fn (mut j Juggler) get_script(event Event) ?Script {
 	// if event !is GitEvent { panic('implement') }
 
-	repo := j.backend.get[Repository](event.object_id) or { panic('this hopefully doesnt happen') }
+	repo := j.osis.generic_get[Repository](event.object_id) or { panic('this hopefully doesnt happen') }
 
 	if repo.host == '' {
 		panic('this should never happen')
@@ -145,7 +145,7 @@ fn (mut j Juggler) get_script(event Event) ?Script {
 }
 
 pub fn (mut j Juggler) update_plays() ! {
-	plays := j.backend.list[Play]()!
+	plays := j.osis.generic_list[Play]()!
 	mut sm := startupmanager.get()!
 
 	for mut play in plays.filter(it.status == .running || it.status == .starting) {
@@ -163,6 +163,6 @@ pub fn (mut j Juggler) update_plays() ! {
 		if play.status == .error || play.status == .success {
 			// sm.ended()
 		}
-		j.backend.set[Play](play) or { panic(err) }
+		j.osis.generic_set[Play](play) or { panic(err) }
 	}
 }

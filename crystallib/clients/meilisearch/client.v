@@ -5,7 +5,7 @@ import x.json2
 import json
 
 // health checks if the server is healthy
-pub fn (mut client MeiliClient) health() !Health {
+pub fn (mut client MeilisearchClient) health() !Health {
 	req := httpconnection.Request{
 		prefix: 'health'
 	}
@@ -14,7 +14,7 @@ pub fn (mut client MeiliClient) health() !Health {
 }
 
 // version gets the version of the Meilisearch server
-pub fn (mut client MeiliClient) version() !Version {
+pub fn (mut client MeilisearchClient) version() !Version {
 	req := httpconnection.Request{
 		prefix: 'version'
 	}
@@ -23,7 +23,7 @@ pub fn (mut client MeiliClient) version() !Version {
 }
 
 // create_index creates a new index with the given UID
-pub fn (mut client MeiliClient) create_index(args CreateIndexArgs) !CreateIndexResponse {
+pub fn (mut client MeilisearchClient) create_index(args CreateIndexArgs) !CreateIndexResponse {
 	req := httpconnection.Request{
 		prefix: 'indexes'
 		method: .post
@@ -35,7 +35,7 @@ pub fn (mut client MeiliClient) create_index(args CreateIndexArgs) !CreateIndexR
 }
 
 // get_index retrieves information about an index
-pub fn (mut client MeiliClient) get_index(uid string) !GetIndexResponse {
+pub fn (mut client MeilisearchClient) get_index(uid string) !GetIndexResponse {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}'
 	}
@@ -44,7 +44,7 @@ pub fn (mut client MeiliClient) get_index(uid string) !GetIndexResponse {
 }
 
 // list_indexes retrieves all indexes
-pub fn (mut client MeiliClient) list_indexes(args ListIndexArgs) ![]GetIndexResponse {
+pub fn (mut client MeilisearchClient) list_indexes(args ListIndexArgs) ![]GetIndexResponse {
 	req := httpconnection.Request{
 		prefix: 'indexes?limit=${args.limit}&offset=${args.offset}'
 	}
@@ -54,7 +54,7 @@ pub fn (mut client MeiliClient) list_indexes(args ListIndexArgs) ![]GetIndexResp
 }
 
 // delete_index deletes an index
-pub fn (mut client MeiliClient) delete_index(uid string) !DeleteIndexResponse {
+pub fn (mut client MeilisearchClient) delete_index(uid string) !DeleteIndexResponse {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}'
 	}
@@ -63,7 +63,7 @@ pub fn (mut client MeiliClient) delete_index(uid string) !DeleteIndexResponse {
 }
 
 // get_settings retrieves all settings of an index
-pub fn (mut client MeiliClient) get_settings(uid string) !IndexSettings {
+pub fn (mut client MeilisearchClient) get_settings(uid string) !IndexSettings {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings'
 	}
@@ -96,7 +96,7 @@ pub fn (mut client MeiliClient) get_settings(uid string) !IndexSettings {
 }
 
 // update_settings updates all settings of an index
-pub fn (mut client MeiliClient) update_settings(uid string, settings IndexSettings) !string {
+pub fn (mut client MeilisearchClient) update_settings(uid string, settings IndexSettings) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings'
 		method: .patch
@@ -106,7 +106,7 @@ pub fn (mut client MeiliClient) update_settings(uid string, settings IndexSettin
 }
 
 // reset_settings resets all settings of an index to default values
-pub fn (mut client MeiliClient) reset_settings(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_settings(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings'
 		method: .delete
@@ -115,7 +115,7 @@ pub fn (mut client MeiliClient) reset_settings(uid string) !string {
 }
 
 // get_ranking_rules retrieves ranking rules of an index
-pub fn (mut client MeiliClient) get_ranking_rules(uid string) ![]string {
+pub fn (mut client MeilisearchClient) get_ranking_rules(uid string) ![]string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/ranking-rules'
 	}
@@ -124,7 +124,7 @@ pub fn (mut client MeiliClient) get_ranking_rules(uid string) ![]string {
 }
 
 // update_ranking_rules updates ranking rules of an index
-pub fn (mut client MeiliClient) update_ranking_rules(uid string, rules []string) !string {
+pub fn (mut client MeilisearchClient) update_ranking_rules(uid string, rules []string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/ranking-rules'
 		method: .put
@@ -136,7 +136,7 @@ pub fn (mut client MeiliClient) update_ranking_rules(uid string, rules []string)
 }
 
 // reset_ranking_rules resets ranking rules of an index to default values
-pub fn (mut client MeiliClient) reset_ranking_rules(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_ranking_rules(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/ranking-rules'
 		method: .delete
@@ -145,7 +145,7 @@ pub fn (mut client MeiliClient) reset_ranking_rules(uid string) !string {
 }
 
 // get_distinct_attribute retrieves distinct attribute of an index
-pub fn (mut client MeiliClient) get_distinct_attribute(uid string) !string {
+pub fn (mut client MeilisearchClient) get_distinct_attribute(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/distinct-attribute'
 	}
@@ -154,7 +154,7 @@ pub fn (mut client MeiliClient) get_distinct_attribute(uid string) !string {
 }
 
 // update_distinct_attribute updates distinct attribute of an index
-pub fn (mut client MeiliClient) update_distinct_attribute(uid string, attribute string) !string {
+pub fn (mut client MeilisearchClient) update_distinct_attribute(uid string, attribute string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/distinct-attribute'
 		method: .put
@@ -166,7 +166,7 @@ pub fn (mut client MeiliClient) update_distinct_attribute(uid string, attribute 
 }
 
 // reset_distinct_attribute resets distinct attribute of an index
-pub fn (mut client MeiliClient) reset_distinct_attribute(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_distinct_attribute(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/distinct-attribute'
 		method: .delete
@@ -175,7 +175,7 @@ pub fn (mut client MeiliClient) reset_distinct_attribute(uid string) !string {
 }
 
 // get_searchable_attributes retrieves searchable attributes of an index
-pub fn (mut client MeiliClient) get_searchable_attributes(uid string) ![]string {
+pub fn (mut client MeilisearchClient) get_searchable_attributes(uid string) ![]string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/searchable-attributes'
 	}
@@ -184,7 +184,7 @@ pub fn (mut client MeiliClient) get_searchable_attributes(uid string) ![]string 
 }
 
 // update_searchable_attributes updates searchable attributes of an index
-pub fn (mut client MeiliClient) update_searchable_attributes(uid string, attributes []string) !string {
+pub fn (mut client MeilisearchClient) update_searchable_attributes(uid string, attributes []string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/searchable-attributes'
 		method: .put
@@ -196,7 +196,7 @@ pub fn (mut client MeiliClient) update_searchable_attributes(uid string, attribu
 }
 
 // reset_searchable_attributes resets searchable attributes of an index
-pub fn (mut client MeiliClient) reset_searchable_attributes(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_searchable_attributes(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/searchable-attributes'
 		method: .delete
@@ -205,7 +205,7 @@ pub fn (mut client MeiliClient) reset_searchable_attributes(uid string) !string 
 }
 
 // get_displayed_attributes retrieves displayed attributes of an index
-pub fn (mut client MeiliClient) get_displayed_attributes(uid string) ![]string {
+pub fn (mut client MeilisearchClient) get_displayed_attributes(uid string) ![]string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/displayed-attributes'
 	}
@@ -214,7 +214,7 @@ pub fn (mut client MeiliClient) get_displayed_attributes(uid string) ![]string {
 }
 
 // update_displayed_attributes updates displayed attributes of an index
-pub fn (mut client MeiliClient) update_displayed_attributes(uid string, attributes []string) !string {
+pub fn (mut client MeilisearchClient) update_displayed_attributes(uid string, attributes []string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/displayed-attributes'
 		method: .put
@@ -226,7 +226,7 @@ pub fn (mut client MeiliClient) update_displayed_attributes(uid string, attribut
 }
 
 // reset_displayed_attributes resets displayed attributes of an index
-pub fn (mut client MeiliClient) reset_displayed_attributes(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_displayed_attributes(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/displayed-attributes'
 		method: .delete
@@ -235,7 +235,7 @@ pub fn (mut client MeiliClient) reset_displayed_attributes(uid string) !string {
 }
 
 // get_stop_words retrieves stop words of an index
-pub fn (mut client MeiliClient) get_stop_words(uid string) ![]string {
+pub fn (mut client MeilisearchClient) get_stop_words(uid string) ![]string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/stop-words'
 	}
@@ -244,7 +244,7 @@ pub fn (mut client MeiliClient) get_stop_words(uid string) ![]string {
 }
 
 // update_stop_words updates stop words of an index
-pub fn (mut client MeiliClient) update_stop_words(uid string, words []string) !string {
+pub fn (mut client MeilisearchClient) update_stop_words(uid string, words []string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/stop-words'
 		method: .put
@@ -256,7 +256,7 @@ pub fn (mut client MeiliClient) update_stop_words(uid string, words []string) !s
 }
 
 // reset_stop_words resets stop words of an index
-pub fn (mut client MeiliClient) reset_stop_words(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_stop_words(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/stop-words'
 		method: .delete
@@ -265,7 +265,7 @@ pub fn (mut client MeiliClient) reset_stop_words(uid string) !string {
 }
 
 // get_synonyms retrieves synonyms of an index
-pub fn (mut client MeiliClient) get_synonyms(uid string) !map[string][]string {
+pub fn (mut client MeilisearchClient) get_synonyms(uid string) !map[string][]string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/synonyms'
 	}
@@ -278,7 +278,7 @@ pub fn (mut client MeiliClient) get_synonyms(uid string) !map[string][]string {
 }
 
 // update_synonyms updates synonyms of an index
-pub fn (mut client MeiliClient) update_synonyms(uid string, synonyms map[string][]string) !string {
+pub fn (mut client MeilisearchClient) update_synonyms(uid string, synonyms map[string][]string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/synonyms'
 		method: .put
@@ -290,7 +290,7 @@ pub fn (mut client MeiliClient) update_synonyms(uid string, synonyms map[string]
 }
 
 // reset_synonyms resets synonyms of an index
-pub fn (mut client MeiliClient) reset_synonyms(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_synonyms(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/synonyms'
 		method: .delete
@@ -299,7 +299,7 @@ pub fn (mut client MeiliClient) reset_synonyms(uid string) !string {
 }
 
 // get_filterable_attributes retrieves filterable attributes of an index
-pub fn (mut client MeiliClient) get_filterable_attributes(uid string) ![]string {
+pub fn (mut client MeilisearchClient) get_filterable_attributes(uid string) ![]string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/filterable-attributes'
 	}
@@ -308,7 +308,7 @@ pub fn (mut client MeiliClient) get_filterable_attributes(uid string) ![]string 
 }
 
 // update_filterable_attributes updates filterable attributes of an index
-pub fn (mut client MeiliClient) update_filterable_attributes(uid string, attributes []string) !string {
+pub fn (mut client MeilisearchClient) update_filterable_attributes(uid string, attributes []string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/filterable-attributes'
 		method: .put
@@ -320,7 +320,7 @@ pub fn (mut client MeiliClient) update_filterable_attributes(uid string, attribu
 }
 
 // reset_filterable_attributes resets filterable attributes of an index
-pub fn (mut client MeiliClient) reset_filterable_attributes(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_filterable_attributes(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/filterable-attributes'
 		method: .delete
@@ -329,7 +329,7 @@ pub fn (mut client MeiliClient) reset_filterable_attributes(uid string) !string 
 }
 
 // get_sortable_attributes retrieves sortable attributes of an index
-pub fn (mut client MeiliClient) get_sortable_attributes(uid string) ![]string {
+pub fn (mut client MeilisearchClient) get_sortable_attributes(uid string) ![]string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/sortable-attributes'
 	}
@@ -338,7 +338,7 @@ pub fn (mut client MeiliClient) get_sortable_attributes(uid string) ![]string {
 }
 
 // update_sortable_attributes updates sortable attributes of an index
-pub fn (mut client MeiliClient) update_sortable_attributes(uid string, attributes []string) !string {
+pub fn (mut client MeilisearchClient) update_sortable_attributes(uid string, attributes []string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/sortable-attributes'
 		method: .put
@@ -350,7 +350,7 @@ pub fn (mut client MeiliClient) update_sortable_attributes(uid string, attribute
 }
 
 // reset_sortable_attributes resets sortable attributes of an index
-pub fn (mut client MeiliClient) reset_sortable_attributes(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_sortable_attributes(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/sortable-attributes'
 		method: .delete
@@ -359,7 +359,7 @@ pub fn (mut client MeiliClient) reset_sortable_attributes(uid string) !string {
 }
 
 // get_typo_tolerance retrieves typo tolerance settings of an index
-pub fn (mut client MeiliClient) get_typo_tolerance(uid string) !TypoTolerance {
+pub fn (mut client MeilisearchClient) get_typo_tolerance(uid string) !TypoTolerance {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/typo-tolerance'
 	}
@@ -382,7 +382,7 @@ pub fn (mut client MeiliClient) get_typo_tolerance(uid string) !TypoTolerance {
 }
 
 // update_typo_tolerance updates typo tolerance settings of an index
-pub fn (mut client MeiliClient) update_typo_tolerance(uid string, typo_tolerance TypoTolerance) !string {
+pub fn (mut client MeilisearchClient) update_typo_tolerance(uid string, typo_tolerance TypoTolerance) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/typo-tolerance'
 		method: .patch
@@ -392,7 +392,7 @@ pub fn (mut client MeiliClient) update_typo_tolerance(uid string, typo_tolerance
 }
 
 // reset_typo_tolerance resets typo tolerance settings of an index
-pub fn (mut client MeiliClient) reset_typo_tolerance(uid string) !string {
+pub fn (mut client MeilisearchClient) reset_typo_tolerance(uid string) !string {
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/typo-tolerance'
 		method: .delete

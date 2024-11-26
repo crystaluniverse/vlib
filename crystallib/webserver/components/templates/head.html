@@ -51,6 +51,21 @@
             flex: 1;
         }
 
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .grid-container {
+                padding: 0rem 1rem 1rem 1rem;
+                grid-template-columns: 1fr;
+            }
+            .grid-container > article {
+                padding: 1rem;
+            }
+
+            :root {
+                --pico-spacing: 0.5rem; /* Reduce spacing for padding and margins */
+            }
+        }
+
         /* Main content area styling */
         .main-content {
             padding: 2rem;
