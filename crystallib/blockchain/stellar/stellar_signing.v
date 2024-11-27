@@ -3,22 +3,29 @@ module stellar
 @[params]
 pub struct AddSignersArgs {
 pub:
-	source_account_name ?string
-	signers             []TXSigner
+	source_address ?string
+	signers_to_add []TXSigner
+	signers        []string
 }
 
 pub fn (mut client StellarClient) add_signers(args AddSignersArgs) !string {
-	mut account_name := client.account_name
-	if v := args.source_account_name {
-		account_name = v
+	mut ops := []Operation{}
+	mut source_address := client.account_address
+	if v := args.source_address {
+		source_address = v
 	}
-	account_keys := get_account_keys(account_name)!
 
-	mut tx := client.new_transaction_envelope(account_keys.address)!
-	for signer in args.signers {
+	mut tx := client.new_transaction_envelope(client.account_address)!
+	for signer in args.signers_to_add {
+		ops << Operation{
+			source_address: source_address
+			threshold:      .high
+		}
+
 		if signer.key == tx.tx.source_account {
 			tx.add_set_options_op(
-				set_options: SetOptions{
+				source_account: if v := args.source_address { v } else { none }
+				set_options:    SetOptions{
 					master_weight: signer.weight
 				}
 			)!
@@ -29,9 +36,8 @@ pub fn (mut client StellarClient) add_signers(args AddSignersArgs) !string {
 			signer: signer
 		)!
 	}
-
 	mut xdr := tx.xdr()!
-	xdr = client.sign_tx(xdr, account_keys.secret)!
+	xdr = client.sign_with_signers(xdr, ops, args.signers)!
 	tx_info := client.send_tx(xdr)!
 	return tx_info.hash
 }
@@ -39,10 +45,11 @@ pub fn (mut client StellarClient) add_signers(args AddSignersArgs) !string {
 @[params]
 pub struct UpdateThresholdArgs {
 pub mut:
-	source_account_name ?string
-	low_threshold       ?int
-	med_threshold       ?int
-	high_threshold      ?int
+	source_address ?string
+	low_threshold  ?int
+	med_threshold  ?int
+	high_threshold ?int
+	signers        []string
 }
 
 pub fn (mut client StellarClient) update_threshold(args UpdateThresholdArgs) !string {
@@ -50,15 +57,15 @@ pub fn (mut client StellarClient) update_threshold(args UpdateThresholdArgs) !st
 		return error('at least one threshold must be set')
 	}
 
-	mut account_name := client.account_name
-	if v := args.source_account_name {
-		account_name = v
+	mut source_address := client.account_address
+	if v := args.source_address {
+		source_address = v
 	}
-	account_keys := get_account_keys(account_name)!
 
-	mut tx := client.new_transaction_envelope(account_keys.address)!
+	mut tx := client.new_transaction_envelope(client.account_address)!
 	tx.add_set_options_op(
-		set_options: SetOptions{
+		source_account: if v := args.source_address { v } else { none }
+		set_options:    SetOptions{
 			low_threshold:  args.low_threshold
 			med_threshold:  args.med_threshold
 			high_threshold: args.high_threshold
@@ -66,7 +73,13 @@ pub fn (mut client StellarClient) update_threshold(args UpdateThresholdArgs) !st
 	)!
 
 	mut xdr := tx.xdr()!
-	xdr = client.sign_tx(xdr, account_keys.secret)!
+	xdr = client.sign_with_signers(xdr, [
+		Operation{
+			source_address: source_address
+			threshold:      .high
+		},
+	], args.signers)!
+
 	tx_info := client.send_tx(xdr)!
 	return tx_info.hash
 }
@@ -74,20 +87,21 @@ pub fn (mut client StellarClient) update_threshold(args UpdateThresholdArgs) !st
 @[params]
 pub struct RemoveSignerArgs {
 pub:
-	source_account_name ?string
-	address             string
+	source_address ?string
+	address        string
+	signers        []string
 }
 
 pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) !string {
-	mut account_name := client.account_name
-	if v := args.source_account_name {
-		account_name = v
+	mut source_address := client.account_address
+	if v := args.source_address {
+		source_address = v
 	}
-	account_keys := get_account_keys(account_name)!
 
-	mut tx := client.new_transaction_envelope(account_keys.address)!
+	mut tx := client.new_transaction_envelope(client.account_address)!
 	tx.add_set_options_op(
-		set_options: SetOptions{
+		source_account: if v := args.source_address { v } else { none }
+		set_options:    SetOptions{
 			signer: TXSigner{
 				key:    args.address
 				weight: 0
@@ -96,7 +110,12 @@ pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) !string {
 	)!
 
 	mut xdr := tx.xdr()!
-	xdr = client.sign_tx(xdr, account_keys.secret)!
+	xdr = client.sign_with_signers(xdr, [
+		Operation{
+			source_address: source_address
+			threshold:      .high
+		},
+	], args.signers)!
 	tx_info := client.send_tx(xdr)!
 	return tx_info.hash
 }

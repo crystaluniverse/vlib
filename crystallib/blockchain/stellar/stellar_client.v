@@ -26,16 +26,16 @@ pub struct NewStellarClientArgs {
 pub:
 	network        StellarNetwork = .testnet
 	account_name   string
-	account_secret string         @[required]
+	account_secret string @[required]
 	cache          bool = true // If you do not want to cache account keys, set to false. If it is true and you send the same account name twice, the saved keys will be overwritten.
 }
 
 pub fn new_client(config NewStellarClientArgs) !StellarClient {
 	account_address := get_address(config.account_secret)!
 	mut cl := StellarClient{
-		network: config.network
-		account_name: config.account_name
-		account_secret: config.account_secret
+		network:         config.network
+		account_name:    config.account_name
+		account_secret:  config.account_secret
 		account_address: account_address
 	}
 
@@ -58,7 +58,7 @@ pub:
 
 pub fn get_client(config GetStellarClientArgs) !StellarClient {
 	mut cl := StellarClient{
-		network: config.network
+		network:      config.network
 		account_name: config.account_name
 	}
 
@@ -85,58 +85,108 @@ pub fn (mut client StellarClient) default_assetid_get() !string {
 	return result.output.trim_space()
 }
 
-@[params]
-pub struct SendPaymentParams {
-pub mut:
-	asset                 string = 'native'
-	source_account_secret ?string // secret of source account
-	to                    string   @[required]
-	amount                int      @[required]
-	signers               []string // secret of signers
-}
-
 pub struct NetworkConfig {
 	url        string
 	passphrase string
 }
 
+enum ThresholdLevel {
+	low
+	med
+	high
+}
+
+pub struct Operation {
+	source_address string
+	threshold      ThresholdLevel
+}
+
+fn (mut client StellarClient) sign_with_signers(xdr_ string, ops []Operation, signers []string) !string {
+	mut xdr := xdr_
+	mut signers_ := signers.clone()
+	mut signer_address_secret := map[string]string{} // Address:Secret
+	mut signers_signed := map[string]bool{} // Address:Secret
+	signers_ << client.account_secret
+
+	for signer in signers_ {
+		signer_address_secret[get_address(signer)!] = signer
+	}
+
+	for op in ops {
+		source_acc := new_horizon_client(client.network)!.get_account(op.source_address)!
+		mut current_weight := 0
+
+		threshold := match op.threshold {
+			.low {
+				source_acc.thresholds.low_threshold
+			}
+			.med {
+				source_acc.thresholds.med_threshold
+			}
+			.high {
+				source_acc.thresholds.high_threshold
+			}
+		}
+
+		for signer in source_acc.signers {
+			if signers_signed[signer.key] {
+				current_weight += signer.weight
+			}
+		}
+
+		for signer in source_acc.signers {
+			if current_weight >= threshold && current_weight > 0 {
+				break
+			}
+
+			secret := signer_address_secret[signer.key] or { continue }
+			if signers_signed[signer.key] {
+				continue
+			}
+
+			signers_signed[signer.key] = true
+			xdr = client.sign_tx(xdr, secret)!
+			current_weight += signer.weight
+		}
+	}
+
+	return xdr
+}
+
+@[params]
+pub struct SendPaymentParams {
+pub mut:
+	asset         string = 'native'
+	to            string @[required]
+	amount        int    @[required]
+	source_secret ?string  // the secret of the source account
+	signers       []string // secret of signers
+}
+
 pub fn (mut client StellarClient) payment_send(args SendPaymentParams) !string {
-	source_account := if v := args.source_account_secret {
-		v
-	} else {
-		account_keys := get_account_keys(client.account_name)!
-		account_keys.secret
+	mut source_secret := client.account_secret
+	if v := args.source_secret {
+		source_secret = v
 	}
 
 	network_config := get_network_config(client.network)!
-	cmd := 'stellar tx new payment --asset ${args.asset} --source-account ${source_account} --destination ${args.to} --amount ${args.amount} --build-only --network ${client.network} --rpc-url ${network_config.url} --network-passphrase "${network_config.passphrase}" --quiet'
+	cmd := 'stellar tx new payment --asset ${args.asset} --source-account ${source_secret} --destination ${args.to} --amount ${args.amount} --build-only --network ${client.network} --rpc-url ${network_config.url} --network-passphrase "${network_config.passphrase}" --quiet'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('Failed to send payment: ${result.output}')
 	}
-	mut tx := result.output.trim_space()
 
-	source_address := get_address(source_account)!
-	mut signer_address_secret := map[string]string{}
-	signer_address_secret[get_address(source_account)!] = source_account
-	for signer in args.signers {
-		signer_address_secret[get_address(signer)!] = signer
-	}
+	mut signers_ := args.signers.clone()
+	signers_ << source_secret
+	mut xdr := result.output.trim_space()
+	xdr = client.sign_with_signers(xdr, [
+		Operation{
+			source_address: get_address(source_secret)!
+			threshold:      .med
+		},
+	], signers_)!
 
-	source_acc := new_horizon_client(client.network)!.get_account(source_address)!
-	mut current_threshold := 0
-	threshold := source_acc.thresholds.med_threshold
-	for signer in source_acc.signers {
-		secret := signer_address_secret[signer.key] or { continue }
-
-		tx = client.sign_tx(tx, secret)!
-		current_threshold += signer.weight
-		if current_threshold >= threshold {
-			break
-		}
-	}
-
-	tx_info := client.send_tx(tx)!
+	tx_info := client.send_tx(xdr)!
 	return tx_info.hash
 }
 
@@ -210,17 +260,30 @@ pub struct StellarCreateAccountArgs {
 pub mut:
 	address          string
 	starting_balance u64
+	source_address   ?string
+	signers          []string
 }
 
 pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) !string {
+	mut source_address := client.account_address
+	if v := args.source_address {
+		source_address = v
+	}
+
 	mut tx := client.new_transaction_envelope(client.account_address)!
 	tx.add_create_account_op(client.account_address,
-		destination: args.address
+		destination:      args.address
 		starting_balance: args.starting_balance
 	)!
 
 	mut xdr := tx.xdr()!
-	xdr = client.sign_tx(xdr, client.account_secret)!
+	xdr = client.sign_with_signers(xdr, [
+		Operation{
+			source_address: source_address
+			threshold:      .med
+		},
+	], args.signers)!
+
 	tx_info := client.send_tx(xdr)!
 	return tx_info.hash
 }
@@ -228,26 +291,30 @@ pub fn (mut client StellarClient) create_account(args StellarCreateAccountArgs) 
 @[params]
 pub struct AddChangeTrustArgs {
 pub mut:
-	asset_code     string  @[required]
-	issuer         string  @[required]
+	asset_code     string @[required]
+	issuer         string @[required]
 	limit          u64 = (u64(1) << 63) - 1
-	source_account ?string
-
-	signers []string
+	source_address ?string
+	signers        []string
 }
 
 pub fn (mut client StellarClient) add_trust_line(args AddChangeTrustArgs) !string {
 	mut tx := client.new_transaction_envelope(client.account_address)!
 	tx.add_change_trust_op(args)!
 
-	// TODO: Check the source account.
-	// source_account := args.source_account
-	// if source_account == none {
-	// 	source_account = client.account_name
-	// }
+	mut source_address := client.account_address
+	if v := args.source_address {
+		source_address = v
+	}
 
 	mut xdr := tx.xdr()!
-	xdr = client.sign_tx(xdr, client.account_secret)!
+	xdr = client.sign_with_signers(xdr, [
+		Operation{
+			source_address: source_address
+			threshold:      .med
+		},
+	], args.signers)!
+
 	tx_info := client.send_tx(xdr)!
 	return tx_info.hash
 }
@@ -257,11 +324,12 @@ pub struct OfferArgs {
 pub mut:
 	sell           bool
 	buy            bool
-	source_account ?string
+	source_address ?string
 	selling        Asset
 	buying         Asset
-	amount         u64     @[required]
-	price          f32     @[required] // Price of 1 unit of selling in terms of buying
+	amount         u64 @[required]
+	price          f32 @[required] // Price of 1 unit of selling in terms of buying
+	signers        []string
 }
 
 fn (mut client StellarClient) make_offer(offer_id u64, args OfferArgs) !TransactionRecord {
@@ -269,10 +337,20 @@ fn (mut client StellarClient) make_offer(offer_id u64, args OfferArgs) !Transact
 		return error('You must either sell or buy at the same time')
 	}
 
+	mut source_address := client.account_address
+	if v := args.source_address {
+		source_address = v
+	}
+
 	mut tx := client.new_transaction_envelope(client.account_address)!
 	tx.make_offer_op(offer_id: offer_id, offer: args, sell: args.sell, buy: args.buy)!
 	mut xdr := tx.xdr()!
-	xdr = client.sign_tx(xdr, client.account_secret)!
+	xdr = client.sign_with_signers(xdr, [
+		Operation{
+			source_address: source_address
+			threshold:      .med
+		},
+	], args.signers)!
 	return client.send_tx(xdr)!
 }
 

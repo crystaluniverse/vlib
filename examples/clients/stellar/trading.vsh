@@ -63,6 +63,5 @@ buy_offer_args.amount = 100
 client.update_offer(buy_offer_id, buy_offer_args)!
 println('offer ${buy_offer_id} is update')
 
-
 client.delete_offer(sell_offer_id, sell_offer_args)!
 println('sell offer ${sell_offer_id} is deleted')
