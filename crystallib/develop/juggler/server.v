@@ -2,7 +2,7 @@ module juggler
 
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.servers.caddy
-import freeflowuniverse.crystallib.webserver.auth.jwt { SignedJWT }
+import freeflowuniverse.crystallib.web.auth.jwt { SignedJWT }
 import veb
 import os
 

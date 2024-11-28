@@ -2,7 +2,7 @@ module main
 
 import vweb
 import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
-import freeflowuniverse.crystallib.webserver.auth
+import freeflowuniverse.crystallib.web.auth
 import os
 
 pub struct FileServer {

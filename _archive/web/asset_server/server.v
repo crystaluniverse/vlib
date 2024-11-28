@@ -1,8 +1,8 @@
 module resources
 
 import vweb
-import freeflowuniverse.crystallib.webserver.auth { Authenticator }
-import freeflowuniverse.crystallib.webserver.auth_server
+import freeflowuniverse.crystallib.web.auth { Authenticator }
+import freeflowuniverse.crystallib.web.auth_server
 import freeflowuniverse.crystallib.core.pathlib
 import log
 

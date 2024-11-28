@@ -1,0 +1,10 @@
+<details>
+  <summary>
+    @{dropdown.label}
+  </summary>
+  <ul dir="ltr">
+    @for item in dropdown.items
+    <li><a class="secondary" href=@{item.href}>@{item.text}</a></li>
+    @end
+  </ul>
+</details>
