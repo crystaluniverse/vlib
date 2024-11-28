@@ -29,7 +29,7 @@ assert some_function('input_string') == 'output_string'
 
 fn test_parse_example_pairing() ! {
 	example := parse_example_pairing(openrpc.example_txt)!
-	params := example.params or { panic('oop') }
+	params := example.params
 	assert params.len == 1
 	param0 := (params[0] as Example)
 	assert param0.value or { panic('err') } == "'input_string'"

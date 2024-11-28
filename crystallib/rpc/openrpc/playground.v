@@ -32,14 +32,11 @@ pub fn export_playground(config PlaygroundConfig) ! {
 	// css_dest := '${os.dir(@FILE)}/static/css/index.css'
 	// tw.compile(css_source, css_dest)!
 	mut gs := gittools.new() or { panic(err) }
-	mut locator := gs.locator_new('https://github.com/freeflowuniverse/playground') or {
-		panic(err)
-	}
-	repo := gs.repo_get(locator: locator, reset: false) or { panic(err) }
+	mut repo := gs.get_repo(url: 'https://github.com/freeflowuniverse/playground')!
 
-	playground_dir := repo.path
+	playground_dir := repo.get_path()!
 
-	mut project := npm.new_project(playground_dir.path)!
+	mut project := npm.new_project(playground_dir)!
 	project.install()
 	// export_examples(config.specs, '${playground_dir.path}/src')!
 	project.build()!
