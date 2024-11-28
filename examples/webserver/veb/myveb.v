@@ -2,7 +2,7 @@ module main
 
 import veb
 import os
-import freeflowuniverse.crystallib.webserver.heroweb
+import freeflowuniverse.crystallib.web.heroweb
 import freeflowuniverse.crystallib.security.authentication
 import freeflowuniverse.crystallib.clients.mailclient
 import freeflowuniverse.crystallib.osal

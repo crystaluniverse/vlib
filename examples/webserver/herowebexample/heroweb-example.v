@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.webserver.heroweb
+import freeflowuniverse.crystallib.web.heroweb
 import os
 
 fn main() {

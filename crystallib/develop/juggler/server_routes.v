@@ -1,7 +1,7 @@
 module juggler
 
 import freeflowuniverse.crystallib.sysadmin.startupmanager
-import freeflowuniverse.crystallib.webserver.auth.jwt
+import freeflowuniverse.crystallib.web.auth.jwt
 import net.http
 import veb
 import os

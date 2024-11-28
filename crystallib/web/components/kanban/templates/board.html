@@ -1,0 +1,86 @@
+<style>@{style}</style>
+<div class="ui container fluid padded">
+    <div class="ui container tw-max-w-full">
+        <div class="tw-flex tw-justify-between tw-items-center tw-mb-4 tw-gap-3">
+            <h2 class="tw-mb-0 tw-flex-1 tw-break-anywhere">@{project.title}</h2>
+            <div class="ui compact mini menu">
+                <a class="item" href="@{project.edit_url}">
+                    <svg viewBox="0 0 16 16" class="svg octicon-pencil" aria-hidden="true" width="16" height="16">
+                        <path d="M11.013 1.427a1.75 1.75..."></path>
+                    </svg>
+                    Edit
+                </a>
+                <button class="item btn link-action" data-url="@{project.close_url}">
+                    <svg viewBox="0 0 16 16" class="svg octicon-skip" aria-hidden="true" width="16" height="16">
+                        <path d="M8 0a8 8 0..."></path>
+                    </svg>
+                    Close
+                </button>
+                <button class="item btn delete-button" data-url="@{project.delete_url}" data-id="@{project.id}">
+                    <svg viewBox="0 0 16 16" class="svg octicon-trash" aria-hidden="true" width="16" height="16">
+                        <path d="M11 1.75V3h..."></path>
+                    </svg>
+                    Delete
+                </button>
+                <button class="item btn show-modal" data-modal="#new-project-column-item">
+                    <svg viewBox="0 0 16 16" class="svg octicon-plus" aria-hidden="true" width="16" height="16">
+                        <path d="M7.75 2a.75.75..."></path>
+                    </svg>
+                    New Column
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="project-board">
+        <div class="board sortable" data-url="@{board.move_url}">
+            @for column in board.columns
+            <div class="project-column" data-id="@{column.id}" data-sorting="@{column.sorting}" data-url="@{column.url}">
+                <div class="project-column-header tw-cursor-grab">
+                    <div class="ui circular label project-column-issue-count">@{column.issue_count}</div>
+                    <div class="project-column-title-label gt-ellipsis">@{column.title}</div>
+                    <div class="ui dropdown tw-p-1" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false">
+                        <svg viewBox="0 0 16 16" class="svg octicon-kebab-horizontal" aria-hidden="true" width="16" height="16">
+                            <path d="M8 9a1.5 1.5..."></path>
+                        </svg>
+                        <div class="menu" tabindex="-1">
+                            <a class="item show-modal button" data-modal="@{column.edit_modal}" role="option">@{column.edit_text}</a>
+                            <a class="item show-modal button" data-modal="@{column.default_modal}" data-url="@{column.default_url}" role="option">@{column.default_text}</a>
+                            <a class="item show-modal button" data-modal="@{column.delete_modal}" data-url="@{column.delete_url}" role="option">@{column.delete_text}</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="ui cards">
+                    @for issue in column.issues
+                    <div class="issue-card gt-word-break tw-cursor-grab" data-issue="@{issue.id}">
+                        <div class="content tw-w-full">
+                            <div class="tw-flex tw-items-start tw-gap-[5px]">
+                                <div class="issue-card-icon">
+                                    <svg viewBox="0 0 16 16" class="text green svg octicon-issue-opened" aria-hidden="true" width="16" height="16">
+                                        <path d="M8 9.5a1.5 1.5..."></path>
+                                    </svg>
+                                </div>
+                                <a class="issue-card-title muted issue-title tw-break-anywhere" href="@{issue.url}">@{issue.title}</a>
+                            </div>
+                            <div class="meta">
+                                <span class="text light grey muted-links">@{issue.meta}</span>
+                            </div>
+                        </div>
+                        <div class="issue-card-bottom">
+                            <div class="labels-list"></div>
+                            <div class="issue-card-assignees">
+                                @for assignee in issue.assignees
+                                <a target="_blank" href="@{assignee.url}" data-tooltip-content="Assigned to @{assignee.name}" aria-label="Assigned to @{assignee.name}">
+                                    <img class="ui avatar" src="@{assignee.avatar_url}" title="@{assignee.name}" />
+                                </a>
+                                @end
+                            </div>
+                        </div>
+                    </div>
+                    @end
+                </div>
+            </div>
+            @end
+        </div>
+    </div>
+</div>

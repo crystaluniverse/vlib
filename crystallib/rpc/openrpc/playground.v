@@ -4,7 +4,7 @@ import json
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.webtools.npm
+import freeflowuniverse.crystallib.web.npm
 import vweb
 import os
 

@@ -1,6 +1,6 @@
 module herocmds
 
-import freeflowuniverse.crystallib.webtools.mdbook
+import freeflowuniverse.crystallib.web.mdbook
 import cli { Command, Flag }
 import freeflowuniverse.crystallib.ui.console
 
@@ -63,7 +63,6 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	if path.len > 0 || url.len > 0 {
 		// execute the attached playbook
 		mut plbook, _ := plbook_run(cmd)!
-
 		// get name from the book.generate action
 		if name == '' {
 			mut a := plbook.action_get(actor: 'mdbook', name: 'export')!

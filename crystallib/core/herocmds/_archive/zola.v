@@ -1,7 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.installers.web.zola as zola_installer
-import freeflowuniverse.crystallib.webtools.zola
+import freeflowuniverse.crystallib.web.zola
 import cli { Command, Flag }
 import os
 
