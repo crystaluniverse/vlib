@@ -228,3 +228,16 @@ fn find_key_recursive(data map[string]json2.Any, key_to_find string) !json2.Any 
 
 	return error('Key ${key_to_find} not found')
 }
+
+fn url_encode(map_ map[string]json2.Any) string {
+	mut formated := ''
+
+	for k, v in map_ {
+		if formated != '' {
+			formated += '&' + k + '=' + v.str()
+		} else {
+			formated = k + '=' + v.str()
+		}
+	}
+	return formated
+}

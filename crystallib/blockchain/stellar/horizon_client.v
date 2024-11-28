@@ -2,10 +2,38 @@ module stellar
 
 import freeflowuniverse.crystallib.clients.httpconnection
 import json
+import x.json2
 
 pub struct HorizonClient {
 pub mut:
 	url string
+}
+
+// Struct for the order book request
+pub struct OrderBookRequest {
+pub mut:
+	selling_asset_type   string @[json: 'sellingAssetType']
+	selling_asset_code   string @[json: 'sellingAssetCode']
+	selling_asset_issuer string @[json: 'sellingAssetIssuer']
+	buying_asset_type    string @[json: 'buyingAssetType']
+	buying_asset_code    string @[json: 'buyingAssetCode']
+	buying_asset_issuer  string @[json: 'buyingAssetIssuer']
+	limit                int
+}
+
+// Struct for the order book response (you'll need to match Horizon API's response format)
+pub struct OrderBook {
+	// Add fields based on the Horizon API order book response
+pub:
+	bids []Order
+	asks []Order
+}
+
+pub struct Order {
+pub:
+	price_r map[string]int // Price ratio as returned by Stellar Horizon
+	price   string
+	amount  string
 }
 
 // TODO: this needs to be configured to work on both networks
@@ -29,8 +57,8 @@ pub fn (self HorizonClient) get_account(pubkey string) !StellarAccount {
 	mut client := httpconnection.new(name: 'horizon', url: self.url)!
 
 	result := client.get_json(
-		prefix: 'accounts/${pubkey}'
-		debug: true
+		prefix:        'accounts/${pubkey}'
+		debug:         true
 		cache_disable: false
 	)!
 
@@ -45,8 +73,8 @@ pub fn (self HorizonClient) get_last_transaction(address string) !TransactionInf
 	mut client := httpconnection.new(name: 'horizon', url: self.url)!
 
 	result := client.get_json(
-		prefix: 'accounts/${address}/transactions?limit=1&order=desc'
-		debug: true
+		prefix:        'accounts/${address}/transactions?limit=1&order=desc'
+		debug:         true
 		cache_disable: false
 	)!
 
@@ -55,4 +83,26 @@ pub fn (self HorizonClient) get_last_transaction(address string) !TransactionInf
 	}
 
 	return tx
+}
+
+// Function to get the order book
+pub fn (self HorizonClient) get_order_book(order_book_request OrderBookRequest) !OrderBook {
+	// Construct the query parameters
+	mut query_params := map[string]json2.Any{}
+	mut client := httpconnection.new(name: 'horizon', url: self.url)!
+
+	$for field in order_book_request.fields {
+		query_params[field.name] = order_book_request.$(field.name)
+	}
+	result := client.get_json(
+		prefix:        'order_book?' + url_encode(query_params)
+		debug:         true
+		cache_disable: false
+	)!
+
+	order_book := json.decode(OrderBook, result) or {
+		return error('Failed to decode OrderBook: error: ${result}')
+	}
+
+	return order_book
 }
