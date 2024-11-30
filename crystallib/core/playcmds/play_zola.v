@@ -1,7 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.webtools.zola
+import freeflowuniverse.crystallib.web.zola
 import freeflowuniverse.crystallib.core.playbook
 
 struct WebsiteItem {

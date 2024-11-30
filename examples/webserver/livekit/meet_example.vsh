@@ -2,7 +2,7 @@
 
 import os
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.webserver.livekit.meet
+import freeflowuniverse.crystallib.web.livekit.meet
 
 
 osal.load_env_file('${os.dir(@FILE)}/.env') or {

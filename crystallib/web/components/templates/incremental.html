@@ -1,0 +1,55 @@
+<div id="inputsContainer">
+    <div role="group">
+        <input type="text" placeholder="Enter value" required>
+        <button type="button" class="add-input" aria-label="Add">Add</button>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputsContainer = document.getElementById('inputsContainer');
+
+        // Function to create a new input group
+        const createInputGroup = () => {
+            const inputGroup = document.createElement('div');
+            inputGroup.setAttribute('role', 'group');
+
+            inputGroup.innerHTML = `
+                <input type="text" placeholder="Enter value" required>
+                <button type="button" class="add-input" aria-label="Add">Add</button>
+            `;
+
+            const addButton = inputGroup.querySelector('.add-input');
+
+            // Add functionality to toggle between Add and Remove
+            addButton.addEventListener('click', () => {
+                if (addButton.textContent === 'Add') {
+                    addButton.textContent = 'Remove';
+                    addButton.classList.remove('add-input');
+                    addButton.classList.add('remove-input');
+                    const newInputGroup = createInputGroup();
+                    inputsContainer.appendChild(newInputGroup);
+                } else {
+                    inputGroup.remove();
+                }
+            });
+
+            return inputGroup;
+        };
+
+        // Add initial behavior to the first button
+        const firstAddButton = inputsContainer.querySelector('.add-input');
+        firstAddButton.addEventListener('click', (event) => {
+            const addButton = event.target;
+            addButton.textContent = 'Remove';
+            addButton.classList.remove('add-input');
+            addButton.classList.add('remove-input');
+            const newInputGroup = createInputGroup();
+            inputsContainer.appendChild(newInputGroup);
+
+            // Change functionality to remove the input group
+            addButton.addEventListener('click', () => {
+                addButton.parentElement.remove();
+            });
+        });
+    });
+</script>

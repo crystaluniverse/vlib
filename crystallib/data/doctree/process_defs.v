@@ -10,7 +10,6 @@ pub fn (mut tree Tree) process_defs() ! {
 	console.print_green('Processing tree defs')
 
 	for _, mut col in tree.collections {
-		println("debugzo1${col.fail_on_error}")
 		for _, mut page in col.pages {
 			mut p := page
 			mut c := col

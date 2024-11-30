@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements { Header }
+import freeflowuniverse.crystallib.rpc.openrpc
 import freeflowuniverse.crystallib.core.pathlib
 import os
 import json
@@ -129,11 +130,53 @@ pub fn (a Actor) generate_module() !Module {
 		files << generate_object_test_code(actor_struct, object)!
 	}
 
+	// generate code files for each of the objects the actor is responsible for
+	mut methods_file := CodeFile {}
+	mut items :=
+
+
 	return Module{
 		name: a.name
 		files: files
 		misc_files: [readme]
 	}
+}
+
+
+pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
+	obj_name := texttools.name_fix_pascal_to_snake(object.structure.name)
+	object_type := object.structure.name
+
+	mut items := []CodeItem{}
+	items = [generate_new_method(actor, object), generate_get_method(actor, object),
+		generate_set_method(actor, object), generate_delete_method(actor, object),
+		generate_list_result_struct(actor, object), generate_list_method(actor, object)]
+
+	items << generate_object_methods(actor, object)
+	mut file := codemodel.new_file(
+		mod: texttools.name_fix(actor.name)
+		name: obj_name
+		imports: [
+			Import{
+				mod: object.structure.mod
+				types: [object_type]
+			},
+			Import{
+				mod: 'freeflowuniverse.crystallib.baobab.backend'
+				types: ['FilterParams']
+			},
+		]
+		items: items
+	)
+
+	if object.structure.fields.any(it.attrs.any(it.name == 'index')) {
+		// can't filter without indices
+		filter_params := generate_filter_params(actor, object)
+		file.items << filter_params.map(CodeItem(it))
+		file.items << generate_filter_method(actor, object)
+	}
+
+	return file
 }
 
 pub fn (a Actor) generate_openrpc_specification() !File {
@@ -210,4 +253,42 @@ pub fn generate_actor_factory(actor Struct) Function {
 	}
 	function.body = 'return ${actor.name}{Actor: actor.new(config)!}'
 	return function
+}
+
+
+pub fn generate_actor_from_spec(openrpc_doc openrpc.OpenRPC) !Actor {
+	// Extract Actor metadata from OpenRPC info
+	actor_name := openrpc_doc.info.title
+	actor_description := openrpc_doc.info.description
+
+	// Generate methods
+	mut methods := []ActorMethod{}
+	for method in openrpc_doc.methods {
+		method_code := method.to_code()! // Using provided to_code function
+		methods << ActorMethod{
+			name: method.name
+			func: method_code
+		}
+	}
+
+	// // Generate BaseObject structs from schemas
+	// mut objects := []BaseObject{}
+	// for key, schema_ref in openrpc_doc.components.schemas {
+	// 	struct_obj := schema_ref.to_code()! // Assuming schema_ref.to_code() converts schema to Struct
+	// 	// objects << BaseObject{
+	// 	// 	structure: codemodel.Struct{
+	// 	// 		name: struct_obj.name
+	// 	// 	}
+	// 	// }
+	// }
+
+	// Build the Actor struct
+	actor := Actor{
+		name: actor_name
+		description: actor_description
+		methods: methods
+		// objects: objects
+	}
+
+	return actor
 }

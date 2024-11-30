@@ -8,10 +8,11 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 pub fn parse_doc(mut doc elements.Doc) ! {
 	mut parser := parser_line_new(mut doc)!
 	doc.type_name = 'doc'
+
 	for {
 		if parser.eof() {
 			// go out of loop if end of file
-			// console.print_debug('--- end')
+			// console.print_debug('+++ end')
 			break
 		}
 
@@ -154,7 +155,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				}
 			}
 			else {
-				// console.print_debug(llast.str())
 				panic('parser error, means we got element which is not supported')
 			}
 		}

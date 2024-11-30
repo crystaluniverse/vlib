@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.biz.bizmodel
 import freeflowuniverse.crystallib.threefold.grid4.gridsimulator
 //import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
-import freeflowuniverse.crystallib.webserver.components.slides
+import freeflowuniverse.crystallib.web.components.slides
 // import freeflowuniverse.crystallib.installers.base as base_install
 // import freeflowuniverse.crystallib.installers.infra.coredns
 
