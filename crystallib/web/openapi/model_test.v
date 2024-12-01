@@ -144,108 +144,214 @@ const spec = openapi.OpenAPI{
 				}
 			}
 		}
-	}
-	components: openapi.Components{
-		schemas: {
-			'Pet': Schema{
-				typ: 'object'
-				required: ['id', 'name']
-				properties: {
-					'id': SchemaRef(Schema{
-						typ: 'integer'
-						format: 'int64'
-					})
-					'name': SchemaRef(Schema{
-						typ: 'string'
-					})
-					'tag': SchemaRef(Schema{
-						typ: 'string'
-					})
+		'/orders': openapi.PathItem{
+			get: openapi.Operation{
+				summary: 'List all orders'
+				operation_id: 'listOrders'
+				responses: {
+					'200': openapi.Response{
+						description: 'A list of orders'
+						content: {
+							'application/json': openapi.MediaType{
+								schema: Schema{
+									typ: 'array'
+									items: SchemaRef(Reference{
+										ref: '#/components/schemas/Order'
+									})
+								}
+							}
+						}
+					}
 				}
 			}
-			'NewPet': Schema{
-				typ: 'object'
-				required: ['name']
-				properties: {
-					'name': SchemaRef(Schema{
-						typ: 'string'
-					})
-					'tag': SchemaRef(Schema{
-						typ: 'string'
-					})
+		}
+		'/orders/{orderId}': openapi.PathItem{
+			get: openapi.Operation{
+				summary: 'Get an order by ID'
+				operation_id: 'getOrder'
+				parameters: [
+					openapi.Parameter{
+						name: 'orderId'
+						in_: 'path'
+						description: 'ID of the order to retrieve'
+						required: true
+						schema: Schema{
+							typ: 'integer'
+							format: 'int64'
+						}
+					}
+				]
+				responses: {
+					'200': openapi.Response{
+						description: 'An order'
+						content: {
+							'application/json': openapi.MediaType{
+								schema: Reference{
+									ref: '#/components/schemas/Order'
+								}
+							}
+						}
+					}
+					'404': openapi.Response{
+						description: 'Order not found'
+					}
 				}
 			}
-			'Pets': Schema{
-				typ: 'array'
-				items: SchemaRef(Reference{
-					ref: '#/components/schemas/Pet'
-				})
-			}
-			'Order': Schema{
-				typ: 'object'
-				required: ['id', 'petId', 'quantity', 'shipDate']
-				properties: {
-					'id': SchemaRef(Schema{
-						typ: 'integer'
-						format: 'int64'
-					})
-					'petId': SchemaRef(Schema{
-						typ: 'integer'
-						format: 'int64'
-					})
-					'quantity': SchemaRef(Schema{
-						typ: 'integer'
-						format: 'int32'
-					})
-					'shipDate': SchemaRef(Schema{
-						typ: 'string'
-						format: 'date-time'
-					})
-					'status': SchemaRef(Schema{
-						typ: 'string'
-						enum_: ['placed', 'approved', 'delivered']
-					})
-					'complete': SchemaRef(Schema{
-						typ: 'boolean'
-					})
+			delete: openapi.Operation{
+				summary: 'Delete an order by ID'
+				operation_id: 'deleteOrder'
+				parameters: [
+					openapi.Parameter{
+						name: 'orderId'
+						in_: 'path'
+						description: 'ID of the order to delete'
+						required: true
+						schema: Schema{
+							typ: 'integer'
+							format: 'int64'
+						}
+					}
+				]
+				responses: {
+					'204': openapi.Response{
+						description: 'Order deleted'
+					}
+					'404': openapi.Response{
+						description: 'Order not found'
+					}
 				}
 			}
-			'User': Schema{
-				typ: 'object'
-				required: ['id', 'username']
-				properties: {
-					'id': SchemaRef(Schema{
-						typ: 'integer'
-						format: 'int64'
-					})
-					'username': SchemaRef(Schema{
-						typ: 'string'
-					})
-					'email': SchemaRef(Schema{
-						typ: 'string'
-					})
-					'phone': SchemaRef(Schema{
-						typ: 'string'
-					})
+		}
+		'/users': openapi.PathItem{
+			post: openapi.Operation{
+				summary: 'Create a user'
+				operation_id: 'createUser'
+				request_body: openapi.RequestBody{
+					required: true
+					content: {
+						'application/json': openapi.MediaType{
+							schema: Reference{
+								ref: '#/components/schemas/NewUser'
+							}
+						}
+					}
 				}
-			}
-			'NewUser': Schema{
-				typ: 'object'
-				required: ['username']
-				properties: {
-					'username': SchemaRef(Schema{
-						typ: 'string'
-					})
-					'email': SchemaRef(Schema{
-						typ: 'string'
-					})
-					'phone': SchemaRef(Schema{
-						typ: 'string'
-					})
+				responses: {
+					'201': openapi.Response{
+						description: 'User created'
+						content: {
+							'application/json': openapi.MediaType{
+								schema: Reference{
+									ref: '#/components/schemas/User'
+								}
+							}
+						}
+					}
 				}
 			}
 		}
 	}
+	components: openapi.Components{
+	schemas: {
+		'Pet': SchemaRef(Schema{
+			typ: 'object'
+			required: ['id', 'name']
+			properties: {
+				'id': SchemaRef(Schema{
+					typ: 'integer'
+					format: 'int64'
+				})
+				'name': SchemaRef(Schema{
+					typ: 'string'
+				})
+				'tag': SchemaRef(Schema{
+					typ: 'string'
+				})
+			}
+		})
+		'NewPet': SchemaRef(Schema{
+			typ: 'object'
+			required: ['name']
+			properties: {
+				'name': SchemaRef(Schema{
+					typ: 'string'
+				})
+				'tag': SchemaRef(Schema{
+					typ: 'string'
+				})
+			}
+		})
+		'Pets': SchemaRef(Schema{
+			typ: 'array'
+			items: SchemaRef(Reference{
+				ref: '#/components/schemas/Pet'
+			})
+		})
+		'Order': SchemaRef(Schema{
+			typ: 'object'
+			required: ['id', 'petId', 'quantity', 'shipDate']
+			properties: {
+				'id': SchemaRef(Schema{
+					typ: 'integer'
+					format: 'int64'
+				})
+				'petId': SchemaRef(Schema{
+					typ: 'integer'
+					format: 'int64'
+				})
+				'quantity': SchemaRef(Schema{
+					typ: 'integer'
+					format: 'int32'
+				})
+				'shipDate': SchemaRef(Schema{
+					typ: 'string'
+					format: 'date-time'
+				})
+				'status': SchemaRef(Schema{
+					typ: 'string'
+					enum_: ['placed', 'approved', 'delivered']
+				})
+				'complete': SchemaRef(Schema{
+					typ: 'boolean'
+				})
+			}
+		})
+		'User': SchemaRef(Schema{
+			typ: 'object'
+			required: ['id', 'username']
+			properties: {
+				'id': SchemaRef(Schema{
+					typ: 'integer'
+					format: 'int64'
+				})
+				'username': SchemaRef(Schema{
+					typ: 'string'
+				})
+				'email': SchemaRef(Schema{
+					typ: 'string'
+				})
+				'phone': SchemaRef(Schema{
+					typ: 'string'
+				})
+			}
+		})
+		'NewUser': SchemaRef(Schema{
+			typ: 'object'
+			required: ['username']
+			properties: {
+				'username': SchemaRef(Schema{
+					typ: 'string'
+				})
+				'email': SchemaRef(Schema{
+					typ: 'string'
+				})
+				'phone': SchemaRef(Schema{
+					typ: 'string'
+				})
+			}
+		})
+	}
+}
 }
 
 pub fn testsuite_begin() {}
@@ -266,6 +372,9 @@ fn test_decode() {
 		match_operations(path.delete, spec.paths[key].delete)
 	}
 	assert decoded.webhooks == spec.webhooks
+	for key, schema in decoded.components.schemas {
+		assert schema == spec.components.schemas[key], 'Schemas ${key} dont match.'
+	}
 	assert decoded.components == spec.components
 	assert decoded.security == spec.security
 }
