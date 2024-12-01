@@ -21,16 +21,18 @@ pub mut:
 	buying_asset_issuer  string
 	selling_asset_type   string
 	buying_asset_type    string
+	// TODO: add sell amount
+	// TODO: add buy amount
 }
 
 @[params]
 pub struct StellarTradingBotArgs {
 pub mut:
-	account_secret       string @[required] // The account secret
-	buying_target_price  string @[required] // Your desired buy price
-	selling_target_price string @[required] // Your desired sell price
-	selling_asset_code   string @[required]
-	buying_asset_code    string @[required]
+	account_secret       string                 @[required] // The account secret
+	buying_target_price  string                 @[required] // Your desired buy price
+	selling_target_price string                 @[required] // Your desired sell price
+	selling_asset_code   string                 @[required]
+	buying_asset_code    string                 @[required]
 	selling_asset_issuer string
 	buying_asset_issuer  string
 	network              stellar.StellarNetwork = .testnet
@@ -39,25 +41,26 @@ pub mut:
 pub fn new(args StellarTradingBotArgs) !StellarTradingBot {
 	mut hclient := stellar.new_horizon_client(args.network)!
 	mut sclient := stellar.new_client(
-		account_name:   'default'
+		account_name: 'default'
 		account_secret: args.account_secret
-		network:        args.network
-		cache:          false
+		network: args.network
+		cache: false
 	)!
 
+	// TODO: i believe any asset can work, no?
 	mut supported_issuers := {
 		'TFT': 'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
 		'XLM': 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
 	}
 
 	mut tbot := StellarTradingBot{
-		hclient:              hclient
-		sclient:              sclient
+		hclient: hclient
+		sclient: sclient
 		selling_target_price: args.selling_target_price
-		selling_asset_code:   args.selling_asset_code
-		buying_target_price:  args.buying_target_price
-		buying_asset_code:    args.buying_asset_code
-		account_secret:       args.account_secret
+		selling_asset_code: args.selling_asset_code
+		buying_target_price: args.buying_target_price
+		buying_asset_code: args.buying_asset_code
+		account_secret: args.account_secret
 	}
 
 	if args.selling_asset_code.to_upper() in supported_issuers.keys() {
@@ -71,7 +74,7 @@ pub fn new(args StellarTradingBotArgs) !StellarTradingBot {
 		// TODO: Need to check if the trust line already exists
 		tx_hash := sclient.add_trust_line(
 			asset_code: tbot.selling_asset_code
-			issuer:     tbot.selling_asset_issuer
+			issuer: tbot.selling_asset_issuer
 		)!
 		println('Transaction hash: ${tx_hash}')
 	}
@@ -87,7 +90,7 @@ pub fn new(args StellarTradingBotArgs) !StellarTradingBot {
 		// TODO: Need to check if the trust line already exists
 		tx_hash := sclient.add_trust_line(
 			asset_code: tbot.buying_asset_code
-			issuer:     tbot.buying_asset_issuer
+			issuer: tbot.buying_asset_issuer
 		)!
 		println('Transaction hash: ${tx_hash}')
 	}
@@ -155,13 +158,13 @@ fn (mut bot StellarTradingBot) run(op StellarTradingBotOperation) ! {
 // Fetch order book
 fn (mut bot StellarTradingBot) fetch_order_book() !stellar.OrderBook {
 	mut order_book_request := stellar.OrderBookRequest{
-		selling_asset_code:   bot.selling_asset_code
-		selling_asset_type:   bot.selling_asset_type
-		buying_asset_code:    bot.buying_asset_code
-		buying_asset_type:    bot.buying_asset_type
+		selling_asset_code: bot.selling_asset_code
+		selling_asset_type: bot.selling_asset_type
+		buying_asset_code: bot.buying_asset_code
+		buying_asset_type: bot.buying_asset_type
 		selling_asset_issuer: bot.selling_asset_issuer
-		buying_asset_issuer:  bot.buying_asset_issuer
-		limit:                200
+		buying_asset_issuer: bot.buying_asset_issuer
+		limit: 200
 	}
 
 	println('Order book request: ${order_book_request}')
@@ -185,13 +188,13 @@ fn (mut bot StellarTradingBot) try_buy() ! {
 					asset_code: 'native'
 					// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
 				}
-				buying:  stellar.Asset{
+				buying: stellar.Asset{
 					asset_code: 'TFT'
-					issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
+					issuer: 'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
 				}
-				buy:     true
-				amount:  50
-				price:   10
+				buy: true
+				amount: 50
+				price: 10
 			}
 
 			mut buy_offer_id := bot.sclient.create_offer(buy_offer_args)!
@@ -206,6 +209,12 @@ fn (mut bot StellarTradingBot) try_buy() ! {
 
 // Sell if price is above target
 fn (mut bot StellarTradingBot) try_sell() ! {
+	// TODO: fetch current offers if any
+	/*
+		notes:
+			- assume bot works on one offer only
+			- if there is an active offer, update it accordingly
+	*/
 	order_book := bot.fetch_order_book()!
 	if order_book.bids.len > 0 {
 		best_bid := order_book.bids[0] // Highest buy price
@@ -217,13 +226,13 @@ fn (mut bot StellarTradingBot) try_sell() ! {
 					asset_code: 'native'
 					// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
 				}
-				buying:  stellar.Asset{
+				buying: stellar.Asset{
 					asset_code: 'TFT'
-					issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
+					issuer: 'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
 				}
-				sell:    true
-				amount:  50
-				price:   10
+				sell: true
+				amount: 50
+				price: 10
 			}
 			mut sell_offer_id := bot.sclient.create_offer(sell_offer_args)!
 			println('Sell offer id: ${sell_offer_id}')
@@ -231,5 +240,7 @@ fn (mut bot StellarTradingBot) try_sell() ! {
 			// TODO: We need to think if we should continue selling if the offer is not accepted
 			// TODO: We need to think if we should return and exit the loop
 		}
+
+		// TODO: if amount = 0, delete offer if exists
 	}
 }
