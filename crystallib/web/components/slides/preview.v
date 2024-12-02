@@ -1,6 +1,6 @@
 module slides
 
-import freeflowuniverse.crystallib.web.components {Row, Cell}
+import freeflowuniverse.crystallib.web.components {Table, Row, Cell, Image}
 
 pub struct SlideshowPreview {
 pub mut:
@@ -25,20 +25,20 @@ pub fn (slideshow SlideshowPreview) html() string {
 	// Define the table structure
 	table := Table{
 		headers: ['', 'Slideshow', 'Tags', '']
-		rows:    rows
+		rows: slideshow.slides.map(it.to_row())
 	}
 	return $tmpl('templates/slideshow_preview.html')
 }
 
-pub fn (slide SlidePreview) html() string {
+pub fn (slide SlidePreview) to_row() Row {
 	// Generate table rows based on filtered documents
 	row := Row{
 		cells: [
 			Cell{
 				Image{
 					typ: .thumbnail
-					url: slide.thumbnail_url
-				}
+					source: slide.thumbnail_url
+				}.html()
 			}, // Insert icon HTML directly
 			Cell{'<div>
 				<a href="" target="_blank">${slide.title}</a>
@@ -47,6 +47,6 @@ pub fn (slide SlidePreview) html() string {
 			// Cell{action_cell(it.name)},
 		]
 	}
-
-	return row.html()
+	return row
+	// return row.html()
 }
