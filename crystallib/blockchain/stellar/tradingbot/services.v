@@ -13,24 +13,26 @@ mut:
 	sclient stellar.StellarClient // Stellar client
 pub mut:
 	account_secret       string
+	account_address      string
 	selling_asset_code   string
 	buying_asset_code    string
-	buying_target_price  string
-	selling_target_price string
+	buying_target_price  f32
+	selling_target_price f32
 	selling_asset_issuer string
 	buying_asset_issuer  string
 	selling_asset_type   string
 	buying_asset_type    string
-	// TODO: add sell amount
-	// TODO: add buy amount
+	sell_amount          f64
+	buy_amount           f64
+	preserve             f64 // min balance to have in account
 }
 
 @[params]
 pub struct StellarTradingBotArgs {
 pub mut:
 	account_secret       string                 @[required] // The account secret
-	buying_target_price  string                 @[required] // Your desired buy price
-	selling_target_price string                 @[required] // Your desired sell price
+	buying_target_price  f32                    @[required]    // Your desired buy price
+	selling_target_price f32                    @[required]    // Your desired sell price
 	selling_asset_code   string                 @[required]
 	buying_asset_code    string                 @[required]
 	selling_asset_issuer string
@@ -180,7 +182,7 @@ fn (mut bot StellarTradingBot) try_buy() ! {
 	order_book := bot.fetch_order_book()!
 	if order_book.asks.len > 0 {
 		best_ask := order_book.asks[0] // Lowest sell price
-		if best_ask.price.f64() <= bot.buying_target_price.f64() {
+		if best_ask.price.f32() <= bot.buying_target_price {
 			println('Buying at price: ${best_ask.price}')
 			// Make buy offer
 			mut buy_offer_args := stellar.OfferArgs{
@@ -216,31 +218,76 @@ fn (mut bot StellarTradingBot) try_sell() ! {
 			- if there is an active offer, update it accordingly
 	*/
 	order_book := bot.fetch_order_book()!
+	mut best_bid := 0.0
 	if order_book.bids.len > 0 {
-		best_bid := order_book.bids[0] // Highest buy price
-		if best_bid.price.f64() >= bot.selling_target_price.f64() {
-			println('Selling at price: ${best_bid.price}')
-			// Make sell offer
-			sell_offer_args := stellar.OfferArgs{
-				selling: stellar.Asset{
-					asset_code: 'native'
-					// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
-				}
-				buying: stellar.Asset{
-					asset_code: 'TFT'
-					issuer: 'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
-				}
-				sell: true
-				amount: 50
-				price: 10
-			}
-			mut sell_offer_id := bot.sclient.create_offer(sell_offer_args)!
-			println('Sell offer id: ${sell_offer_id}')
-			// TODO: We need to think if the bot should wait for the offer to be accepted
-			// TODO: We need to think if we should continue selling if the offer is not accepted
-			// TODO: We need to think if we should return and exit the loop
+		best_bid = order_book.bids[0].price.f32() // Highest buy price
+	}
+
+	// get wallet balance
+	asset_balance := bot.get_asset_balance(bot.selling_asset_code, bot.selling_asset_issuer)!
+
+	// get wallet offers
+	offer := bot.get_wallet_offer()!
+
+	// sell_amount := min(max(asset_balance - bot.preserve, 0), bot.sell_amount)
+	if offer.offer_id == 0 {
+		// create new offer
+		if bot.sell_amount == 0 {
+			return error('Sell amount is 0, but There are no active offers to delete.')
 		}
 
-		// TODO: if amount = 0, delete offer if exists
+		if asset_balance <= bot.preserve {
+			return error('Wallet does not have enough balance for a new offer, current balance is ${asset_balance}.')
+		}
+
+		println('there is no active offer for wallet and configured pair: (${bot.selling_asset_code} - ${bot.buying_asset_code})')
+
+		mut price := stellar.get_offer_price(bot.selling_target_price)
+		if best_bid > bot.selling_target_price {
+			price = order_book.bids[0].price_r
+		}
 	}
+	if best_bid >= bot.selling_target_price {
+		println('Selling at price: ${best_bid.price}')
+		// Make sell offer
+		sell_offer_args := stellar.OfferArgs{
+			selling: stellar.Asset{
+				asset_code: 'native'
+				// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
+			}
+			buying: stellar.Asset{
+				asset_code: 'TFT'
+				issuer: 'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
+			}
+			sell: true
+			amount: 50
+			price: 10
+		}
+		mut sell_offer_id := bot.sclient.create_offer(sell_offer_args)!
+		println('Sell offer id: ${sell_offer_id}')
+		// TODO: We need to think if the bot should wait for the offer to be accepted
+		// TODO: We need to think if we should continue selling if the offer is not accepted
+		// TODO: We need to think if we should return and exit the loop
+	}
+
+	// TODO: if amount = 0, delete offer if exists
+}
+
+fn (mut bot StellarTradingBot) get_wallet_offer() !stellar.Offer {
+	// todo: get wallet offer
+	// return error if many
+	// return offer with zero price of none
+	return stellar.Offer{}
+}
+
+fn (mut bot StellarTradingBot) get_asset_balance(asset_code string, asset_issuer string) !f64 {
+	wallet_address := stellar.get_address(bot.account_secret)!
+	account := bot.hclient.get_account(wallet_address)!
+	for balance_info in account.balances {
+		if balance_info.asset_code == asset_code && balance_info.asset_issuer == asset_issuer {
+			return balance_info.balance.f64()
+		}
+	}
+
+	return error('acount does not have trust line for asset ${asset_code}')
 }
