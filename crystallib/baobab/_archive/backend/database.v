@@ -42,7 +42,6 @@ fn (mut db Database) exec(cmd string, params ExecParams) ![]Row {
 
 fn (mut db Database) insert(object RootObject) ![]Row {
 	indices, values := object.sql_indices_values()
-	println('debugzo1')
 	rows := match db.default_db {
 		.sqlite {
 			rows_ := db.sqlite_db or {panic('err')}.exec("INSERT INTO ${get_table_name(object)} (${indices.join(', ')}) VALUES (${values.join(', ')})")!
@@ -58,6 +57,5 @@ fn (mut db Database) insert(object RootObject) ![]Row {
 			rows_.map(Row{vals: it.vals.map(it or {''})})
 		}
 	}
-	println('debugzo2')
 	return rows
 }

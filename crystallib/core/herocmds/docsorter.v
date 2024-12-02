@@ -54,7 +54,6 @@ pub fn cmd_docsorter(mut cmdroot Command) {
 		description: 'extract slides out of the pdfs.'
 	})
 
-
 	cmdroot.add_command(cmd_run)
 }
 
