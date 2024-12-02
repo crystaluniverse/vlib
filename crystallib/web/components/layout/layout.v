@@ -1,12 +1,7 @@
-module components
+module layout
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
-
-pub interface ILayout {
-    html() string
-mut:
-    main IComponent
-}
+import freeflowuniverse.crystallib.web.components {IComponent, Navbar, MarkdownContent}
 
 pub struct Layout {
 pub:

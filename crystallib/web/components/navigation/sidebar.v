@@ -6,6 +6,7 @@ pub struct NavItem {
 pub mut:
     href string
     text string
+    subtitle string
     class_name ?string
 }
 
@@ -30,7 +31,7 @@ pub mut:
 
 pub fn (item NavItem) html() string {
     // return ''
-    return '<a href="${item.href}">${item.text}</a>'
+    return '<li><a href="${item.href}">${item.text}</a>${item.subtitle}</li>'
 }
 
 pub struct Sidebar {

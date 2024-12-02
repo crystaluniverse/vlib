@@ -12,6 +12,14 @@ pub mut:
     layout ILayout
 }
 
+
+pub interface ILayout {
+    html() string
+mut:
+    main IComponent
+}
+
+
 pub fn (view View) html() string {
     // println(view.layout)
     return $tmpl('./templates/view.html')
