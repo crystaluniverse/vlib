@@ -1,10 +1,10 @@
 module gittools
 
 import freeflowuniverse.crystallib.core.pathlib
-
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
 import os
+import freeflowuniverse.crystallib.clients.redisclient
 
 // GitStructureConfig defines configuration settings for a GitStructure instance.
 @[params]
@@ -21,21 +21,19 @@ pub mut:
 @[heap]
 pub struct GitStructure {
 pub mut:
-	key      string                // Unique key representing the git structure (default is hash of $home/code).
-	config   GitStructureConfig    // Configuration settings for the git structure.
-	coderoot pathlib.Path          // Root directory where repositories are located.
-	repos    map[string]&GitRepo   // Map of repositories, keyed by their unique names.
-	loaded   bool                  // Indicates if the repositories have been loaded into memory.
+	key      string // Unique key representing the git structure (default is hash of $home/code).
+	config   GitStructureConfig  // Configuration settings for the git structure.
+	coderoot pathlib.Path        // Root directory where repositories are located.
+	repos    map[string]&GitRepo // Map of repositories, keyed by their unique names.
+	loaded   bool // Indicates if the repositories have been loaded into memory.
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
-
 
 @[params]
 pub struct StatusUpdateArgs {
-	reload bool
+	reload       bool
 	ssh_key_name string // name of ssh key to be used when loading
 }
 
@@ -47,16 +45,28 @@ pub struct StatusUpdateArgs {
 pub fn (mut gitstructure GitStructure) load(args StatusUpdateArgs) ! {
 	mut processed_paths := []string{}
 	gitstructure.load_recursive(gitstructure.coderoot.path, args, mut processed_paths)!
+
+	mut ths := []thread !{}
+	for _, mut repo_ in gitstructure.repos {
+		// mut repo := repo_
+		ths << spawn fn (mut repo GitRepo) ! {
+			repo.status_update()!
+		}(mut repo_)
+	}
+
+	for th in ths {
+		th.wait()!
+	}
+
 	gitstructure.init()!
 }
 
-//just some initialization mechanism
+// just some initialization mechanism
 pub fn (mut gitstructure GitStructure) init() ! {
-	if gitstructure.config.debug{
+	if gitstructure.config.debug {
 		gitstructure.config.log = true
 	}
 }
-
 
 // Recursively loads repositories from the provided path, updating their statuses.
 //
@@ -75,7 +85,9 @@ fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdate
 		return
 	}
 
-	items := os.ls(path) or { return error('Cannot load gitstructure because directory not found: ${path}') }
+	items := os.ls(path) or {
+		return error('Cannot load gitstructure because directory not found: ${path}')
+	}
 
 	for item in items {
 		current_path := os.join_path(path, item)
@@ -84,7 +96,7 @@ fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdate
 			if os.exists(os.join_path(current_path, '.git')) {
 				// Initialize the repository from the current path.
 				mut repo := gitstructure.repo_init_from_path_(current_path)!
-				repo.status_update()!
+				// repo.status_update()!
 
 				key_ := repo.get_key()
 				path_ := repo.get_path()!
@@ -98,6 +110,7 @@ fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdate
 				gitstructure.repos[key_] = &repo
 				continue
 			}
+
 			if item.starts_with('.') || item.starts_with('_') {
 				continue
 			}
@@ -147,17 +160,20 @@ fn (mut gitstructure GitStructure) repo_init_from_path_(path string, params Repo
 	gl := gitstructure.gitlocation_from_path(mypath.path)!
 
 	// Initialize and return a GitRepo struct.
-	mut r:= GitRepo{
-		gs:            &gitstructure
+	// mut c := base.context()!
+	// mut redis := c.redis()!
+	mut r := GitRepo{
+		gs: &gitstructure
 		status_remote: GitRepoStatusRemote{}
-		status_local:  GitRepoStatusLocal{}
-		config:        GitRepoConfig{}
-		provider:      gl.provider
-		account:       gl.account
-		name:          gl.name
-		deploysshkey:  params.ssh_key_name
+		status_local: GitRepoStatusLocal{}
+		config: GitRepoConfig{}
+		provider: gl.provider
+		account: gl.account
+		name: gl.name
+		deploysshkey: params.ssh_key_name
 	}
-	r.status_update()!
+
+	// r.status_update()!
 	return r
 }
 
@@ -172,4 +188,3 @@ pub fn (mut gitstructure GitStructure) get_working_repo() ?GitRepo {
 	curdir := pathlib.get_wd()
 	return gitstructure.repo_init_from_path_(curdir.path) or { return none }
 }
-

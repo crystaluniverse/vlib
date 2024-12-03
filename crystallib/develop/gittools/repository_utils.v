@@ -6,11 +6,10 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.develop.sourcetree
-
 import os
 
 @[params]
-struct GetParentDir{
+struct GetParentDir {
 pub mut:
 	create bool
 }
@@ -31,29 +30,29 @@ pub fn (repo GitRepo) get_path() !string {
 // ex: 'https://git.ourworld.tf/ourworld_holding/info_ourworld/src/branch/main/books/cocreation/SUMMARY.md'
 // returns <repo_path>/books/cocreation/SUMMARY.md
 pub fn (repo GitRepo) get_path_of_url(url string) !string {
-    // Split the URL into components
-    url_parts := url.split('/')
-    
-    // Find the index of "src" (Gitea) or "blob/tree" (GitHub)
-    mut repo_root_idx := url_parts.index('src')
-	if repo_root_idx == -1 {	
-		repo_root_idx = url_parts.index('blob')
-	} 
-	
+	// Split the URL into components
+	url_parts := url.split('/')
+
+	// Find the index of "src" (Gitea) or "blob/tree" (GitHub)
+	mut repo_root_idx := url_parts.index('src')
 	if repo_root_idx == -1 {
-        return error('Invalid URL format: Cannot find repository path')
-    }
-    
-    // Ensure that the repository path starts after the branch
-    if url_parts.len < repo_root_idx + 2 {
-        return error('Invalid URL format: Missing branch or file path')
-    }
-    
-    // Extract the path inside the repository
-    path_in_repo := url_parts[repo_root_idx + 3..].join('/')
-    
-    // Construct the full path
-    return '${repo.get_path()!}/${path_in_repo}'
+		repo_root_idx = url_parts.index('blob')
+	}
+
+	if repo_root_idx == -1 {
+		return error('Invalid URL format: Cannot find repository path')
+	}
+
+	// Ensure that the repository path starts after the branch
+	if url_parts.len < repo_root_idx + 2 {
+		return error('Invalid URL format: Missing branch or file path')
+	}
+
+	// Extract the path inside the repository
+	path_in_repo := url_parts[repo_root_idx + 3..].join('/')
+
+	// Construct the full path
+	return '${repo.get_path()!}/${path_in_repo}'
 }
 
 // Relative path inside the gitstructure, pointing to the repo
@@ -82,12 +81,12 @@ pub mut:
 fn (self GitRepo) get_repo_url(args GetRepoUrlArgs) !string {
 	url := self.status_wanted.url
 	if url.len != 0 {
-		if args.with_branch{
+		if args.with_branch {
 			return '${url}/tree/${self.status_local.branch}'
 		}
 		return url
 	}
-	
+
 	if sshagent.loaded() {
 		return self.get_ssh_url()!
 	} else {

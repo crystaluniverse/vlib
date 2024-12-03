@@ -5,10 +5,19 @@ import crypto.md5
 import os
 import json
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.clients.redisclient
 
 __global (
-	gsinstances shared map[string]&GitStructure
+	gsinstances  shared map[string]&GitStructure
+	redis_client shared redisclient.Redis
 )
+
+fn init() {
+	client := redisclient.core_get() or { panic(err) }
+	lock redis_client {
+		redis_client = client
+	}
+}
 
 // Retrieve or create a new GitStructure instance with the given configuration.
 pub fn getset(args_ GitStructureConfig) !&GitStructure {
@@ -36,8 +45,8 @@ pub fn getset(args_ GitStructureConfig) !&GitStructure {
 @[params]
 pub struct GitStructureNewArgs {
 pub mut:
-	coderoot string // Root directory for the code
-	reload   bool   // If true, reloads the GitStructure from disk
+	coderoot     string // Root directory for the code
+	reload       bool   // If true, reloads the GitStructure from disk
 	ssh_key_name string // name of ssh key to be used when loading the gitstructure
 }
 
@@ -73,7 +82,7 @@ pub fn get(args_ GitStructureNewArgs) !&GitStructure {
 			}
 			if args.reload {
 				gs.load()!
-			}else{
+			} else {
 				gs.init()!
 			}
 			return gs
@@ -86,19 +95,19 @@ pub fn get(args_ GitStructureNewArgs) !&GitStructure {
 	mut datajson := redis.get(gitstructure_config_key(key))!
 
 	if datajson == '' {
-		//is a but should never happen because otherwise the get/set was not done propery
+		// is a but should never happen because otherwise the get/set was not done propery
 		// return error("Unable to find git structure for coderoot, do a getset in stead: '${args.coderoot}'")
 	}
 
-	mut config := json.decode(GitStructureConfig, datajson) or {GitStructureConfig{}}
+	mut config := json.decode(GitStructureConfig, datajson) or { GitStructureConfig{} }
 
 	// Create and load the GitStructure instance.
 	mut gs := &GitStructure{
-		key:      key
-		config:   config
+		key: key
+		config: config
 		coderoot: pathlib.get_dir(path: args.coderoot, create: true)!
 	}
-	
+
 	gs.load(
 		ssh_key_name: args.ssh_key_name
 	)!
