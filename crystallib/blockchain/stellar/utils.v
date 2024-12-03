@@ -39,9 +39,9 @@ pub fn get_account_keys(name string) !StellarAccountKeys {
 
 	// Return the StellarAccountKeys struct
 	return StellarAccountKeys{
-		name: name
+		name:    name
 		address: address
-		secret: secret
+		secret:  secret
 	}
 }
 
@@ -55,7 +55,7 @@ pub fn get_network_config(network StellarNetwork) !NetworkConfig {
 		}
 	}
 	return NetworkConfig{
-		url: rpc_url
+		url:        rpc_url
 		passphrase: passphrase
 	}
 }
@@ -75,7 +75,7 @@ pub fn encode_tx_to_xdr(json_encoding string) !string {
 pub struct GenerateAccountArgs {
 pub mut:
 	network StellarNetwork = .testnet // Specifies the Stellar network (testnet or mainnet). Defaults to testnet.
-	name    string         @[required] // Name of the account. This is required.
+	name    string @[required] // Name of the account. This is required.
 	fund    bool // Whether to fund the account on the test network after creation.
 	cache   bool // Whether to cache the generated keys locally.
 }
@@ -131,7 +131,7 @@ pub fn generate_keys(args GenerateAccountArgs) !StellarAccountKeys {
 pub struct RemoveCachedKeysArgs {
 pub mut:
 	network StellarNetwork = .testnet // Specifies the Stellar network (testnet or mainnet). Defaults to testnet.
-	name    string         @[required] // Name of the account. This is required.
+	name    string @[required] // Name of the account. This is required.
 }
 
 // Removes cached Stellar keys for a specific account.
@@ -159,7 +159,7 @@ fn remove_cached_keys(args RemoveCachedKeysArgs) ! {
 pub fn fund_account(address string) ! {
 	mut client := httpconnection.new(
 		name: 'stellar'
-		url: 'https://friendbot.stellar.org/'
+		url:  'https://friendbot.stellar.org/'
 	)!
 
 	client.get(
@@ -178,7 +178,7 @@ pub mut:
 // adding a new signer
 pub fn new_signer(args NewSignerArgs) TXSigner {
 	return TXSigner{
-		key: args.key
+		key:    args.key
 		weight: args.weight
 	}
 }
@@ -191,6 +191,16 @@ pub fn get_offer_price(price f32) Price {
 		n: n
 		d: d
 	}
+}
+
+pub fn fetch_highest_bid_price(orderBook OrderBook) !Price {
+	// Parse highest bid price from the order book response
+	if orderBook.bids.len == 0 {
+		return error('There are no bids.')
+	}
+
+	println('highest bid: ${orderBook.bids[0].price}')
+	return orderBook.bids[0].price_r
 }
 
 pub fn get_offer_id_from_result_xdr(result_xdr string) !u64 {
