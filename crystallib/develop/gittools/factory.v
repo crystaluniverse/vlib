@@ -53,8 +53,9 @@ pub fn new(args_ GitStructureNewArgs) !&GitStructure {
 	datajson := json.encode(args)
 	mut c := base.context()!
 	mut redis := c.redis()!
+	println('debugzo1 ${datajson}')
 	redis.set(gitstructure_config_key(key), datajson)!
-
+	println('debugzo2')
 	return get(args_)
 }
 
@@ -86,10 +87,10 @@ pub fn get(args_ GitStructureNewArgs) !&GitStructure {
 
 	if datajson == '' {
 		//is a but should never happen because otherwise the get/set was not done propery
-		return error("Unable to find git structure for coderoot, do a getset in stead: '${args.coderoot}'")
+		// return error("Unable to find git structure for coderoot, do a getset in stead: '${args.coderoot}'")
 	}
 
-	mut config := json.decode(GitStructureConfig, datajson)!
+	mut config := json.decode(GitStructureConfig, datajson) or {GitStructureConfig{}}
 
 	// Create and load the GitStructure instance.
 	mut gs := &GitStructure{
