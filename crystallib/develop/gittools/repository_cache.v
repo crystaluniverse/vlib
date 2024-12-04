@@ -27,11 +27,13 @@ fn (mut repo GitRepo) cache_get() ! {
 }
 
 // Remove cache
-fn (mut repo GitRepo) cache_delete() ! {
+fn (repo GitRepo) cache_delete() ! {
 	lock redis_client {
 		cache_key := repo.get_cache_key()
 		redis_client.del(cache_key) or {
 			return error('Cannot delete the repo cache due to: ${err}')
 		}
+		// TODO: report v bug, function should work without return as well
+		return
 	}
 }
