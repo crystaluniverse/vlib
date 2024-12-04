@@ -1,7 +1,5 @@
 module tradingbot
 
-import freeflowuniverse.crystallib.blockchain.stellar
-
 // Normalizes asset codes and validates issuers
 fn normalize_assets(args StellarTradingBotArgs) !StellarTradingBotArgs {
 	mut args_ := args
@@ -23,13 +21,4 @@ fn determine_asset_type(asset_code string, asset_issuer string) string {
 	} else {
 		'credit_alphanum12'
 	}
-}
-
-// Adds a trust line for a specific asset
-fn add_trust_line(mut sclient stellar.StellarClient, asset_code string, issuer string) ! {
-	println('Adding trustline for ${asset_code}, Issuer: ${issuer}')
-	sclient.add_trust_line(
-		asset_code: asset_code
-		issuer:     issuer
-	)!
 }

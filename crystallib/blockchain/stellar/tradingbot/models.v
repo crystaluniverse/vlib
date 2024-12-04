@@ -2,6 +2,11 @@ module tradingbot
 
 import freeflowuniverse.crystallib.blockchain.stellar
 
+pub enum StellarTradingBotOperation {
+	sell
+	buy
+}
+
 pub struct StellarTradingBot {
 mut:
 	hclient stellar.HorizonClient // Horizon client
@@ -17,7 +22,6 @@ pub mut:
 	buying_asset_issuer  string // issuer of the asset to buy
 	selling_asset_type   string // type of the asset to sell
 	buying_asset_type    string // type of the asset to buy
-	sell_amount          f64    // amount to sell
-	buy_amount           f64    // amount to buy
+	amount               f64    // amount to sell
 	preserve             f64    // min balance to have in account
 }

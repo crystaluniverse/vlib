@@ -203,6 +203,16 @@ pub fn fetch_highest_bid_price(orderBook OrderBook) !Price {
 	return orderBook.bids[0].price_r
 }
 
+pub fn fetch_highest_ask_price(orderBook OrderBook) !Price {
+	// Parse highest bid price from the order book response
+	if orderBook.asks.len == 0 {
+		return error('There are no asks.')
+	}
+
+	println('highest ask: ${orderBook.asks[0].price}')
+	return orderBook.asks[0].price_r
+}
+
 pub fn get_offer_id_from_result_xdr(result_xdr string) !u64 {
 	cmd := 'echo ${result_xdr} | stellar xdr decode --type TransactionResult'
 	tx_result := os.execute(cmd)
