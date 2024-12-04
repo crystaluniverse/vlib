@@ -1,12 +1,6 @@
 module gittools
 
 import json
-import freeflowuniverse.crystallib.clients.redisclient
-
-struct CacheManager {
-mut:
-	redis_client redisclient.Redis
-}
 
 // Save repo to redis cache
 fn (mut repo GitRepo) cache_set() ! {

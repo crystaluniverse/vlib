@@ -196,7 +196,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 
 		mut ths := []thread !bool{}
 		for mut g in repos {
-			ths << spawn fn (mut g GitRepo, args ReposActionsArgs, need_commit bool, need_push bool, mut ui generic.UserInterface) !bool {
+			ths << spawn fn (mut g GitRepo, args ReposActionsArgs, need_commit bool, need_push bool, shared ui generic.UserInterface) !bool {
 				mut has_changed := false
 				need_commit_repo := (g.need_commit()! || need_commit)
 					&& args.cmd in 'commit,pull,push'.split(',')
@@ -211,8 +211,8 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 						if args.script {
 							return error('message needs to be specified for commit.')
 						}
-						// TODO: this needs to be fixed
-						lock {
+
+						lock ui {
 							msg = ui.ask_question(
 								question: 'commit message for repo: ${g.account}/${g.name} '
 							)!
@@ -242,7 +242,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 				}
 
 				return has_changed
-			}(mut g, args, need_commit, need_push, mut &ui)
+			}(mut g, args, need_commit, need_push, shared &ui)
 		}
 
 		for th in ths {

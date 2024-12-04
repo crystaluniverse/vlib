@@ -1,10 +1,8 @@
 module gittools
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
 import os
-import freeflowuniverse.crystallib.clients.redisclient
 
 // GitStructureConfig defines configuration settings for a GitStructure instance.
 @[params]
@@ -48,7 +46,6 @@ pub fn (mut gitstructure GitStructure) load(args StatusUpdateArgs) ! {
 
 	mut ths := []thread !{}
 	for _, mut repo_ in gitstructure.repos {
-		// mut repo := repo_
 		ths << spawn fn (mut repo GitRepo) ! {
 			repo.status_update()!
 		}(mut repo_)
@@ -75,8 +72,6 @@ pub fn (mut gitstructure GitStructure) init() ! {
 // - args (StatusUpdateArgs): Controls the status update and reload behavior.
 // - processed_paths ([]string): List of already processed paths to avoid duplication.
 fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdateArgs, mut processed_paths []string) ! {
-	console.print_debug('Recursively loading gitstructure from: ${path}')
-
 	path_object := pathlib.get(path)
 	relpath := path_object.path_relative(gitstructure.coderoot.path)!
 
@@ -160,8 +155,6 @@ fn (mut gitstructure GitStructure) repo_init_from_path_(path string, params Repo
 	gl := gitstructure.gitlocation_from_path(mypath.path)!
 
 	// Initialize and return a GitRepo struct.
-	// mut c := base.context()!
-	// mut redis := c.redis()!
 	mut r := GitRepo{
 		gs: &gitstructure
 		status_remote: GitRepoStatusRemote{}
@@ -173,7 +166,6 @@ fn (mut gitstructure GitStructure) repo_init_from_path_(path string, params Repo
 		deploysshkey: params.ssh_key_name
 	}
 
-	// r.status_update()!
 	return r
 }
 
