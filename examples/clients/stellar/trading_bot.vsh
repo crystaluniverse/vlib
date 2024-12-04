@@ -16,3 +16,4 @@ mut bot := tradingbot.new(
 )!
 
 bot.run(.sell)!
+// bot.run(.buy)!

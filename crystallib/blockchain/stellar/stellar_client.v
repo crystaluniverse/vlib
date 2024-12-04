@@ -361,6 +361,10 @@ pub fn (mut client StellarClient) create_offer(args OfferArgs) !u64 {
 }
 
 pub fn (mut client StellarClient) update_offer(offer_id u64, args OfferArgs) ! {
+	if args.amount == 0 {
+		return error('Amount must be greater than 0')
+	}
+
 	client.make_offer(offer_id, args)!
 }
 

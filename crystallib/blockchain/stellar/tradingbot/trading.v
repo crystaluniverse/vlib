@@ -103,37 +103,47 @@ pub fn (mut bot StellarTradingBot) run(op StellarTradingBotOperation) ! {
 }
 
 // Buy if price is below target
-fn (mut bot StellarTradingBot) buy_high() !stellar.OrderBook {
+fn (mut bot StellarTradingBot) buy_high() ! {
 	order_book := bot.fetch_order_book()!
 	mut active_offer := bot.fetch_wallet_offers()!
 	println('Active offer: ${active_offer}')
+
+	if bot.amount == 0 {
+		bot.delete_offer(active_offer)!
+		return
+	}
 
 	if active_offer.id.int() == 0 {
 		// create new offer
 		bot.create_offer(.buy, order_book, active_offer)!
+	} else {
+		// update offer
+		bot.update_offer(.buy, order_book, active_offer)!
 	}
 
-	if bot.amount == 0 {
-		bot.delete_offer(active_offer)!
-	}
-	return order_book
+	// return order_book
 }
 
 // Sell if price is above target
-fn (mut bot StellarTradingBot) sell_high() !stellar.OrderBook {
+fn (mut bot StellarTradingBot) sell_high() ! {
 	order_book := bot.fetch_order_book()!
 	mut active_offer := bot.fetch_wallet_offers()!
 	println('Active offer: ${active_offer}')
 
+	if bot.amount == 0 {
+		bot.delete_offer(active_offer)!
+		return
+	}
+
 	if active_offer.id.int() == 0 {
 		// create new offer
 		bot.create_offer(.sell, order_book, active_offer)!
+	} else {
+		// update offer
+		bot.update_offer(.sell, order_book, active_offer)!
 	}
 
-	if bot.amount == 0 {
-		bot.delete_offer(active_offer)!
-	}
-	return order_book
+	// return order_book
 }
 
 // Delete offer
@@ -234,9 +244,10 @@ fn (mut bot StellarTradingBot) fetch_wallet_offers() !stellar.OfferModel {
 			&& offer.selling.asset_issuer == selling_asset_issuer
 			&& offer.buying.asset_code == buying_asset_code
 			&& offer.buying.asset_issuer == buying_asset_issuer {
-			if matching_offer.id.int() != 0 {
-				return error('wallet ${bot.account_address} has more than one offer for the configured pair')
-			}
+			// if matching_offer.id.int() != 0 {
+			// 	return matching_offer
+			// 	// return error('wallet ${bot.account_address} has more than one offer for the configured pair')
+			// }
 
 			amount := offer.amount.f64()
 			price := offer.price.f64()
@@ -343,6 +354,38 @@ fn (mut bot StellarTradingBot) create_offer(op StellarTradingBotOperation, order
 		sell:    if op == .sell { true } else { false }
 		price:   if op == .buy { bot.buying_target_price } else { bot.selling_target_price }
 	}
-	mut buy_offer_id := bot.sclient.create_offer(offer_args)!
-	println('Offer ${buy_offer_id} is created')
+	mut offer_id := bot.sclient.create_offer(offer_args)!
+	println('Offer ${offer_id} is created')
+}
+
+fn (mut bot StellarTradingBot) update_offer(op StellarTradingBotOperation, order_book stellar.OrderBook, active_offer stellar.OfferModel) ! {
+	mut selling_asset := stellar.Asset{
+		asset_code: bot.selling_asset_code
+		issuer:     bot.selling_asset_issuer
+	}
+
+	mut buying_asset := stellar.Asset{
+		asset_code: bot.buying_asset_code
+		issuer:     bot.buying_asset_issuer
+	}
+
+	if active_offer.selling.asset_type == 'native' {
+		selling_asset.asset_code = 'native'
+	}
+
+	if active_offer.buying.asset_type == 'native' {
+		buying_asset.asset_code = 'native'
+	}
+
+	offer_args := stellar.OfferArgs{
+		selling: selling_asset
+		buying:  buying_asset
+		amount:  u64(bot.amount)
+		buy:     if op == .buy { true } else { false }
+		sell:    if op == .sell { true } else { false }
+		price:   if op == .buy { bot.buying_target_price } else { bot.selling_target_price }
+	}
+
+	bot.sclient.update_offer(active_offer.id.u64(), offer_args)!
+	println('Offer ${active_offer.id} is created')
 }
