@@ -17,7 +17,6 @@ pub fn cmd_git(mut cmdroot Command) {
 		sort_commands: true
 	}
 
-
 	mut clone_command := Command{
 		sort_flags: true
 		name: 'clone'
@@ -106,9 +105,8 @@ pub fn cmd_git(mut cmdroot Command) {
 			name: 'silent'
 			abbrev: 's'
 			description: 'be silent.'
-		})	
+		})
 	}
-
 
 	mut allcmdscommit := [&push_command, &pull_command, &commit_command]
 
@@ -149,15 +147,14 @@ pub fn cmd_git(mut cmdroot Command) {
 			name: 'pullreset'
 			abbrev: 'pr'
 			description: 'force a pull and do a reset.'
-		})	
+		})
 		c.add_flag(Flag{
 			flag: .bool
 			required: false
 			name: 'recursive'
 			description: 'if we do a clone or a pull we also get the git submodules.'
-		})			
-	}		
-	
+		})
+	}
 
 	for mut c in allcmdsref {
 		c.add_flag(Flag{
@@ -182,7 +179,6 @@ pub fn cmd_git(mut cmdroot Command) {
 			abbrev: 'b'
 			description: 'branch of repo (optional)'
 		})
-
 
 		c.add_flag(Flag{
 			flag: .string
@@ -220,14 +216,11 @@ pub fn cmd_git(mut cmdroot Command) {
 	}
 	cmd_run.add_command(cmd_cd)
 	cmdroot.add_command(cmd_run)
-	
 }
 
-
 fn cmd_git_execute(cmd Command) ! {
-
-	mut silent:= cmd.flags.get_bool('silent') or { false }
-	if silent || cmd.name == "cd"{
+	mut silent := cmd.flags.get_bool('silent') or { false }
+	if silent || cmd.name == 'cd' {
 		console.silent_set()
 	}
 	mut coderoot := cmd.flags.get_string('coderoot') or { '' }
@@ -248,11 +241,10 @@ fn cmd_git_execute(cmd Command) ! {
 	mut account := cmd.flags.get_string('account') or { '' }
 	mut provider := cmd.flags.get_string('provider') or { '' }
 
-
-	if cmd.name != "cd"{
+	if cmd.name != 'cd' {
 		// check if we are in a git repo
 		if repo == '' && account == '' && provider == '' && filter == '' {
-			if r0 := gs.get_working_repo() { 
+			if r0 := gs.get_working_repo() {
 				repo = r0.name
 				account = r0.account
 				provider = r0.provider
@@ -261,14 +253,14 @@ fn cmd_git_execute(cmd Command) ! {
 	}
 
 	if cmd.name in gittools.gitcmds.split(',') {
-		mut pull:= cmd.flags.get_bool('pull') or { false }
-		mut reset:= cmd.flags.get_bool('reset') or { false }
-		mut recursive:= cmd.flags.get_bool('recursive') or { false }
-		if cmd.flags.get_bool('pullreset') or { false }{
-			pull=true
-			reset=true
+		mut pull := cmd.flags.get_bool('pull') or { false }
+		mut reset := cmd.flags.get_bool('reset') or { false }
+		mut recursive := cmd.flags.get_bool('recursive') or { false }
+		if cmd.flags.get_bool('pullreset') or { false } {
+			pull = true
+			reset = true
 		}
-		mypath:=gs.do(
+		mypath := gs.do(
 			filter: filter
 			repo: repo
 			account: account
@@ -282,8 +274,8 @@ fn cmd_git_execute(cmd Command) ! {
 			msg: cmd.flags.get_string('message') or { '' }
 			url: cmd.flags.get_string('url') or { '' }
 		)!
-		if cmd.name=="cd"{ 
-			print("cd ${mypath}\n")
+		if cmd.name == 'cd' {
+			print('cd ${mypath}\n')
 		}
 		return
 	} else {
