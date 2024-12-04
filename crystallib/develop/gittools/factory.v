@@ -62,9 +62,7 @@ pub fn new(args_ GitStructureNewArgs) !&GitStructure {
 	datajson := json.encode(args)
 	mut c := base.context()!
 	mut redis := c.redis()!
-	println('debugzo1 ${datajson}')
 	redis.set(gitstructure_config_key(key), datajson)!
-	println('debugzo2')
 	return get(args_)
 }
 
