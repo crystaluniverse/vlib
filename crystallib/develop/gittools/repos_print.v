@@ -43,8 +43,6 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 		repo_data << format_repo_info(repo)!
 	}
 
-
-
 	// Clear the console and start printing the formatted repository information
 	console.clear()
 	console.print_lf(1)

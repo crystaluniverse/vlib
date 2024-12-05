@@ -2,6 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
+import os
 
 @[params]
 pub struct GitCloneArgs {
@@ -33,7 +34,10 @@ pub fn (mut gitstructure GitStructure) clone(args GitCloneArgs) !&GitRepo {
 	}
 
 	cmd := 'cd ${parent_dir} && git clone ${extra} ${repo.get_repo_url()!} ${repo.name}'
-	osal.exec(cmd: cmd) or { return error('Cannot clone the repository due to: \n${err}') }
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('Cannot clone the repository due to: \n${result.output}')
+	}
 
 	repo.load()!
 

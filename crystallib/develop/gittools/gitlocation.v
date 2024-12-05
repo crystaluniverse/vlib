@@ -36,9 +36,9 @@ pub fn (mut gs GitStructure) gitlocation_from_path(path string) !GitLocation {
 
 	return GitLocation{
 		provider: provider
-		account: account
-		name: name
-		path: repo_path
+		account:  account
+		name:     name
+		path:     repo_path
 	}
 }
 
@@ -89,12 +89,12 @@ pub fn (mut gs GitStructure) gitlocation_from_url(url string) !GitLocation {
 	name := parts[2].replace('.git', '')
 
 	return GitLocation{
-		provider: provider
-		account: account
-		name: name
+		provider:      provider
+		account:       account
+		name:          name
 		branch_or_tag: branch_or_tag
-		path: path
-		anker: anchor
+		path:          path
+		anker:         anchor
 	}
 }
 

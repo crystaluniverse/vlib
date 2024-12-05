@@ -62,24 +62,24 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 
 	if args.cmd == 'reload' {
 		console.print_header(' - reload gitstructure ${gs.config.coderoot}')
-		gs.load(reload:true)!
+		gs.load(reload: true)!
 		return ''
 	}
 
 	if args.cmd == 'list' {
 		gs.repos_print(
-			filter: args.filter
-			name: args.repo
-			account: args.account
+			filter:   args.filter
+			name:     args.repo
+			account:  args.account
 			provider: args.provider
 		)!
 		return ''
 	}
 
 	mut repos := gs.get_repos(
-		filter: args.filter
-		name: args.repo
-		account: args.account
+		filter:   args.filter
+		name:     args.repo
+		account:  args.account
 		provider: args.provider
 	)!
 
@@ -132,9 +132,9 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 
 	if args.cmd in 'pull,push,commit,delete'.split(',') {
 		gs.repos_print(
-			filter: args.filter
-			name: args.repo
-			account: args.account
+			filter:   args.filter
+			name:     args.repo
+			account:  args.account
 			provider: args.provider
 		)!
 
@@ -199,7 +199,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		for mut g in repos {
 			ths << spawn fn (mut g GitRepo, args ReposActionsArgs, need_commit bool, need_push bool, shared ui generic.UserInterface) !bool {
 				redisclient.reset()!
-				redisclient.checkempty()			
+				redisclient.checkempty()
 				mut has_changed := false
 				need_commit_repo := (g.need_commit()! || need_commit)
 					&& args.cmd in 'commit,pull,push'.split(',')
@@ -255,9 +255,9 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 				console.print_header('\nCompleted required actions.\n')
 
 				gs.repos_print(
-					filter: args.filter
-					name: args.repo
-					account: args.account
+					filter:   args.filter
+					name:     args.repo
+					account:  args.account
 					provider: args.provider
 				)!
 			}
