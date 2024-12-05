@@ -168,8 +168,8 @@ fn (mut gitstructure GitStructure) repo_init_from_path_(path string, params Repo
 //
 // Raises:
 // - None: If `.git` is not found in the parent directories.
-pub fn (mut gitstructure GitStructure) get_working_repo() ?GitRepo {
+pub fn (mut gitstructure GitStructure) get_working_repo() !GitRepo {
 	curdir := pathlib.get_wd()
-	return gitstructure.repo_init_from_path_(curdir.path) or { none }
+	return gitstructure.repo_init_from_path_(curdir.path)
 }
 
