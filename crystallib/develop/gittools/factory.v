@@ -64,6 +64,9 @@ pub fn get(args_ GitStructureArgGet) !&GitStructure {
 	if args.coderoot == '' {
 		args.coderoot = '${os.home_dir()}/code'
 	}	
+	if args.reload{
+		cachereset()!
+	}
 	rediskey_:=rediskey(args.coderoot)
 	// println(rediskey_)
 
@@ -82,7 +85,7 @@ pub fn get(args_ GitStructureArgGet) !&GitStructure {
 	mut datajson := redis.get(rediskey_) or {""}
 
 	if datajson == '' {
-		if args.coderoot == ""{
+		if args_.coderoot == ""{
 			return new()!
 		}
 		return error("can't find repostructure for coderoot: ${args.coderoot}")
