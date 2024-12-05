@@ -1,0 +1,11 @@
+<article>
+    <hgroup>
+        <h3>@{slideshow.title}</h3>
+        <p>@{slideshow.description}</p>
+    </hgroup>
+    <table>
+    @for slide in slideshow.slides
+        @{slide.html()}
+    @end
+    </table>
+</article>

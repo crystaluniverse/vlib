@@ -1,0 +1,56 @@
+<style>
+    a > img {
+        max-width: none;
+    }
+    nav > ul > li > details {
+        width: max-content;
+    }
+
+    header {
+        display: grid;
+        grid-template-columns: 1fr 5fr;
+        gap: 2rem;
+        padding: 0rem 2rem;
+    }
+
+    header > button {
+        display: none;
+    }
+
+    header > :nth-child(2) {
+        align-content: center;
+        justify-self: center;
+    }
+
+    header > :nth-child(3) {
+        align-content: center;
+        justify-self: end;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        header {
+            display: flex;
+            justify-content: space-between;
+        }
+        header > button {
+            display: inherit;
+        }
+    }
+</style>
+<header>
+    <!-- Logo -->
+    <button onclick="toggleSidebar()" class="toggle-sidebar secondary outline" style="border: none; font-size: 14px;">☰</button>
+    <a href="/">
+        @{navbar.logo.html()}
+    </a>
+    <nav>
+        <ul>
+            @for item in navbar.items
+            <li>
+                @{item.html()}
+            </li>
+            @end
+        </ul>
+    </nav>
+</header>

@@ -71,9 +71,9 @@ pub fn (mut self Doc) process() !int {
 // 	return ""
 // }
 
-// pub fn (self Doc) html() string {
-// 	return ""
-// }
+pub fn (self Doc) html() !string {
+	return "<body class='container'>${self.DocBase.html()!}</body>"
+}
 
 pub fn (self Doc) pug() !string {
 	return ":markdown-it(linkify langPrefix='highlight-')\n${texttools.indent(self.markdown()!,

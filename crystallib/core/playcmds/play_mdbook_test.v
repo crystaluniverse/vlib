@@ -71,7 +71,7 @@ fn test_play_mdbook() {
     path:'~/hero/var/collections/info_tfgrid' 
 
 
-!!mdbook.export 
+!!mdbook.export
     title:'ThreeFold Technology'
     name:'tech'
     summary_url:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/books/tech/SUMMARY.md' 

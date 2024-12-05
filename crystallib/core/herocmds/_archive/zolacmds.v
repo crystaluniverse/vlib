@@ -1,7 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.webtools.zola
+import freeflowuniverse.crystallib.web.zola
 import cli { Command, Flag }
 
 // path string //if location on filessytem, if exists, this has prio on git_url

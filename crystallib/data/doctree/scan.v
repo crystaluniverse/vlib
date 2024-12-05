@@ -100,7 +100,11 @@ pub fn (mut tree Tree) add_collection(args_ CollectionNewArgs) ! {
 	args.name = texttools.name_fix(args.name)
 
 	if args.name in tree.collections {
-		return error('Collection with name ${args.name} already exits')
+		if args.fail_on_error {
+			return error('Collection with name ${args.name} already exits')
+		} 
+		return 
+		// TODO: report error
 	}
 
 	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist

@@ -41,11 +41,11 @@ pub fn sort(_args Params)! DocSorter {
     if !os.exists(p.path) {
         return error('Path: ${p.path} does not exist.')
     }
+
     if !os.exists(p.instructions) {
         return error('Instructions file: ${p.instructions} does not exist.')
     }
     
-
     mut cl:= DocSorter{
         docs: []&Doc{}
         args: p
@@ -118,6 +118,7 @@ fn (mut pc DocSorter) do()! {
     mut files := []string{}
     pc.walk_dir(pc.args.path, mut files)!
 
+    println('debugzo ${pc.args.path}')
     for file in files {
         base := os.base(file)
         if !base.contains('[') || !base.contains(']') {

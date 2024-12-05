@@ -39,14 +39,12 @@ pub fn new_page(args NewPageArgs) !Page {
 	if args.name == '' {
 		return error('page name must not be empty')
 	}
-
 	mut doc := markdownparser.new(path: args.path.path, collection_name: args.collection_name)!
 	children := doc.children_recursive()
 	mut element_cache := map[int]Element{}
 	for child in children {
 		element_cache[child.id] = child
 	}
-
 	mut new_page := Page{
 		element_cache: element_cache
 		name: args.name
@@ -54,7 +52,6 @@ pub fn new_page(args NewPageArgs) !Page {
 		collection_name: args.collection_name
 		doc: &doc
 	}
-
 	return new_page
 }
 

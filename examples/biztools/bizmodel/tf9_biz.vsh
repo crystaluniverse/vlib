@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.biz.bizmodel
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playcmds
-import freeflowuniverse.crystallib.webtools.mdbook
+import freeflowuniverse.crystallib.web.mdbook
 import freeflowuniverse.crystallib.biz.spreadsheet
 import os
 

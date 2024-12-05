@@ -1,0 +1,304 @@
+<!doctype html>
+<html>
+<head>
+    <title>Image Slides Viewer with Thumbnails</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+        #mainContainer {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        #thumbnailContainer {
+            width: 200px;
+            overflow-y: auto;
+            background-color: #f0f0f0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .thumbnail {
+            width: 100%;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .thumbnail.active {
+            border-color: #4caf50;
+        }
+        #viewerContainer {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e0e0e0;
+            overflow: auto;
+            position: relative;
+        }
+        #viewer img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        #navigationControls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background-color: #333;
+        }
+        .navButton {
+            background-color: #4caf50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #pageInfo {
+            color: white;
+            font-size: 16px;
+            margin: 0 20px;
+        }
+        #loadingIndicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer">
+        <div id="thumbnailContainer"></div>
+        <div id="viewerContainer">
+            <div id="loadingIndicator">Loading Slides</div>
+            <div id="viewer"></div>
+        </div>
+    </div>
+    <div id="navigationControls">
+        <button id="prevBtn" class="navButton">Previous</button>
+        <span id="pageInfo"></span>
+        <button id="nextBtn" class="navButton">Next</button>
+    </div>
+
+    <script>
+        let db;
+
+        const request = indexedDB.open('FileCacheDB', 1);
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            db.createObjectStore('files', { keyPath: 'file_id' });
+        };
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            initializeImageViewer();
+        };
+
+        function storeFile(file_id, file_data) {
+            const transaction = db.transaction(['files'], 'readwrite');
+            const store = transaction.objectStore('files');
+            store.put({ file_id: file_id, file_data: file_data });
+        }
+
+        function getFile(file_id) {
+            return new Promise(function(resolve, reject) {
+                const transaction = db.transaction(['files'], 'readonly');
+                const store = transaction.objectStore('files');
+                const request = store.get(file_id);
+                request.onsuccess = function(event) {
+                    resolve(event.target.result ? event.target.result.file_data : null);
+                };
+                request.onerror = function(event) {
+                    reject('Failed to retrieve file from indexedDB');
+                };
+            });
+        }
+
+        async function hashFile(file_data) {
+            const buffer = await crypto.subtle.digest('SHA-256', file_data);
+            return Array.from(new Uint8Array(buffer)).map(function(b) {
+                return b.toString(16).padStart(2, '0');
+            }).join('');
+        }
+
+        async function fetchFile(file_id, url) {
+            const cachedFileData = await getFile(file_id);
+            const cachedHash = cachedFileData ? await hashFile(cachedFileData) : '';
+
+            const response = await fetch(url + '?hash=' + cachedHash);
+            if (response.status === 304) {
+                return cachedFileData;
+            } else if (response.ok) {
+                const file_data = await response.arrayBuffer();
+                storeFile(file_id, file_data);
+                return file_data;
+            } else {
+                throw new Error('Failed to fetch file from server');
+            }
+        }
+
+        function animateEllipses() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            let dots = '';
+            setInterval(() => {
+                dots = dots.length < 3 ? dots + '.' : '';
+                loadingIndicator.textContent = 'Loading Slides' + dots;
+            }, 500);
+        }
+
+        function initializeImageViewer() {
+            const slidesName = '@{s.name}';
+            const slideInfo = @{slides_info};
+            const viewer = document.getElementById('viewer');
+            const thumbnailContainer = document.getElementById('thumbnailContainer');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            let currentPage = 1;
+            let totalSlides;
+            let slidesList;
+
+            async function loadSlidesInfo() {
+                try {
+                    // const response = await fetch('/asset/' + slidesName);
+                    // const slideInfo = await response.json();
+                    slidesList = slideInfo.slides;
+                    totalSlides = slidesList.length;
+                    createThumbnails();
+                    loadSlide(currentPage);
+                } catch (error) {
+                    console.error('Error fetching slide info:', error);
+                }
+            }
+
+            // Function to log slide views
+    function logSlideView(slideName) {
+        const logEndpoint = `/log/@{s.name}`;
+
+        // Construct the log payload
+        const logData = {
+            event: "view",
+            subject: "user",
+            object: "@{s.name}",
+            message: JSON.stringify({
+                page: slideName,
+                duration: 0 // Assuming you want to start with a duration of 0
+            }),
+        };
+
+        // Send the log via a POST request
+        fetch(logEndpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(logData),
+        }).then(response => {
+            if (!response.ok) {
+                console.error("Failed to log slide view");
+            }
+        }).catch(error => {
+            console.error("Error sending log:", error);
+        });
+    }
+
+    async function loadSlide(pageNumber) {
+        try {
+            loadingIndicator.style.display = 'block';
+            animateEllipses();
+            const slideName = slidesList[pageNumber - 1].name;
+            const file_data = await fetchFile(slidesName + '_' + slideName, '@{s.url}/' + slideName);
+            const blob = new Blob([file_data]);
+            const url = URL.createObjectURL(blob);
+
+            viewer.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = url;
+            viewer.appendChild(img);
+
+            updatePageInfo();
+            updateActiveThumbnail();
+
+            // Log the slide view
+            logSlideView(slideName);
+        } catch (error) {
+            console.error('Error loading slide:', error);
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+
+            function createThumbnails() {
+                thumbnailContainer.innerHTML = '';
+                slidesList.forEach((slide, index) => {
+                    fetchFile(slidesName + '_' + slide.name, '@{s.url}/' + slide.name).then(file_data => {
+                        const blob = new Blob([file_data]);
+                        const url = URL.createObjectURL(blob);
+
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.className = 'thumbnail';
+                        img.setAttribute('data-page-number', index + 1);
+                        img.onclick = function() {
+                            currentPage = index + 1;
+                            loadSlide(currentPage);
+                        };
+
+                        thumbnailContainer.appendChild(img);
+                    });
+                });
+            }
+
+            function updatePageInfo() {
+                pageInfo.textContent = 'Slide ' + currentPage + ' of ' + totalSlides;
+            }
+
+            function updateActiveThumbnail() {
+                const thumbnails = document.querySelectorAll('.thumbnail');
+                thumbnails.forEach(thumb => {
+                    thumb.classList.remove('active');
+                    if (parseInt(thumb.getAttribute('data-page-number')) === currentPage) {
+                        thumb.classList.add('active');
+                    }
+                });
+            }
+
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadSlide(currentPage);
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                if (currentPage < totalSlides) {
+                    currentPage++;
+                    loadSlide(currentPage);
+                }
+            });
+
+            loadSlidesInfo();
+        }
+    </script>
+</body>
+</html>

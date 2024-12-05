@@ -3,26 +3,26 @@ module gittools
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.ui.generic
 import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree,cd'
 
-
 @[params]
 pub struct ReposActionsArgs {
 pub mut:
-	cmd      string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
-	filter   string // if used will only show the repo's which have the filter string inside
-	repo     string
-	account  string
-	provider string
-	msg      string
-	url      string
-	branch      string
+	cmd       string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
+	filter    string // if used will only show the repo's which have the filter string inside
+	repo      string
+	account   string
+	provider  string
+	msg       string
+	url       string
+	branch    string
 	recursive bool
-	pull     bool
-	script   bool = true // run non interactive
-	reset    bool = true // means we will lose changes (only relevant for clone, pull)
+	pull      bool
+	script    bool = true // run non interactive
+	reset     bool = true // means we will lose changes (only relevant for clone, pull)
 }
 
 // do group actions on repo
@@ -41,7 +41,7 @@ pub mut:
 //```
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	mut args := args_
-	console.print_debug('git do ${args}')	
+	console.print_debug('git do ${args}')
 
 	if args.repo == '' && args.account == '' && args.provider == '' && args.filter == '' {
 		curdir := os.getwd()
@@ -90,7 +90,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		}
 		if args.reset {
 			g.remove_changes()!
-		}		
+		}
 		if args.cmd == 'pull' || args.pull {
 			g.pull()!
 		}
@@ -104,8 +104,8 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 			g.push()!
 		}
 		if args.cmd == 'pull' || args.cmd == 'clone' || args.cmd == 'push' {
-			gpath:=g.get_path()!
-			console.print_debug('git do ok, on path ${gpath}')				
+			gpath := g.get_path()!
+			console.print_debug('git do ok, on path ${gpath}')
 			return gpath
 		}
 		repos = [g]
@@ -192,59 +192,72 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 			return error('cannot continue with action, you asked me to stop.\n${args}')
 		}
 
-		mut changed := false
+		// mut changed := false
 
+		mut ths := []thread !bool{}
 		for mut g in repos {
-			need_commit_repo := (g.need_commit()! || need_commit)
-				&& args.cmd in 'commit,pull,push'.split(',')
-			need_pull_repo := args.cmd in 'pull,push'.split(',') // always do pull when push and pull
-			need_push_repo := args.cmd in 'push'.split(',') && (g.need_push_or_pull()! || need_push)
-			// console.print_debug(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
+			ths << spawn fn (mut g GitRepo, args ReposActionsArgs, need_commit bool, need_push bool, shared ui generic.UserInterface) !bool {
+				mut has_changed := false
+				need_commit_repo := (g.need_commit()! || need_commit)
+					&& args.cmd in 'commit,pull,push'.split(',')
+				need_pull_repo := args.cmd in 'pull,push'.split(',') // always do pull when push and pull
+				need_push_repo := args.cmd in 'push'.split(',')
+					&& (g.need_push_or_pull()! || need_push)
+				// console.print_debug(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
 
-			if need_commit_repo {
-				mut msg := args.msg
-				if msg.len == 0 {
-					if args.script {
-						return error('message needs to be specified for commit.')
+				if need_commit_repo {
+					mut msg := args.msg
+					if msg.len == 0 {
+						if args.script {
+							return error('message needs to be specified for commit.')
+						}
+
+						lock ui {
+							msg = ui.ask_question(
+								question: 'commit message for repo: ${g.account}/${g.name} '
+							)!
+						}
 					}
-					msg = ui.ask_question(
-						question: 'commit message for repo: ${g.account}/${g.name} '
-					)!
+					console.print_header(' - commit ${g.account}/${g.name}')
+					g.commit(msg)!
+					has_changed = true
 				}
-				console.print_header(' - commit ${g.account}/${g.name}')
-				g.commit(msg)!
-				changed = true
-			}
-			if need_pull_repo {
-				if args.reset {
-					console.print_header(' - remove changes ${g.account}/${g.name}')
-					g.remove_changes()!
+				if need_pull_repo {
+					if args.reset {
+						console.print_header(' - remove changes ${g.account}/${g.name}')
+						g.remove_changes()!
+					}
+					console.print_header(' - pull ${g.account}/${g.name}')
+					g.pull()!
+					has_changed = true
 				}
-				console.print_header(' - pull ${g.account}/${g.name}')
-				g.pull()!
-				changed = true
-			}
-			if need_push_repo {
-				console.print_header(' - push ${g.account}/${g.name}')
-				g.push()!
-				changed = true
-			}
-			if args.cmd == 'delete' {
-				g.delete()!
-				changed = true
-			}
+				if need_push_repo {
+					console.print_header(' - push ${g.account}/${g.name}')
+					g.push()!
+					has_changed = true
+				}
+				if args.cmd == 'delete' {
+					g.delete()!
+					has_changed = true
+				}
+
+				return has_changed
+			}(mut g, args, need_commit, need_push, shared &ui)
 		}
 
-		if changed {
-			// console.clear()
-			console.print_header('\nCompleted required actions.\n')
+		for th in ths {
+			has_changed := th.wait()!
+			if has_changed {
+				// console.clear()
+				console.print_header('\nCompleted required actions.\n')
 
-			gs.repos_print(
-				filter: args.filter
-				name: args.repo
-				account: args.account
-				provider: args.provider
-			)!
+				gs.repos_print(
+					filter: args.filter
+					name: args.repo
+					account: args.account
+					provider: args.provider
+				)!
+			}
 		}
 
 		return ''
