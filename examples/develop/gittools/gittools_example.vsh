@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -cg -enable-globals run
 
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.osal

@@ -38,9 +38,21 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 
 	mut repo_data := [][]string{}
 
+	// // Collect repository information based on the provided criteria
+	// for _, repo in gitstructure.get_repos(args)! {
+	// 	repo_data << format_repo_info(repo)!
+	// }
+
+	mut ths := []thread ![]string{}
 	// Collect repository information based on the provided criteria
 	for _, repo in gitstructure.get_repos(args)! {
-		repo_data << format_repo_info(repo)!
+		ths << spawn fn (repo GitRepo) ![]string {
+			return format_repo_info(repo)!
+		}(repo)
+	}
+
+	for th in ths {
+		repo_data << th.wait()!
 	}
 
 	// Clear the console and start printing the formatted repository information

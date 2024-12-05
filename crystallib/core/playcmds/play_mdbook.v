@@ -134,5 +134,4 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		)!
 		action.done = true
 	}
-	println('debugzo!!!!')
 }
