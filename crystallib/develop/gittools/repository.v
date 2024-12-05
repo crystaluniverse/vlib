@@ -49,7 +49,7 @@ pub mut:
 // GitRepoConfig holds repository-specific configuration options.
 pub struct GitRepoConfig {
 pub mut:
-	remote_check_period int // Seconds to wait between remote checks (0 = check every time)
+	remote_check_period int = 3600*24*3// Seconds to wait between remote checks (0 = check every time), default 3 days
 }
 
 // just some initialization mechanism
@@ -307,15 +307,4 @@ fn (repo GitRepo) exec(cmd_ string) !string {
 	}
 	r := osal.exec(cmd: cmd, debug: repo.gs.config.debug)!
 	return r.output
-}
-
-pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
-	// Check current time vs last check, if needed (check period) then load
-	repo.cache_get()! // Ensure we have the situation from redis
-	repo.init()!
-	current_time := int(time.now().unix())
-	if args.reload || repo.last_load == 0
-		|| current_time - repo.last_load >= repo.config.remote_check_period {
-		repo.load()!
-	}
 }

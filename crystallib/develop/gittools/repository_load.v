@@ -3,6 +3,30 @@ module gittools
 import time
 import freeflowuniverse.crystallib.ui.console
 
+
+@[params]
+pub struct StatusUpdateArgs {
+	reload       bool
+	ssh_key_name string // name of ssh key to be used when loading
+}
+
+
+pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
+	// Check current time vs last check, if needed (check period) then load
+	//println("${repo.name} ++")
+	repo.cache_get()! // Ensure we have the situation from redis
+	repo.init()!
+	current_time := int(time.now().unix())
+	if args.reload || repo.last_load == 0
+		|| current_time - repo.last_load >= repo.config.remote_check_period {
+		console.print_debug("${repo.name} ${current_time}-${repo.last_load}: ${repo.config.remote_check_period}  +++")			
+		//if true{exit(0)}
+		repo.load()!
+		//println("${repo.name} ++++")
+	}
+}
+
+
 // Load repo information
 fn (mut repo GitRepo) load() ! {
 	console.print_debug('load ${repo.get_key()}')

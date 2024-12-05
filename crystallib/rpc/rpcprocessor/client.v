@@ -18,7 +18,7 @@ const mock_activity = Activity{
 }
 
 fn new_mock_handler() !Handler {
-	mut redis_client := redisclient.new([])!
+	mut redis_client := redisclient.core_get()!
 	return Handler{
 		name: 'Mock handler'
 		description: 'This is a mock handler that is used for examples'
