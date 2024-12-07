@@ -1,5 +1,7 @@
 module tradingbot
 
+import freeflowuniverse.crystallib.blockchain.stellar
+
 // Normalizes asset codes and validates issuers
 fn normalize_assets(args StellarTradingBotArgs) !StellarTradingBotArgs {
 	mut args_ := args
@@ -13,12 +15,31 @@ fn normalize_assets(args StellarTradingBotArgs) !StellarTradingBotArgs {
 }
 
 // Determines the Stellar asset type based on code length
-fn determine_asset_type(asset_code string, asset_issuer string) string {
-	return if asset_code == 'XLM' && asset_issuer.len == 0 {
-		'native'
-	} else if asset_code.len <= 4 {
+fn determine_asset_type(asset_code string) string {
+	return if asset_code.len <= 4 {
 		'credit_alphanum4'
 	} else {
 		'credit_alphanum12'
 	}
 }
+
+// fn get_offer_asset_type(asset_type string, asset_code string, asset_issuer string) stellar.ManagerOfferAssetType {
+// 	if asset_type == 'native' {
+// 		return stellar.ManagerOfferAssetType('native')
+// 	}
+
+// 	mut asset := stellar.AssetType{}
+// 	if asset_code.len <= 4 {
+// 		asset.credit_alphanum4 = stellar.Asset{
+// 			asset_code: asset_code
+// 			issuer: asset_issuer
+// 		}
+// 	} else {
+// 		asset.credit_alphanum12 = stellar.Asset{
+// 			asset_code: asset_code
+// 			issuer: asset_issuer
+// 		}
+// 	}
+
+// 	return stellar.ManagerOfferAssetType(asset_type)
+// }

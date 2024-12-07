@@ -79,7 +79,7 @@ pub mut:
 	d int
 }
 
-type ManagerOfferAssetType = AssetType | string
+pub type ManagerOfferAssetType = AssetType | string
 
 pub struct Offer {
 pub mut:
@@ -98,7 +98,7 @@ fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
 
 	asset := Asset{
 		asset_code: args.asset_code
-		issuer:     args.issuer
+		issuer: args.issuer
 	}
 
 	mut change_trust_line := AssetType{}
@@ -110,7 +110,7 @@ fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
 
 	body := OperationBody{
 		change_trust: ChangeTrust{
-			line:  change_trust_line
+			line: change_trust_line
 			limit: args.limit
 		}
 	}
@@ -119,7 +119,6 @@ fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
 	tx.tx.fee += 100
 }
 
-@[noinit]
 pub struct AssetType {
 pub mut:
 	credit_alphanum4  ?Asset
@@ -141,7 +140,7 @@ fn (mut c StellarClient) new_transaction_envelope(source_account_address string)
 	return TransactionEnvelope{
 		tx: Transaction{
 			source_account: source_account_address
-			seq_num:        sequence_number
+			seq_num: sequence_number
 		}
 	}
 }
@@ -170,7 +169,7 @@ fn (mut tx TransactionEnvelope) add_operation(source_account ?string, op Operati
 
 	tx.tx.operations << TransactionOperation{
 		source_account: source_account
-		body:           op
+		body: op
 	}
 }
 
@@ -220,7 +219,7 @@ fn (tx TransactionEnvelope) xdr() !string {
 pub struct TXCreateAccount {
 pub mut:
 	destination      string @[required] // The public key of the account to create
-	starting_balance u64    @[required] // Use f64 for the raw balance (in this case, 100.0)
+	starting_balance u64    @[required]    // Use f64 for the raw balance (in this case, 100.0)
 }
 
 fn (mut tx TransactionEnvelope) add_create_account_op(source_account ?string, args TXCreateAccount) ! {
@@ -232,20 +231,25 @@ fn (mut tx TransactionEnvelope) add_create_account_op(source_account ?string, ar
 	tx.tx.fee += 100
 }
 
-fn get_offer_asset_type(asset Asset) ManagerOfferAssetType {
-	if asset.asset_code == 'native' {
-		return 'native'
+pub fn get_offer_asset_type(asset_type string, asset_code string, asset_issuer string) ManagerOfferAssetType {
+	if asset_type == 'native' {
+		return ManagerOfferAssetType('native')
 	}
 
-	mut asset_type := AssetType{}
-
-	if asset.asset_code.len > 4 {
-		asset_type.credit_alphanum12 = asset
+	mut asset := AssetType{}
+	if asset_code.len <= 4 {
+		asset.credit_alphanum4 = Asset{
+			asset_code: asset_code
+			issuer: asset_issuer
+		}
 	} else {
-		asset_type.credit_alphanum4 = asset
+		asset.credit_alphanum12 = Asset{
+			asset_code: asset_code
+			issuer: asset_issuer
+		}
 	}
 
-	return asset_type
+	return ManagerOfferAssetType(asset)
 }
 
 @[params]
@@ -261,13 +265,13 @@ fn (mut tx TransactionEnvelope) make_offer_op(args MakeOfferOpArgs) ! {
 		return error('You must either sell or buy at the same time')
 	}
 
-	selling_asset_type := get_offer_asset_type(args.offer.selling)
-	buying_asset_type := get_offer_asset_type(args.offer.buying)
+	// selling_asset_type := get_offer_asset_type(args.offer.selling)
+	// buying_asset_type := get_offer_asset_type(args.offer.buying)
 
 	mut offer := Offer{
-		selling:  selling_asset_type
-		buying:   buying_asset_type
-		price:    get_offer_price(args.offer.price)
+		selling: args.offer.selling
+		buying: args.offer.buying
+		price: get_offer_price(args.offer.price)
 		offer_id: args.offer_id
 	}
 
