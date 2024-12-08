@@ -9,9 +9,7 @@ fn (mut bot StellarTradingBot) sell_high(active_offers []stellar.OfferModel, ord
 		return error('failed to get active sell offer: ${err}')
 	}
 
-	offer_id := bot.create_or_update_sell_offer(active_sell_offer, order_book)!
-
-	// return order_book
+	bot.create_or_update_sell_offer(active_sell_offer, order_book)!
 }
 
 fn (mut bot StellarTradingBot) get_sell_offer_from_active_offers(active_offers []stellar.OfferModel) !stellar.OfferModel {
@@ -40,8 +38,8 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 	println('Creating/Updating a new sell offer')
 
 	mut asset_info := stellar.GetOfferAssetInfo{
-		asset_type: bot.selling_asset_type
-		asset_code: bot.selling_asset_code
+		asset_type:   bot.selling_asset_type
+		asset_code:   bot.selling_asset_code
 		asset_issuer: bot.selling_asset_issuer
 	}
 
@@ -60,19 +58,20 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 		return error('Wallet does not have enough balance for asset ${bot.selling_asset_code} to make a new sell offer, current balance is ${asset_balance}.')
 	}
 
-	spendable_balance := asset_balance - bot.preserve
+	mut spendable_balance := asset_balance - bot.preserve
+	spendable_balance = spendable_balance / 10000000
 	println('Spendable balance: ${spendable_balance}')
 
-	amount := math.min(spendable_balance, bot.selling_amount)
+	mut amount := math.min(spendable_balance, bot.selling_amount)
 
 	offer_args := stellar.OfferArgs{
 		selling: stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
 			bot.selling_asset_issuer)
-		buying: stellar.get_offer_asset_type(bot.buying_asset_type, bot.buying_asset_code,
+		buying:  stellar.get_offer_asset_type(bot.buying_asset_type, bot.buying_asset_code,
 			bot.buying_asset_issuer)
-		amount: u64(amount)
-		sell: true
-		price: selling_price
+		amount:  u64(amount)
+		sell:    true
+		price:   selling_price
 	}
 
 	if active_offer.id.int() == 0 {
@@ -83,9 +82,15 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 	}
 
 	// check if update is needed
-	println('active offer:  price: ${active_offer.price} - amount: ${active_offer.amount}')
+	amount = round_to_precision(amount, 5)
+	active_offer_amount := round_to_precision(active_offer.amount.f64(), 5)
+	active_offer_price := round_to_precision(active_offer.price.f64(), 4)
+
+	selling_price = f32(round_to_precision(f64(selling_price), 4))
+
+	println('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
 	println('selling: price: ${selling_price} - amount: ${amount}')
-	if active_offer.price.f64() == selling_price && active_offer.amount.f64() == amount {
+	if active_offer_price == selling_price && active_offer_amount == amount {
 		// don't need an update
 		println('offer ${active_offer.id.int()} is up-to-date.')
 		return active_offer.id.u64()

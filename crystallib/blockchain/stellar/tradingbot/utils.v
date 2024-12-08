@@ -1,6 +1,7 @@
 module tradingbot
 
 import freeflowuniverse.crystallib.blockchain.stellar
+import math
 
 // Normalizes asset codes and validates issuers
 fn normalize_assets(args StellarTradingBotArgs) !StellarTradingBotArgs {
@@ -21,6 +22,12 @@ fn determine_asset_type(asset_code string) string {
 	} else {
 		'credit_alphanum12'
 	}
+}
+
+// Rounding function, to the specified precision
+fn round_to_precision(num f64, precision int) f64 {
+	factor := math.pow(10, precision)
+	return math.round(num * factor) / factor
 }
 
 // fn get_offer_asset_type(asset_type string, asset_code string, asset_issuer string) stellar.OfferAssetType {
