@@ -10,18 +10,6 @@ fn (mut bot StellarTradingBot) buy_low(active_offers []stellar.OfferModel, order
 	}
 
 	bot.create_or_update_buy_offer(active_buy_offer, order_book)!
-
-	// println('Active offer: ${active_buy_offer}')
-
-	// if active_offer.id.int() == 0 {
-	// 	// create new offer
-	// 	bot.create_offer(.buy, order_book, active_offer)!
-	// } else {
-	// 	// update offer
-	// 	bot.update_offer(.buy, order_book, active_offer)!
-	// }
-
-	// return order_book
 }
 
 // checks if offer has reversed assets (buy is sell, and sell is buy)
@@ -82,7 +70,7 @@ fn (mut bot StellarTradingBot) create_or_update_buy_offer(active_offer stellar.O
 			bot.selling_asset_issuer)
 		amount:  u64(amount)
 		sell:    true
-		price:   buying_price
+		price:   f32(buying_price)
 	}
 
 	if active_offer.id.int() == 0 {
@@ -92,14 +80,15 @@ fn (mut bot StellarTradingBot) create_or_update_buy_offer(active_offer stellar.O
 		return offer_id
 	}
 
-	amount = round_to_precision(amount, 5)
-	active_offer_amount := round_to_precision(active_offer.amount.f64(), 5)
-	active_offer_price := round_to_precision(active_offer.price.f64(), 4)
-
-	buying_price = f32(round_to_precision(f64(buying_price), 4))
+	// check if update is needed
+	amount = round_to_precision(amount, 7)
+	active_offer_amount := active_offer.amount.f64()
+	active_offer_price := round_to_precision(active_offer.price.f64(), 7)
+	buying_price = f64(round_to_precision(f64(buying_price), 7))
 
 	println('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
 	println('selling: price: ${buying_price} - amount: ${amount}')
+
 	if active_offer_price == buying_price && active_offer_amount == amount {
 		// don't need an update
 		println('offer ${active_offer.id.int()} is up-to-date.')

@@ -52,17 +52,19 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 		selling_price = highest_price_float
 	}
 
-	asset_balance := bot.get_asset_balance(asset_info)!
+	mut asset_balance := bot.get_asset_balance(asset_info)!
+	println('Asset balance: ${asset_balance}')
 
 	if asset_balance <= bot.preserve {
 		return error('Wallet does not have enough balance for asset ${bot.selling_asset_code} to make a new sell offer, current balance is ${asset_balance}.')
 	}
 
-	mut spendable_balance := asset_balance - bot.preserve
-	spendable_balance = spendable_balance / 10000000
+	spendable_balance := asset_balance - bot.preserve
 	println('Spendable balance: ${spendable_balance}')
 
+	println('bot.selling_amount: ${bot.selling_amount}')
 	mut amount := math.min(spendable_balance, bot.selling_amount)
+	println('amount: ${amount}')
 
 	offer_args := stellar.OfferArgs{
 		selling: stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
@@ -71,7 +73,7 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 			bot.buying_asset_issuer)
 		amount:  u64(amount)
 		sell:    true
-		price:   selling_price
+		price:   f32(selling_price)
 	}
 
 	if active_offer.id.int() == 0 {
@@ -82,14 +84,14 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 	}
 
 	// check if update is needed
-	amount = round_to_precision(amount, 5)
-	active_offer_amount := round_to_precision(active_offer.amount.f64(), 5)
-	active_offer_price := round_to_precision(active_offer.price.f64(), 4)
-
-	selling_price = f32(round_to_precision(f64(selling_price), 4))
+	amount = round_to_precision(amount, 7)
+	active_offer_amount := active_offer.amount.f64()
+	active_offer_price := round_to_precision(active_offer.price.f64(), 7)
+	selling_price = f64(round_to_precision(f64(selling_price), 7))
 
 	println('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
 	println('selling: price: ${selling_price} - amount: ${amount}')
+
 	if active_offer_price == selling_price && active_offer_amount == amount {
 		// don't need an update
 		println('offer ${active_offer.id.int()} is up-to-date.')

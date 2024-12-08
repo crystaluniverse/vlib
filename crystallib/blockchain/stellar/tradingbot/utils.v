@@ -1,6 +1,5 @@
 module tradingbot
 
-import freeflowuniverse.crystallib.blockchain.stellar
 import math
 
 // Normalizes asset codes and validates issuers

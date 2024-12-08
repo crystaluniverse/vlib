@@ -24,9 +24,9 @@ pub mut:
 	// selling stellar.OfferAssetType
 	// buying  stellar.OfferAssetType
 
-	buying_target_price  f32 // price to buy at
-	selling_target_price f32 // price to sell at
-	selling_amount       f32 // amount to sell
-	buying_amount        f32
+	buying_target_price  f64 // price to buy at
+	selling_target_price f64 // price to sell at
+	selling_amount       f64
+	buying_amount        f64
 	preserve             f64 // min balance to have in account
 }
