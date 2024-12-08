@@ -23,9 +23,9 @@ fn determine_asset_type(asset_code string) string {
 	}
 }
 
-// fn get_offer_asset_type(asset_type string, asset_code string, asset_issuer string) stellar.ManagerOfferAssetType {
+// fn get_offer_asset_type(asset_type string, asset_code string, asset_issuer string) stellar.OfferAssetType {
 // 	if asset_type == 'native' {
-// 		return stellar.ManagerOfferAssetType('native')
+// 		return stellar.OfferAssetType('native')
 // 	}
 
 // 	mut asset := stellar.AssetType{}
@@ -41,5 +41,5 @@ fn determine_asset_type(asset_code string) string {
 // 		}
 // 	}
 
-// 	return stellar.ManagerOfferAssetType(asset_type)
+// 	return stellar.OfferAssetType(asset_type)
 // }

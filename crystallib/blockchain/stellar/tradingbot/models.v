@@ -21,8 +21,8 @@ pub mut:
 	buying_asset_code    string // asset to buy
 	buying_asset_issuer  string // issuer of the asset to buy
 	buying_asset_type    string // type of the asset to buy
-	// selling stellar.ManagerOfferAssetType
-	// buying  stellar.ManagerOfferAssetType
+	// selling stellar.OfferAssetType
+	// buying  stellar.OfferAssetType
 
 	buying_target_price  f32 // price to buy at
 	selling_target_price f32 // price to sell at
