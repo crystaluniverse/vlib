@@ -27,7 +27,7 @@ pub mut:
 
 	foldlevel    int
 	printbook    bool
-	summary_url  string // url of the summary.md file
+	// summary_url  string // url of the summary.md file
 	summary_path string // can also give the path to the summary file (can be the dir or the summary itself)
 	// doctree_url  string
 	// doctree_path string
@@ -35,6 +35,7 @@ pub mut:
 	build_path   string
 	production   bool
 	collections  []string
+	description string
 }
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
@@ -61,24 +62,6 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 
 	mut gs := gittools.get()!
 
-	if args.summary_url.len > 0 {
-		repo := gs.get_repo(url:args.summary_url, reset: false, pull: false)!
-
-		// get the path corresponding to the summary_url dir/file
-		summary_path := repo.get_path_of_url(args.summary_url)!
-		mut summary_dir := pathlib.get_dir(path: summary_path)!
-
-		summary_file_path := summary_dir.file_get_ignorecase('summary.md') or {
-			summary_dir = summary_dir.parent()!
-			p := summary_dir.file_get_ignorecase('summary.md') or {
-				return error('summary from git needs to be dir or file: ${err}')
-			}
-			p
-		}
-
-		args.summary_path = summary_file_path.path
-	}
-
 	mut src_path := pathlib.get_dir(path: '${args.build_path}/src', create: true)!
 	_ := pathlib.get_dir(path: '${args.build_path}/.edit', create: true)!
 	mut collection_set := map[string]bool{}
@@ -86,14 +69,23 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		// link collections from col_path to src
 		mut p := pathlib.get_dir(path: col_path)!
 		mut entries := p.list(dirs_only: true, recursive: false)!
-		for mut entry in entries.paths {
-			if _ := collection_set[entry.name()] {
-				return error('collection with name ${entry.name()} already exists')
-			}
-
-			collection_set[entry.name()] = true
-			entry.link('${src_path.path}/${entry.name()}', true)!
+		println('debugzo ${col_path} -- ${entries}')
+		
+		if _ := collection_set[p.name()] {
+			return error('collection with name ${p.name()} already exists')
 		}
+		p.link('${src_path.path}/${p.name()}', true)!
+		
+		// QUESTION: why was this ever implemented per entry?
+		// for mut entry in entries.paths {
+		// 	if _ := collection_set[entry.name()] {
+		// 		println('collection with name ${entry.name()} already exists')
+		// 		// return error('collection with name ${entry.name()} already exists')
+		// 	}
+
+		// 	collection_set[entry.name()] = true
+		// 	entry.link('${src_path.path}/${entry.name()}', true)!
+		// }
 	}
 
 	mut book := MDBook{
