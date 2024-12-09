@@ -54,7 +54,7 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 	}
 
 	mut asset_balance := bot.get_asset_balance(asset_info)!
-	console.print_header('Asset balance: ${asset_balance}')
+	console.print_header('Asset ${bot.selling_asset_code} balance: ${asset_balance}')
 
 	if asset_balance <= bot.preserve {
 		return error('Wallet does not have enough balance for asset ${bot.selling_asset_code} to make a new sell offer, current balance is ${asset_balance}.')

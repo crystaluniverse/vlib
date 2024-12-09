@@ -61,7 +61,6 @@ pub fn get_network_config(network StellarNetwork) !NetworkConfig {
 }
 
 pub fn encode_tx_to_xdr(json_encoding string) !string {
-	println('json_encoding: ${json_encoding}')
 	cmd := "echo '${json_encoding}' | stellar xdr encode --type TransactionEnvelope"
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
@@ -206,7 +205,7 @@ pub fn fetch_highest_bid_price(orderBook OrderBook) !Price {
 	return orderBook.bids[0].price_r
 }
 
-pub fn fetch_highest_ask_price(orderBook OrderBook) !Price {
+pub fn fetch_lowest_ask_price(orderBook OrderBook) !Price {
 	// Parse highest bid price from the order book response
 	if orderBook.asks.len == 0 {
 		return error('There are no asks.')

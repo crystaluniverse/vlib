@@ -17,7 +17,7 @@ fn (mut bot StellarTradingBot) buy_low(active_offers []stellar.OfferModel, order
 fn (mut bot StellarTradingBot) is_buy_offer(offer stellar.OfferModel) bool {
 	return
 		bot.match_buy_asset(offer.selling.asset_type, offer.selling.asset_code, offer.selling.asset_issuer)
-		&& bot.match_buy_asset(offer.buying.asset_type, offer.buying.asset_code, offer.buying.asset_issuer)
+		&& bot.match_sell_asset(offer.buying.asset_type, offer.buying.asset_code, offer.buying.asset_issuer)
 }
 
 fn (mut bot StellarTradingBot) get_buy_offer_from_active_offers(active_offers []stellar.OfferModel) !stellar.OfferModel {
@@ -46,15 +46,19 @@ fn (mut bot StellarTradingBot) create_or_update_buy_offer(active_offer stellar.O
 	}
 
 	mut buying_price := bot.buying_target_price
-	highest_price := stellar.fetch_highest_ask_price(order_book)!
+	lowest_price := stellar.fetch_lowest_ask_price(order_book)! // 500
 
-	highest_price_float := f32(highest_price.n) / f32(highest_price.d)
-	if highest_price_float > bot.buying_target_price {
-		buying_price = highest_price_float
+	lowest_price_float := f32(lowest_price.n) / f32(lowest_price.d)
+	if lowest_price_float < bot.buying_target_price {
+		buying_price = lowest_price_float
+	}
+
+	if buying_price == bot.selling_target_price {
+		// We need to
 	}
 
 	asset_balance := bot.get_asset_balance(asset_info)!
-	console.print_header('Asset balance: ${asset_balance}')
+	console.print_header('Asset ${bot.buying_asset_code} balance: ${asset_balance}')
 
 	if asset_balance <= bot.preserve {
 		return error('Wallet does not have enough balance for asset ${bot.buying_asset_code} to make a new buy offer, current balance is ${asset_balance}.')
