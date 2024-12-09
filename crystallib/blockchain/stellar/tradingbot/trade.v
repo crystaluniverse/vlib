@@ -120,12 +120,10 @@ pub fn (mut bot StellarTradingBot) run() ! {
 
 	if bot.selling_asset_type == 'native' {
 		selling_asset = 'XLM'
-		bot.selling_asset_code = 'XLM'
 	}
 
 	if bot.buying_asset_type == 'native' {
 		buying_asset = 'XLM'
-		bot.buying_asset_code = 'XLM'
 	}
 
 	console.print_header('Bot status: selling ${selling_asset}, buying ${buying_asset}')
