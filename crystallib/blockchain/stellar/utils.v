@@ -61,6 +61,7 @@ pub fn get_network_config(network StellarNetwork) !NetworkConfig {
 }
 
 pub fn encode_tx_to_xdr(json_encoding string) !string {
+	println('json_encoding: ${json_encoding}')
 	cmd := "echo '${json_encoding}' | stellar xdr encode --type TransactionEnvelope"
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
@@ -202,7 +203,6 @@ pub fn fetch_highest_bid_price(orderBook OrderBook) !Price {
 		}
 	}
 
-	println('highest bid: ${orderBook.bids[0].price}')
 	return orderBook.bids[0].price_r
 }
 
@@ -212,7 +212,6 @@ pub fn fetch_highest_ask_price(orderBook OrderBook) !Price {
 		return error('There are no asks.')
 	}
 
-	println('highest ask: ${orderBook.asks[0].price}')
 	return orderBook.asks[0].price_r
 }
 
@@ -223,7 +222,6 @@ pub fn get_offer_id_from_result_xdr(result_xdr string) !u64 {
 		return error('Failed to decode transaction result: ${tx_result.output}')
 	}
 	data := json2.raw_decode(tx_result.output.trim_space())!.as_map()
-	println('data map: ${data}')
 	return find_key_recursive(data, 'offer_id')!.u64()
 }
 

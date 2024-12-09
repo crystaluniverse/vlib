@@ -1,6 +1,7 @@
 module tradingbot
 
 import freeflowuniverse.crystallib.blockchain.stellar
+import freeflowuniverse.crystallib.ui.console
 import math
 
 // Sell if price is above target
@@ -35,7 +36,7 @@ fn (mut bot StellarTradingBot) is_sell_offer(offer stellar.OfferModel) bool {
 }
 
 fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.OfferModel, order_book stellar.OrderBook) !u64 {
-	println('Creating/Updating a new sell offer')
+	console.print_header('Creating/Updating a new sell offer')
 
 	mut asset_info := stellar.GetOfferAssetInfo{
 		asset_type:   bot.selling_asset_type
@@ -53,18 +54,16 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 	}
 
 	mut asset_balance := bot.get_asset_balance(asset_info)!
-	println('Asset balance: ${asset_balance}')
+	console.print_header('Asset balance: ${asset_balance}')
 
 	if asset_balance <= bot.preserve {
 		return error('Wallet does not have enough balance for asset ${bot.selling_asset_code} to make a new sell offer, current balance is ${asset_balance}.')
 	}
 
 	spendable_balance := asset_balance - bot.preserve
-	println('Spendable balance: ${spendable_balance}')
+	console.print_header('Spendable balance: ${spendable_balance}')
 
-	println('bot.selling_amount: ${bot.selling_amount}')
 	mut amount := math.min(spendable_balance, bot.selling_amount)
-	println('amount: ${amount}')
 
 	offer_args := stellar.OfferArgs{
 		selling: stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
@@ -78,8 +77,7 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 
 	if active_offer.id.int() == 0 {
 		mut offer_id := bot.sclient.create_offer(offer_args)!
-		println('Offer ${offer_id} is created')
-
+		console.print_header('Offer ${offer_id} is created')
 		return offer_id
 	}
 
@@ -89,17 +87,17 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 	active_offer_price := round_to_precision(active_offer.price.f64(), 7)
 	selling_price = f64(round_to_precision(f64(selling_price), 7))
 
-	println('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
-	println('selling: price: ${selling_price} - amount: ${amount}')
+	console.print_header('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
+	console.print_header('selling price: ${selling_price} - amount: ${amount}')
 
 	if active_offer_price == selling_price && active_offer_amount == amount {
 		// don't need an update
-		println('offer ${active_offer.id.int()} is up-to-date.')
+		console.print_header('offer ${active_offer.id.int()} is up-to-date.')
 		return active_offer.id.u64()
 	}
 
 	bot.sclient.update_offer(active_offer.id.u64(), offer_args)!
-	println('Offer ${active_offer.id.int()} is updated')
+	console.print_header('Offer ${active_offer.id.int()} is updated')
 
 	return active_offer.id.u64()
 }

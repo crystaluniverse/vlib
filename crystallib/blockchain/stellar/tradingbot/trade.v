@@ -96,7 +96,7 @@ fn (mut bot StellarTradingBot) add_needed_trust_lines() ! {
 	}
 
 	if need_selling_trustline {
-		println('Adding trustline for ${bot.selling_asset_code}, Issuer: ${bot.selling_asset_issuer}')
+		console.print_header('Adding trustline for ${bot.selling_asset_code}, Issuer: ${bot.selling_asset_issuer}')
 		bot.sclient.add_trust_line(
 			asset_code: bot.selling_asset_code
 			issuer:     bot.selling_asset_issuer
@@ -104,7 +104,7 @@ fn (mut bot StellarTradingBot) add_needed_trust_lines() ! {
 	}
 
 	if need_buying_trustline {
-		println('Adding trustline for ${bot.buying_asset_code}, Issuer: ${bot.buying_asset_issuer}')
+		console.print_header('Adding trustline for ${bot.buying_asset_code}, Issuer: ${bot.buying_asset_issuer}')
 		bot.sclient.add_trust_line(
 			asset_code: bot.buying_asset_code
 			issuer:     bot.buying_asset_issuer
@@ -114,7 +114,18 @@ fn (mut bot StellarTradingBot) add_needed_trust_lines() ! {
 
 // Runs a specific operation (buy or sell) in a loop
 pub fn (mut bot StellarTradingBot) run() ! {
-	println('Bot status: selling ${bot.selling_asset_code}, buying ${bot.buying_asset_code}')
+	mut selling_asset := bot.selling_asset_code
+	mut buying_asset := bot.buying_asset_code
+
+	if bot.selling_asset_type == 'native' {
+		selling_asset = 'XLM'
+	}
+
+	if bot.buying_asset_type == 'native' {
+		buying_asset = 'XLM'
+	}
+
+	console.print_header('Bot status: selling ${selling_asset}, buying ${buying_asset}')
 
 	mut active_offers := bot.fetch_wallet_offers()!
 
@@ -130,13 +141,6 @@ pub fn (mut bot StellarTradingBot) run() ! {
 		return
 	}
 
-	/*	
-		TODO:
-			- when fetching order book, exclude ours // maybe not needed
-			- validate that buy threshold is strictly less than sell threshold
-			- for sell, validate that fetched wallet offer is actually a sell offer by validating price is ess than or equal to sell threshold
-			- for buy, validate that fetched wallet offer is actually a buy offer by validating price is less or equal to buy threshold
-	*/
 	for {
 		active_offers = bot.fetch_wallet_offers()!
 
@@ -146,7 +150,7 @@ pub fn (mut bot StellarTradingBot) run() ! {
 		}
 
 		bot.sell_high(active_offers, order_book) or { console.print_stderr('${err}') }
-		// bot.buy_low(active_offers, order_book) or { console.print_stderr('${err}') }
+		bot.buy_low(active_offers, order_book) or { console.print_stderr('${err}') }
 
 		// Adjust polling interval as needed
 		time.sleep(poll_interval)
@@ -168,7 +172,6 @@ fn (mut bot StellarTradingBot) fetch_order_book() !stellar.OrderBook {
 	order_book := bot.hclient.get_order_book(order_book_request) or {
 		return error('Failed to fetch order book: ${err}')
 	}
-	println('Order Book: ${order_book}')
 	return order_book
 }
 
