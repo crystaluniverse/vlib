@@ -143,9 +143,8 @@ pub fn plbook_code_get(cmd Command) !string {
 }
 
 // same as session_run_get but will also run the playbook
-fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
+pub fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
 	path := plbook_code_get(cmd)!
-
 	if path.len == 0 {
 		return error(cmd.help_message())
 	}

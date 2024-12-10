@@ -33,8 +33,8 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 
 	// finally lets publish defined books
 	for mut action in plbook.find(filter: 'book:publish')! {
-		mut p := action.params
-		play_book_publish(mut p)!
+		p := action.params
+		spawn play_book_publish(p)
 		action.done = true
 	}
 }
@@ -96,7 +96,7 @@ fn play_book_define(mut params Params) ! {
 	)!
 }
 
-fn play_book_publish(mut p Params) ! {
+fn play_book_publish(p Params) ! {
 	name := p.get('name')!
 	params := p.decode[PublishParams]()!
 	production := p.get_default_false('production')

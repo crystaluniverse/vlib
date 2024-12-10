@@ -36,6 +36,7 @@ pub mut:
 	production   bool
 	collections  []string
 	description string
+	export bool // whether mdbook should be built
 }
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
@@ -69,7 +70,6 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		// link collections from col_path to src
 		mut p := pathlib.get_dir(path: col_path)!
 		mut entries := p.list(dirs_only: true, recursive: false)!
-		println('debugzo ${col_path} -- ${entries}')
 		
 		if _ := collection_set[p.name()] {
 			return error('collection with name ${p.name()} already exists')
@@ -105,7 +105,7 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		if os.exists('${collection_dir_path.path}/errors.md') {
 			summary.add_error_page(collectionname, 'errors.md')
 		}
-		// // now link the collection into the build dir
+		// now link the collection into the build dir
 		collection_dirbuild_str := '${book.path_build.path}/src/${collectionname}'.replace('~',
 			os.home_dir())
 		if !pathlib.path_equal(collection_dirbuild_str, collection_dir_path.path) {
@@ -182,7 +182,9 @@ You can ignore these pages, they are just to get links to work.
 
 	book.template_install()!
 
-	book.generate()!
+	if args.export {
+		book.generate()!
+	}
 
 	console.print_header(' mdbook prepared: ${book.path_build.path}')
 

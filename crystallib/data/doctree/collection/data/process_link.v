@@ -10,6 +10,11 @@ pub fn (mut page Page) process_links(paths map[string]string) ![]string {
 	mut doc := page.doc()!
 	for mut element in doc.children_recursive() {
 		if mut element is elements.Link {
+			if element.cat == .html || (element.cat == .anchor && element.url == '') {
+				// is external link or same page anchor, nothing to process
+				// maybe in the future check if exists
+				continue
+			}
 			mut name := texttools.name_fix_keepext(element.filename)
 			mut site := texttools.name_fix(element.site)
 			if site == '' {

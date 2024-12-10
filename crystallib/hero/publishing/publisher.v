@@ -2,6 +2,7 @@ module publishing
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.doctree { Tree }
 import freeflowuniverse.crystallib.web.mdbook { MDBook }
 
@@ -50,9 +51,10 @@ pub struct Book {
 }
 
 pub fn (book Book) publish(path string, params PublishParams) ! {
+	println("debugzo ${book}-mdbook build --dest-dir ${path}")
 	os.execute_opt('	
 		cd ${book.path}
-		mdbook build --dest-dir ${path}'
+		mdbook build --dest-dir ${path}/${book.name}'
 	)!
 }
 
@@ -78,8 +80,6 @@ pub fn (p Publisher) new_book(book NewBook) ! {
 		col_paths << p.tree.collections[col].path.path
 	}
 
-	
-
 	_ := mdbooks.generate(
 		name: book.name
 		title: book.title
@@ -98,6 +98,17 @@ pub fn (book Book) print() {
 	println('Book: ${book.name}\n- title: ${book.title}\n- description: ${book.description}\n- path: ${book.path}')
 }
 
+pub fn (p Publisher) open(name string) ! {
+	p.publish(name)!
+	book := p.books[name]
+	cmd := 'open \'${p.publish_directory().path}/${name}/index.html\''
+	osal.exec(cmd: cmd)!
+}
+
 pub fn (p Publisher) export_tree() ! {
 	publisher.tree.export(destination: '${publisher.root_path}/collections')!
+}
+
+pub fn (p Publisher) list_books() ![]Book {
+	return p.books.values()
 }
