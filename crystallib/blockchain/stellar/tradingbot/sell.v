@@ -83,11 +83,11 @@ fn (mut bot StellarTradingBot) create_or_update_sell_offer(active_offer stellar.
 
 	// check if update is needed
 	amount = round_to_precision(amount, 7)
-	active_offer_amount := active_offer.amount.f64()
+	active_offer_amount := f64(round_to_precision(active_offer.amount.f64(), 7))
 	active_offer_price := round_to_precision(active_offer.price.f64(), 7)
 	selling_price = f64(round_to_precision(f64(selling_price), 7))
 
-	console.print_header('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
+	console.print_header('active offer: price: ${active_offer_price} - amount: ${active_offer_amount}')
 	console.print_header('selling price: ${selling_price} - amount: ${amount}')
 
 	if active_offer_price == selling_price && active_offer_amount == amount {

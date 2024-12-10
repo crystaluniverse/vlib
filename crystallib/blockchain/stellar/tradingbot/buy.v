@@ -16,8 +16,8 @@ fn (mut bot StellarTradingBot) buy_low(active_offers []stellar.OfferModel, order
 // checks if offer has reversed assets (buy is sell, and sell is buy)
 fn (mut bot StellarTradingBot) is_buy_offer(offer stellar.OfferModel) bool {
 	return
-		bot.match_buy_asset(offer.selling.asset_type, offer.selling.asset_code, offer.selling.asset_issuer)
-		&& bot.match_sell_asset(offer.buying.asset_type, offer.buying.asset_code, offer.buying.asset_issuer)
+		bot.match_buy_asset(offer.buying.asset_type, offer.buying.asset_code, offer.buying.asset_issuer)
+		&& bot.match_sell_asset(offer.selling.asset_type, offer.selling.asset_code, offer.selling.asset_issuer)
 }
 
 fn (mut bot StellarTradingBot) get_buy_offer_from_active_offers(active_offers []stellar.OfferModel) !stellar.OfferModel {
@@ -87,12 +87,12 @@ fn (mut bot StellarTradingBot) create_or_update_buy_offer(active_offer stellar.O
 
 	// check if update is needed
 	amount = round_to_precision(amount, 7)
-	active_offer_amount := active_offer.amount.f64()
+	active_offer_amount := f64(round_to_precision(active_offer.amount.f64(), 7))
 	active_offer_price := round_to_precision(active_offer.price.f64(), 7)
 	buying_price = f64(round_to_precision(f64(buying_price), 7))
 
 	console.print_header('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
-	console.print_header('selling: price: ${buying_price} - amount: ${amount}')
+	console.print_header('buying: price: ${buying_price} - amount: ${amount}')
 
 	if active_offer_price == buying_price && active_offer_amount == amount {
 		// don't need an update
