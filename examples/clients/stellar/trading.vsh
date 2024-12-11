@@ -2,39 +2,31 @@
 
 import freeflowuniverse.crystallib.blockchain.stellar
 
+tft_issuer := 'GCGE3IQWC4QIOJ7WVLIHZMXSE623CMXWQVMK4JWSRX2V3TXZEW3RHDR6'
+
+account1 := stellar.generate_keys(name: 'account1', network: .testnet, fund: true)!
+println('Account 1: ${account1}')
+
 mut client := stellar.new_client(
-	account_name:   'default'
-	account_secret: 'SBUG7WNI6EACVNFQBWE74JDBB2PI5FSEMPMHQJSFZTLWO2XORDSIW6PV'
-	network:        .testnet
-	cache:          false
+	account_name: 'default'
+	account_secret: account1.secret
+	network: .testnet
+	cache: false
 )!
 
-// mut client := stellar.get_client(account_name:"default", network: .testnet)!
 mut hash := client.add_trust_line(
 	asset_code: 'TFT'
-	issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
+	issuer: tft_issuer // tft issuer id
 )!
-println('hash: ${hash}')
-
-mut hash2 := client.add_trust_line(
-	asset_code: 'USDC'
-	issuer:     'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5'
-)!
-println('hash2: ${hash2}')
+println('add tft trustline tx hash: ${hash}')
 
 // Make sell offer
 sell_offer_args := stellar.OfferArgs{
-	selling: stellar.Asset{
-		asset_code: 'native'
-		// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
-	}
-	buying:  stellar.Asset{
-		asset_code: 'TFT'
-		issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
-	}
-	sell:    true
-	amount:  50
-	price:   10
+	selling: stellar.OfferAssetType('native')
+	buying: stellar.OfferAssetType(stellar.new_asset_type('TFT', tft_issuer))
+	sell: true
+	amount: 50
+	price: 10
 }
 mut sell_offer_id := client.create_offer(sell_offer_args)!
 
@@ -42,21 +34,14 @@ println('sell_offer_id: ${sell_offer_id}')
 
 // Make buy offer
 mut buy_offer_args := stellar.OfferArgs{
-	selling: stellar.Asset{
-		asset_code: 'native'
-		// issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
-	}
-	buying:  stellar.Asset{
-		asset_code: 'TFT'
-		issuer:     'GA47YZA3PKFUZMPLQ3B5F2E3CJIB57TGGU7SPCQT2WAEYKN766PWIMB3'
-	}
-	buy:     true
-	amount:  50
-	price:   10
+	selling: stellar.OfferAssetType('native')
+	buying: stellar.OfferAssetType(stellar.new_asset_type('TFT', tft_issuer))
+	buy: true
+	amount: 50
+	price: 10
 }
 
 mut buy_offer_id := client.create_offer(buy_offer_args)!
-
 println('buy_offer_id: ${buy_offer_id}')
 
 buy_offer_args.amount = 100

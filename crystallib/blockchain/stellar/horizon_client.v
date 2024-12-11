@@ -57,8 +57,8 @@ pub fn (self HorizonClient) get_account(pubkey string) !StellarAccount {
 	mut client := httpconnection.new(name: 'horizon', url: self.url)!
 
 	result := client.get_json(
-		prefix:        'accounts/${pubkey}'
-		debug:         true
+		prefix: 'accounts/${pubkey}'
+		debug: true
 		cache_disable: false
 	)!
 
@@ -73,8 +73,8 @@ pub fn (self HorizonClient) get_last_transaction(address string) !TransactionInf
 	mut client := httpconnection.new(name: 'horizon', url: self.url)!
 
 	result := client.get_json(
-		prefix:        'accounts/${address}/transactions?limit=1&order=desc'
-		debug:         true
+		prefix: 'accounts/${address}/transactions?limit=1&order=desc'
+		debug: true
 		cache_disable: false
 	)!
 
@@ -95,8 +95,8 @@ pub fn (self HorizonClient) get_order_book(order_book_request OrderBookRequest) 
 		query_params[field.name] = order_book_request.$(field.name)
 	}
 	result := client.get_json(
-		prefix:        'order_book?' + url_encode(query_params)
-		debug:         true
+		prefix: 'order_book?' + url_encode(query_params)
+		debug: true
 		cache_disable: false
 	)!
 
@@ -151,8 +151,8 @@ pub fn (self HorizonClient) get_offers(args GetOfferArgs) ![]OfferModel {
 		query_params[field.name] = args.$(field.name)
 	}
 	result := client.get_json(
-		prefix:        'offers?' + url_encode(query_params)
-		debug:         true
+		prefix: 'offers?' + url_encode(query_params)
+		debug: true
 		cache_disable: false
 	)!
 

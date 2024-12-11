@@ -18,9 +18,9 @@ pub mut:
 	buying_asset_issuer  string
 	buying_asset_type    string
 
-	selling_target_price f64 @[required] // Your desired sell price
+	selling_target_price f64                    @[required] // Your desired sell price
 	selling_amount       f64
-	buying_target_price  f64 @[required] // Your desired buy price
+	buying_target_price  f64                    @[required] // Your desired buy price
 	buying_amount        f64
 	network              stellar.StellarNetwork = .testnet
 }
@@ -43,29 +43,29 @@ pub fn new(args_ StellarTradingBotArgs) !StellarTradingBot {
 
 	mut hclient := stellar.new_horizon_client(args.network)!
 	mut sclient := stellar.new_client(
-		account_name:   'tradingbot'
+		account_name: 'tradingbot'
 		account_secret: args.account_secret
-		network:        args.network
-		cache:          false
+		network: args.network
+		cache: false
 	)!
 
 	account_keys := stellar.get_account_keys(args.account_secret)!
 
 	mut bot := StellarTradingBot{
-		hclient:              hclient
-		sclient:              sclient
-		account_secret:       account_keys.secret
-		account_address:      account_keys.address
-		selling_asset_type:   args.selling_asset_type
-		selling_asset_code:   args.selling_asset_code
+		hclient: hclient
+		sclient: sclient
+		account_secret: account_keys.secret
+		account_address: account_keys.address
+		selling_asset_type: args.selling_asset_type
+		selling_asset_code: args.selling_asset_code
 		selling_asset_issuer: args.selling_asset_issuer
-		selling_amount:       args.selling_amount
+		selling_amount: args.selling_amount
 		selling_target_price: args.selling_target_price
-		buying_target_price:  args.buying_target_price
-		buying_asset_code:    args.buying_asset_code
-		buying_asset_type:    args.buying_asset_type
-		buying_asset_issuer:  args.buying_asset_issuer
-		buying_amount:        args.buying_amount
+		buying_target_price: args.buying_target_price
+		buying_asset_code: args.buying_asset_code
+		buying_asset_type: args.buying_asset_type
+		buying_asset_issuer: args.buying_asset_issuer
+		buying_amount: args.buying_amount
 	}
 
 	// bot.update_assets()
@@ -96,7 +96,7 @@ fn (mut bot StellarTradingBot) add_needed_trust_lines() ! {
 		console.print_header('Adding trustline for ${bot.selling_asset_code}, Issuer: ${bot.selling_asset_issuer}')
 		bot.sclient.add_trust_line(
 			asset_code: bot.selling_asset_code
-			issuer:     bot.selling_asset_issuer
+			issuer: bot.selling_asset_issuer
 		)!
 	}
 
@@ -104,7 +104,7 @@ fn (mut bot StellarTradingBot) add_needed_trust_lines() ! {
 		console.print_header('Adding trustline for ${bot.buying_asset_code}, Issuer: ${bot.buying_asset_issuer}')
 		bot.sclient.add_trust_line(
 			asset_code: bot.buying_asset_code
-			issuer:     bot.buying_asset_issuer
+			issuer: bot.buying_asset_issuer
 		)!
 	}
 }
@@ -169,20 +169,20 @@ pub fn (mut bot StellarTradingBot) run() ! {
 		}
 
 		// Adjust polling interval as needed
-		time.sleep(poll_interval)
+		time.sleep(tradingbot.poll_interval)
 	}
 }
 
 // Fetch order book
 fn (mut bot StellarTradingBot) fetch_order_book() !stellar.OrderBook {
 	mut order_book_request := stellar.OrderBookRequest{
-		selling_asset_code:   bot.selling_asset_code
-		selling_asset_type:   bot.selling_asset_type
-		buying_asset_code:    bot.buying_asset_code
-		buying_asset_type:    bot.buying_asset_type
+		selling_asset_code: bot.selling_asset_code
+		selling_asset_type: bot.selling_asset_type
+		buying_asset_code: bot.buying_asset_code
+		buying_asset_type: bot.buying_asset_type
 		selling_asset_issuer: bot.selling_asset_issuer
-		buying_asset_issuer:  bot.buying_asset_issuer
-		limit:                200
+		buying_asset_issuer: bot.buying_asset_issuer
+		limit: 200
 	}
 
 	order_book := bot.hclient.get_order_book(order_book_request) or {

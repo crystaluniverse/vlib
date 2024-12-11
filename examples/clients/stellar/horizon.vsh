@@ -2,10 +2,23 @@
 
 import freeflowuniverse.crystallib.blockchain.stellar
 
-mut cl := stellar.new_horizon_client(.testnet)!
+// create and fund a new account on testnet
+generated_account := stellar.generate_keys(name: 'account', network: .testnet, fund: true)!
+println('Account: ${generated_account}')
 
-mut account := cl.get_account('GANUFHCJIDAI347KLXHC6OK3H3Z7YRJQLH6IRBOHLRZ56KJ27LLTXOD7')!
+mut stellar_client := stellar.new_client(
+	account_name: generated_account.name
+	account_secret: generated_account.secret
+	network: .testnet
+	cache: false
+)!
+
+mut horizon_client := stellar.new_horizon_client(.testnet)!
+
+// get account information
+mut account := horizon_client.get_account(generated_account.address)!
 println('account: ${account}')
 
-tx := cl.get_last_transaction('GANUFHCJIDAI347KLXHC6OK3H3Z7YRJQLH6IRBOHLRZ56KJ27LLTXOD7')!
-println('last tx: ${tx}')
+// get infromation about last transaction for this account
+last_tx := horizon_client.get_last_transaction(generated_account.address)!
+println('last tx: ${last_tx}')

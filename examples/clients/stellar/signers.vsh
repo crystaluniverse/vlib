@@ -2,43 +2,48 @@
 
 import freeflowuniverse.crystallib.blockchain.stellar
 
+account1 := stellar.generate_keys(name: 'account1', network: .testnet, fund: true)!
+println('Account 1: ${account1}')
+
+account2 := stellar.generate_keys(name: 'account2', network: .testnet, fund: true)!
+println('Account 2: ${account2}')
+
+account3 := stellar.generate_keys(name: 'account3', network: .testnet, fund: true)!
+println('Account 3: ${account3}')
+
 mut client := stellar.new_client(
-	account_name:   'default'
-	account_secret: 'SA5AH6PDCKPP4P7XNWX6W4SKVDS6C2GECH4BQDKPDG5JQC3GFRGAB377'
-	network:        .testnet
-	cache:          false
+	account_name: 'default'
+	account_secret: account1.secret
+	network: .testnet
+	cache: false
 )!
 
 // If you have a saved keys you can use the get_client method without specifying the account_secret.
 // mut client := stellar.get_client(account_name:"default", network: .testnet)!
 
 signer1 := stellar.new_signer(
-	key:    'GBSQW44E3AHYFF5G2M7T64R3F25SUW3B64OXCTAGWS2J2ZWV67WGAI5V'
+	key: account1.address
 	weight: 3
 )
 
 signer2 := stellar.new_signer(
-	key:    'GAXPE7LWNHKD4QKWJYCS5H4GZJHCYTLG45JOU3KRDZR65XSZTQK7OYLG'
+	key: account2.address
 	weight: 4
 )
 
 signer3 := stellar.new_signer(
-	key:    'GANUFHCJIDAI347KLXHC6OK3H3Z7YRJQLH6IRBOHLRZ56KJ27LLTXOD7'
+	key: account3.address
 	weight: 5
 )
 
 mut hash := client.add_signers(
-	signers_to_add: [signer1, signer2, signer3]
-	signers:        [
-		'SDFN5S2WBCFBZR675KZJM4FKYQ5WGNTPRUP4H3NR5DMHL753UBLUDDGF',
-	]
+	signers_to_add: [signer1, signer2, signer3] // signers to add to this account
+	signers: [account1.secret] // signers that may sign this transaction
 )!
 println('add signer tx hash: ${hash}')
 
 hash2 := client.remove_signer(
-	address: 'GBSQW44E3AHYFF5G2M7T64R3F25SUW3B64OXCTAGWS2J2ZWV67WGAI5V'
-	signers: [
-		'SDFN5S2WBCFBZR675KZJM4FKYQ5WGNTPRUP4H3NR5DMHL753UBLUDDGF',
-	]
+	address: account2.address // signer to remove
+	signers: [account3.secret] // signers that may sign this transaction
 )!
 println('remove signer tx hash: ${hash2}')
