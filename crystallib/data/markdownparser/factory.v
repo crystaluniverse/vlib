@@ -16,7 +16,9 @@ pub:
 // get a parsed document, path is the path to the file, if not given content is needed
 pub fn new(args_ NewDocArgs) !elements.Doc {
 	mut args := args_
-	mut doc := elements.doc_new(collection_name: args.collection_name)!
+	mut doc := elements.doc_new(collection_name: args.collection_name) or {
+		return error('Failed create new doc ${args.collection_name}\n${err}')
+	}
 	if args.path == '' {
 		doc.content = args.content
 	} else {
@@ -29,6 +31,8 @@ pub fn new(args_ NewDocArgs) !elements.Doc {
 		}
 	}
 
-	parsers.parse_doc(mut doc)!
+	parsers.parse_doc(mut doc) or {
+		return error('Failed to parse doc ${args.path}\n${err}')
+	}
 	return doc
 }

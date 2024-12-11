@@ -9,16 +9,16 @@ import time
 @[heap]
 pub struct GitRepo {
 pub mut:
-	gs            &GitStructure       @[skip; str: skip] // Reference to the parent GitStructure
-	provider      string // e.g., github.com, shortened to 'github'
-	account       string // Git account name
-	name          string // Repository name
+	gs            &GitStructure @[skip; str: skip] // Reference to the parent GitStructure
+	provider      string              // e.g., github.com, shortened to 'github'
+	account       string              // Git account name
+	name          string              // Repository name
 	status_remote GitRepoStatusRemote // Remote repository status
 	status_local  GitRepoStatusLocal  // Local repository status
 	status_wanted GitRepoStatusWanted // what is the status we want?
 	config        GitRepoConfig       // Repository-specific configuration
-	last_load     int    // Epoch timestamp of the last load from reality
-	deploysshkey  string // to use with git
+	last_load     int                 // Epoch timestamp of the last load from reality
+	deploysshkey  string              // to use with git
 }
 
 // this is the status we want, we need to work towards off
@@ -33,7 +33,7 @@ pub mut:
 // GitRepoStatusRemote holds remote status information for a repository.
 pub struct GitRepoStatusRemote {
 pub mut:
-	ref_default string // is the default branch hash
+	ref_default string            // is the default branch hash
 	branches    map[string]string // Branch name -> commit hash
 	tags        map[string]string // Tag name -> commit hash
 }
@@ -42,25 +42,25 @@ pub mut:
 pub struct GitRepoStatusLocal {
 pub mut:
 	branches map[string]string // Branch name -> commit hash
-	branch   string // the current branch
-	tag      string // If the local branch is not set, the tag may be set
+	branch   string            // the current branch
+	tag      string            // If the local branch is not set, the tag may be set
 }
 
 // GitRepoConfig holds repository-specific configuration options.
 pub struct GitRepoConfig {
 pub mut:
-	remote_check_period int // Seconds to wait between remote checks (0 = check every time)
+	remote_check_period int = 3600 * 24 * 3 // Seconds to wait between remote checks (0 = check every time), default 3 days
 }
 
 // just some initialization mechanism
 pub fn (mut gitstructure GitStructure) repo_new_from_gitlocation(git_location GitLocation) !&GitRepo {
 	mut repo := GitRepo{
-		provider: git_location.provider
-		name: git_location.name
-		account: git_location.account
-		gs: &gitstructure
+		provider:      git_location.provider
+		name:          git_location.name
+		account:       git_location.account
+		gs:            &gitstructure
 		status_remote: GitRepoStatusRemote{}
-		status_local: GitRepoStatusLocal{}
+		status_local:  GitRepoStatusLocal{}
 		status_wanted: GitRepoStatusWanted{}
 	}
 	gitstructure.repos[repo.name] = &repo
@@ -221,11 +221,11 @@ pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
 	}
 
 	return GitLocation{
-		provider: gs.provider
-		account: gs.account
-		name: gs.name
+		provider:      gs.provider
+		account:       gs.account
+		name:          gs.name
 		branch_or_tag: branch_or_tag
-		path: path // relative path in relation to git repo
+		path:          path // relative path in relation to git repo
 	}
 }
 
@@ -305,17 +305,9 @@ fn (repo GitRepo) exec(cmd_ string) !string {
 	if repo.gs.config.log {
 		console.print_green(cmd)
 	}
-	r := osal.exec(cmd: cmd, debug: repo.gs.config.debug)!
-	return r.output
-}
-
-pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
-	// Check current time vs last check, if needed (check period) then load
-	repo.cache_get()! // Ensure we have the situation from redis
-	repo.init()!
-	current_time := int(time.now().unix())
-	if args.reload || repo.last_load == 0
-		|| current_time - repo.last_load >= repo.config.remote_check_period {
-		repo.load()!
+	r := os.execute(cmd)
+	if r.exit_code != 0 {
+		return error('Repo failed to exec cmd: ${cmd}\n${r.output})')
 	}
+	return r.output
 }

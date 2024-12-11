@@ -40,7 +40,10 @@ pub fn (repo GitRepo) get_path_of_url(url string) !string {
 	}
 
 	if repo_root_idx == -1 {
-		return error('Invalid URL format: Cannot find repository path')
+		// maybe default repo url (without src and blob)
+		return repo.get_path() or {
+			return error('Invalid URL format: Cannot find repository path')
+		}
 	}
 
 	// Ensure that the repository path starts after the branch

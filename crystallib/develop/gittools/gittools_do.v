@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui.generic
+import freeflowuniverse.crystallib.clients.redisclient
 import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree,cd'
@@ -41,7 +42,7 @@ pub mut:
 //```
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	mut args := args_
-	console.print_debug('git do ${args}')
+	console.print_debug('git do ${args.cmd}')
 
 	if args.repo == '' && args.account == '' && args.provider == '' && args.filter == '' {
 		curdir := os.getwd()
@@ -60,25 +61,25 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	mut ui := gui.new()!
 
 	if args.cmd == 'reload' {
-		console.print_header(' - reload gitstructure ${gs.key}')
-		gs.load()!
+		console.print_header(' - reload gitstructure ${gs.config.coderoot}')
+		gs.load(reload: true)!
 		return ''
 	}
 
 	if args.cmd == 'list' {
 		gs.repos_print(
-			filter: args.filter
-			name: args.repo
-			account: args.account
+			filter:   args.filter
+			name:     args.repo
+			account:  args.account
 			provider: args.provider
 		)!
 		return ''
 	}
 
 	mut repos := gs.get_repos(
-		filter: args.filter
-		name: args.repo
-		account: args.account
+		filter:   args.filter
+		name:     args.repo
+		account:  args.account
 		provider: args.provider
 	)!
 
@@ -131,9 +132,9 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 
 	if args.cmd in 'pull,push,commit,delete'.split(',') {
 		gs.repos_print(
-			filter: args.filter
-			name: args.repo
-			account: args.account
+			filter:   args.filter
+			name:     args.repo
+			account:  args.account
 			provider: args.provider
 		)!
 
@@ -197,6 +198,8 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		mut ths := []thread !bool{}
 		for mut g in repos {
 			ths << spawn fn (mut g GitRepo, args ReposActionsArgs, need_commit bool, need_push bool, shared ui generic.UserInterface) !bool {
+				redisclient.reset()!
+				redisclient.checkempty()
 				mut has_changed := false
 				need_commit_repo := (g.need_commit()! || need_commit)
 					&& args.cmd in 'commit,pull,push'.split(',')
@@ -252,9 +255,9 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 				console.print_header('\nCompleted required actions.\n')
 
 				gs.repos_print(
-					filter: args.filter
-					name: args.repo
-					account: args.account
+					filter:   args.filter
+					name:     args.repo
+					account:  args.account
 					provider: args.provider
 				)!
 			}

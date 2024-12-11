@@ -18,7 +18,7 @@ pub struct SummaryItem {
 pub mut:
 	level       int
 	description string
-	path        string
+	relpath        string // relative path of summary item to source
 	collection  string
 	pagename    string
 }
@@ -86,10 +86,23 @@ pub fn (mut book MDBook) summary(production bool) !Summary {
 			continue
 		}
 
-		file_path := '${path_collection.path}/${pagename}'
+		list := path_collection.list()!
+		file_path_ := list.paths.filter(it.name() == pagename)
+		if file_path_.len == 0 {
+			book.error(
+				msg: "page find error in summary: '${line}', can't find page: ${pagename} in collection: ${path_collection_str}\n${file_path_} doesnt exist"
+			)
+			continue
+		} else if file_path_.len > 1 {
+			book.error(msg: 'duplicate page in collection: ${pagename}')
+			continue
+		}
+
+		file_path := file_path_[0].path
+
 		if !os.exists(file_path) || !os.is_file(file_path) {
 			book.error(
-				msg: "page find error in summary: '${line}', can't find page: ${pagename} in collection: ${path_collection_str}"
+				msg: "page find error in summary: '${line}', can't find page: ${pagename} in collection: ${path_collection_str}\n${file_path} doesnt exist"
 			)
 			continue
 		}
@@ -104,9 +117,9 @@ pub fn (mut book MDBook) summary(production bool) !Summary {
 
 		summary.items << SummaryItem{
 			level: level
-			path: path
 			description: description
 			pagename: pagename
+			relpath: file_path.all_after('${book.args.build_path}/src/') // relative path of page to src dir
 			collection: collection
 		}
 	}
@@ -176,7 +189,7 @@ pub fn (mut self Summary) str() string {
 		for _ in 0 .. item.level {
 			pre += '  '
 		}
-		out << '${pre}- [${item.description}](${item.collection}/${item.pagename})'
+		out << '${pre}- [${item.description}](${item.relpath})'
 	}
 
 	if self.addpages.len > 0 || (!self.production && self.errors.len > 0) {

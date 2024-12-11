@@ -1,5 +1,8 @@
 module gittools
 
+import freeflowuniverse.crystallib.clients.redisclient
+import time
+
 // ReposGetArgs defines arguments to retrieve repositories from the git structure.
 // It includes filters by name, account, provider, and an option to clone a missing repo.
 @[params]
@@ -57,21 +60,25 @@ pub fn (mut gitstructure GitStructure) get_repos(args_ ReposGetArgs) ![]&GitRepo
 		}
 	}
 
+	// operate per repo on thread based on args
 	mut ths := []thread !{}
 	for mut repo in res {
-		ths << spawn fn (mut repo GitRepo, args_ ReposGetArgs) ! {
-			if args_.pull {
+		// check redis cache outside, in threads is problematic
+		repo.cache_get() or { return error('failed to get repo cache ${err}') }
+		if time.since(time.unix(repo.last_load)) > 24 * time.hour {
+			args.reload = true
+		}
+		ths << spawn fn (mut repo GitRepo, args ReposGetArgs) ! {
+			redisclient.reset()!
+			redisclient.checkempty()
+			if args.pull {
 				repo.pull()!
-			}
-
-			if args_.reset {
+			} else if args.reset {
 				repo.reset()!
-			}
-
-			if args_.reload {
+			} else if args.reload {
 				repo.load()!
 			}
-		}(mut repo, args_)
+		}(mut repo, args)
 	}
 
 	for th in ths {

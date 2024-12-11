@@ -123,7 +123,6 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		mdbooks.generate(
 			name: name
 			title: title
-			summary_url: summary_url
 			summary_path: summary_path
 			publish_path: publish_path
 			build_path: build_path

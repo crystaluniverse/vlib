@@ -4,7 +4,7 @@ module redisclient
 pub struct RedisURL {
 	address string = '127.0.0.1'
 	port    int    = 6379
-	db      int
+	//db      int
 }
 
 pub fn get_redis_url(url string) !RedisURL {
@@ -19,6 +19,6 @@ pub fn get_redis_url(url string) !RedisURL {
 }
 
 pub fn core_get(url RedisURL) !Redis {
-	mut r := new(['${url.address}:${url.port}'])!
+	mut r := new('${url.address}:${url.port}')!
 	return r
 }

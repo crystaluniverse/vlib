@@ -231,6 +231,7 @@ fn cmd_git_execute(cmd Command) ! {
 
 	mut gs := gittools.get()!
 	if coderoot.len > 0 {
+		//is a hack for now 
 		gs = gittools.new(coderoot: coderoot)!
 	}
 
@@ -273,6 +274,7 @@ fn cmd_git_execute(cmd Command) ! {
 			reset: reset
 			msg: cmd.flags.get_string('message') or { '' }
 			url: cmd.flags.get_string('url') or { '' }
+
 		)!
 		if cmd.name == 'cd' {
 			print('cd ${mypath}\n')

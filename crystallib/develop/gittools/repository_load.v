@@ -3,21 +3,39 @@ module gittools
 import time
 import freeflowuniverse.crystallib.ui.console
 
+@[params]
+pub struct StatusUpdateArgs {
+	reload       bool
+	ssh_key_name string // name of ssh key to be used when loading
+}
+
+pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
+	// Check current time vs last check, if needed (check period) then load
+	// println("${repo.name} ++")
+	repo.cache_get()! // Ensure we have the situation from redis
+	repo.init()!
+	current_time := int(time.now().unix())
+	if args.reload || repo.last_load == 0
+		|| current_time - repo.last_load >= repo.config.remote_check_period {
+		console.print_debug('${repo.name} ${current_time}-${repo.last_load}: ${repo.config.remote_check_period}  +++')
+		// if true{exit(0)}
+		repo.load()!
+		// println("${repo.name} ++++")
+	}
+}
+
 // Load repo information
+// Does not check cache, it is the callers responsibility to check cache and load accordingly.
 fn (mut repo GitRepo) load() ! {
 	console.print_debug('load ${repo.get_key()}')
 	repo.init()!
-
-	repo.cache_get()!
-	if time.since(time.unix(repo.last_load)) > 24 * time.hour {
-		repo.exec('git fetch --all') or {
-			return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
-		}
-		repo.load_branches()!
-		repo.load_tags()!
-		repo.last_load = int(time.now().unix())
-		repo.cache_set()!
+	repo.exec('git fetch --all') or {
+		return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
 	}
+	repo.load_branches()!
+	repo.load_tags()!
+	repo.last_load = int(time.now().unix())
+	repo.cache_set()!
 }
 
 // Helper to load remote tags

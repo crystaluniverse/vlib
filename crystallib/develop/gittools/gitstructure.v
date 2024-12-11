@@ -1,17 +1,23 @@
 module gittools
 
+import crypto.md5
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.clients.redisclient
 import os
+import freeflowuniverse.crystallib.ui.console
 
-// GitStructureConfig defines configuration settings for a GitStructure instance.
-@[params]
 pub struct GitStructureConfig {
 pub mut:
-	coderoot string // Root directory where code is checked out, comes from context if not specified
-	light    bool = true // If true, clones only the last history for all branches (clone with only 1 level deep)
-	log      bool = true // If true, logs git commands/statements
-	debug    bool = true
+	coderoot     string
+	light        bool = true // If true, clones only the last history for all branches (clone with only 1 level deep)
+	log          bool = true // If true, logs git commands/statements
+	debug        bool = true
+	ssh_key_name string
+}
+
+fn rediskey(coderoot string) string {
+	key := md5.hexhash(coderoot)
+	return 'git:config:${key}'
 }
 
 // GitStructure holds information about repositories within a specific code root.
@@ -19,21 +25,15 @@ pub mut:
 @[heap]
 pub struct GitStructure {
 pub mut:
-	key      string // Unique key representing the git structure (default is hash of $home/code).
+	key      string              // Unique key representing the git structure (default is hash of $home/code).
 	config   GitStructureConfig  // Configuration settings for the git structure.
 	coderoot pathlib.Path        // Root directory where repositories are located.
 	repos    map[string]&GitRepo // Map of repositories, keyed by their unique names.
-	loaded   bool // Indicates if the repositories have been loaded into memory.
+	loaded   bool                // Indicates if the repositories have been loaded into memory.
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
-
-@[params]
-pub struct StatusUpdateArgs {
-	reload       bool
-	ssh_key_name string // name of ssh key to be used when loading
-}
 
 // Loads all repository information from the filesystem and updates from remote if necessary.
 // Use the reload argument to force reloading from the disk.
@@ -42,17 +42,30 @@ pub struct StatusUpdateArgs {
 // - args (StatusUpdateArgs): Arguments controlling the reload behavior.
 pub fn (mut gitstructure GitStructure) load(args StatusUpdateArgs) ! {
 	mut processed_paths := []string{}
-	gitstructure.load_recursive(gitstructure.coderoot.path, args, mut processed_paths)!
+	// println("1")
+	gitstructure.load_recursive(gitstructure.coderoot.path, mut processed_paths)!
+	// println("2")
 
-	mut ths := []thread !{}
-	for _, mut repo_ in gitstructure.repos {
-		ths << spawn fn (mut repo GitRepo) ! {
-			repo.status_update()!
-		}(mut repo_)
-	}
+	if args.reload {
+		mut ths := []thread !{}
+		redisclient.reset()! // make sure redis is empty, we don't want to reuse
+		for _, mut repo_ in gitstructure.repos {
+			mut myfunction := fn (mut repo GitRepo) ! {
+				// println("reload repo ${repo.name} on ${repo.get_path()!}")
+				redisclient.reset()!
+				redisclient.checkempty()
+				repo.status_update(reload: true)!
+			}
 
-	for th in ths {
-		th.wait()!
+			ths << spawn myfunction(mut repo_)
+		}
+		console.print_debug('loaded all threads for git on ${gitstructure.coderoot.path}')
+
+		for th in ths {
+			th.wait()!
+		}
+		// console.print_debug("threads finished")
+		// exit(0)
 	}
 
 	gitstructure.init()!
@@ -63,15 +76,17 @@ pub fn (mut gitstructure GitStructure) init() ! {
 	if gitstructure.config.debug {
 		gitstructure.config.log = true
 	}
+	if gitstructure.repos.keys().len == 0 {
+		gitstructure.load()!
+	}
 }
 
 // Recursively loads repositories from the provided path, updating their statuses.
 //
 // Args:
 // - path (string): The path to search for repositories.
-// - args (StatusUpdateArgs): Controls the status update and reload behavior.
 // - processed_paths ([]string): List of already processed paths to avoid duplication.
-fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdateArgs, mut processed_paths []string) ! {
+fn (mut gitstructure GitStructure) load_recursive(path string, mut processed_paths []string) ! {
 	path_object := pathlib.get(path)
 	relpath := path_object.path_relative(gitstructure.coderoot.path)!
 
@@ -110,15 +125,14 @@ fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdate
 				continue
 			}
 			// Recursively search in subdirectories.
-			gitstructure.load_recursive(current_path, args, mut processed_paths)!
+			gitstructure.load_recursive(current_path, mut processed_paths)!
 		}
 	}
 }
 
 // Resets the cache for the current Git structure, removing cached data from Redis.
 pub fn (mut gitstructure GitStructure) cachereset() ! {
-	mut context := base.context()!
-	mut redis := context.redis()!
+	mut redis := redis_get()
 	keys := redis.keys('git:repos:${gitstructure.key}:**')!
 
 	for key in keys {
@@ -156,14 +170,14 @@ fn (mut gitstructure GitStructure) repo_init_from_path_(path string, params Repo
 
 	// Initialize and return a GitRepo struct.
 	mut r := GitRepo{
-		gs: &gitstructure
+		gs:            &gitstructure
 		status_remote: GitRepoStatusRemote{}
-		status_local: GitRepoStatusLocal{}
-		config: GitRepoConfig{}
-		provider: gl.provider
-		account: gl.account
-		name: gl.name
-		deploysshkey: params.ssh_key_name
+		status_local:  GitRepoStatusLocal{}
+		config:        GitRepoConfig{}
+		provider:      gl.provider
+		account:       gl.account
+		name:          gl.name
+		deploysshkey:  params.ssh_key_name
 	}
 
 	return r
