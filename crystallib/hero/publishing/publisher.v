@@ -1,7 +1,7 @@
 module publishing
 
 import os
-import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.pathlib {Path}
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.doctree { Tree }
 import freeflowuniverse.crystallib.web.mdbook { MDBook }
@@ -15,6 +15,21 @@ pub mut:
 	tree Tree
 	books map[string]Book
 	root_path string = os.join_path(os.home_dir(), 'hero/publisher')
+}
+
+// returns the directory of a given collecation
+fn (p Publisher) collection_directory(name string) ?Path {
+	mut cols_dir := p.collections_directory()
+	return cols_dir.dir_get(name) or {
+		return none
+	}
+}
+
+pub fn (p Publisher) collections_directory() pathlib.Path {
+	collections_path := '${p.root_path}/collections'
+	return pathlib.get_dir(path: collections_path) or {
+		panic('this should never happen ${err}')
+	}
 }
 
 pub fn (p Publisher) build_directory() pathlib.Path {
@@ -51,7 +66,6 @@ pub struct Book {
 }
 
 pub fn (book Book) publish(path string, params PublishParams) ! {
-	println("debugzo ${book}-mdbook build --dest-dir ${path}")
 	os.execute_opt('	
 		cd ${book.path}
 		mdbook build --dest-dir ${path}/${book.name}'
@@ -74,10 +88,10 @@ pub fn (p Publisher) new_book(book NewBook) ! {
 
 	mut col_paths := []string{}
 	for col in book.collections {
-		if col !in p.tree.collections {
+		col_dir := p.collection_directory(col) or {
 			return error('Collection ${col} not found in publisher tree')
 		}
-		col_paths << p.tree.collections[col].path.path
+		col_paths << col_dir.path
 	}
 
 	_ := mdbooks.generate(

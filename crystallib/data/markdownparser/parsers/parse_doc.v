@@ -6,7 +6,9 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 pub fn parse_doc(mut doc elements.Doc) ! {
-	mut parser := parser_line_new(mut doc)!
+	mut parser := parser_line_new(mut doc) or {
+		return error('Failed to parse line\n${err}')
+	}
 	doc.type_name = 'doc'
 
 	for {
@@ -19,7 +21,9 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		mut line := parser.line_current()
 		trimmed_line := line.trim_space()
 
-		mut llast := parser.lastitem()!
+		mut llast := parser.lastitem() or {
+			return error('Failed to get last item\n${err}')
+		}
 
 		// console.print_header('- line: ${llast.type_name} \'${line}\'')
 
@@ -29,7 +33,9 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			parser.ensure_last_is_paragraph()!
+			parser.ensure_last_is_paragraph() or {
+				return error('Failed to ensure last item is paragraph\n${err}')
+			}
 			continue
 		}
 
@@ -39,7 +45,9 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				parser.next()
 				continue
 			}
-			parser.next_start_lf()!
+			parser.next_start_lf() or {
+				return error('Failed to next start lf\n${err}')
+			}
 			continue
 		}
 
@@ -179,5 +187,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 	// 	}
 	// }
 
-	doc.process()!
+	doc.process() or {
+		return error('Failed to process doc\n${err}')
+	}
 }

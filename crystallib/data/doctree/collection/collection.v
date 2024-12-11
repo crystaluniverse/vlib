@@ -41,7 +41,9 @@ pub fn new(args_ CollectionNewArgs) !Collection {
 	}
 
 	if args.load {
-		collection.scan()!
+		collection.scan() or {
+			return error('Error scanning collection ${args.name}:\n${err}')
+		}
 	}
 
 	return collection

@@ -93,7 +93,8 @@ fn (mut file File) exists() !bool {
 	return file.path.exists()
 }
 
-pub fn (mut file File) copy(dest string) ! {
+pub fn (file_ File) copy(dest string) ! {
+	mut file := file_
 	mut dest2 := pathlib.get(dest)
 	file.path.copy(dest: dest2.path, rsync: false) or {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')

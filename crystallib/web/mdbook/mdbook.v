@@ -105,7 +105,7 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		if os.exists('${collection_dir_path.path}/errors.md') {
 			summary.add_error_page(collectionname, 'errors.md')
 		}
-		// now link the collection into the build dir
+		// now link the exported collection into the build dir
 		collection_dirbuild_str := '${book.path_build.path}/src/${collectionname}'.replace('~',
 			os.home_dir())
 		if !pathlib.path_equal(collection_dirbuild_str, collection_dir_path.path) {

@@ -69,12 +69,14 @@ fn play_new_collection(mut p Params) ! {
 	reset := p.get_default_false('reset')
 	pull := p.get_default_false('pull')
 
-	publisher.tree.scan(
+	mut tree := publisher.tree
+	tree.scan_concurrent(
 		path: path
 		git_url: url
 		git_reset: reset
 		git_pull: pull
 	)!
+	publisher.tree = tree
 }
 
 fn play_book_define(mut params Params) ! {
