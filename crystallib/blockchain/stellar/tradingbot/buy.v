@@ -5,7 +5,7 @@ import math
 
 @[params]
 struct BuyLowArgs {
-	order_book   stellar.OrderBook @[required]
+	order_book   stellar.OrderBook   @[required]
 	active_offer ?stellar.OfferModel
 }
 
@@ -14,8 +14,8 @@ fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
 	log('Creating/Updating a new buy offer', false)
 
 	mut asset_info := stellar.GetOfferAssetInfo{
-		asset_type:   bot.buying_asset_type
-		asset_code:   bot.buying_asset_code
+		asset_type: bot.buying_asset_type
+		asset_code: bot.buying_asset_code
 		asset_issuer: bot.buying_asset_issuer
 	}
 
@@ -27,14 +27,9 @@ fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
 	}
 
 	mut buying_price := bot.buying_target_price
-	lowest_price := stellar.fetch_lowest_ask_price(args.order_book)! // 500
+	lowest_price := stellar.fetch_lowest_ask_price(args.order_book) // 500
 
 	lowest_price_float := f32(lowest_price.n) / f32(lowest_price.d)
-	if lowest_price_float > bot.buying_target_price {
-		log('The price is too high: ${lowest_price_float} > ${bot.buying_target_price}, Skipping...',
-			false)
-		return
-	}
 
 	if lowest_price_float < bot.buying_target_price {
 		buying_price = lowest_price_float
@@ -48,11 +43,11 @@ fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
 	offer_args := stellar.OfferArgs{
 		selling: stellar.get_offer_asset_type(bot.buying_asset_type, bot.buying_asset_code,
 			bot.buying_asset_issuer)
-		buying:  stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
+		buying: stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
 			bot.selling_asset_issuer)
-		amount:  u64(amount)
-		buy:     true
-		price:   f32(buying_price)
+		amount: amount
+		buy: true
+		price: f32(buying_price)
 	}
 
 	if active_offer := args.active_offer {
@@ -66,7 +61,7 @@ fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
 			false)
 		log('buying: price: ${buying_price} - amount: ${amount}', false)
 
-		if active_offer_price == buying_price && active_offer_amount == amount {
+		if active_offer_price == buying_price && math.abs(active_offer_amount - amount) < 1e-7 {
 			// don't need an update
 			log('offer ${active_offer.id.int()} is up-to-date.', false)
 			return
@@ -77,8 +72,13 @@ fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
 
 		return
 	} else {
-		mut offer_id := bot.sclient.create_offer(offer_args)!
-		log('Offer ${offer_id} is created', false)
+		mut offer_result := bot.sclient.create_offer(offer_args)!
+		if offer_result.claimed {
+			log('Offer created and claimed by ${offer_result.offer_id}', false)
+		} else {
+			log('Offer ${offer_result.offer_id} is created', false)
+		}
+
 		return
 	}
 }

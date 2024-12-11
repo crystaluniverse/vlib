@@ -28,9 +28,12 @@ sell_offer_args := stellar.OfferArgs{
 	amount: 50
 	price: 10
 }
-mut sell_offer_id := client.create_offer(sell_offer_args)!
-
-println('sell_offer_id: ${sell_offer_id}')
+mut sell_offer_result := client.create_offer(sell_offer_args)!
+if sell_offer_result.claimed {
+	println('Offer created and claimed by ${sell_offer_result.offer_id}')
+} else {
+	println('Offer ${sell_offer_result.offer_id} is created')
+}
 
 // Make buy offer
 mut buy_offer_args := stellar.OfferArgs{
@@ -41,8 +44,12 @@ mut buy_offer_args := stellar.OfferArgs{
 	price: 10
 }
 
-mut buy_offer_id := client.create_offer(buy_offer_args)!
-println('buy_offer_id: ${buy_offer_id}')
+mut buy_offer_result := client.create_offer(buy_offer_args)!
+if buy_offer_result.claimed {
+	println('Offer created and claimed by ${buy_offer_result.offer_id}')
+} else {
+	println('Offer ${buy_offer_result.offer_id} is created')
+}
 
 buy_offer_args.amount = 100
 client.update_offer(buy_offer_id, buy_offer_args)!

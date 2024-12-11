@@ -39,9 +39,9 @@ pub fn get_account_keys(name string) !StellarAccountKeys {
 
 	// Return the StellarAccountKeys struct
 	return StellarAccountKeys{
-		name:    name
+		name: name
 		address: address
-		secret:  secret
+		secret: secret
 	}
 }
 
@@ -55,7 +55,7 @@ pub fn get_network_config(network StellarNetwork) !NetworkConfig {
 		}
 	}
 	return NetworkConfig{
-		url:        rpc_url
+		url: rpc_url
 		passphrase: passphrase
 	}
 }
@@ -75,7 +75,7 @@ pub fn encode_tx_to_xdr(json_encoding string) !string {
 pub struct GenerateAccountArgs {
 pub mut:
 	network StellarNetwork = .testnet // Specifies the Stellar network (testnet or mainnet). Defaults to testnet.
-	name    string @[required] // Name of the account. This is required.
+	name    string         @[required] // Name of the account. This is required.
 	fund    bool // Whether to fund the account on the test network after creation.
 	cache   bool // Whether to cache the generated keys locally.
 }
@@ -131,7 +131,7 @@ pub fn generate_keys(args GenerateAccountArgs) !StellarAccountKeys {
 pub struct RemoveCachedKeysArgs {
 pub mut:
 	network StellarNetwork = .testnet // Specifies the Stellar network (testnet or mainnet). Defaults to testnet.
-	name    string @[required] // Name of the account. This is required.
+	name    string         @[required] // Name of the account. This is required.
 }
 
 // Removes cached Stellar keys for a specific account.
@@ -159,7 +159,7 @@ fn remove_cached_keys(args RemoveCachedKeysArgs) ! {
 pub fn fund_account(address string) ! {
 	mut client := httpconnection.new(
 		name: 'stellar'
-		url:  'https://friendbot.stellar.org/'
+		url: 'https://friendbot.stellar.org/'
 	)!
 
 	client.get(
@@ -178,7 +178,7 @@ pub mut:
 // adding a new signer
 pub fn new_signer(args NewSignerArgs) TXSigner {
 	return TXSigner{
-		key:    args.key
+		key: args.key
 		weight: args.weight
 	}
 }
@@ -193,7 +193,7 @@ pub fn get_offer_price(price f32) Price {
 	}
 }
 
-pub fn fetch_highest_bid_price(orderBook OrderBook) !Price {
+pub fn fetch_highest_bid_price(orderBook OrderBook) Price {
 	// Parse highest bid price from the order book response
 	if orderBook.bids.len == 0 {
 		return Price{
@@ -205,23 +205,44 @@ pub fn fetch_highest_bid_price(orderBook OrderBook) !Price {
 	return orderBook.bids[0].price_r
 }
 
-pub fn fetch_lowest_ask_price(orderBook OrderBook) !Price {
+pub fn fetch_lowest_ask_price(orderBook OrderBook) Price {
 	// Parse highest bid price from the order book response
 	if orderBook.asks.len == 0 {
-		return error('There are no asks.')
+		return Price{
+			n: 0
+			d: 1
+		}
 	}
 
 	return orderBook.asks[0].price_r
 }
 
-pub fn get_offer_id_from_result_xdr(result_xdr string) !u64 {
+pub struct MakeOfferResult {
+pub mut:
+	offer_id u64
+	claimed  bool
+}
+
+pub fn get_offer_id_from_result_xdr(result_xdr string) !MakeOfferResult {
 	cmd := 'echo ${result_xdr} | stellar xdr decode --type TransactionResult'
 	tx_result := os.execute(cmd)
 	if tx_result.exit_code != 0 {
 		return error('Failed to decode transaction result: ${tx_result.output}')
 	}
+
 	data := json2.raw_decode(tx_result.output.trim_space())!.as_map()
-	return find_key_recursive(data, 'offer_id')!.u64()
+
+	offer_id := find_key_recursive(data, 'offer_id')!.u64()
+	if tx_result.output.contains('"offer":"deleted"') {
+		return MakeOfferResult{
+			offer_id: offer_id
+			claimed: true
+		}
+	}
+
+	return MakeOfferResult{
+		offer_id: offer_id
+	}
 }
 
 fn find_key_recursive(data map[string]json2.Any, key_to_find string) !json2.Any {

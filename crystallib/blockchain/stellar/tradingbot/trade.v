@@ -158,19 +158,28 @@ pub fn (mut bot StellarTradingBot) run() ! {
 			}
 		}(active_offers)
 
-		console.print_header('Sell high offer logs')
-		bot.sell_high(active_offer: active_offer, order_book: order_book) or {
-			console.print_stderr('${err}')
-		}
-
-		console.print_header('Buy low offer logs')
-		bot.buy_low(active_offer: active_offer, order_book: order_book) or {
-			console.print_stderr('${err}')
+		if bot.should_sell(order_book) {
+			console.print_header('Highest bid price is more than buying threshold. Trying to sell ${selling_asset} and buy ${buying_asset}...')
+			bot.sell_high(active_offer: active_offer, order_book: order_book) or {
+				console.print_stderr('${err}')
+			}
+		} else {
+			console.print_header('Lowest ask price is less than or equal to buying threshold. Trying to buy ${buying_asset} and sell ${selling_asset}')
+			bot.buy_low(active_offer: active_offer, order_book: order_book) or {
+				console.print_stderr('${err}')
+			}
 		}
 
 		// Adjust polling interval as needed
 		time.sleep(tradingbot.poll_interval)
 	}
+}
+
+fn (mut bot StellarTradingBot) should_sell(order_book stellar.OrderBook) bool {
+	highest_price := stellar.fetch_highest_bid_price(order_book)
+	highest_price_float := f32(highest_price.n) / f32(highest_price.d)
+
+	return highest_price_float > bot.buying_target_price
 }
 
 // Fetch order book
@@ -205,7 +214,6 @@ fn (mut bot StellarTradingBot) fetch_wallet_offers() ![]stellar.OfferModel {
 			&& offer.buying.asset_code == bot.buying_asset_code
 			&& offer.buying.asset_issuer == bot.buying_asset_issuer
 			&& offer.buying.asset_type == bot.buying_asset_type {
-			offer.amount = '${offer.amount.f64() * 1e7}'
 			matching_offers << offer
 		}
 	}

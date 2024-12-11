@@ -50,8 +50,8 @@ println('add signer tx hash: ${hash2}')
 
 // this would fail if we don't add enough singers
 hash2 = client.payment_send(
-	to: account2.address
-	amount: int(200)
+	destination: account2.address
+	amount: 200
 	signers: signers
 )!
 println('payment tx hash: ${hash2}')

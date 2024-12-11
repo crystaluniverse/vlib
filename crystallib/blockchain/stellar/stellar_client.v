@@ -156,38 +156,58 @@ fn (mut client StellarClient) sign_with_signers(xdr_ string, ops []Operation, si
 @[params]
 pub struct SendPaymentParams {
 pub mut:
-	asset         OfferAssetType = OfferAssetType('native')
-	to            string         @[required]
-	amount        int            @[required]
-	source_secret ?string  // the secret of the source account
-	signers       []string // secret of signers
+	asset          OfferAssetType = OfferAssetType('native')
+	destination    string         @[required]
+	amount         u64            @[required]
+	source_address ?string  // the secret of the source account
+	signers        []string // secret of signers
 }
 
 pub fn (mut client StellarClient) payment_send(args SendPaymentParams) !string {
-	mut source_secret := client.account_secret
-	if v := args.source_secret {
-		source_secret = v
+	// mut source_secret := client.account_secret
+	// if v := args.source_secret {
+	// 	source_secret = v
+	// }
+
+	// network_config := get_network_config(client.network)!
+	// TODO: add options to use different assets
+	mut tx := client.new_transaction_envelope(client.account_address)!
+	tx.add_payment_op(args)!
+
+	mut source_address := client.account_address
+	if v := args.source_address {
+		source_address = v
 	}
 
-	network_config := get_network_config(client.network)!
-	cmd := 'stellar tx new payment --asset ${args.asset} --source-account ${source_secret} --destination ${args.to} --amount ${args.amount} --build-only --network ${client.network} --rpc-url ${network_config.url} --network-passphrase "${network_config.passphrase}" --quiet'
-	result := os.execute(cmd)
-	if result.exit_code != 0 {
-		return error('Failed to send payment: ${result.output}')
-	}
-
-	mut signers_ := args.signers.clone()
-	signers_ << source_secret
-	mut xdr := result.output.trim_space()
+	mut xdr := tx.xdr()!
 	xdr = client.sign_with_signers(xdr, [
 		Operation{
-			source_address: get_address(source_secret)!
+			source_address: source_address
 			threshold: .med
 		},
-	], signers_)!
+	], args.signers)!
 
 	tx_info := client.send_tx(xdr)!
 	return tx_info.hash
+
+	// cmd := 'stellar tx new payment --asset ${args.asset} --source-account ${source_secret} --destination ${args.to} --amount ${args.amount} --build-only --network ${client.network} --rpc-url ${network_config.url} --network-passphrase "${network_config.passphrase}" --quiet'
+	// result := os.execute(cmd)
+	// if result.exit_code != 0 {
+	// 	return error('Failed to send payment: ${result.output}')
+	// }
+
+	// mut signers_ := args.signers.clone()
+	// signers_ << source_secret
+	// mut xdr := result.output.trim_space()
+	// xdr = client.sign_with_signers(xdr, [
+	// 	Operation{
+	// 		source_address: get_address(source_secret)!
+	// 		threshold: .med
+	// 	},
+	// ], signers_)!
+
+	// tx_info := client.send_tx(xdr)!
+	// return tx_info.hash
 }
 
 // TODO: Check what is wrong with this method.
@@ -327,7 +347,7 @@ pub mut:
 	source_address ?string
 	selling        OfferAssetType
 	buying         OfferAssetType
-	amount         u64            @[required]
+	amount         f64            @[required] // in stroops
 	price          f32            @[required] // Price of 1 unit of selling in terms of buying
 	signers        []string
 }
@@ -354,10 +374,9 @@ fn (mut client StellarClient) make_offer(offer_id u64, args OfferArgs) !Transact
 	return client.send_tx(xdr)!
 }
 
-pub fn (mut client StellarClient) create_offer(args OfferArgs) !u64 {
+pub fn (mut client StellarClient) create_offer(args OfferArgs) !MakeOfferResult {
 	tx_record := client.make_offer(0, args)!
-	cur_offer_id := get_offer_id_from_result_xdr(tx_record.result_xdr)!
-	return cur_offer_id
+	return get_offer_id_from_result_xdr(tx_record.result_xdr)!
 }
 
 pub fn (mut client StellarClient) update_offer(offer_id u64, args OfferArgs) ! {

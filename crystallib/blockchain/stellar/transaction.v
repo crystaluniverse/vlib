@@ -36,7 +36,9 @@ pub mut:
 // a placeholder.
 pub struct PaymentOptions {
 pub mut:
-	to string
+	destination string
+	amount      u64
+	asset       OfferAssetType
 }
 
 @[noinit]
@@ -85,8 +87,8 @@ pub struct Offer {
 pub mut:
 	selling    OfferAssetType
 	buying     OfferAssetType
-	amount     ?u64
-	buy_amount ?u64
+	amount     ?u64 // stroops
+	buy_amount ?u64 // stroops
 	price      Price
 	offer_id   u64
 }
@@ -119,14 +121,17 @@ fn (mut tx TransactionEnvelope) add_change_trust_op(args AddChangeTrustArgs) ! {
 	tx.tx.fee += 100
 }
 
-pub struct AddPaymentArgs {
-pub mut:
-	destination string
-	asset       OfferAssetType
-	amount      u64
-}
+fn (mut tx TransactionEnvelope) add_payment_op(args SendPaymentParams) ! {
+	body := OperationBody{
+		payment: PaymentOptions{
+			destination: args.destination
+			asset: args.asset
+			amount: args.amount
+		}
+	}
 
-fn (mut tx TransactionEnvelope) add_payment_op(args AddPaymentArgs) ! {
+	tx.add_operation(args.source_address, body)!
+	tx.tx.fee += 100
 }
 
 pub struct AssetType {
@@ -305,10 +310,10 @@ fn (mut tx TransactionEnvelope) make_offer_op(args MakeOfferOpArgs) ! {
 	mut body := OperationBody{}
 
 	if args.sell {
-		offer.amount = args.offer.amount
+		offer.amount = u64(args.offer.amount * 1e7)
 		body.manage_sell_offer = offer
 	} else {
-		offer.buy_amount = args.offer.amount
+		offer.buy_amount = u64(args.offer.amount * 1e7)
 		body.manage_buy_offer = offer
 	}
 
