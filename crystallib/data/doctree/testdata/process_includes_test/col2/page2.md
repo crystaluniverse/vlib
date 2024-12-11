@@ -1,0 +1,1 @@
+!!wiki.include page:'col2:page3.md'

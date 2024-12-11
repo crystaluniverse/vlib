@@ -1,6 +1,6 @@
 module playcmds
 
-import freeflowuniverse.crystallib.webtools.mdbook
+import freeflowuniverse.crystallib.web.mdbook
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.playbook
 import os
@@ -46,7 +46,6 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		mut p := action.params
 		name := p.get('name')!
 		fail_on_error := p.get_default_false('fail_on_error')
-		println('fail on error: ${fail_on_error}')
 		if name in trees {
 			return error('tree with name ${name} already exists')
 		}
@@ -59,9 +58,17 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		mut p := action.params
 		url := p.get_default('url', '')!
 		path := p.get_default('path', '')!
-		name := p.get('name')!
+		name := p.get_default('name', '')!
 
-		mut tree := trees[name] or { return error('tree ${name} not found') }
+		if trees.len == 0 {
+			return error('no tree found')
+		}
+
+		mut tree := if name != '' {
+			trees[name] or { return error('tree ${name} not found') }
+		} else {
+			trees.values()[0]
+		}
 
 		tree.scan(
 			path: path
@@ -116,7 +123,6 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		mdbooks.generate(
 			name: name
 			title: title
-			summary_url: summary_url
 			summary_path: summary_path
 			publish_path: publish_path
 			build_path: build_path

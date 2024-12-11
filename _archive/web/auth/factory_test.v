@@ -1,10 +1,10 @@
 module main
 
 // import freeflowuniverse.spiderlib.auth.jwt
-// import freeflowuniverse.crystallib.webserver.auth.email
-// import freeflowuniverse.crystallib.webserver.auth.authorization
-// import freeflowuniverse.crystallib.webserver.auth.analytics
-// import freeflowuniverse.crystallib.webserver.auth.identity
+// import freeflowuniverse.crystallib.web.auth.email
+// import freeflowuniverse.crystallib.web.auth.authorization
+// import freeflowuniverse.crystallib.web.auth.analytics
+// import freeflowuniverse.crystallib.web.auth.identity
 // import net.http
 // import time
 // import log

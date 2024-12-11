@@ -1,7 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.webtools.zola
+import freeflowuniverse.crystallib.web.zola
 import freeflowuniverse.crystallib.core.playbook
 
 struct WebsiteItem {
@@ -55,33 +55,30 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 			console.print_debug('website.template_add')
 			mut p := action.params
 			url := p.get_default('url', '')!
-			path := p.get_default('path', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for template_add, should have been defined before with !!website.define")
 			}
 
-			site_.template_add(url: url, path: path)!
+			site_.template_add(url: url)!
 		} else if action.name == 'content_add' {
 			console.print_debug('website.content_add')
 			mut p := action.params
 			url := p.get_default('url', '')!
-			path := p.get_default('path', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for content_add, should have been defined before with !!website.define")
 			}
 
-			site_.content_add(url: url, path: path)!
+			site_.content_add(url: url)!
 		} else if action.name == 'doctree_add' {
 			console.print_debug('website.doctree_add')
 			mut p := action.params
 			url := p.get_default('url', '')!
-			path := p.get_default('path', '')!
 			pull := p.get_default_false('pull')
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.doctree_add(url: url, path: path, pull: pull)!
+			site_.doctree_add(url: url, pull: pull)!
 		} else if action.name == 'post_add' {
 			console.print_debug('website.post_add')
 			mut p := action.params

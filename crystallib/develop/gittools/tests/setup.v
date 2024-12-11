@@ -34,7 +34,7 @@ fn create_new_file(repo_path string)! string {
 fn setup_repo() !GittoolsTests {
     ts := GittoolsTests{
         coderoot: '/tmp/code',
-        repo_url: 'https://github.com/Mahmoud-Emad/repo2.git',
+        repo_url: 'https://github.com/freeflowuniverse/test_repo.git',
     }
 
     if os.exists(ts.coderoot){

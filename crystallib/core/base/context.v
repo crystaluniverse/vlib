@@ -2,7 +2,7 @@ module base
 
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 // import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import freeflowuniverse.crystallib.ui
@@ -147,13 +147,13 @@ pub fn (mut self Context) dbcollection() !&dbfs.DBCollection {
 	return dbc2
 }
 
-fn (mut self Context) db_get(dbname string) !dbfs.DB {
+pub fn (mut self Context) db_get(dbname string) !dbfs.DB {
 	mut dbc := self.dbcollection()!
 	return dbc.db_get_create(name: dbname, withkeys: true)!
 }
 
 // always return the config db which is the same for all apps in context
-fn (mut self Context) db_config_get() !dbfs.DB {
+pub fn (mut self Context) db_config_get() !dbfs.DB {
 	mut dbc := self.dbcollection()!
 	return dbc.db_get_create(name: 'config', withkeys: true)!
 }

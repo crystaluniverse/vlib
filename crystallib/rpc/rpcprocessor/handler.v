@@ -12,7 +12,7 @@ mut:
 }
 
 pub fn new_handler() !RPCProcessorHandler {
-	mut redis_client := redisclient.new([]) or {
+	mut redis_client := redisclient.core_get() or {
 		return error('Failed to create Redis client: ${err}')
 	}
 	return RPCProcessorHandler{
@@ -26,7 +26,7 @@ pub fn new_handler() !RPCProcessorHandler {
 // this rpc_handler listens to the echo method's redis queue
 // and handles echo rpc
 pub fn (mut h RPCProcessorHandler) run() ! {
-	mut redis_client := redisclient.new([]) or {
+	mut redis_client := redisclient.core_get() or {
 		return error('Failed to create Redis client: ${err}')
 	}
 	for {

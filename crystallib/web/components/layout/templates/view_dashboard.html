@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicoCSS Dashboard</title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2/css/pico.min.css"
+    >
+    <script src="https://cdn.jsdelivr.net/npm/unpoly@@3.9.2/unpoly.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/unpoly@@3.9.2/unpoly.min.css">
+    <style>
+        /* Custom CSS for the dashboard grid layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+
+        th, td {
+            background-color: inherit;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 4fr;
+            gap: 2rem;
+            padding: 0rem 2rem 2rem 2rem;
+            flex: 1;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            color: white;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            color: #c9c9d1;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .sidebar a:hover {
+            background-color: #0077b6;
+            color: #ffffff;
+            border-radius: 0.25rem;
+        }
+
+        /* Main content area styling */
+        .main-content {
+            padding: 2rem;
+            border-radius: 0.5rem;
+            color: #c9c9d1;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+    /* Ensure the table section fits within the available space and allows scrolling */
+    #table-section {
+        flex: 1;
+        max-height: 60vh; /* Adjust height as needed */
+        overflow-y: auto;
+        overflow-x: auto; /* Allow horizontal scrolling */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        table {
+            display: block; /* Treat table as a block element */
+            width: 100%;
+            overflow-x: auto; /* Horizontal scrolling for the table */
+        }
+        
+        /* Adjust table headers and cells for smaller screens */
+        th, td {
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+    }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Extra: Improve checkbox and input field look */
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            margin-right: 0.5rem;
+        }
+
+        input[type="password"],
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #1d1f27;
+            border: 1px solid #c9c9d1;
+            border-radius: 0.5rem;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top navigation -->
+    @{view.navbar.html()}
+
+    <!-- Dashboard Layout: Sidebar and Main Content -->
+    <div class="grid-container">
+        <!-- Sidebar -->
+        <article>
+            @{view.sidebar.html()}
+        </article>
+
+        <!-- Main content area -->
+        <article class="main-content">
+            @{view.main.html()}
+        </article>
+    </div>
+</body>
+
+</html>

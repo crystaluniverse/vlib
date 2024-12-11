@@ -14,15 +14,20 @@ pub struct Person {
 
 
 mut py:=python.new(name:'test')! //a python env with name test
-py.update()!
+//py.update()!
 py.pip("ipython")!
 
+
+nrcount:=5
 cmd:=$tmpl("pythonexample.py")
-// for i in 0..100{
-// 	println(i)
-// 	res:=py.exec(cmd:cmd)!
-// }
-res:=py.exec(cmd:cmd)!
+
+mut res:=""
+for i in 0..5{
+	println(i)
+	res=py.exec(cmd:cmd)!
+    
+}
+//res:=py.exec(cmd:cmd)!
 
 person:=json.decode(Person,res)!
 println(person)

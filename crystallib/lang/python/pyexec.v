@@ -1,7 +1,7 @@
 module python
 
 import freeflowuniverse.crystallib.osal
-// import freeflowuniverse.crystallib.core.dbfs
+// import freeflowuniverse.crystallib.data.dbfs
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import os
@@ -14,7 +14,7 @@ pub mut:
 	result_delimiter   string = '==RESULT=='
 	ok_delimiter       string = '==OK=='
 	python_script_name string // if used will put it in root of the sandbox under that name
-	stdout             bool
+	stdout             bool = true
 }
 
 pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
@@ -37,7 +37,7 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 			return error('error: cannot write script to execute: ${err}')
 		}
 	}
-	// console.print_debug(" - scriptpath: ${scriptpath}")
+	console.print_debug(" - python script exec: ${scriptpath}")
 	os.chmod(scriptpath, 0o777)!
 
 	cmd2 := '

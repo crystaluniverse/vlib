@@ -1,0 +1,64 @@
+<style>
+    aside nav details ul li a {
+        margin: 0;
+        margin-left: calc(var(--pico-border-width) * -1);
+        padding: 0;
+        padding-left: 0px;
+        padding-left: calc(var(--pico-nav-element-spacing-horizontal) * 1.5);
+        border-left: var(--pico-border-width) solid transparent;
+        border-radius: 0;
+        font-weight: 400;
+        transition: background-color var(--pico-transition),color var(--pico-transition),box-shadow var(--pico-transition),border-color var(--pico-transition),font-weight var(--pico-transition),-webkit-text-decoration var(--pico-transition);
+        transition: background-color var(--pico-transition),color var(--pico-transition),text-decoration var(--pico-transition),box-shadow var(--pico-transition),border-color var(--pico-transition),font-weight var(--pico-transition);
+        transition: background-color var(--pico-transition),color var(--pico-transition),text-decoration var(--pico-transition),box-shadow var(--pico-transition),border-color var(--pico-transition),font-weight var(--pico-transition),-webkit-text-decoration var(--pico-transition);
+    }
+
+    /* Responsive: Hide sidebar by default on smaller screens */
+    .sidebar-toggle {
+            display: none;
+        }
+
+        /* Toggle button styling */
+        .toggle-sidebar {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: inherit;
+            padding: 0px;
+        }
+
+        /* Show sidebar and toggle button on small screens */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .sidebar.active {
+                display: unset;
+            }
+        }
+    .sidebar details {
+        margin-bottom: 0px;
+    }
+
+    .sidebar a {
+        color: white;
+    }
+</style>
+<!-- Toggle Button for Sidebar (only on small screens) -->
+<aside id="sidebar" class="sidebar">
+    <nav>
+        <ul>
+        @for item in sidebar.items
+            <li>@{item.html()}</li>
+        @end
+        </ul>
+    </nav>
+</aside>
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+</script>

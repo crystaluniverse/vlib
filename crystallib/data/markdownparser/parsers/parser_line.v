@@ -24,16 +24,38 @@ fn parser_line_new(mut doc elements.Doc) !Parser {
 	mut parser := Parser{
 		doc: doc
 	}
+
+	// Parse frontmatter if present
+	if doc.content.starts_with('+++') {
+		mut frontmatter_content := ''
+		mut lines := doc.content.split_into_lines()
+		lines = lines[1..] // Skip the opening '+++'
+
+		for line in lines {
+			if line.trim_space() == '+++' {
+				// End of frontmatter
+				doc.content = lines.join('\n') // Update content to exclude frontmatter
+				break
+			}
+			frontmatter_content += '${line}\n'
+		}
+
+		// Create and process the Frontmatter element
+		mut frontmatter := doc.frontmatter_new(mut &doc, frontmatter_content)
+		frontmatter.process() or {
+			return error('Failed to parse frontmatter: ${err.msg()}')
+		}
+	}
+
 	doc.paragraph_new(mut parser.doc, '')
 	parser.lines = doc.content.split_into_lines()
 	if doc.content.ends_with('\n') {
 		parser.endlf = true
 	}
-	parser.lines = parser.lines.map(it.replace('\t', '    ')) // remove the tabs
+	parser.lines = parser.lines.map(it.replace('\t', '    ')) // replace tabs with spaces
 	parser.linenr = 0
 	return parser
 }
-
 fn (mut parser Parser) lastitem() !elements.Element {
 	return parser.doc.last()!
 }

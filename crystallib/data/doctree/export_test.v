@@ -3,6 +3,25 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
+const test_dir = '${os.dir(@FILE)}/testdata/export_test'
+const tree_dir = '${test_dir}/mytree'
+const export_dir = '${test_dir}/export'
+const export_expected_dir = '${test_dir}/export_expected'
+
+fn testsuite_begin() {
+	pathlib.get_dir(
+		path: export_dir
+		empty: true
+	)!
+}
+
+fn testsuite_end() {
+	pathlib.get_dir(
+		path: export_dir
+		empty: true
+	)!
+}
+
 fn test_export() {
 	/*
 		tree_root/
@@ -41,38 +60,23 @@ fn test_export() {
 			- ensure tree structure is valid
 	*/
 
-	mut file1_path := pathlib.get_file(path: '/tmp/mytree/dir1/file2.md', create: true)!
-	file1_path.write('[some page](col2:file3.md)')!
-	mut file2_path := pathlib.get_file(path: '/tmp/mytree/dir1/image.png', create: true)!
-	mut file3_path := pathlib.get_file(path: '/tmp/mytree/dir1/dir2/file1.md', create: true)!
-	file3_path.write('[not existent page](col3:file5.md)')!
-	mut file4_path := pathlib.get_file(path: '/tmp/mytree/dir1/.collection', create: true)!
-	file4_path.write('name:col1')!
-
-	mut file5_path := pathlib.get_file(path: '/tmp/mytree/dir3/.collection', create: true)!
-	file5_path.write('name:col2')!
-	mut file6_path := pathlib.get_file(path: '/tmp/mytree/dir3/file3.md', create: true)!
-
 	mut tree := new(name: 'mynewtree')!
-	tree.add_collection(path: file1_path.parent()!.path, name: 'col1')!
-	tree.add_collection(path: file6_path.parent()!.path, name: 'col2')!
+	tree.add_collection(path: '${tree_dir}/dir1', name: 'col1')!
+	tree.add_collection(path: '${tree_dir}/dir3', name: 'col2')!
 
-	tree.export(dest: '/tmp/export_test')!
+	tree.export(destination: '${export_dir}')!
 
-	defer {
-		os.rmdir_all('/tmp/export_test') or {}
-		os.rmdir_all('/tmp/mytree') or {}
-	}
+	col1_path := '${export_dir}/col1'
+	expected_col1_path := '${export_expected_dir}/col1'
+	assert os.read_file('${col1_path}/.collection')! == os.read_file('${expected_col1_path}/.collection')!
+	assert os.read_file('${col1_path}/.linkedpages')! == os.read_file('${expected_col1_path}/.linkedpages')!
+	assert os.read_file('${col1_path}/errors.md')! == os.read_file('${expected_col1_path}/errors.md')!
+	assert os.read_file('${col1_path}/file1.md')! == os.read_file('${expected_col1_path}/file1.md')!
+	assert os.read_file('${col1_path}/file2.md')! == os.read_file('${expected_col1_path}/file2.md')!
 
-	col1_path := '/tmp/export_test/src/col1'
-	assert os.read_file('${col1_path}/.linkedpages')! == 'col2:file3.md'
-	assert os.read_file('${col1_path}/.collection')! == "name:col1 src:'/tmp/mytree/dir1'"
-	assert os.read_file('${col1_path}/errors.md')! == '# Errors\n\n\n\n## unknown \n\nlinked item col3:file5.md not found\n\n'
-	assert os.read_file('${col1_path}/file1.md')! == '[not existent page](col3:file5.md)'
-	assert os.read_file('${col1_path}/file2.md')! == '[some page](../col2/file3.md)'
-
-	col2_path := '/tmp/export_test/src/col2'
+	col2_path := '${export_dir}/col2'
+	expected_col2_path := '${export_expected_dir}/col2'
 	assert os.read_file('${col2_path}/.linkedpages')! == ''
-	assert os.read_file('${col2_path}/.collection')! == "name:col2 src:'/tmp/mytree/dir3'"
+	assert os.read_file('${col2_path}/.collection')! == os.read_file('${expected_col2_path}/.collection')!
 	assert os.read_file('${col2_path}/file3.md')! == ''
 }

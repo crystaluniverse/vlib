@@ -33,7 +33,7 @@ fn format_repo_info(repo GitRepo) ![]string {
 
 // Print repositories based on the provided criteria, showing their statuses
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
-	console.print_debug(' #### Overview of repositories:')
+	console.print_debug('#### Overview of repositories:')
 	console.print_debug('')
 
 	mut repo_data := [][]string{}
@@ -49,9 +49,9 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 
 	// Display header with optional argument filtering information
 	header := if args.str().len > 0 {
-		'Repositories: ${gitstructure.coderoot.path} [${args.str()}]'
+		'Repositories: ${gitstructure.config.coderoot} [${args.str()}]'
 	} else {
-		'Repositories: ${gitstructure.coderoot.path}'
+		'Repositories: ${gitstructure.config.coderoot}'
 	}
 	console.print_header(header)
 

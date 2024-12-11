@@ -1,7 +1,8 @@
 # verasure - Jerasure made simple in V
 
-This is a V implementation of Jerasure2, with a custom wrapper. In V, there is a wrapper to make
-call pure-v style.
+This is a V implementation of Jerasure2, with a custom wrapper.
+
+In V, there is a wrapper to make call pure-v style.
 
 # Example
 

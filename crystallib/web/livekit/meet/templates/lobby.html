@@ -1,0 +1,67 @@
+<style>
+    /* Custom minimal styles */
+    .room-card {
+      padding: 1rem;
+      border: 1px solid #ddd;
+      margin: 0.5rem;
+      width: 200px;
+    }
+    .rooms-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-start;
+    }
+    .create-room form {
+      display: flex;
+      gap: 0.5rem;
+      flex-direction: column;
+    }
+    .plus-icon {
+      font-size: 2rem;
+    }
+  </style>
+  <main class="container">
+    <!-- First Section: Rooms -->
+    <section class="rooms-row">
+      <!-- Create Room Card -->
+      <article class="room-card">
+        <form action="/view/meet/room/new" method="GET">
+            <h3>New Room</h3>
+          <button type="submit">+</button>
+        </form>
+      </article>
+
+      <!-- Other Room Cards -->
+      @for room in lobby.rooms
+      <a href="@{room.url}" role="button" class="outline room-card">
+        <hgroup>
+          <h3>@{room.name}</h3>
+          <p>@{room.creation_time.format()}</p>
+        </hgroup>
+        <p>Participants: 3</p>
+      </a>
+      @end
+    </section>
+
+    <!-- Second Section: Previous Meetings -->
+    <table role="grid">
+      <thead>
+        <tr>
+          <th>Meeting Name</th>
+          <th>Participants</th>
+          <th>Date</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for meeting in lobby.meetings
+        <tr>
+          <td>Project Kickoff</td>
+          <td>4</td>
+          <td>Oct 10, 2024</td>
+          <td>1 hr</td>
+        </tr>
+        @end
+      </tbody>
+    </table>
+  </main>

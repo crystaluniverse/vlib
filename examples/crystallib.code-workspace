@@ -20,6 +20,12 @@
 		},
 		{
 			"path": "../research"
+		},
+		{
+			"path": "../tools"
+		},
+		{
+			"path": "../cli"
 		}
 	],
 	"settings": {}

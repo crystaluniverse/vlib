@@ -1,0 +1,75 @@
+<main>
+        <style>
+            /* Custom styles for the kanban layout */
+            .kanban-board {
+                display: flex;
+                gap: 1rem;
+                justify-content: space-around;
+                padding: 1rem;
+            }
+            .swimlane {
+                border-collapse: unset;
+                border: solid 1px aliceblue;
+                border-radius: 0.5rem;
+                flex: 1;
+                min-width: 200px;
+                max-width: 300px;
+            }
+            .event-card {
+                margin-bottom: 1rem;
+            }
+            .event-meta {
+                font-size: 0.8rem;
+            }
+            .event-labels {
+                margin-top: 0.5rem;
+            }
+            .event-labels .label {
+                background-color: #007bff;
+                color: #fff;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                margin-right: 0.25rem;
+                display: inline-block;
+                font-size: 0.75rem;
+            }
+            /* Priority-based colors */
+            .priority-high {
+                border-left: 4px solid red;
+            }
+            .priority-medium {
+                border-left: 4px solid orange;
+            }
+            .priority-low {
+                border-left: 4px solid green;
+            }
+        </style>
+        <div id="kanban-board" class="kanban-board">
+            @for swimlane in data.swimlanes
+            <div class="swimlane">
+            <table>
+                <thead>
+                    <th>@swimlane.name</th>
+                </thead>
+                <tbody>
+                    @for event in data.events.filter(it.swimlane == swimlane.name)
+                    <tr>
+                        <td class="event-card priority-@event.priority">
+                            <strong>@event.subject</strong>
+                            <div class="event-meta">Deadline: @event.deadline</div>
+                            <div class="event-meta">Assigned: @event.assigned</div>
+                            <div class="event-meta">Priority: @event.priority</div>
+                            <div class="event-meta">Tags: 
+                                @for label in event.labels.split(',')
+                                <a>@label</a>, 
+                                @end
+                            </div>
+                        </td>
+                    </tr>
+                    @end
+                </tbody>
+            </table>
+            </div>
+            @end
+        </div>    
+</main>

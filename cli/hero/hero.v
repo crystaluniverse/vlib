@@ -1,8 +1,9 @@
 module main
 
 import os
-import cli { Command }
+import cli { Command, Flag }
 import freeflowuniverse.crystallib.core.herocmds
+import freeflowuniverse.crystallib.hero.publishing
 import freeflowuniverse.crystallib.installers.base as installerbase
 import freeflowuniverse.crystallib.installers.db.redis
 import freeflowuniverse.crystallib.ui.console
@@ -27,13 +28,21 @@ fn do() ! {
 		}
 	}
 
-
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.30'
+		version: '1.0.31'
 	}
 
+	cmd.add_flag(Flag{
+		flag: .string
+		name: 'url'
+		abbrev: 'u'
+		global:      true
+		description: 'url of playbook'
+	})
+	
+	// herocmds.cmd_run_add_flags(mut cmd)
 
 	mut toinstall:=false
 	if !osal.cmd_exists('mc') || !osal.cmd_exists('redis-cli') {
@@ -79,15 +88,19 @@ fn do() ! {
 	herocmds.cmd_luadns(mut cmd)
 	herocmds.cmd_caddy(mut cmd)
 	herocmds.cmd_zola(mut cmd)
-	herocmds.cmd_juggler(mut cmd)
+	// herocmds.cmd_juggler(mut cmd)
 	herocmds.cmd_generator(mut cmd)
+	herocmds.cmd_docsorter(mut cmd)
 
+	cmd.add_command(publishing.cmd_publisher(pre_func))
 	cmd.setup()
-	
-
-	cmd.parse(os.args)	
+	cmd.parse(os.args)
 }
 
 fn main() {
 	do() or { panic(err) }
+}
+
+fn pre_func(cmd Command) ! {
+	herocmds.plbook_run(cmd)!
 }

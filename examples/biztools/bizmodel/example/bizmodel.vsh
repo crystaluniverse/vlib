@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.biz.bizmodel
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playcmds
-import freeflowuniverse.crystallib.webtools.mdbook
+import freeflowuniverse.crystallib.web.mdbook
 import os
 
 

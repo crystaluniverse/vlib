@@ -1,14 +1,15 @@
 
 import json
 
-for counter in range(1, 11):  # Loop from 1 to 10
+
+for counter in range(1, @nrcount):  # Loop from 1 to 10
 	print(f"done_{counter}")
  
 
 # Define a simple Python structure (e.g., a dictionary)
 example_struct = {
     "name": "John Doe",
-    "age": 30,
+    "age": @nrcount,
     "is_member": True,
     "skills": ["Python", "Data Analysis", "Machine Learning"]
 }

@@ -3,11 +3,11 @@ module auth
 import net.http
 import json
 import time
-import freeflowuniverse.crystallib.webserver.auth.identity
-import freeflowuniverse.crystallib.webserver.auth.tokens
-import freeflowuniverse.crystallib.webserver.auth.authorization
-import freeflowuniverse.crystallib.webserver.auth.session
-import freeflowuniverse.crystallib.webserver.auth.jwt
+import freeflowuniverse.crystallib.web.auth.identity
+import freeflowuniverse.crystallib.web.auth.tokens
+import freeflowuniverse.crystallib.web.auth.authorization
+import freeflowuniverse.crystallib.web.auth.session
+import freeflowuniverse.crystallib.web.auth.jwt
 
 // // session controller that be be added to vweb projects
 pub struct Client {

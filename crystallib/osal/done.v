@@ -1,7 +1,7 @@
 module osal
 
 import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 import freeflowuniverse.crystallib.ui.console
 
 fn donedb() !&dbfs.DB {

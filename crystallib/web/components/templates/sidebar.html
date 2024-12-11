@@ -1,0 +1,44 @@
+<style>
+    /* Responsive: Hide sidebar by default on smaller screens */
+    .sidebar-toggle {
+            display: none;
+        }
+
+        /* Toggle button styling */
+        .toggle-sidebar {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: inherit;
+            padding: 0px;
+        }
+
+        /* Show sidebar and toggle button on small screens */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .sidebar.active {
+                display: unset;
+            }
+
+            .toggle-sidebar {
+                display: inline-block;
+            }
+        }
+</style>
+<!-- Toggle Button for Sidebar (only on small screens) -->
+<button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
+<aside id="sidebar" class="sidebar">
+    @for item in sidebar.items
+        <a href="@{item.href}">@{item.text}</a>
+    @end
+</aside>
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+</script>

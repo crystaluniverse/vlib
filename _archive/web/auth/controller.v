@@ -1,7 +1,7 @@
 module auth
 
 import json
-import freeflowuniverse.crystallib.webserver.auth.email
+import freeflowuniverse.crystallib.web.auth.email
 import vweb
 import toml
 import os

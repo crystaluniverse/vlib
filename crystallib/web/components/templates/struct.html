@@ -1,0 +1,48 @@
+<section class="container">
+	<article>
+		<h2>Struct: @{s.typ}</h2>
+		<form>
+			@for field in s.fields
+			<div class="form-group">
+				<label for="@{field.name}">@{field.name}</label>
+				@if field.ftype == 'string' || field.ftype == 'int'
+				<input type="text" id="@{field.name}" name="@{field.name}" value="@{field.value}" class="form-control">
+				@end
+                @if field.ftype == 'bool'
+				<input type="checkbox" id="@{field.name}" name="@{field.name}" 
+                @if field.value == 'true'
+                    checked
+                @end
+                >
+				@end
+                @if field.ftype == 'map'
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Key</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						@for key, val in field.value.split(',')
+						<tr>
+							<td>@{key}</td>
+							<td>@{val}</td>
+						</tr>
+						@end
+					</tbody>
+				</table>
+                @end
+				@if field.ftype == 'array'
+				<ul>
+					@for val in field.value.split(',')
+					<li>@{val}</li>
+					@end
+				</ul>
+				@end
+			</div>
+			@end
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</article>
+</section>

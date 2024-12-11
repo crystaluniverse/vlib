@@ -80,7 +80,7 @@ pub fn (zdb ZDBDeployed) ping() bool {
 
 pub fn (zdb ZDBDeployed) redisclient() !redisclient.Redis {
 	redis_addr := '${zdb.mycelium_ip}:6379'
-	return redisclient.new([redis_addr])!
+	return redisclient.new(redis_addr)!
 }
 
 // //only connect to yggdrasil and mycelium

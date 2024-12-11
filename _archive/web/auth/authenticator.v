@@ -1,12 +1,12 @@
 module auth
 
-import freeflowuniverse.crystallib.webserver.auth.jwt { SignedJWT }
-import freeflowuniverse.crystallib.webserver.auth.analytics
-import freeflowuniverse.crystallib.webserver.auth.authorization
-import freeflowuniverse.crystallib.webserver.auth.tokens
-import freeflowuniverse.crystallib.webserver.auth.email
-import freeflowuniverse.crystallib.webserver.auth.session
-import freeflowuniverse.crystallib.webserver.auth.identity
+import freeflowuniverse.crystallib.web.auth.jwt { SignedJWT }
+import freeflowuniverse.crystallib.web.auth.analytics
+import freeflowuniverse.crystallib.web.auth.authorization
+import freeflowuniverse.crystallib.web.auth.tokens
+import freeflowuniverse.crystallib.web.auth.email
+import freeflowuniverse.crystallib.web.auth.session
+import freeflowuniverse.crystallib.web.auth.identity
 import net.http
 import time
 import log

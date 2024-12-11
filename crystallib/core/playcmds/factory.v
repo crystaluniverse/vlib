@@ -5,10 +5,11 @@ import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.virt.hetzner
 //import freeflowuniverse.crystallib.clients.b2
 import freeflowuniverse.crystallib.biz.bizmodel
+import freeflowuniverse.crystallib.hero.publishing
 import freeflowuniverse.crystallib.threefold.grid4.gridsimulator
 //import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
-import freeflowuniverse.crystallib.webserver.components.slides
+import freeflowuniverse.crystallib.web.components.slides
 // import freeflowuniverse.crystallib.installers.base as base_install
 // import freeflowuniverse.crystallib.installers.infra.coredns
 
@@ -35,7 +36,7 @@ pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
 	// base_install(play(mut plbook)!
 	// coredns.play(mut plbook)!
 
-	play_mdbook(mut plbook)!
+	publishing.play(mut plbook)!
 
 	//plbook.empty_check()!
 

@@ -11,10 +11,10 @@ pub mut:
 }
 
 // Set up a test client instance
-fn setup_client() !MeiliClient {
+fn setup_client() !MeilisearchClient {
 	config := ClientConfig{
 		host:    'http://localhost:7700'
-		api_key: 'avrSXQvFdYMbX6MxgWsEmiZYJ3hIGYluUE2blCZzk1U'
+		api_key: 'be61fdce-c5d4-44bc-886b-3a484ff6c531'
 	}
 	factory := new_factory(config)
 	mut client := factory.get()!

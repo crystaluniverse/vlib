@@ -1,5 +1,8 @@
 module gittools
 
+import freeflowuniverse.crystallib.clients.redisclient
+import time
+
 // ReposGetArgs defines arguments to retrieve repositories from the git structure.
 // It includes filters by name, account, provider, and an option to clone a missing repo.
 @[params]
@@ -15,10 +18,9 @@ pub mut:
 	url      string // Repository URL
 }
 
-
 // Retrieves a list of repositories from the git structure that match the provided arguments.
 // if pull will force a pull, if it can't will be error, if reset will remove the changes
-// 
+//
 // Args:
 //```
 // ReposGetArgs {
@@ -35,6 +37,7 @@ pub mut:
 // - []&GitRepo: A list of repository references that match the criteria.
 pub fn (mut gitstructure GitStructure) get_repos(args_ ReposGetArgs) ![]&GitRepo {
 	mut args := args_
+
 	mut res := []&GitRepo{}
 
 	for _, repo in gitstructure.repos {
@@ -45,25 +48,41 @@ pub fn (mut gitstructure GitStructure) get_repos(args_ ReposGetArgs) ![]&GitRepo
 			continue
 		}
 
+		if args.url.len > 0 {
+			// if being mathed from url load repo info
+			git_location := gitstructure.gitlocation_from_url(args.url)!
+			args.account = git_location.account
+			args.provider = git_location.provider
+			args.name = git_location.name
+		}
 		if repo_match_check(repo, args) {
 			res << repo
 		}
 	}
 
-	for mut repo in res{
-
-		if args_.pull{
-			repo.pull()!
+	// operate per repo on thread based on args
+	mut ths := []thread !{}
+	for mut repo in res {
+		// check redis cache outside, in threads is problematic
+		repo.cache_get() or { return error('failed to get repo cache ${err}') }
+		if time.since(time.unix(repo.last_load)) > 24 * time.hour {
+			args.reload = true
 		}
+		ths << spawn fn (mut repo GitRepo, args ReposGetArgs) ! {
+			redisclient.reset()!
+			redisclient.checkempty()
+			if args.pull {
+				repo.pull()!
+			} else if args.reset {
+				repo.reset()!
+			} else if args.reload {
+				repo.load()!
+			}
+		}(mut repo, args)
+	}
 
-		if args_.reset{
-			repo.reset()!
-		}
-
-		if args_.reload{
-			repo.load()!
-		}	
-
+	for th in ths {
+		th.wait()!
 	}
 
 	return res
@@ -104,27 +123,12 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 	}
 
 	if repositories.len > 1 {
-		repos := repositories.map('- ${it.account}.${it.name}').join_lines()
+		repos := repositories.map('- ${it} ${it.account}.${it.name}').join_lines()
 		return error('Found more than one repository for \n${args}\n${repos}')
-	}
-
-	mut repo := repositories[0]
-
-	if args_.pull{
-		repo.pull()!
-	}
-
-	if args_.reset{
-		repo.reset()!
-	}
-
-	if args_.reload{
-		repo.load()!
 	}
 
 	return repositories[0]
 }
-
 
 // Helper function to check if a repository matches the criteria (name, account, provider).
 //
@@ -135,7 +139,7 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 // Returns:
 // - bool: True if the repository matches, false otherwise.
 fn repo_match_check(repo GitRepo, args ReposGetArgs) bool {
-	return (args.name.len == 0 || repo.name == args.name) &&
-	(args.account.len == 0 || repo.account == args.account) &&
-	(args.provider.len == 0 || repo.provider == args.provider)
+	return (args.name.len == 0 || repo.name == args.name)
+		&& (args.account.len == 0 || repo.account == args.account)
+		&& (args.provider.len == 0 || repo.provider == args.provider)
 }

@@ -1,0 +1,415 @@
+    <!doctype html>
+    <html>
+        <head>
+            <title>PDF Presentation Viewer with Thumbnails and WebSocket Control</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css" />
+            <style>
+                body, html {
+                    margin: 0;
+                    padding: 0;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    font-family: Arial, sans-serif;
+                }
+    
+                #mainContainer {
+                    display: flex;
+                    flex: 1;
+                    overflow: hidden;
+                }
+    
+                #thumbnailContainer {
+                    width: 200px;
+                    overflow-y: auto;
+                    background-color: #f0f0f0;
+                    padding: 10px;
+                    box-sizing: border-box;
+                }
+    
+                .thumbnail {
+                    width: 100%;
+                    margin-bottom: 10px;
+                    cursor: pointer;
+                    border: 2px solid transparent;
+                }
+    
+                .thumbnail.active {
+                    border-color: #4caf50;
+                }
+    
+                #viewerContainer {
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #e0e0e0;
+                    overflow: auto;
+                    position: relative;
+                }
+    
+                #viewer {
+                    width: 100%;
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+    
+                #viewer canvas {
+                    width: 100%;
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: contain;
+                }
+    
+                #navigationControls {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 10px;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    position: fixed;
+                    bottom: 0;
+                    width: 100%;
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity 0.3s ease-in-out;
+                    z-index: 1000;
+                }
+    
+                #viewerContainer:hover #navigationControls,
+                #navigationControls:hover {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+    
+                .navButton {
+                    background-color: #4caf50;
+                    border: none;
+                    color: white;
+                    padding: 10px 20px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 0 10px;
+                    cursor: pointer;
+                    border-radius: 5px;
+                }
+    
+                #pageInfo {
+                    color: white;
+                    font-size: 16px;
+                    margin: 0 20px;
+                }
+    
+                #loadingIndicator {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 20px;
+                    background-color: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 10px;
+                    border-radius: 5px;
+                    display: none;
+                }
+    
+                #viewerContainer.fullscreen {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: black;
+                    z-index: 999;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+    
+                #enterFullscreen {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s ease-in-out;
+                }
+    
+                #viewerContainer:hover #enterFullscreen,
+                #enterFullscreen:hover {
+                    opacity: 1;
+                }
+            </style>
+        </head>
+        <body>
+            <div id="mainContainer">
+                <div id="thumbnailContainer"></div>
+                <div id="viewerContainer">
+                    <div id="loadingIndicator">Loading PDF</div>
+                    <div id="viewer" class="pdfViewer"></div>
+                </div>
+            </div>
+            <div id="navigationControls">
+                <button id="prevBtn" class="navButton">Previous</button>
+                <span id="pageInfo"></span>
+                <button id="nextBtn" class="navButton">Next</button>
+            </div>
+            <button id="enterFullscreen" class="navButton">Full Screen</button>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        <script>
+            const initialFullscreen = true; // Server-side rendered variable for fullscreen
+const initialPage = 3; // Server-side rendered variable for the initial page
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+let db;
+
+const request = indexedDB.open('FileCacheDB', 1);
+request.onupgradeneeded = function (event) {
+    db = event.target.result;
+    db.createObjectStore('files', { keyPath: 'file_id' });
+};
+request.onsuccess = function (event) {
+    db = event.target.result;
+    initializePDFViewer();
+};
+request.onerror = function () {
+    window.location.href = '/server_error'; // Redirect on DB failure
+};
+
+function storeFile(file_id, file_data) {
+    const transaction = db.transaction(['files'], 'readwrite');
+    const store = transaction.objectStore('files');
+    store.put({ file_id: file_id, file_data: file_data });
+}
+
+function getFile(file_id) {
+    return new Promise(function (resolve, reject) {
+        const transaction = db.transaction(['files'], 'readonly');
+        const store = transaction.objectStore('files');
+        const request = store.get(file_id);
+        request.onsuccess = function (event) {
+            resolve(event.target.result ? event.target.result.file_data : null);
+        };
+        request.onerror = function () {
+            reject('Failed to retrieve file from IndexedDB');
+        };
+    });
+}
+
+async function hashFile(file_data) {
+    const buffer = await crypto.subtle.digest('SHA-256', file_data);
+    return Array.from(new Uint8Array(buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function fetchFile(file_id, url) {
+    try {
+        const cachedFileData = await getFile(file_id);
+        const cachedHash = cachedFileData ? await hashFile(cachedFileData) : '';
+
+        const response = await fetch(`@{dollar}{url}?hash=@{dollar}{cachedHash}`);
+        if (response.status === 304) {
+            return cachedFileData;
+        } else if (response.ok) {
+            const file_data = await response.arrayBuffer();
+            storeFile(file_id, file_data);
+            return file_data;
+        } else {
+            throw new Error('Failed to fetch file from server');
+        }
+    } catch (error) {
+        console.error("Error fetching file:", error);
+        window.location.href = '/server_error'; // Redirect on fetch failure
+        throw error;
+    }
+}
+
+function logPDFPageView(pageNumber) {
+    console.log("Logging page view for page:", pageNumber);
+    const logEndpoint = `/log/@{s.name}`;
+    const logData = {
+        event: "view",
+        subject: "user",
+        object: "@{s.name}",
+        message: JSON.stringify({ page: pageNumber, duration: 0 }),
+    };
+
+    fetch(logEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(logData),
+    }).catch(() => console.error("Failed to log page view."));
+}
+
+function initializePDFViewer() {
+    const url = "@{s.url}";
+    const name = "@{s.name}";
+    const viewer = document.getElementById("viewer");
+    const thumbnailContainer = document.getElementById("thumbnailContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const pageInfo = document.getElementById("pageInfo");
+    const loadingIndicator = document.getElementById("loadingIndicator");
+    const viewerContainer = document.getElementById("viewerContainer");
+    const fullscreenButton = document.getElementById("enterFullscreen");
+    const navigationControls = document.getElementById("navigationControls");
+
+    let pdf;
+    let currentPage = initialPage; // Start from the initialPage
+    let totalPages;
+
+    // Toggle full-screen mode
+    function toggleFullscreen(isFullscreen) {
+        if (isFullscreen) {
+            viewerContainer.classList.add("fullscreen");
+            fullscreenButton.textContent = "Exit Full Screen";
+        } else {
+            viewerContainer.classList.remove("fullscreen");
+            fullscreenButton.textContent = "Full Screen";
+        }
+    }
+
+    // Initialize viewer based on `initialFullscreen`
+    toggleFullscreen(initialFullscreen);
+
+    // Show controls on hover
+    function showControls() {
+        navigationControls.style.opacity = "1";
+        navigationControls.style.pointerEvents = "auto";
+        fullscreenButton.style.opacity = "1";
+    }
+
+    // Hide controls when not hovered
+    function hideControls() {
+        navigationControls.style.opacity = "0";
+        navigationControls.style.pointerEvents = "none";
+        fullscreenButton.style.opacity = "0";
+    }
+
+    viewerContainer.addEventListener("mouseenter", showControls);
+    viewerContainer.addEventListener("mouseleave", hideControls);
+    fullscreenButton.addEventListener("mouseenter", showControls);
+    fullscreenButton.addEventListener("mouseleave", hideControls);
+
+    fullscreenButton.addEventListener("click", () => {
+        const isFullscreen = viewerContainer.classList.contains("fullscreen");
+        toggleFullscreen(!isFullscreen);
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") prevBtn.click();
+        else if (e.key === "ArrowRight") nextBtn.click();
+        else if (e.key === "Escape" && viewerContainer.classList.contains("fullscreen")) {
+            toggleFullscreen(false);
+        }
+    });
+
+    prevBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage(currentPage);
+        }
+    });
+
+    nextBtn.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage(currentPage);
+        }
+    });
+
+    async function loadPDF() {
+        try {
+            loadingIndicator.style.display = "block";
+            const file_data = await fetchFile(name, url);
+            const loadingTask = pdfjsLib.getDocument({ data: file_data });
+            pdf = await loadingTask.promise;
+            totalPages = pdf.numPages;
+            renderPage(currentPage); // Start at initialPage
+            createThumbnails();
+        } catch (error) {
+            console.error("Error loading PDF:", error);
+            window.location.href = '/server_error';
+        } finally {
+            loadingIndicator.style.display = "none";
+        }
+    }
+
+    function renderPage(pageNumber) {
+        pdf.getPage(pageNumber).then((page) => {
+            const scale = 2;
+            const viewport = page.getViewport({ scale });
+
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const renderContext = { canvasContext: context, viewport };
+
+            viewer.innerHTML = "";
+            viewer.appendChild(canvas);
+
+            page.render(renderContext);
+            updatePageInfo();
+            logPDFPageView(pageNumber);
+            highlightThumbnail(pageNumber);
+        });
+    }
+
+    function createThumbnails() {
+        thumbnailContainer.innerHTML = "";
+        for (let i = 1; i <= totalPages; i++) {
+            pdf.getPage(i).then((page) => {
+                const scale = 0.2;
+                const viewport = page.getViewport({ scale });
+
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d");
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = { canvasContext: context, viewport };
+
+                page.render(renderContext);
+
+                canvas.className = "thumbnail";
+                canvas.setAttribute("data-page-number", i);
+                canvas.onclick = () => {
+                    currentPage = i;
+                    renderPage(currentPage);
+                };
+
+                thumbnailContainer.appendChild(canvas);
+            });
+        }
+
+        // Highlight the initial page thumbnail
+        setTimeout(() => highlightThumbnail(currentPage), 100);
+    }
+
+    function highlightThumbnail(pageNumber) {
+        // Highlight the current thumbnail
+        const thumbnails = thumbnailContainer.getElementsByClassName("thumbnail");
+        Array.from(thumbnails).forEach((thumbnail, index) => {
+            if (index + 1 === pageNumber) {
+                thumbnail.classList.add("active");
+                thumbnail.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+                thumbnail.classList.remove("active");
+            }
+        });
+    }
+
+    function updatePageInfo() {
+        pageInfo.textContent = `Page @{dollar}{currentPage} of @{dollar}{totalPages}`;
+    }
+
+    loadPDF();
+}
+        </script>
+    </body>
+</html>

@@ -1,0 +1,69 @@
+# Module: biz/bizmodel
+
+## V Files
+
+* biz/bizmodel/play_funding.v
+* biz/bizmodel/model.v
+
+### Structs
+
+#### BizModel
+
+Properties:
+* name (string)
+* sheet (&spreadsheet.Sheet)
+* employees (map[string]&Employee)
+* departments (map[string]&Department)
+* costcenters (map[string]&Costcenter)
+* products (map[string]&Product)
+
+#### Employee
+
+Properties:
+* name (string)
+* description (string)
+* title (string)
+* department (string)
+* cost (string)
+* cost_percent_revenue (f64)
+* nrpeople (string)
+* indexation (f64)
+* cost_center (string)
+* page (string)
+* fulltime_perc (f64)
+
+#### Department
+
+Properties:
+* name (string)
+* description (string)
+* page (string)
+* title (string)
+* order (int)
+
+#### Costcenter
+
+Properties:
+* name (string)
+* description (string)
+* department (string)
+
+#### Product
+
+Properties:
+* name (string)
+* title (string)
+* description (string)
+* order (int)
+* has_revenue (bool)
+* has_items (bool)
+* has_oneoffs (bool)
+* nr_months_recurring (int)
+
+* biz/bizmodel/macros.v
+* biz/bizmodel/factory.v
+* biz/bizmodel/play_product_revenue.v
+* biz/bizmodel/play.v
+* biz/bizmodel/play_cost.v
+* biz/bizmodel/play_costcenter.v
+* biz/bizmodel/play_hr.v

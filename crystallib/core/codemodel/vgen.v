@@ -109,7 +109,7 @@ pub fn vgen_generics(generics map[string]string) string {
 }
 
 // vgen_function generates a function statement for a function
-pub fn (function Function) vgen() string {
+pub fn (function Function) vgen(options WriteOptions) string {
 	mut params_ := function.params.map(Param{
 		...it
 		typ: Type{
@@ -121,13 +121,13 @@ pub fn (function Function) vgen() string {
 		}
 	})
 
-	options := params_.filter(it.is_optional)
+	optionals := params_.filter(it.is_optional)
 	options_struct := Struct{
 		name: '${texttools.name_fix_snake_to_pascal(function.name)}Options'
 		attrs: [Attribute{
 			name: 'params'
 		}]
-		fields: options.map(StructField{
+		fields: optionals.map(StructField{
 			name: it.name
 			description: it.description
 			typ: Type{
@@ -135,7 +135,7 @@ pub fn (function Function) vgen() string {
 			}
 		})
 	}
-	if options.len > 0 {
+	if optionals.len > 0 {
 		params_ << Param{
 			name: 'options'
 			typ: Type{
@@ -149,10 +149,14 @@ pub fn (function Function) vgen() string {
 	receiver := function.receiver.vgen()
 
 	mut function_str := $tmpl('templates/function/function.v.template')
-	result := os.execute_opt('echo "${function_str.replace('$', '\\$')}" | v fmt') or {
-		panic('${function_str}\n${err}')
-	}
-	function_str = result.output.split_into_lines().filter(!it.starts_with('import ')).join('\n')
+	
+	// if options.format {
+	// 	result := os.execute_opt('echo "${function_str.replace('$', '\\$')}" | v fmt') or {
+	// 		panic('${function_str}\n${err}')
+	// 	}
+	// 	function_str = result.output
+	// }
+	function_str = function_str.split_into_lines().filter(!it.starts_with('import ')).join('\n')
 
 	return if options_struct.fields.len != 0 {
 		'${options_struct.vgen()}\n${function_str}'
@@ -183,7 +187,7 @@ pub fn (param Param) vgen() string {
 
 // vgen_function generates a function statement for a function
 pub fn (struct_ Struct) vgen() string {
-	gen := VGenerator{true}
+	gen := VGenerator{false}
 	return gen.generate_struct(struct_) or { panic(err) }
 	// mut struct_str := $tmpl('templates/struct/struct.v.template')
 	// return struct_str

@@ -1,7 +1,7 @@
 module view
 
 import vweb
-import freeflowuniverse.crystallib.webserver.auth.identity
+import freeflowuniverse.crystallib.web.auth.identity
 
 pub struct Controller {
 	vweb.Context

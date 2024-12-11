@@ -45,7 +45,7 @@ pub fn (e Event) category() string {
 }
 
 pub fn (mut j Juggler) event_card(event Event) !string {
-	repo := j.backend.get[Repository](event.object_id)!
+	repo := j.osis.generic_get[Repository](event.object_id)!
 	return event.card(repo)
 }
 
@@ -61,8 +61,8 @@ pub fn (event Event) card(repository Repository) string {
 }
 
 pub fn (mut j Juggler) row(play Play) string {
-	script := j.backend.get[Script](play.script_id) or { panic(err) }
-	event := j.backend.get[Event](play.event_id) or { panic(err) }
+	script := j.osis.generic_get[Script](play.script_id) or { panic(err) }
+	event := j.osis.generic_get[Event](play.event_id) or { panic(err) }
 	status_color := match play.status {
 		.starting { 'yellow-500' }
 		.success { 'emerald-500' }
