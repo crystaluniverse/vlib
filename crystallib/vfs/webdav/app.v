@@ -3,15 +3,14 @@ module webdav
 import vweb
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import rand
 
 @[heap]
 struct App {
 	vweb.Context
-	username string @[required]
-	password string @[required]
+	user_db  map[string]string @[required]
 	root_dir pathlib.Path      @[vweb_global]
 pub mut:
+	lock_manager LockManager
 	server_port int
 	middlewares map[string][]vweb.Middleware
 }
@@ -19,19 +18,17 @@ pub mut:
 @[params]
 pub struct AppArgs {
 pub mut:
-	server_port int = rand.int_in_range(8000, 9000)!
-	root_dir string @[required]
-	username string @[required]
-	password string @[required]
+	server_port int = 8080
+	root_dir    string            @[required]
+	user_db     map[string]string @[required]
 }
 
 pub fn new_app(args AppArgs) !&App {
 	root_dir := pathlib.get_dir(path: args.root_dir, create: true)!
 	mut app := &App{
-		username: args.username,
-		password: args.password,
-		root_dir: root_dir,
-		server_port: args.server_port,
+		user_db: args.user_db.clone()
+		root_dir: root_dir
+		server_port: args.server_port
 	}
 
 	app.middlewares['/'] << logging_middleware
@@ -43,12 +40,12 @@ pub fn new_app(args AppArgs) !&App {
 @[params]
 pub struct RunArgs {
 pub mut:
-	spawn_ bool
+	background bool
 }
 
 pub fn (mut app App) run(args RunArgs) {
 	console.print_green('Running the server on port: ${app.server_port}')
-	if args.spawn_{
+	if args.background {
 		spawn vweb.run(app, app.server_port)
 	} else {
 		vweb.run(app, app.server_port)

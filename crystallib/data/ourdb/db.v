@@ -17,10 +17,39 @@ import os
 // The data is stored with a CRC32 checksum for integrity verification
 // and maintains a linked list of previous values for history tracking
 // Returns the ID used (either x if specified, or auto-incremented if x=0)
-pub fn (mut db OurDB) set(x u32, data []u8) !u32 {
-	location := db.lookup.get(x) or { Location{} } // Get location from lookup table if exists
-	db.set_(x, location, data)!
-	return db.lookup.set(x, location)!
+@[params]
+struct OurDBSetArgs {
+	id   ?u32
+	data []u8 @[required]
+}
+
+pub fn (mut db OurDB) set(args OurDBSetArgs) !u32 {
+	if db.incremental_mode {
+		// if id points to an empty location, return an error
+		// else, overwrite data
+		if id := args.id {
+			// this is an update
+			location := db.lookup.get(id)!
+			if location.position == 0 {
+				return error('cannot set id for insertions when incremental mode is enabled')
+			}
+
+			db.set_(id, location, args.data)!
+			db.lookup.set(id, location)! // TODO: maybe not needed
+			return id
+		}
+
+		// this is an insert
+		id := db.lookup.get_next_id()!
+		db.set_(id, Location{}, args.data)!
+		return id
+	}
+
+	// using key-value mode
+	id := args.id or { return error('id must be provided when incremental is disabled') }
+	location := db.lookup.get(id)! // Get location from lookup table if exists
+	db.set_(id, location, args.data)!
+	return id
 }
 
 // get retrieves data stored at the specified key position
@@ -57,11 +86,9 @@ pub fn (mut db OurDB) get_history(x u32, depth u8) ![][]u8 {
 // This operation zeros out the record but maintains the space in the file
 // Use condense() to reclaim space from deleted records (happens in step after)
 pub fn (mut db OurDB) delete(x u32) ! {
+	location := db.lookup.get(x)! // Get location from lookup table
+	db.delete_(x, location)!
 	db.lookup.delete(x)!
-
-	// TODO: do we actually need to erase data?
-	// location := db.lookup.get(x)! // Get location from lookup table
-	// db.delete_(x, location)!
 }
 
 // close closes the database file

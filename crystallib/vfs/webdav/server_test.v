@@ -4,22 +4,37 @@ import net.http
 import freeflowuniverse.crystallib.core.pathlib
 import time
 import encoding.base64
+import rand
+
+fn test_run() {
+	root_dir := '/tmp/webdav'
+	mut app := new_app(
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
+	)!
+	app.run()
+}
 
 fn test_get() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
-		root_dir: root_dir,
-		username: 'mario',
-		password: 'hashed_password',
+		server_port: rand.int_in_range(8000, 9000)!
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 	time.sleep(1 * time.second)
 	file_name := 'newfile.txt'
 	mut p := pathlib.get_file(path: '${root_dir}/${file_name}', create: true)!
 	p.write('my new file')!
 
-	mut req := http.new_request(.get, 'http://localhost:${app.server_port}/${file_name}', '')
-	signature := base64.encode_str("${app.username}:${app.password}")
+	mut req := http.new_request(.get, 'http://localhost:${app.server_port}/${file_name}',
+		'')
+	signature := base64.encode_str('mario:123')
 	req.add_custom_header('Authorization', 'Basic ${signature}')!
 
 	response := req.do()!
@@ -29,17 +44,20 @@ fn test_get() {
 fn test_put() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
-		root_dir: root_dir,
-		username: 'mario',
-		password: 'hashed_password',
+		server_port: rand.int_in_range(8000, 9000)!
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
 	)!
-	app.run(spawn_: true)
+	app.run(background: true)
 	time.sleep(1 * time.second)
 	file_name := 'newfile_put.txt'
 
 	mut data := 'my new put file'
-	mut req := http.new_request(.put, 'http://localhost:${app.server_port}/${file_name}', data)
-	signature := base64.encode_str("${app.username}:${app.password}")
+	mut req := http.new_request(.put, 'http://localhost:${app.server_port}/${file_name}',
+		data)
+	signature := base64.encode_str('mario:123')
 	req.add_custom_header('Authorization', 'Basic ${signature}')!
 	mut response := req.do()!
 
@@ -61,8 +79,14 @@ fn test_put() {
 
 fn test_copy() {
 	root_dir := '/tmp/webdav'
-	mut app := new_app(root_dir: root_dir, username: 'mario', password: 'hashed_password')!
-	app.run(spawn_: true)
+	mut app := new_app(
+		server_port: rand.int_in_range(8000, 9000)!
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
+	)!
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	file_name1, file_name2 := 'newfile_copy1.txt', 'newfile_copy2.txt'
@@ -70,10 +94,11 @@ fn test_copy() {
 	data := 'file copy data'
 	p1.write(data)!
 
-	mut req := http.new_request(.copy, 'http://localhost:${app.server_port}/${file_name1}', '')
-	signature := base64.encode_str("${app.username}:${app.password}")
+	mut req := http.new_request(.copy, 'http://localhost:${app.server_port}/${file_name1}',
+		'')
+	signature := base64.encode_str('mario:123')
 	req.add_custom_header('Authorization', 'Basic ${signature}')!
-	req.add_custom_header('Destination', 'http://localhost:${app.server_port}}/${file_name2}')!
+	req.add_custom_header('Destination', 'http://localhost:${app.server_port}/${file_name2}')!
 	mut response := req.do()!
 
 	assert p1.exists()
@@ -84,8 +109,14 @@ fn test_copy() {
 
 fn test_move() {
 	root_dir := '/tmp/webdav'
-	mut app := new_app(root_dir: root_dir, username: 'mario', password: 'hashed_password')!
-	app.run(spawn_: true)
+	mut app := new_app(
+		server_port: rand.int_in_range(8000, 9000)!
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
+	)!
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	file_name1, file_name2 := 'newfile_move1.txt', 'newfile_move2.txt'
@@ -93,10 +124,11 @@ fn test_move() {
 	data := 'file move data'
 	p.write(data)!
 
-	mut req := http.new_request(.move, 'http://localhost:${app.server_port}/${file_name1}', '')
-	signature := base64.encode_str("${app.username}:${app.password}")
+	mut req := http.new_request(.move, 'http://localhost:${app.server_port}/${file_name1}',
+		'')
+	signature := base64.encode_str('mario:123')
 	req.add_custom_header('Authorization', 'Basic ${signature}')!
-	req.add_custom_header('Destination', 'http://localhost:${app.server_port}}/${file_name2}')!
+	req.add_custom_header('Destination', 'http://localhost:${app.server_port}/${file_name2}')!
 	mut response := req.do()!
 
 	p = pathlib.get_file(path: '${root_dir}/${file_name2}')!
@@ -106,15 +138,22 @@ fn test_move() {
 
 fn test_delete() {
 	root_dir := '/tmp/webdav'
-	mut app := new_app(root_dir: root_dir, username: 'mario', password: 'hashed_password')!
-	app.run(spawn_: true)
+	mut app := new_app(
+		server_port: rand.int_in_range(8000, 9000)!
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
+	)!
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	file_name := 'newfile_delete.txt'
 	mut p := pathlib.get_file(path: '${root_dir}/${file_name}', create: true)!
 
-	mut req := http.new_request(.delete, 'http://localhost:${app.server_port}/${file_name}', '')
-	signature := base64.encode_str("${app.username}:${app.password}")
+	mut req := http.new_request(.delete, 'http://localhost:${app.server_port}/${file_name}',
+		'')
+	signature := base64.encode_str('mario:123')
 	req.add_custom_header('Authorization', 'Basic ${signature}')!
 	mut response := req.do()!
 
@@ -123,14 +162,21 @@ fn test_delete() {
 
 fn test_mkcol() {
 	root_dir := '/tmp/webdav'
-	mut app := new_app(root_dir: root_dir, username: 'mario', password: 'hashed_password')!
-	app.run(spawn_: true)
+	mut app := new_app(
+		server_port: rand.int_in_range(8000, 9000)!
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
+	)!
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	dir_name := 'newdir'
 
-	mut req := http.new_request(.mkcol, 'http://localhost:${app.server_port}/${dir_name}', '')
-	signature := base64.encode_str("${app.username}:${app.password}")
+	mut req := http.new_request(.mkcol, 'http://localhost:${app.server_port}/${dir_name}',
+		'')
+	signature := base64.encode_str('mario:123')
 	req.add_custom_header('Authorization', 'Basic ${signature}')!
 	mut response := req.do()!
 
@@ -140,8 +186,14 @@ fn test_mkcol() {
 
 fn test_propfind() {
 	root_dir := '/tmp/webdav'
-	mut app := new_app(root_dir: root_dir, username: 'mario', password: 'hashed_password')!
-	app.run(spawn_: true)
+	mut app := new_app(
+		server_port: rand.int_in_range(8000, 9000)!
+		root_dir: root_dir
+		user_db: {
+			'mario': '123'
+		}
+	)!
+	app.run(background: true)
 
 	time.sleep(1 * time.second)
 	dir_name := 'newdir'
@@ -154,8 +206,9 @@ fn test_propfind() {
 	mut file2_p := pathlib.get_file(path: '${p.path}/${file2}', create: true)!
 	mut dir1_p := pathlib.get_dir(path: '${p.path}/${dir1}', create: true)!
 
-	mut req := http.new_request(.propfind, 'http://localhost:${app.server_port}/${dir_name}', '')
-	signature := base64.encode_str("${app.username}:${app.password}")
+	mut req := http.new_request(.propfind, 'http://localhost:${app.server_port}/${dir_name}',
+		'')
+	signature := base64.encode_str('mario:123')
 	req.add_custom_header('Authorization', 'Basic ${signature}')!
 	mut response := req.do()!
 

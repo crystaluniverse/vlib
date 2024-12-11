@@ -17,22 +17,22 @@ fn test_basic_operations() {
 
 	// Test set and get
 	test_data := 'Hello, World!'.bytes()
-	db.set(1, test_data)!
+	id := db.set(data: test_data)!
 
-	retrieved := db.get(1)!
+	retrieved := db.get(id)!
 	assert retrieved == test_data
 
 	// Test overwrite
 	new_data := 'Updated data'.bytes()
-	db.set(1, new_data)!
-	retrieved2 := db.get(1)!
+	id2 := db.set(data: new_data)!
+	retrieved2 := db.get(id2)!
 	assert retrieved2 == new_data
 }
 
 fn test_auto_increment() {
 	mut db := new(
-		record_nr_max: 16777216 - 1 // max size of records
-		record_size_max: 1024
+		record_nr_max: 10 // max size of records
+		record_size_max: 2
 		path: ourdb.test_dir
 	)!
 
@@ -42,16 +42,16 @@ fn test_auto_increment() {
 
 	// Create 5 objects with no ID specified (x=0)
 	mut ids := []u32{}
-	for i in 0..5 {
+	for i in 0 .. 5 {
 		data := 'Object ${i + 1}'.bytes()
-		id := db.set(0, data)!
+		id := db.set(data: data)!
 		ids << id
 	}
 
 	// Verify IDs are incremental
 	assert ids.len == 5
-	for i in 0..5 {
-		assert ids[i] == u32(i + 1)
+	for i in 0 .. 5 {
+		assert ids[i] == i
 		// Verify data can be retrieved
 		data := db.get(ids[i])!
 		assert data == 'Object ${i + 1}'.bytes()
@@ -63,6 +63,7 @@ fn test_history_tracking() {
 		record_nr_max: 16777216 - 1 // max size of records
 		record_size_max: 1024
 		path: ourdb.test_dir
+		incremental_mode: false
 	)!
 
 	defer {
@@ -75,9 +76,9 @@ fn test_history_tracking() {
 	data2 := 'Version 2'.bytes()
 	data3 := 'Version 3'.bytes()
 
-	db.set(key, data1)!
-	db.set(key, data2)!
-	db.set(key, data3)!
+	db.set(id: key, data: data1)!
+	db.set(id: key, data: data2)!
+	db.set(id: key, data: data3)!
 
 	// Get history with depth 3
 	history := db.get_history(key, 3)!
@@ -92,6 +93,7 @@ fn test_delete_operation() {
 		record_nr_max: 16777216 - 1 // max size of records
 		record_size_max: 1024
 		path: ourdb.test_dir
+		incremental_mode: false
 	)!
 
 	defer {
@@ -101,7 +103,7 @@ fn test_delete_operation() {
 	// Set and then delete data
 	test_data := 'Test data'.bytes()
 	key := u32(1)
-	db.set(key, test_data)!
+	db.set(id: key, data: test_data)!
 
 	// Verify data exists
 	retrieved := db.get(key)!
@@ -149,6 +151,7 @@ fn test_file_switching() {
 		record_size_max: 1024
 		path: ourdb.test_dir
 		file_size: 10
+		incremental_mode: false
 	)!
 
 	defer {
@@ -157,11 +160,11 @@ fn test_file_switching() {
 
 	test_data1 := 'Test data'.bytes()
 	key := u32(1)
-	db.set(key, test_data1)!
+	db.set(id: key, data: test_data1)!
 	stat := os.stat('${db.path}/${db.last_used_file_nr}.db')!
 
 	test_data2 := 'Test data 2222'.bytes()
-	db.set(u32(2), test_data2)!
+	db.set(id: u32(2), data: test_data2)!
 
 	location := db.lookup.get(u32(2))!
 	assert location.file_nr == 1
