@@ -4,11 +4,7 @@ import freeflowuniverse.crystallib.blockchain.stellar
 import freeflowuniverse.crystallib.ui.console
 import time
 
-const poll_interval = 2 * time.second // Polling interval for bot operations
-
-// Steps
-// 1. Initialize the stellar bot using the wallet secret
-// 2. Support a real-time checking to get the current price of a spacific token eg. XLM
+const poll_interval = 10 * time.second // Polling interval for bot operations
 
 @[params]
 pub struct StellarTradingBotArgs {
@@ -131,11 +127,11 @@ pub fn (mut bot StellarTradingBot) run() ! {
 	mut active_offers := bot.fetch_wallet_offers()!
 
 	if bot.selling_amount == 0 {
-		bot.delete_sell_offers(active_offers)!
+		bot.delete_sell_offers(mut active_offers)!
 	}
 
 	if bot.buying_amount == 0 {
-		bot.delete_buy_offers(active_offers)!
+		bot.delete_buy_offers(mut active_offers)!
 	}
 
 	if bot.selling_amount == 0 && bot.buying_amount == 0 {
@@ -145,13 +141,32 @@ pub fn (mut bot StellarTradingBot) run() ! {
 	for {
 		active_offers = bot.fetch_wallet_offers()!
 
+		if active_offers.len > 1 {
+			return error('Wallet has more than one offer')
+		}
+
 		order_book := bot.fetch_order_book() or {
 			console.print_stderr('failed to get orderbook: ${err}')
 			continue
 		}
 
-		bot.sell_high(active_offers, order_book) or { console.print_stderr('${err}') }
-		bot.buy_low(active_offers, order_book) or { console.print_stderr('${err}') }
+		active_offer := fn (active_offers []stellar.OfferModel) ?stellar.OfferModel {
+			if active_offers.len == 1 {
+				return active_offers[0]
+			} else {
+				return none
+			}
+		}(active_offers)
+
+		console.print_header('Sell high offer logs')
+		bot.sell_high(active_offer: active_offer, order_book: order_book) or {
+			console.print_stderr('${err}')
+		}
+
+		console.print_header('Buy low offer logs')
+		bot.buy_low(active_offer: active_offer, order_book: order_book) or {
+			console.print_stderr('${err}')
+		}
 
 		// Adjust polling interval as needed
 		time.sleep(poll_interval)

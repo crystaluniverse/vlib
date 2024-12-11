@@ -1,43 +1,17 @@
 module tradingbot
 
 import freeflowuniverse.crystallib.blockchain.stellar
-import freeflowuniverse.crystallib.ui.console
 import math
 
+@[params]
+struct BuyLowArgs {
+	order_book   stellar.OrderBook @[required]
+	active_offer ?stellar.OfferModel
+}
+
 // Buy if price is below target
-fn (mut bot StellarTradingBot) buy_low(active_offers []stellar.OfferModel, order_book stellar.OrderBook) ! {
-	mut active_buy_offer := bot.get_buy_offer_from_active_offers(active_offers) or {
-		return error('failed to get active buy offer: ${err}')
-	}
-
-	bot.create_or_update_buy_offer(active_buy_offer, order_book)!
-}
-
-// checks if offer has reversed assets (buy is sell, and sell is buy)
-fn (mut bot StellarTradingBot) is_buy_offer(offer stellar.OfferModel) bool {
-	return
-		bot.match_buy_asset(offer.buying.asset_type, offer.buying.asset_code, offer.buying.asset_issuer)
-		&& bot.match_sell_asset(offer.selling.asset_type, offer.selling.asset_code, offer.selling.asset_issuer)
-}
-
-fn (mut bot StellarTradingBot) get_buy_offer_from_active_offers(active_offers []stellar.OfferModel) !stellar.OfferModel {
-	mut matching_offer := stellar.OfferModel{}
-	for offer in active_offers {
-		if bot.is_buy_offer(offer) {
-			// this is a buy offer
-			if matching_offer.id.int() != 0 {
-				return error('there is more than one buy offer in wallet active offers')
-			}
-
-			matching_offer = offer
-		}
-	}
-
-	return matching_offer
-}
-
-fn (mut bot StellarTradingBot) create_or_update_buy_offer(active_offer stellar.OfferModel, order_book stellar.OrderBook) !u64 {
-	console.print_header('Creating/Updating a new buy offer')
+fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
+	log('Creating/Updating a new buy offer', false)
 
 	mut asset_info := stellar.GetOfferAssetInfo{
 		asset_type:   bot.buying_asset_type
@@ -45,27 +19,29 @@ fn (mut bot StellarTradingBot) create_or_update_buy_offer(active_offer stellar.O
 		asset_issuer: bot.buying_asset_issuer
 	}
 
-	mut buying_price := bot.buying_target_price
-	lowest_price := stellar.fetch_lowest_ask_price(order_book)! // 500
-
-	lowest_price_float := f32(lowest_price.n) / f32(lowest_price.d)
-	if lowest_price_float < bot.buying_target_price {
-		buying_price = lowest_price_float
-	}
-
-	if buying_price == bot.selling_target_price {
-		// We need to
-	}
-
 	asset_balance := bot.get_asset_balance(asset_info)!
-	console.print_header('Asset ${bot.buying_asset_code} balance: ${asset_balance}')
+	log('Asset ${bot.buying_asset_code} balance: ${asset_balance}', false)
 
 	if asset_balance <= bot.preserve {
 		return error('Wallet does not have enough balance for asset ${bot.buying_asset_code} to make a new buy offer, current balance is ${asset_balance}.')
 	}
 
+	mut buying_price := bot.buying_target_price
+	lowest_price := stellar.fetch_lowest_ask_price(args.order_book)! // 500
+
+	lowest_price_float := f32(lowest_price.n) / f32(lowest_price.d)
+	if lowest_price_float > bot.buying_target_price {
+		log('The price is too high: ${lowest_price_float} > ${bot.buying_target_price}, Skipping...',
+			false)
+		return
+	}
+
+	if lowest_price_float < bot.buying_target_price {
+		buying_price = lowest_price_float
+	}
+
 	mut spendable_balance := asset_balance - bot.preserve
-	console.print_header('Spendable balance: ${spendable_balance}')
+	log('Spendable balance: ${spendable_balance}', false)
 
 	mut amount := math.min(spendable_balance, bot.buying_amount)
 
@@ -79,29 +55,30 @@ fn (mut bot StellarTradingBot) create_or_update_buy_offer(active_offer stellar.O
 		price:   f32(buying_price)
 	}
 
-	if active_offer.id.int() == 0 {
+	if active_offer := args.active_offer {
+		// check if update is needed
+		amount = round_to_precision(amount, 7)
+		active_offer_amount := f64(round_to_precision(active_offer.amount.f64(), 7))
+		active_offer_price := round_to_precision(active_offer.price.f64(), 7)
+		buying_price = f64(round_to_precision(f64(buying_price), 7))
+
+		log('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}',
+			false)
+		log('buying: price: ${buying_price} - amount: ${amount}', false)
+
+		if active_offer_price == buying_price && active_offer_amount == amount {
+			// don't need an update
+			log('offer ${active_offer.id.int()} is up-to-date.', false)
+			return
+		}
+
+		bot.sclient.update_offer(active_offer.id.u64(), offer_args)!
+		log('Offer ${active_offer.id.int()} is updated', false)
+
+		return
+	} else {
 		mut offer_id := bot.sclient.create_offer(offer_args)!
-		console.print_header('Offer ${offer_id} is created')
-		return offer_id
+		log('Offer ${offer_id} is created', false)
+		return
 	}
-
-	// check if update is needed
-	amount = round_to_precision(amount, 7)
-	active_offer_amount := f64(round_to_precision(active_offer.amount.f64(), 7))
-	active_offer_price := round_to_precision(active_offer.price.f64(), 7)
-	buying_price = f64(round_to_precision(f64(buying_price), 7))
-
-	console.print_header('active offer:  price: ${active_offer_price} - amount: ${active_offer_amount}')
-	console.print_header('buying: price: ${buying_price} - amount: ${amount}')
-
-	if active_offer_price == buying_price && active_offer_amount == amount {
-		// don't need an update
-		console.print_header('offer ${active_offer.id.int()} is up-to-date.')
-		return active_offer.id.u64()
-	}
-
-	bot.sclient.update_offer(active_offer.id.u64(), offer_args)!
-	console.print_header('Offer ${active_offer.id.int()} is updated')
-
-	return active_offer.id.u64()
 }
