@@ -14,17 +14,17 @@ fn test_write_tree() {
 	write_dir3 := pathlib.get_dir(path: '/tmp/tree_write3', empty: true)!
 
 	// read tree1
-	mut tree1 := new(name: doctree.tree_name)!
-	tree1.scan(path: doctree.collections_path)!
+	mut tree1 := new(name: tree_name)!
+	tree1.scan(path: collections_path)!
 	tree1.export(destination: write_dir1.path)!
 
 	// create tree2 from the written tree
-	mut tree2 := new(name: doctree.tree_name)!
+	mut tree2 := new(name: tree_name)!
 	tree2.scan(path: write_dir1.path)!
 	tree2.export(destination: write_dir2.path)!
 
 	// write tree2 another time to compare the output of the two
-	mut tree3 := new(name: doctree.tree_name)!
+	mut tree3 := new(name: tree_name)!
 	tree3.scan(path: write_dir2.path)!
 	tree3.export(destination: write_dir3.path)!
 

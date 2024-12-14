@@ -1,6 +1,6 @@
 module doctree
 
-import freeflowuniverse.crystallib.data.doctree.collection {CollectionError}
+import freeflowuniverse.crystallib.data.doctree.collection { CollectionError }
 import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.ui.console
 
@@ -34,8 +34,8 @@ fn (mut tree Tree) process_page_def_actions(mut p data.Page, mut c collection.Co
 	if def_actions.len > 1 {
 		c.error(
 			path: p.path
-			msg: 'a page can have at most one def action'
-			cat: .def
+			msg:  'a page can have at most one def action'
+			cat:  .def
 		)!
 	}
 
@@ -48,8 +48,8 @@ fn (mut tree Tree) process_page_def_actions(mut p data.Page, mut c collection.Co
 		if alias in tree.defs {
 			c.error(
 				path: p.path
-				msg: 'alias ${alias} is already used'
-				cat: .def
+				msg:  'alias ${alias} is already used'
+				cat:  .def
 			)!
 			continue
 		}
@@ -68,7 +68,11 @@ fn (mut tree Tree) replace_page_defs_with_links(mut p data.Page) ![]CollectionEr
 			def_data[def] = [referenced_page.key(), referenced_page.alias]
 		} else {
 			// accrue errors that occur
-			errors << CollectionError{path: p.path, msg: 'def ${def} is not defined', cat: .def}
+			errors << CollectionError{
+				path: p.path
+				msg:  'def ${def} is not defined'
+				cat:  .def
+			}
 			continue
 		}
 	}

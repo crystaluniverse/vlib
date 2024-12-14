@@ -13,7 +13,7 @@ pub enum PageStatus {
 @[heap]
 pub struct Page {
 mut:
-	doc           &Doc            @[str: skip]
+	doc           &Doc @[str: skip]
 	element_cache map[int]Element
 	changed       bool
 pub mut:
@@ -48,11 +48,11 @@ pub fn new_page(args NewPageArgs) !Page {
 		element_cache[child.id] = child
 	}
 	mut new_page := Page{
-		element_cache: element_cache
-		name: args.name
-		path: args.path
+		element_cache:   element_cache
+		name:            args.name
+		path:            args.path
 		collection_name: args.collection_name
-		doc: &doc
+		doc:             &doc
 	}
 	return new_page
 }
@@ -73,7 +73,7 @@ fn (page Page) doc_immute() !&Doc {
 		content := page.doc.markdown()!
 		doc := markdownparser.new(content: content, collection_name: page.collection_name)!
 		return &doc
-	} 
+	}
 	return page.doc
 }
 
@@ -129,7 +129,7 @@ pub fn (mut page Page) get_all_actions() ![]&Action {
 pub fn (page Page) get_include_actions() ![]Action {
 	mut actions := []Action{}
 	// TODO: check if below is necessary
-	// mut doc := page.doc_immute()!
+	mut doc := page.doc_immute()!
 	for element in page.doc.children_recursive() {
 		if element is Action {
 			if element.action.actor == 'wiki' && element.action.name == 'include' {

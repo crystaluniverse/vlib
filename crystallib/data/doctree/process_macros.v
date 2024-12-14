@@ -1,6 +1,6 @@
 module doctree
 
-import freeflowuniverse.crystallib.data.doctree.collection {Collection}
+import freeflowuniverse.crystallib.data.doctree.collection { Collection }
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook

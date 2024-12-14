@@ -14,7 +14,7 @@ pub fn (tree Tree) get_collection_with_pointer(p pointer.Pointer) !&collection.C
 	return tree.get_collection(p.collection) or {
 		return CollectionNotFound{
 			pointer: p
-			msg: '${err}'
+			msg:     '${err}'
 		}
 	}
 }

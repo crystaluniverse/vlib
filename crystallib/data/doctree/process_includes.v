@@ -2,7 +2,7 @@ module doctree
 
 // import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.data.doctree.pointer
-import freeflowuniverse.crystallib.data.doctree.collection {CollectionError}
+import freeflowuniverse.crystallib.data.doctree.collection { CollectionError }
 import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
@@ -65,8 +65,8 @@ pub fn (mut tree Tree) process_includes() ! {
 		mut col := tree.get_collection(page.collection_name)!
 		col.error(
 			path: page.path
-			msg: 'page ${key} is in an include cycle'
-			cat: .circular_import
+			msg:  'page ${key} is in an include cycle'
+			cat:  .circular_import
 		)!
 	}
 }
@@ -115,7 +115,7 @@ fn (mut tree Tree) collection_page_graph(col &collection.Collection) !map[string
 
 pub struct GraphResponse {
 pub:
-	graph map[string]map[string]bool
+	graph  map[string]map[string]bool
 	errors []CollectionError
 }
 
@@ -128,8 +128,8 @@ fn (tree Tree) generate_page_graph(current_page &data.Page, col_name string) !Gr
 		page_pointer := get_include_page_pointer(col_name, element.action) or {
 			errors << CollectionError{
 				path: current_page.path
-				msg: 'failed to get page pointer for include ${element.action.heroscript()}: ${err}'
-				cat: .include
+				msg:  'failed to get page pointer for include ${element.action.heroscript()}: ${err}'
+				cat:  .include
 			}
 			continue
 		}
@@ -147,7 +147,7 @@ fn (tree Tree) generate_page_graph(current_page &data.Page, col_name string) !Gr
 		graph[include_page.key()][current_page.key()] = true
 	}
 	return GraphResponse{
-		graph: graph
+		graph:  graph
 		errors: errors
 	}
 }
