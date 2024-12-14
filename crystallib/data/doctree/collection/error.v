@@ -1,6 +1,7 @@
 module collection
 
 import freeflowuniverse.crystallib.core.pathlib { Path }
+import freeflowuniverse.crystallib.data.doctree.pointer { Pointer }
 import freeflowuniverse.crystallib.ui.console
 
 pub enum CollectionErrorCat {
@@ -61,4 +62,23 @@ pub fn (collection Collection) errors_report(dest_ string, errors []CollectionEr
 	}
 	c := $tmpl('template/errors.md')
 	dest.write(c)!
+}
+
+fn error_pointer_not_found(ptr Pointer) CollectionError {
+	cat := match ptr.cat {
+		.page {
+			CollectionErrorCat.page_not_found
+		}
+		.image {
+			CollectionErrorCat.image_not_found
+		}
+		else {
+			CollectionErrorCat.file_not_found
+		}
+	}
+
+	return CollectionError{
+		msg: '${ptr.cat} ${ptr.str()} not found'
+		cat: cat
+	}
 }

@@ -100,3 +100,15 @@ pub fn (file_ File) copy(dest string) ! {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')
 	}
 }
+
+pub struct ExportParams {
+pub:
+	reset bool // whether the export will overwrite
+}
+
+pub fn (file File) export(dest string, params ExportParams) ! {
+	d := '${dest}/${file.name}.${file.ext}'
+	if params.reset || !os.exists(d) {
+		file.copy(d)!
+	}
+}

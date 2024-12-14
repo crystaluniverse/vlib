@@ -3,6 +3,7 @@ module data
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Doc, Element }
 import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.core.texttools.regext
 
 pub enum PageStatus {
 	unknown
@@ -161,4 +162,26 @@ pub fn (mut page Page) set_element_content_no_reparse(element_id int, content st
 
 	element.content = content
 	page.changed = true
+}
+
+@[params]
+pub struct ExportPageParams {
+pub mut:
+	dir_src        pathlib.Path
+	file_paths     map[string]string
+	keep_structure bool // wether the structure of the src collection will be preserved or not
+	replacer       ?regext.ReplaceInstructions
+}
+
+pub fn (p Page) export(directory string, params ExportPageParams) ! {
+	// TODO: implement export with keep structure, maybe higher
+	dest := '${directory}/${p.name}.md'
+
+	mut dest_path := pathlib.get_file(path: dest, create: true)!
+	mut markdown := p.get_markdown()!
+	if mut replacer := params.replacer {
+		markdown = replacer.replace(text: markdown)!
+	}
+
+	dest_path.write(markdown)!
 }

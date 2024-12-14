@@ -36,8 +36,7 @@ pub fn (mut tree Tree) export(args TreeExportArgs) ! {
 	tree.process_defs()!
 	tree.process_includes()!
 	tree.process_actions_and_macros()! // process other actions and macros
-
-	file_paths := tree.generate_paths()!
+	tree.process_links()!
 
 	console.print_green('exporting collections')
 
@@ -47,7 +46,6 @@ pub fn (mut tree Tree) export(args TreeExportArgs) ! {
 			ths << spawn fn (col Collection, dest_path pathlib.Path, file_paths map[string]string, args TreeExportArgs) ! {
 				col.export(
 					destination:    dest_path
-					file_paths:     file_paths
 					reset:          args.reset
 					keep_structure: args.keep_structure
 					exclude_errors: args.exclude_errors

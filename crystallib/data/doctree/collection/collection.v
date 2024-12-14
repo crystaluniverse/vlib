@@ -46,3 +46,14 @@ pub fn new(args_ CollectionNewArgs) !Collection {
 
 	return collection
 }
+
+fn (c Collection) get_linked_pages() ![]string {
+	mut linked_pages_set := map[string]bool{}
+	for _, page in c.pages {
+		for linked_page in page.get_linked_pages()! {
+			linked_pages_set[linked_page] = true
+		}
+	}
+
+	return linked_pages_set.keys()
+}
