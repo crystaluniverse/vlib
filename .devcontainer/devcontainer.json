@@ -15,7 +15,7 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "vlanguage.vscode-vlang",
+                "vosca.vscode-v-analyzer",
                 "saoudrizwan.claude-dev",
                 "ms-vscode.vscode-typescript-next",
                 "mhutchie.git-graph"
@@ -34,6 +34,6 @@
             "onAutoForward": "notify"
         }
     },    
-    // "postStartCommand": "bun run start",
+    "postStartCommand": "/root/code/github/freeflowuniverse/crystallib/install.sh",
     "remoteUser": "root"
 }

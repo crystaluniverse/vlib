@@ -51,11 +51,11 @@ pub fn (mut db NameDB) save() ! {
 pub fn (mut db NameDB) set(key string, data string) !u32 {
 	myid, mut mypath := db.key2path(key)!
 	// Check if the pubkey already exists in the file
-	mut line_num := 0
+	mut line_num := u32(0)
 	content := mypath.read()!
 	mut lines := content.trim_space().split_into_lines()
 	mut lines_out := []string{}
-	mut idfound := 0
+	mut idfound := u32(0)
 	for mut line in lines {
 		key_in_file, _ := namedb_process_line(mypath.path, line)
 		if key_in_file == key {
@@ -74,7 +74,7 @@ pub fn (mut db NameDB) set(key string, data string) !u32 {
 	}
 	mypath.write(lines.join('\n'))!
 
-	return u32(myid + lines.len - 1)
+	return myid + u32(lines.len) - 1
 }
 
 pub fn (mut db NameDB) delete(key string) ! {
@@ -99,13 +99,13 @@ pub fn (mut db NameDB) delete(key string) ! {
 // will store in a place where it can easily be found back and it returns a unique u32
 pub fn (mut db NameDB) get(key string) !(u32, string) {
 	myid, mut mypath := db.key2path(key)!
-	mut line_num := 0
+	mut line_num := u32(0)
 	content := mypath.read()!
 	mut lines := content.trim_space().split_into_lines()
 	for line in lines {
 		key_in_file, data := namedb_process_line(mypath.path, line)
 		if key_in_file == key {
-			return u32(myid + line_num), data
+			return myid + line_num, data
 		}
 		line_num += 1
 	}
@@ -146,10 +146,10 @@ pub fn (mut db NameDB) get_from_id(myid u32) !(string, string) {
 
 // calculate the id's as needed to create the path
 fn namedb_dbid(myid u32) (u8, u8, u16) {
-	a := u8(myid / (256 * 256))
-	a_post := myid - a * int(256 * 256)
+	a := u8(myid / u32(256 * 256))
+	a_post := myid - u32(a) * u32(256 * 256)
 	b := u8(a_post / 256)
-	b_post := a_post - b * int(256)
+	b_post := a_post - u32(b) * u32(256)
 	c := u16(b_post)
 	return a, b, c
 }
@@ -161,9 +161,9 @@ fn (mut db NameDB) key2path(key string) !(u32, pathlib.Path) {
 	}
 	a := hash_bytes[0] or { panic('bug') }
 	b := hash_bytes[1] or { panic('bug') }
-	mut myid := int(a) * 256 * 256 + int(b) * 256
-	mut mypath := db.dbpath(u32(myid))!
-	return u32(myid), mypath
+	myid := u32(int(a) * 256 * 256 + int(b) * 256)
+	mut mypath := db.dbpath(myid)!
+	return myid, mypath
 }
 
 fn namedb_process_line(path string, line string) (string, string) {

@@ -33,16 +33,13 @@ pub fn (mut self BaseConfig[T]) session() !&Session {
 
 // management class of the configs of this obj
 pub fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {
-	mut configurator := self.configurator_ or {
-		// session := self.session_ or { return error('base config must be initialized') }
+	if self.configurator_ == none {
 		mut c := configurator_new[T](
 			instance: self.instance
 		)!
 		self.configurator_ = c
-		self.configurator_ or { panic('s') }
 	}
-
-	return &configurator
+	return &(self.configurator_ or { return error('configurator not initialized') })
 }
 
 // will overwrite the config
@@ -56,7 +53,7 @@ pub fn (mut self BaseConfig[T]) config_new() !&T {
 		mut configurator := self.configurator()!
 		mut c := configurator.new()!
 		self.config_ = &c
-		self.config_ or { panic('s') }
+		&c
 	}
 
 	self.config_save()!

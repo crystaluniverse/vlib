@@ -57,8 +57,8 @@ pub fn (mut robot TFRobot[Config]) vm_deploy(args_ VMSpecs) !VMOutput {
 				name: node_group
 				nodes_count: 1
 				free_cpu: args.cores
-				free_mru: args.memory
-				free_ssd: size
+				free_mru: int(args.memory)
+				free_ssd: int(size)
 			},
 		]
 		vms: [
@@ -66,8 +66,8 @@ pub fn (mut robot TFRobot[Config]) vm_deploy(args_ VMSpecs) !VMOutput {
 				name: args.name
 				vms_count: 1
 				cpu: args.cores
-				mem: args.memory
-				root_size: size
+				mem: int(args.memory)
+				root_size: int(size)
 				node_group: node_group
 				ssh_key: 'SSH_KEY'
 				flist: flist
