@@ -1,16 +1,24 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import toml
-import toml.to
-import json
-import os
-import freeflowuniverse.crystallib.data.encoderhero
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.blockchain.stellar
 
+// create and fund a new account on testnet
+generated_account := stellar.generate_keys(name: 'account', network: .testnet, fund: true)!
+println('Account: ${generated_account}')
 
-mut cl:= stellar.new_horizon_client()!
+mut stellar_client := stellar.new_client(
+	account_name: generated_account.name
+	account_secret: generated_account.secret
+	network: .testnet
+	cache: false
+)!
 
-mut a:= cl.get_account("GB2KXHBMYRIKWNQCDK7TCOQ6ANOCD2OFTBHSS5FNIN7OS67I2UBMRHCO")!
+mut horizon_client := stellar.new_horizon_client(.testnet)!
 
-println(a)
+// get account information
+mut account := horizon_client.get_account(generated_account.address)!
+println('account: ${account}')
+
+// get infromation about last transaction for this account
+last_tx := horizon_client.get_last_transaction(generated_account.address)!
+println('last tx: ${last_tx}')

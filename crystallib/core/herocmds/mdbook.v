@@ -1,7 +1,9 @@
 module herocmds
 
 import freeflowuniverse.crystallib.web.mdbook
+import freeflowuniverse.crystallib.core.pathlib
 import cli { Command, Flag }
+import os
 import freeflowuniverse.crystallib.ui.console
 
 // path string //if location on filessytem, if exists, this has prio on git_url
@@ -52,7 +54,29 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 		description: 'will open the generated book.'
 	})
 
+
+	mut cmd_list := Command{
+		sort_flags: true
+		name: 'list'
+		execute: cmd_mdbook_list
+		description: 'will list existing mdbooks'
+	}
+
+	cmd_mdbook.add_command(cmd_list)
 	cmdroot.add_command(cmd_mdbook)
+}
+
+fn cmd_mdbook_list(cmd Command) ! {
+	console.print_header('MDBooks:')
+	build_path := os.join_path(os.home_dir(), 'hero/var/mdbuild')
+	mut build_dir := pathlib.get_dir(path: build_path)!
+	list := build_dir.list(
+		recursive: false
+		dirs_only: true
+	)!
+	for path in list.paths {
+		console.print_stdout(path.name())
+	}
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
@@ -65,7 +89,7 @@ fn cmd_mdbook_execute(cmd Command) ! {
 		mut plbook, _ := plbook_run(cmd)!
 		// get name from the book.generate action
 		if name == '' {
-			mut a := plbook.action_get(actor: 'mdbook', name: 'export')!
+			mut a := plbook.action_get(actor: 'mdbook', name: 'define')!
 			name = a.params.get('name') or { '' }
 		}
 	} else {

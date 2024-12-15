@@ -1,19 +1,19 @@
 module vfsourdb
 
 import freeflowuniverse.crystallib.vfs.vfscore
-import freeflowuniverse.crystallib.vfs.vfsourdb_core
+import freeflowuniverse.crystallib.vfs.ourdb_fs
 import os
 import time
 
 // OurDBVFS represents a VFS that uses OurDB as the underlying storage
 pub struct OurDBVFS {
 mut:
-	core &vfsourdb_core.VFS
+	core &ourdb_fs.VFS
 }
 
 // new creates a new OurDBVFS instance
 pub fn new(data_dir string, metadata_dir string) !&OurDBVFS {
-	mut core := vfsourdb_core.new(
+	mut core := ourdb_fs.new(
 		data_dir: data_dir
 		metadata_dir: metadata_dir
 	)!
@@ -41,7 +41,7 @@ pub fn (mut self OurDBVFS) file_create(path string) !vfscore.FSEntry {
 
 pub fn (mut self OurDBVFS) file_read(path string) ![]u8 {
 	mut entry := self.get_entry(path)!
-	if mut entry is vfsourdb_core.File {
+	if mut entry is ourdb_fs.File {
 		content := entry.read()!
 		return content.bytes()
 	}
@@ -50,7 +50,7 @@ pub fn (mut self OurDBVFS) file_read(path string) ![]u8 {
 
 pub fn (mut self OurDBVFS) file_write(path string, data []u8) ! {
 	mut entry := self.get_entry(path)!
-	if mut entry is vfsourdb_core.File {
+	if mut entry is ourdb_fs.File {
 		entry.write(data.bytestr())!
 	} else {
 		return error('Not a file: ${path}')
@@ -121,8 +121,8 @@ pub fn (mut self OurDBVFS) link_create(target_path string, link_path string) !vf
 
 	mut parent_dir := self.get_directory(parent_path)!
 	
-	mut symlink := vfsourdb_core.Symlink{
-		metadata: vfsourdb_core.Metadata{
+	mut symlink := ourdb_fs.Symlink{
+		metadata: ourdb_fs.Metadata{
 			id: u32(time.now().unix())
 			name: link_name
 			file_type: .symlink
@@ -144,7 +144,7 @@ pub fn (mut self OurDBVFS) link_create(target_path string, link_path string) !vf
 
 pub fn (mut self OurDBVFS) link_read(path string) !string {
 	mut entry := self.get_entry(path)!
-	if mut entry is vfsourdb_core.Symlink {
+	if mut entry is ourdb_fs.Symlink {
 		return entry.get_target()!
 	}
 	return error('Not a symlink: ${path}')
@@ -156,7 +156,7 @@ pub fn (mut self OurDBVFS) destroy() ! {
 
 // Helper functions
 
-fn (mut self OurDBVFS) get_entry(path string) !vfsourdb_core.FSEntry {
+fn (mut self OurDBVFS) get_entry(path string) !ourdb_fs.FSEntry {
 	if path == '/' {
 		return self.core.get_root()!
 	}
@@ -171,7 +171,7 @@ fn (mut self OurDBVFS) get_entry(path string) !vfsourdb_core.FSEntry {
 		for child in children {
 			if child.metadata.name == parts[i] {
 				match child {
-					vfsourdb_core.Directory {
+					ourdb_fs.Directory {
 						current = child
 						found = true
 						break
@@ -195,29 +195,29 @@ fn (mut self OurDBVFS) get_entry(path string) !vfsourdb_core.FSEntry {
 	return current
 }
 
-fn (mut self OurDBVFS) get_directory(path string) !&vfsourdb_core.Directory {
+fn (mut self OurDBVFS) get_directory(path string) !&ourdb_fs.Directory {
 	mut entry := self.get_entry(path)!
-	if mut entry is vfsourdb_core.Directory {
+	if mut entry is ourdb_fs.Directory {
 		return &entry
 	}
 	return error('Not a directory: ${path}')
 }
 
-fn convert_to_vfscore_entry(entry vfsourdb_core.FSEntry) vfscore.FSEntry {
+fn convert_to_vfscore_entry(entry ourdb_fs.FSEntry) vfscore.FSEntry {
 	match entry {
-		vfsourdb_core.Directory {
+		ourdb_fs.Directory {
 			return &DirectoryEntry{
 				metadata: convert_metadata(entry.metadata)
 				path: entry.metadata.name
 			}
 		}
-		vfsourdb_core.File {
+		ourdb_fs.File {
 			return &FileEntry{
 				metadata: convert_metadata(entry.metadata)
 				path: entry.metadata.name
 			}
 		}
-		vfsourdb_core.Symlink {
+		ourdb_fs.Symlink {
 			return &SymlinkEntry{
 				metadata: convert_metadata(entry.metadata)
 				path: entry.metadata.name
@@ -227,7 +227,7 @@ fn convert_to_vfscore_entry(entry vfsourdb_core.FSEntry) vfscore.FSEntry {
 	}
 }
 
-fn convert_metadata(meta vfsourdb_core.Metadata) vfscore.Metadata {
+fn convert_metadata(meta ourdb_fs.Metadata) vfscore.Metadata {
 	return vfscore.Metadata{
 		name: meta.name
 		file_type: match meta.file_type {

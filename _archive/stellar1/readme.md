@@ -2,7 +2,7 @@
 # Stellar Client
 
 
-see [examples/clients/b2_kristof.vsh](examples/clients/stellar.vsh) for example
+see [examples/clients/stellar.vsh](examples/clients/stellar.vsh) for example
 
 ```v
 mut cl:=stellar.get(instance:"test")!

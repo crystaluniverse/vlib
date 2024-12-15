@@ -1,4 +1,4 @@
-module vfsourdb_core
+module ourdb_fs
 
 
 // DataBlock represents a block of file data

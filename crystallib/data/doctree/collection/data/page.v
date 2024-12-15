@@ -39,7 +39,9 @@ pub fn new_page(args NewPageArgs) !Page {
 	if args.name == '' {
 		return error('page name must not be empty')
 	}
-	mut doc := markdownparser.new(path: args.path.path, collection_name: args.collection_name)!
+	mut doc := markdownparser.new(path: args.path.path, collection_name: args.collection_name) or {
+		return error('failed to parse doc for path ${args.path.path}\n${err}')
+	}
 	children := doc.children_recursive()
 	mut element_cache := map[int]Element{}
 	for child in children {
@@ -65,6 +67,16 @@ fn (mut page Page) doc() !&Doc {
 	return page.doc
 }
 
+// return doc, reparse if needed
+fn (page Page) doc_immute() !&Doc {
+	if page.changed {
+		content := page.doc.markdown()!
+		doc := markdownparser.new(content: content, collection_name: page.collection_name)!
+		return &doc
+	} 
+	return page.doc
+}
+
 // reparse doc markdown and assign new doc to page
 fn (mut page Page) reparse_doc(content string) ! {
 	doc := markdownparser.new(content: content, collection_name: page.collection_name)!
@@ -81,13 +93,13 @@ pub fn (page Page) key() string {
 	return '${page.collection_name}:${page.name}'
 }
 
-pub fn (mut page Page) get_linked_pages() ![]string {
-	doc := page.doc()!
+pub fn (page Page) get_linked_pages() ![]string {
+	doc := page.doc_immute()!
 	return doc.linked_pages
 }
 
-pub fn (mut page Page) get_markdown() !string {
-	mut doc := page.doc()!
+pub fn (page Page) get_markdown() !string {
+	mut doc := page.doc_immute()!
 	return doc.markdown()!
 }
 
@@ -114,17 +126,17 @@ pub fn (mut page Page) get_all_actions() ![]&Action {
 	return actions
 }
 
-pub fn (mut page Page) get_include_actions() ![]Action {
+pub fn (page Page) get_include_actions() ![]Action {
 	mut actions := []Action{}
-	mut doc := page.doc()!
-	for element in doc.children_recursive() {
+	// TODO: check if below is necessary
+	// mut doc := page.doc_immute()!
+	for element in page.doc.children_recursive() {
 		if element is Action {
 			if element.action.actor == 'wiki' && element.action.name == 'include' {
 				actions << *element
 			}
 		}
 	}
-
 	return actions
 }
 

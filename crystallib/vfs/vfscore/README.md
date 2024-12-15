@@ -1,6 +1,8 @@
 # Virtual File System (vfscore) Module
 
-This module provides a pluggable virtual filesystem interface with multiple implementations:
+> is the interface, should not have an implementation
+
+This module provides a pluggable virtual filesystem interface with one default implementation done for local.
 
 1. Local filesystem implementation (direct passthrough to OS filesystem)
 2. OurDB-based implementation (stores files and metadata in OurDB)
@@ -72,9 +74,9 @@ Features:
 - Preserves file permissions and metadata
 - Efficient for local file operations
 
-### OurDB Filesystem (vfsourdb_core)
+### OurDB Filesystem (ourdb_fs)
 
-The vfsourdb_core implementation stores files and metadata in OurDB, providing a database-backed virtual filesystem.
+The ourdb_fs implementation stores files and metadata in OurDB, providing a database-backed virtual filesystem.
 
 Features:
 - Persistent storage in OurDB

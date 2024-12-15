@@ -14,13 +14,10 @@ pub fn (mut self Codeblock) process() !int {
 		return 0
 	}
 	// QUESTION: should we process actions here?
-	mut pb := playbook.new(text: self.content)!
+	// mut pb := playbook.new(text: self.content)!
 	// if pb.actions.len > 0 {
-	// 	println('debugzo501')
 	// 	for action in pb.actions {
-	// 		println('debugzo502 ${action.name}')
 	// 		mut a := self.action_new(mut self.parent_doc(), '')
-	// 		println('debugzo503')
 	// 		a.action = action
 	// 		a.processed = true
 	// 		a.content = action.heroscript()

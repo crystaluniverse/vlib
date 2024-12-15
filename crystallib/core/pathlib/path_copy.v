@@ -1,6 +1,5 @@
 module pathlib
 
-import freeflowuniverse.crystallib.ui.console
 import os
 
 @[params]

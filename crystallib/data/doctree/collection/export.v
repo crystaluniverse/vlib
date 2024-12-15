@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools.regext
 import os
 import freeflowuniverse.crystallib.data.doctree.pointer
+import freeflowuniverse.crystallib.data.doctree.collection.data
 
 @[params]
 pub struct CollectionExportArgs {
@@ -16,24 +17,28 @@ pub mut:
 	replacer       ?regext.ReplaceInstructions
 }
 
-pub fn (mut c Collection) export(args CollectionExportArgs) ! {
+pub fn (c Collection) export(args CollectionExportArgs) ! {
 	dir_src := pathlib.get_dir(path: args.destination.path + '/' + c.name, create: true)!
 
 	mut cfile := pathlib.get_file(path: dir_src.path + '/.collection', create: true)! // will auto save it
 	cfile.write("name:${c.name} src:'${c.path.path}'")!
 
-	c.export_pages(
+	mut errors := c.errors.clone()
+	errors << export_pages(
+		c.path.path,
+		c.pages.values(),
 		dir_src: dir_src
 		file_paths: args.file_paths
 		keep_structure: args.keep_structure
 		replacer: args.replacer
 	)!
+
 	c.export_files(dir_src, args.reset)!
 	c.export_images(dir_src, args.reset)!
 	c.export_linked_pages(dir_src)!
 
 	if !args.exclude_errors {
-		c.errors_report('${dir_src.path}/errors.md')!
+		c.errors_report('${dir_src.path}/errors.md', errors)!
 	}
 }
 
@@ -47,16 +52,18 @@ pub mut:
 }
 
 // creates page file, processes page links, then writes page
-fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
-	for _, mut page in c.pages {
+fn export_pages(col_path string, pages []&data.Page, args ExportPagesArgs) ![]CollectionError {
+	mut errors := []CollectionError{}
+	for page in pages {
 		dest := if args.keep_structure {
-			relpath := page.path.path.trim_string_left(c.path.path)
+			relpath := page.path.path.trim_string_left(col_path)
 			'${args.dir_src.path}/${relpath}'
 		} else {
 			'${args.dir_src.path}/${page.name}.md'
 		}
 
 		not_found := page.process_links(args.file_paths)!
+		
 		for pointer_str in not_found {
 			ptr := pointer.pointer_new(text: pointer_str)!
 			cat := match ptr.cat {
@@ -70,7 +77,11 @@ fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
 					CollectionErrorCat.file_not_found
 				}
 			}
-			c.error(path: page.path, msg: '${ptr.cat} ${ptr.str()} not found', cat: cat)!
+			errors << CollectionError {
+				path: page.path
+				msg: '${ptr.cat} ${ptr.str()} not found'
+				cat: cat
+			}
 		}
 
 		mut dest_path := pathlib.get_file(path: dest, create: true)!
@@ -81,10 +92,11 @@ fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
 
 		dest_path.write(markdown)!
 	}
+	return errors
 }
 
-fn (mut c Collection) export_files(dir_src pathlib.Path, reset bool) ! {
-	for _, mut file in c.files {
+fn (c Collection) export_files(dir_src pathlib.Path, reset bool) ! {
+	for _, file in c.files {
 		mut d := '${dir_src.path}/img/${file.name}.${file.ext}'
 		if reset || !os.exists(d) {
 			file.copy(d)!
@@ -92,8 +104,8 @@ fn (mut c Collection) export_files(dir_src pathlib.Path, reset bool) ! {
 	}
 }
 
-fn (mut c Collection) export_images(dir_src pathlib.Path, reset bool) ! {
-	for _, mut file in c.images {
+fn (c Collection) export_images(dir_src pathlib.Path, reset bool) ! {
+	for _, file in c.images {
 		mut d := '${dir_src.path}/img/${file.name}.${file.ext}'
 		if reset || !os.exists(d) {
 			file.copy(d)!
@@ -101,15 +113,15 @@ fn (mut c Collection) export_images(dir_src pathlib.Path, reset bool) ! {
 	}
 }
 
-fn (mut c Collection) export_linked_pages(dir_src pathlib.Path) ! {
+fn (c Collection) export_linked_pages(dir_src pathlib.Path) ! {
 	collection_linked_pages := c.get_collection_linked_pages()!
 	mut linked_pages_file := pathlib.get_file(path: dir_src.path + '/.linkedpages', create: true)!
 	linked_pages_file.write(collection_linked_pages.join_lines())!
 }
 
-fn (mut c Collection) get_collection_linked_pages() ![]string {
+fn (c Collection) get_collection_linked_pages() ![]string {
 	mut linked_pages_set := map[string]bool{}
-	for _, mut page in c.pages {
+	for _, page in c.pages {
 		for linked_page in page.get_linked_pages()! {
 			linked_pages_set[linked_page] = true
 		}

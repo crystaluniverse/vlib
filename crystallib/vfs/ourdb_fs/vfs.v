@@ -1,13 +1,13 @@
-module vfsourdb_core
+module ourdb_fs
 import freeflowuniverse.crystallib.data.ourdb
 
-// VFS represents the virtual filesystem
+// OurDBFS represents the virtual filesystem
 @[heap]
-pub struct VFS {
+pub struct OurDBFS {
 pub mut:
 	root_id u32        // ID of root directory
 	block_size u32     // Size of data blocks in bytes
-	data_dir string    // Directory to store VFS data
+	data_dir string    // Directory to store OurDBFS data
 	metadata_dir string //Directory where we store the metadata
 	db_data &ourdb.OurDB   // Database instance for persistent storage
 	db_meta &ourdb.OurDB   // Database instance for metadata storage
@@ -15,7 +15,7 @@ pub mut:
 
 
 // get_root returns the root directory
-pub fn (mut fs VFS) get_root() !&Directory {
+pub fn (mut fs OurDBFS) get_root() !&Directory {
 	// Try to load root directory from DB if it exists
 	if data := fs.db_meta.get(fs.root_id) {
 		mut loaded_root := decode_directory(data) or {
@@ -36,7 +36,7 @@ pub fn (mut fs VFS) get_root() !&Directory {
 }
 
 // load_entry loads an entry from the database by ID and sets up parent references
-fn (mut fs VFS) load_entry(id u32) !FSEntry {
+fn (mut fs OurDBFS) load_entry(id u32) !FSEntry {
 	if data := fs.db_meta.get(id) {
 		// First byte is version, second byte indicates the type
 		//TODO: check we dont overflow filetype (u8 in boundaries of filetype)
@@ -70,7 +70,7 @@ fn (mut fs VFS) load_entry(id u32) !FSEntry {
 }
 
 // save_entry saves an entry to the database
-pub fn (mut fs VFS) save_entry(entry FSEntry) !u32 {
+pub fn (mut fs OurDBFS) save_entry(entry FSEntry) !u32 {
 	match entry {
 		Directory {
 			encoded := entry.encode()
@@ -94,7 +94,7 @@ pub fn (mut fs VFS) save_entry(entry FSEntry) !u32 {
 }
 
 // delete_entry deletes an entry from the database
-pub fn (mut fs VFS) delete_entry(id u32) ! {
+pub fn (mut fs OurDBFS) delete_entry(id u32) ! {
 	fs.db_meta.delete(id) or {
 		return error('Failed to delete entry: ${err}')
 	}

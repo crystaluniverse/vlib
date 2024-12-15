@@ -36,7 +36,9 @@ fn (mut collection Collection) scan_directory(mut p Path) ! {
 					path: entry
 					msg: 'Markdown files (${entry.path}) must not be linked'
 					cat: .unknown
-				)!
+				) or {
+					return error('Failed to collection error ${entry.path}:\n${err}')
+				}
 				continue
 			}
 
@@ -50,7 +52,9 @@ fn (mut collection Collection) scan_directory(mut p Path) ! {
 		}
 
 		if entry.is_dir() {
-			collection.scan_directory(mut entry)!
+			collection.scan_directory(mut entry) or {
+				return error('Failed to scan directory ${entry.path}:\n${err}')
+			}
 			continue
 		}
 
@@ -60,10 +64,14 @@ fn (mut collection Collection) scan_directory(mut p Path) ! {
 
 		match entry.extension_lower() {
 			'md' {
-				collection.add_page(mut entry)!
+				collection.add_page(mut entry) or {
+					return error('Failed to add page ${entry.path}:\n${err}')
+				}
 			}
 			else {
-				collection.file_image_remember(mut entry)!
+				collection.file_image_remember(mut entry) or {
+					return error('Failed to remember image ${entry.path}:\n${err}')
+				}
 			}
 		}
 	}
@@ -160,13 +168,17 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 // the page will be parsed as markdown
 pub fn (mut collection Collection) add_page(mut p Path) ! {
 	if collection.heal {
-		p.path_normalize()!
+		p.path_normalize() or {
+			return error('Failed to normalize path ${p.path}\n${err}')
+		}
 	}
 
 	mut ptr := pointer.pointer_new(
 		collection: collection.name
 		text: p.name()
-	)!
+	) or {
+		return error('Failed to get pointer for ${p.name()}\n${err}')
+	}
 
 	// in case heal is true pointer_new can normalize the path
 	if collection.page_exists(ptr.name) {
@@ -174,7 +186,9 @@ pub fn (mut collection Collection) add_page(mut p Path) ! {
 			path: p
 			msg: 'Can\'t add ${p.path}: a page named ${ptr.name} already exists in the collection'
 			cat: .page_double
-		)!
+		) or {
+			return error('Failed to report collection error for ${p.name()}\n${err}')
+		}
 		return
 	}
 
@@ -182,7 +196,9 @@ pub fn (mut collection Collection) add_page(mut p Path) ! {
 		name: ptr.name
 		path: p
 		collection_name: collection.name
-	)!
+	) or {
+		return error('Failed to create new page for ${ptr.name}\n${err}')
+	}
 
 	collection.pages[ptr.name] = &new_page
 }

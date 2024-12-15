@@ -1,15 +1,5 @@
 module meilisearch
 
-import freeflowuniverse.crystallib.clients.httpconnection
-
-// MeilisearchClient is the main client for interacting with Meilisearch
-pub struct MeilisearchClient {
-pub:
-	config ClientConfig
-mut:
-	http &httpconnection.HTTPConnection
-}
-
 // ClientConfig holds configuration for MeilisearchClient
 pub struct ClientConfig {
 pub:

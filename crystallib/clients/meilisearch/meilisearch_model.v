@@ -1,5 +1,6 @@
 module meilisearch
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.clients.httpconnection
 import os
 
 pub const version = '1.0.0'
@@ -25,7 +26,6 @@ pub mut:
     name string = 'default'
     api_key    string  @[secret]
     host string
-    httpclient ?httpconnection.HTTPConnection
 }
 
 fn cfg_play(p paramsparser.Params) ! {
@@ -36,8 +36,7 @@ fn cfg_play(p paramsparser.Params) ! {
         api_key: p.get('api_key')!
     }
     set(mycfg)!
-}     
-
+}
 
 fn obj_init(obj_ MeilisearchClient)!MeilisearchClient{
     //never call get here, only thing we can do here is work on object itself
@@ -46,10 +45,17 @@ fn obj_init(obj_ MeilisearchClient)!MeilisearchClient{
     return obj
 }
 
+fn (mut self MeilisearchClient) httpclient() !&httpconnection.HTTPConnection{
+    mut http_conn := httpconnection.new(
+		name:  'meilisearch'
+		url:   self.host
+	)!
 
-fn (mut self MeilisearchClient) httpclient() !httpconnection.HTTPConnection{
-    //todo
-    panic("implement")
+	// Add authentication header if API key is provided
+	if self.api_key.len > 0 {
+		http_conn.default_header.add(.authorization, 'Bearer ${self.api_key}')
+	}
+    return http_conn
 }
 
 

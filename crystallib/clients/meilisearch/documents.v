@@ -11,8 +11,8 @@ pub fn (mut client MeilisearchClient) add_documents[T](uid string, documents []T
 		method: .post
 		data:   json2.encode(documents)
 	}
-
-	response := client.http.post_json_str(req)!
+	mut http := client.httpclient()!
+	response := http.post_json_str(req)!
 	return json2.decode[AddDocumentResponse](response)!
 }
 
@@ -39,7 +39,8 @@ pub fn (mut client MeilisearchClient) get_document[T](args GetDocumentArgs) !T {
 		params: params
 	}
 
-	response := client.http.get_json(req)!
+	mut http := client.httpclient()!
+	response := http.get_json(req)!
 	return json.decode(T, response)
 }
 
@@ -64,7 +65,8 @@ pub fn (mut client MeilisearchClient) get_documents[T](uid string, query Documen
 		params: params
 	}
 
-	response := client.http.get_json(req)!
+	mut http := client.httpclient()!
+	response := http.get_json(req)!
 	decoded := json.decode(ListResponse[T], response)!
 	return decoded.results
 }
@@ -83,7 +85,8 @@ pub fn (mut client MeilisearchClient) delete_document(args DeleteDocumentArgs) !
 		method: .delete
 	}
 
-	response := client.http.delete(req)!
+	mut http := client.httpclient()!
+	response := http.delete(req)!
 	return json2.decode[DeleteDocumentResponse](response)!
 }
 
@@ -94,7 +97,8 @@ pub fn (mut client MeilisearchClient) delete_all_documents(uid string) !DeleteDo
 		method: .delete
 	}
 
-	response := client.http.delete(req)!
+	mut http := client.httpclient()!
+	response := http.delete(req)!
 	return json2.decode[DeleteDocumentResponse](response)!
 }
 
@@ -106,7 +110,8 @@ pub fn (mut client MeilisearchClient) update_documents(uid string, documents str
 		data:   documents
 	}
 
-	response := client.http.post_json_str(req)!
+	mut http := client.httpclient()!
+	response := http.post_json_str(req)!
 	return json2.decode[TaskInfo](response)!
 }
 
@@ -147,6 +152,84 @@ pub fn (mut client MeilisearchClient) search[T](uid string, args SearchArgs) !Se
 		method: .post
 		data:   json.encode(args)
 	}
-	rsponse := client.http.post_json_str(req)!
+	mut http := client.httpclient()!
+	rsponse := http.post_json_str(req)!
 	return json.decode(SearchResponse[T], rsponse)
+}
+
+@[params]
+struct FacetSearchArgs {
+   	facet_name            ?string	@[json: 'facetName'] // Facet name to search values on
+	facet_query           ?string 	@[json: 'facetQuery'] // Search query for a given facet value. Defaults to placeholder search if not specified.
+    q                     string 	// Query string
+    filter                ?string   // Filter queries by an attribute's value
+    matching_strategy     string = "last" @[json: 'matchingStrategy']  	// Strategy used to match query terms within documents
+    attributes_to_search_on ?[]string  @[json: 'attributesToSearchOn'] 	// Restrict search to the specified attributes
+}
+@[params]
+struct FacetSearchHitsResponse {
+	value  string   @[json: 'value'] // Facet value matching the facetQuery
+	count  int      @[json: 'count'] // Number of documents with a facet value matching value
+}
+
+@[params]
+struct FacetSearchResponse {
+	facet_hits       		[]FacetSearchHitsResponse   @[json: 'facetHits'] 	// Facet value matching the facetQuery
+    facet_query            string   @[json: 'facetQuery'] 		// The original facetQuery
+    processing_time_ms     int      @[json: 'processingTimeMs'] // Processing time of the query
+}
+
+pub fn (mut client MeilisearchClient) facet_search(uid string, args FacetSearchArgs) !FacetSearchResponse {
+	req := httpconnection.Request{
+		prefix: 'indexes/${uid}/facet-search'
+		method: .post
+		data:   json.encode(args)
+	}
+	mut http := client.httpclient()!
+	rsponse := http.post_json_str(req)!
+	return json.decode(FacetSearchResponse, rsponse)
+}
+
+@[params]
+struct SimilarDocumentsArgs{
+	id                       SimilarDocumentsID			@[json: "id"]                     			// Identifier of the target document (mandatory)
+    embedder                 string       = "default"	@[json: "embedder"] 	// Embedder to use when computing recommendations
+    attributes_to_retrieve   []string     = ["*"] 		@[json: "attributesToRetrieve"] 			// Attributes to display in the returned documents
+    offset                   int          				@[json: "offset"]      						// Number of documents to skip
+    limit                    int          = 20 			@[json: "limit"]      						// Maximum number of documents returned
+    filter                   ?string      				@[json: "filter"]                  			// Filter queries by an attribute's value
+    show_ranking_score       bool         				@[json: "showRankingScore"]  				// Display the global ranking score of a document
+    show_ranking_score_details bool       				@[json: "showRankingScoreDetails"] 			// Display detailed ranking score information
+    ranking_score_threshold  ?f64         				@[json: "rankingScoreThreshold"]   			// Exclude results with low ranking scores
+    retrieve_vectors         bool         				@[json: "retrieveVectors"] 					// Return document vector data
+}
+
+type SimilarDocumentsID = string | int
+@[params]
+struct SimilarDocumentsResponse {
+	hits                []SimilarDocumentsHit    	@[json: 'hits']                	// List of hit items
+    id                  string						@[json: 'id']                  	// Identifier of the response
+    processing_time_ms  int       					@[json: 'processingTimeMs']    	// Processing time in milliseconds
+    limit               int       = 20       		@[json: 'limit']    			// Maximum number of documents returned
+    offset              int              			@[json: 'offset']   			// Number of documents to skip
+    estimated_total_hits int      					@[json: 'estimatedTotalHits']  	// Estimated total number of hits
+}
+
+struct SimilarDocumentsHit {
+    id    SimilarDocumentsID 		@[json: 'id']    // Identifier of the hit item
+    title string 					@[json: 'title'] // Title of the hit item
+}
+
+
+pub fn (mut client MeilisearchClient) similar_documents(uid string, args SimilarDocumentsArgs) !SimilarDocumentsResponse {
+	req := httpconnection.Request{
+		prefix: 'indexes/${uid}/similar'
+		method: .post
+		data:   json.encode(args)
+	}
+	res := client.enable_eperimental_feature(vector_store: true)! // Enable the feature first.
+	mut http := client.httpclient()!
+	rsponse := http.post_json_str(req)!
+	println('rsponse: ${rsponse}')
+	return json.decode(SimilarDocumentsResponse, rsponse)
 }

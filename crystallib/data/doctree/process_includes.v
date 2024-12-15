@@ -2,6 +2,8 @@ module doctree
 
 // import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.data.doctree.pointer
+import freeflowuniverse.crystallib.data.doctree.collection {CollectionError}
+import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
 
@@ -38,7 +40,7 @@ pub fn (mut tree Tree) process_includes() ! {
 
 		// process page
 		for element in page.get_include_actions()! {
-			page_pointer := tree.get_include_page_pointer(col.name, element.action) or { continue }
+			page_pointer := get_include_page_pointer(col.name, element.action) or { continue }
 
 			mut include_page := tree.get_page_with_pointer(page_pointer) or { continue }
 
@@ -69,7 +71,7 @@ pub fn (mut tree Tree) process_includes() ! {
 	}
 }
 
-fn (mut tree Tree) get_include_page_pointer(collection_name string, a playbook.Action) !pointer.Pointer {
+fn get_include_page_pointer(collection_name string, a playbook.Action) !pointer.Pointer {
 	mut page_pointer_str := a.params.get('page')!
 
 	// handle includes
@@ -83,36 +85,69 @@ fn (mut tree Tree) get_include_page_pointer(collection_name string, a playbook.A
 
 fn (mut tree Tree) generate_pages_graph() !map[string]map[string]bool {
 	mut graph := map[string]map[string]bool{}
-	for _, mut collection in tree.collections {
-		for _, mut page in collection.pages {
-			mut current_page := page
-			_ := graph[current_page.key()] or {
-				map[string]bool{}
-			}
-			include_action_elements := current_page.get_include_actions()!
-			for element in include_action_elements {
-				page_pointer := tree.get_include_page_pointer(collection.name, element.action) or {
-					collection.error(
-						path: current_page.path
-						msg: 'failed to get page pointer for include ${element.action.heroscript()}: ${err}'
-						cat: .include
-					)!
-					continue
-				}
+	mut ths := []thread !map[string]map[string]bool{}
+	for _, mut col in tree.collections {
+		ths << spawn fn (mut tree Tree, col &collection.Collection) !map[string]map[string]bool {
+			return tree.collection_page_graph(col)!
+		}(mut tree, col)
+	}
+	for th in ths {
+		col_graph := th.wait()!
+		for k, v in col_graph {
+			graph[k] = v.clone()
+		}
+	}
+	return graph
+}
 
-				include_page := tree.get_page_with_pointer(page_pointer) or {
-					collection.error(
-						path: current_page.path
-						msg: 'failed to get page for include ${element.action.heroscript()}: ${err.msg()}'
-						cat: .include
-					)!
-					continue
-				}
-
-				graph[include_page.key()][current_page.key()] = true
-			}
+fn (mut tree Tree) collection_page_graph(col &collection.Collection) !map[string]map[string]bool {
+	mut graph := map[string]map[string]bool{}
+	mut ths := []thread !GraphResponse{}
+	for _, page in col.pages {
+		resp := tree.generate_page_graph(page, col.name)!
+		for k, v in resp.graph {
+			graph[k] = v.clone()
 		}
 	}
 
 	return graph
+}
+
+pub struct GraphResponse {
+pub:
+	graph map[string]map[string]bool
+	errors []CollectionError
+}
+
+fn (tree Tree) generate_page_graph(current_page &data.Page, col_name string) !GraphResponse {
+	mut graph := map[string]map[string]bool{}
+	mut errors := []CollectionError{}
+
+	include_action_elements := current_page.get_include_actions()!
+	for element in include_action_elements {
+		page_pointer := get_include_page_pointer(col_name, element.action) or {
+			errors << CollectionError{
+				path: current_page.path
+				msg: 'failed to get page pointer for include ${element.action.heroscript()}: ${err}'
+				cat: .include
+			}
+			continue
+		}
+
+		include_page := tree.get_page_with_pointer(page_pointer) or {
+			// TODO
+			// col.error(
+			// 	path: current_page.path
+			// 	msg: 'failed to get page for include ${element.action.heroscript()}: ${err.msg()}'
+			// 	cat: .include
+			// )!
+			continue
+		}
+
+		graph[include_page.key()][current_page.key()] = true
+	}
+	return GraphResponse{
+		graph: graph
+		errors: errors
+	}
 }
