@@ -1,4 +1,4 @@
-module vfsourdb_core
+module ourdb_fs
 
 import time
 
@@ -8,7 +8,7 @@ pub mut:
 	metadata Metadata  // Metadata from models_common.v
 	data string       // File content stored in DB
 	parent_id u32     // ID of parent directory
-	myvfs &VFS @[skip]
+	myvfs &OurDBFS @[skip]
 }
 
 pub fn (mut f File) save() ! {

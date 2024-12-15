@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.blockchain
 
 
-heropath := '/Users/despiegk1/private_new/tft/data/hero'
+heropath := '~/private_new/tft/data/hero'
 
 
 mut bc:=blockchain.get()!

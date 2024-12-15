@@ -1,15 +1,16 @@
-# Virtual Filesystem (VFS) as implemented on top of ourdb
+# a OurDBFS: filesystem interface on top of ourbd
 
-A Virtual Filesystem implementation in V that provides an abstraction layer over a key-value store database. The VFS manages files and directories using unique identifiers (u32) as keys and binary data ([]u8) as values.
+The OurDBFS manages files and directories using unique identifiers (u32) as keys and binary data ([]u8) as values.
 
-This is the underlying VFS for the other vfsourdb, which is in line to interface of the vfscore
 
 ## Architecture
 
-### Storage Backend
+### Storage Backend (the ourdb)
+
 - Uses a key-value store where keys are u32 and values are []u8 (bytes)
 - Stores both metadata and file data in the same database
 - Example usage of underlying database:
+
 ```v
 import crystallib.data.ourdb
 
@@ -27,7 +28,8 @@ db_meta.delete(1)!
 
 ### Core Components
 
-#### 1. Common Metadata (models_common.v)
+#### 1. Common Metadata (common.v)
+
 All filesystem entries (files and directories) share common metadata:
 ```v
 pub struct Metadata {
@@ -44,7 +46,7 @@ pub struct Metadata {
 }
 ```
 
-#### 2. Files (models_file.v)
+#### 2. Files (file.v)
 Files are represented as:
 ```v
 pub struct File {
@@ -54,7 +56,7 @@ pub struct File {
 }
 ```
 
-#### 3. Directories (models_directory.v)
+#### 3. Directories (directory.v)
 Directories are represented as:
 ```v
 pub struct Directory {
@@ -64,7 +66,7 @@ pub struct Directory {
 }
 ```
 
-#### 4. Data Storage (models_data.v)
+#### 4. Data Storage (data.v)
 File data is stored in blocks:
 ```v
 pub struct DataBlock {
@@ -120,6 +122,9 @@ pub enum FileType {
    - Uses child IDs for efficient navigation
 
 ### TODO Items
+
+
+> TODO: what is implemented and what not?
 
 1. Directory Implementation
    - Implement recursive listing functionality
