@@ -31,5 +31,4 @@ pub fn (mut client IJsonRpcClient) send_json_rpc[T, D](method string, data T, ti
 @[params]
 pub struct ClientConfig {
 	address string // address of ws server
-	logger  &log.Logger
 }
