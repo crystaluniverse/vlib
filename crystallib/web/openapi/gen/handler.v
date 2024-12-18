@@ -12,7 +12,7 @@ pub fn openapi_to_handler_file(spec OpenAPI) string {
 			if operation is openapi.Operation {
 				operation_id := operation.operation_id
 				params := operation.parameters.map(it.name).join(', ')
-				
+
 				// Generate individual handler
 				handler := generate_individual_handler(method_name, operation_id, params)
 				operation_handlers << handler
@@ -48,14 +48,14 @@ pub fn openapi_to_handler_file(spec OpenAPI) string {
 
 // Helper function to generate individual handlers
 fn generate_individual_handler(method string, operation_id string, params string) string {
-	mut handler := '// Handler for $operation_id\n'
-	handler += "fn (mut actor Actor) handle_$operation_id(data string) !string {\n"
-	handler += "    println('Handling $operation_id with data: \$data')\n"
+	mut handler := '// Handler for ${operation_id}\n'
+	handler += 'fn (mut actor Actor) handle_${operation_id}(data string) !string {\n'
+	handler += "    println('Handling ${operation_id} with data: \$data')\n"
 	if params.len > 0 {
-		handler += '    params := json.decode($params, data) or { return error("Invalid input data: \$err") }\n'
-		handler += '    result := actor.data_store.$operation_id(params)\n'
+		handler += '    params := json.decode(${params}, data) or { return error("Invalid input data: \$err") }\n'
+		handler += '    result := actor.data_store.${operation_id}(params)\n'
 	} else {
-		handler += '    result := actor.data_store.$operation_id()\n'
+		handler += '    result := actor.data_store.${operation_id}()\n'
 	}
 	handler += '    return json.encode(result)\n'
 	handler += '}'
@@ -64,10 +64,10 @@ fn generate_individual_handler(method string, operation_id string, params string
 
 // Helper function to generate a case block for the main router
 fn generate_route_case(method string, path string, operation_id string) string {
-	mut case_block := '        "$operation_id" {'
-	case_block += '\n            println("Handling $operation_id for $method $path")'
-	case_block += '\n            response := h.actor.handle_$operation_id(req.body) or {'
-	case_block += '\n                return Response{ status: http.Status.internal_server_error, body: "Internal server error: $err" }'
+	mut case_block := '        "${operation_id}" {'
+	case_block += '\n            println("Handling ${operation_id} for ${method} ${path}")'
+	case_block += '\n            response := h.actor.handle_${operation_id}(req.body) or {'
+	case_block += '\n                return Response{ status: http.Status.internal_server_error, body: "Internal server error: ${err}" }'
 	case_block += '\n            }'
 	case_block += '\n            return Response{ status: http.Status.ok, body: response }'
 	case_block += '\n        }'

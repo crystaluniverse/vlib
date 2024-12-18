@@ -1,8 +1,38 @@
-import redis
 import json
 import time
 import rand
 import sync
+
+// Mock Redis client implementation
+struct MockRedisClient {
+mut:
+    queues map[string][]string
+}
+
+fn new_mock_redis() &MockRedisClient {
+    return &MockRedisClient{
+        queues: map[string][]string{}
+    }
+}
+
+fn (mut r MockRedisClient) blpop(keys []string, timeout int) ![]string {
+    for key in keys {
+        if key in r.queues && r.queues[key].len > 0 {
+            value := r.queues[key][0]
+            r.queues[key] = r.queues[key][1..]
+            return [key, value]
+        }
+    }
+    return error('no data available')
+}
+
+fn (mut r MockRedisClient) rpush(key string, value string) !int {
+    if key !in r.queues {
+        r.queues[key] = []string{}
+    }
+    r.queues[key] << value
+    return r.queues[key].len
+}
 
 // Define the state of a Raft node
 enum NodeState {
@@ -29,6 +59,7 @@ struct Message {
 // Raft Node structure
 struct RaftNode {
     id             int
+mut:
     state          NodeState
     current_term   int
     voted_for      int
@@ -36,9 +67,9 @@ struct RaftNode {
     commit_index   int
     last_applied   int
     peers          []int
-    redis_client   &redis.Redis
-    election_reset time.Time
-    mutex          &sync.Mutex
+    redis_client   &MockRedisClient = new_mock_redis()
+    election_reset i64         // Monotonic timestamp
+    mutex          &sync.Mutex = sync.new_mutex()
 }
 
 // Initialize the node
@@ -48,11 +79,7 @@ fn (mut rn RaftNode) init_node() {
     rn.voted_for = -1
     rn.commit_index = 0
     rn.last_applied = 0
-    rn.election_reset = time.now()
-    rn.mutex = &sync.Mutex{}
-    rn.redis_client = redis.connect('localhost:6379') or {
-        panic('Failed to connect to Redis: $err')
-    }
+    rn.election_reset = time.unix()
 }
 
 // Start the Raft node
@@ -74,10 +101,10 @@ fn (mut rn RaftNode) run() {
 
 // Follower state behavior
 fn (mut rn RaftNode) follower() {
-    timeout := rand.int_in_range(150, 300) or { 200 }
+    timeout := 200 * time.millisecond
     for rn.state == .follower {
-        elapsed := time.now() - rn.election_reset
-        if elapsed > timeout * time.millisecond {
+        now := time.sys_mono_now()
+        if now - rn.election_reset > timeout {
             rn.state = .candidate
             break
         }
@@ -90,8 +117,8 @@ fn (mut rn RaftNode) candidate() {
     rn.mutex.@lock()
     rn.current_term += 1
     rn.voted_for = rn.id
-    rn.election_reset = time.now()
-    votes_received := 1
+    rn.election_reset = time.sys_mono_now()
+    mut votes_received := 1
     rn.mutex.unlock()
 
     // Send RequestVote RPCs to all peers
@@ -99,10 +126,10 @@ fn (mut rn RaftNode) candidate() {
         go rn.send_request_vote(peer_id)
     }
 
-    timeout := rand.int_in_range(150, 300) or { 200 }
+    timeout := 200 * time.millisecond
     for rn.state == .candidate {
-        elapsed := time.now() - rn.election_reset
-        if elapsed > timeout * time.Duration.milliseconds {
+        now := time.sys_mono_now()
+        if now - rn.election_reset > timeout {
             // Election timeout
             break
         }
@@ -122,7 +149,7 @@ fn (mut rn RaftNode) candidate() {
 // Leader state behavior
 fn (mut rn RaftNode) leader() {
     // Send heartbeats to all followers
-    heartbeat_interval := 50 * time.
+    heartbeat_interval := 50 * time.millisecond
     for rn.state == .leader {
         for peer_id in rn.peers {
             go rn.send_append_entries(peer_id, [])
@@ -173,10 +200,10 @@ fn (mut rn RaftNode) handle_message(msg Message) {
 // Send RequestVote RPC
 fn (mut rn RaftNode) send_request_vote(peer_id int) {
     msg := Message{
-        msg_type: 'RequestVote',
-        term: rn.current_term,
-        sender: rn.id,
-        receiver: peer_id,
+        msg_type: 'RequestVote'
+        term: rn.current_term
+        sender: rn.id
+        receiver: peer_id
         data: {
             'last_log_index': rn.log.len - 1
             'last_log_term': if rn.log.len > 0 { rn.log[rn.log.len - 1].term } else { 0 }
@@ -187,7 +214,7 @@ fn (mut rn RaftNode) send_request_vote(peer_id int) {
 
 // Handle RequestVote RPC
 fn (mut rn RaftNode) handle_request_vote(msg Message) {
-    mut vote_granted := false
+    mut vote_granted := 0
     rn.mutex.@lock()
     if msg.term > rn.current_term {
         rn.current_term = msg.term
@@ -196,17 +223,17 @@ fn (mut rn RaftNode) handle_request_vote(msg Message) {
     }
     if (rn.voted_for == -1 || rn.voted_for == msg.sender) && msg.term >= rn.current_term {
         rn.voted_for = msg.sender
-        vote_granted = true
-        rn.election_reset = time.now()
+        vote_granted = 1
+        rn.election_reset = time.sys_mono_now()
     }
     rn.mutex.unlock()
 
     // Send response
     response := Message{
-        msg_type: 'RequestVoteResponse',
-        term: rn.current_term,
-        sender: rn.id,
-        receiver: msg.sender,
+        msg_type: 'RequestVoteResponse'
+        term: rn.current_term
+        sender: rn.id
+        receiver: msg.sender
         data: {
             'vote_granted': vote_granted
         }
@@ -234,10 +261,10 @@ fn (mut rn RaftNode) handle_request_vote_response(msg Message) {
 // Send AppendEntries RPC (Heartbeat)
 fn (mut rn RaftNode) send_append_entries(peer_id int, entries []LogEntry) {
     msg := Message{
-        msg_type: 'AppendEntries',
-        term: rn.current_term,
-        sender: rn.id,
-        receiver: peer_id,
+        msg_type: 'AppendEntries'
+        term: rn.current_term
+        sender: rn.id
+        receiver: peer_id
         data: {
             'prev_log_index': rn.log.len - 1
             'prev_log_term': if rn.log.len > 0 { rn.log[rn.log.len - 1].term } else { 0 }
@@ -257,10 +284,10 @@ fn (mut rn RaftNode) handle_append_entries(msg Message) {
     if msg.term < rn.current_term {
         // Reply false if term is outdated
         response := Message{
-            msg_type: 'AppendEntriesResponse',
-            term: rn.current_term,
-            sender: rn.id,
-            receiver: msg.sender,
+            msg_type: 'AppendEntriesResponse'
+            term: rn.current_term
+            sender: rn.id
+            receiver: msg.sender
             data: {
                 'success': 0
             }
@@ -271,14 +298,14 @@ fn (mut rn RaftNode) handle_append_entries(msg Message) {
 
     rn.current_term = msg.term
     rn.state = .follower
-    rn.election_reset = time.now()
+    rn.election_reset = time.sys_mono_now()
     // For simplicity, we ignore log consistency checks in this PoC
     // Acknowledge heartbeat
     response := Message{
-        msg_type: 'AppendEntriesResponse',
-        term: rn.current_term,
-        sender: rn.id,
-        receiver: msg.sender,
+        msg_type: 'AppendEntriesResponse'
+        term: rn.current_term
+        sender: rn.id
+        receiver: msg.sender
         data: {
             'success': 1
         }
@@ -301,7 +328,7 @@ fn (mut rn RaftNode) handle_append_entries_response(msg Message) {
 }
 
 // Send a message to a peer via Redis queue
-fn (rn &RaftNode) send_message(msg Message) {
+fn (mut rn RaftNode) send_message(msg Message) {
     queue_name := 'node_${msg.receiver}_queue'
     msg_json := json.encode(msg)
     rn.redis_client.rpush(queue_name, msg_json) or {
@@ -345,14 +372,14 @@ fn main() {
     }
 
     // Start nodes
-    for node in nodes {
+    for mut node in nodes {
         go node.start()
     }
 
     // Simulate submitting commands from the leader
-    time.sleep(1 * time.second) // Wait for leader election
-    leader_id := nodes[0].id // For simplicity, assume first node is leader after election
-    for node in nodes {
+    time.sleep(1000 * time.millisecond) // Wait for leader election
+    mut leader_id := nodes[0].id // For simplicity, assume first node is leader after election
+    for mut node in nodes {
         if node.state == .leader {
             leader_id = node.id
             node.submit_command('Set X = 10')
@@ -362,6 +389,6 @@ fn main() {
 
     // Keep the program running
     for {
-        time.sleep(1 * time.second)
+        time.sleep(1000 * time.millisecond)
     }
 }

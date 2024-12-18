@@ -10,49 +10,49 @@ import os
 
 pub const version = '2.8.4'
 
-@[params]
-pub struct InstallArgs {
-pub mut:
-	reset     bool
-	start     bool
-	restart   bool
-	stop      bool
-	homedir   string = '/var/www'
-	file_path string   // path to caddyfile
-	file_url  string   // path to caddyfile
-	xcaddy    bool     // wether to install caddy with xcaddy
-	plugins   []string // list of plugins to build caddy with
-}
+// @[params]
+// pub struct InstallArgs {
+// pub mut:
+// 	reset     bool
+// 	start     bool
+// 	restart   bool
+// 	stop      bool
+// 	homedir   string = '/var/www'
+// 	file_path string   // path to caddyfile
+// 	file_url  string   // path to caddyfile
+// 	xcaddy    bool     // wether to install caddy with xcaddy
+// 	plugins   []string // list of plugins to build caddy with
+// }
 
-// install caddy will return true if it was already installed
-pub fn install(args_ InstallArgs) ! {
-	mut args := args_
-	version := '2.8.4'
+// // install caddy will return true if it was already installed
+// pub fn install(args_ InstallArgs) ! {
+// 	mut args := args_
+// 	version := '2.8.4'
 
-	installed := is_installed(version)!
+// 	installed := is_installed(version)!
 
-	if args.reset || !installed {
-		console.print_header('install caddy')
-		if args.xcaddy || args.plugins.len > 0 {
-			golang.install()!
-			install_caddy_with_xcaddy(args.plugins)!
-		} else {
-			install_caddy_from_release()!
-		}
-	} else if args.plugins.any(!plugin_is_installed(it)!) {
-		golang.install()!
-		install_caddy_with_xcaddy(args.plugins)!
-	}
+// 	if args.reset || !installed {
+// 		console.print_header('install caddy')
+// 		if args.xcaddy || args.plugins.len > 0 {
+// 			golang.install()!
+// 			install_caddy_with_xcaddy(args.plugins)!
+// 		} else {
+// 			install_caddy_from_release()!
+// 		}
+// 	} else if args.plugins.any(!plugin_is_installed(it)!) {
+// 		golang.install()!
+// 		install_caddy_with_xcaddy(args.plugins)!
+// 	}
 
-	if args.restart {
-		restart(args)!
-		return
-	}
+// 	if args.restart {
+// 		restart(args)!
+// 		return
+// 	}
 
-	if args.start {
-		start(args)!
-	}
-}
+// 	if args.start {
+// 		start(args)!
+// 	}
+// }
 
 pub fn is_installed(version string) !bool {
 	res := os.execute('${osal.profile_path_source_and()} caddy version')

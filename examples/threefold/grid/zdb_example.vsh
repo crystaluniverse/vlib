@@ -1,22 +1,18 @@
-
-
-struct ZDBSpecs{
+struct ZDBSpecs {
 	deployment_name string
-	nodeid string
-	namespace string
-	secret string
+	nodeid          string
+	namespace       string
+	secret          string
 }
 
-struct ZDBDeployed{
-	nodeid string
+struct ZDBDeployed {
+	nodeid    string
 	namespace string
-	secret string
+	secret    string
 }
 
-
-//test zdb is answering
+// test zdb is answering
 pub fn (vm ZDBDeployed) ping() bool {
-
 }
 
 pub fn (vm ZDBDeployed) redisclient() !RedisClient {
@@ -24,8 +20,7 @@ pub fn (vm ZDBDeployed) redisclient() !RedisClient {
 	return error('not implemented')
 }
 
-//only connect to yggdrasil and mycelium
+// only connect to yggdrasil and mycelium
 //
-fn zdb_deploy(args_ ZDBSpecs) ZDBDeployed{
-
+fn zdb_deploy(args_ ZDBSpecs) ZDBDeployed {
 }

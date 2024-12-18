@@ -1,8 +1,12 @@
 module main
 
+// Define sum types for optional struct references
+pub type OptionalStructA = StructA | none
+pub type OptionalStructB = StructB | none
+
 pub struct StructB {
 pub mut:
-	a_link none|StructA @[str: skip]
+	a_link OptionalStructA @[str: skip]
 	c      string = 'koekoe'
 }
 
@@ -12,7 +16,7 @@ pub fn (mut s StructB) koekoe() string {
 
 pub struct StructA {
 pub mut:
-	b     none|StructB
+	b     OptionalStructB
 	debug bool
 }
 

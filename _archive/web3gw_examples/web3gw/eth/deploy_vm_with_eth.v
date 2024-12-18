@@ -99,10 +99,12 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, args Arguments) !
 		env_vars:             {
 			'SSH_KEY': args.ssh_key
 		}
-		disks:                [tfgrid.Disk{
-			size:       10
-			mountpoint: '/mnt/disk1'
-		}]
+		disks:                [
+			tfgrid.Disk{
+				size:       10
+				mountpoint: '/mnt/disk1'
+			},
+		]
 		description:          'My deployment using ethereum'
 	})!
 	logger.info('machines deployment: ${machines_deployment}')

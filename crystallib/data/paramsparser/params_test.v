@@ -72,15 +72,18 @@ fn test_hexhash() {
 fn test_textin3() {
 	params := parse(textin3) or { panic(err) }
 	assert params == Params{
-		params:   [Param{
-			key:     'id'
-			value:   'a1'
-			comment: 'comment 2'
-		}, Param{
-			key:     'name6'
-			value:   'aaaaa'
-			comment: ''
-		}]
+		params:   [
+			Param{
+				key:     'id'
+				value:   'a1'
+				comment: 'comment 2'
+			},
+			Param{
+				key:     'name6'
+				value:   'aaaaa'
+				comment: ''
+			},
+		]
 		args:     ['zz']
 		comments: ['comment 1']
 	}

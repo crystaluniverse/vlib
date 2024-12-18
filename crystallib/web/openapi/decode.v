@@ -1,10 +1,8 @@
 module openapi
 
 import json
-import x.json2 {Any}
+import x.json2 { Any }
 import freeflowuniverse.crystallib.data.jsonschema
-
-
 
 pub fn json_decode(data string) !OpenAPI {
 	// Decode the raw JSON into a map to allow field-specific processing
@@ -33,7 +31,7 @@ pub fn json_decode(data string) !OpenAPI {
 
 pub fn json_decode_components(components_ Components, components_map map[string]Any) !Components {
 	mut components := components_
-	
+
 	if 'schemas' in components_map {
 		components.schemas = jsonschema.decode_schemaref_map(components_map['schemas'].as_map())!
 	}
@@ -42,7 +40,7 @@ pub fn json_decode_components(components_ Components, components_map map[string]
 
 pub fn json_decode_path(path_ PathItem, path_map map[string]Any) !PathItem {
 	mut path := path_
-	
+
 	for key in path_map.keys() {
 		match key {
 			'get' {
@@ -87,27 +85,27 @@ pub fn json_decode_path(path_ PathItem, path_map map[string]Any) !PathItem {
 
 pub fn json_decode_operation(operation_ Operation, operation_map map[string]Any) !Operation {
 	mut operation := operation_
-	
+
 	if 'requestBody' in operation_map {
 		request_body_any := operation_map['requestBody']
 		request_body_map := request_body_any.as_map()
 
 		if 'content' in request_body_map {
 			mut request_body := json.decode(RequestBody, request_body_any.str())!
-			// mut request_body := operation.request_body as RequestBody 
+			// mut request_body := operation.request_body as RequestBody
 			mut content := request_body.content.clone()
 			content_map := request_body_map['content'].as_map()
 			request_body.content = json_decode_content(content, content_map)!
 			operation.request_body = request_body
 		}
 	}
-	
+
 	if 'responses' in operation_map {
 		responses_map := operation_map['responses'].as_map()
 		for key, response_any in responses_map {
 			response_map := response_any.as_map()
 			if 'content' in response_map {
-				mut response := operation.responses[key] 
+				mut response := operation.responses[key]
 				mut content := response.content.clone()
 				content_map := response_map['content'].as_map()
 				response.content = json_decode_content(content, content_map)!
@@ -171,7 +169,6 @@ fn json_decode_content(content_ map[string]MediaType, content_map map[string]Any
 // 			arr := decode_array(val, field_array)!
 // 			obj.$(field.name) = arr
 // 		}
-
 
 // 		println('field ${field.name} ${typeof(field.typ)}')
 // 		field_map := data_map[field.name].as_map()

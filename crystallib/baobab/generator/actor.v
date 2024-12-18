@@ -9,6 +9,31 @@ import freeflowuniverse.crystallib.rpc.openrpc
 import freeflowuniverse.crystallib.core.pathlib
 import os
 import json
+import write_object_methods { generate_delete_method, generate_filter_method, generate_filter_params, generate_get_method, generate_list_method, generate_list_result_struct, generate_new_method, generate_object_methods, generate_set_method }
+import write_object_tests { generate_object_test_code }
+import openrpc
+
+pub struct Actor {
+pub mut:
+	name        string
+	description string
+	structure   Struct
+	methods     []ActorMethod
+	objects     []BaseObject
+}
+
+pub struct BaseObject {
+pub mut:
+	structure Struct
+	methods   []Function
+	children  []Struct
+}
+
+pub struct ActorMethod {
+pub mut:
+	name string
+	func Function
+}
 
 fn get_children(s Struct, code []CodeItem) []Struct {
 	structs := code.filter(it is Struct).map(it as Struct)
@@ -30,13 +55,13 @@ pub fn generate_actor(name string, object_names []string, code []CodeItem) !Acto
 		s.mod = 'tftc.baobab.models.${s.mod}'
 		objects << BaseObject{
 			structure: s
-			methods: code.filter(it is Function).map(it as Function).filter(it.receiver.typ.symbol == s.name).map(it as Function)
-			children: get_children(s, code)
+			methods:   code.filter(it is Function).map(it as Function).filter(it.receiver.typ.symbol == s.name).map(it as Function)
+			children:  get_children(s, code)
 		}
 	}
 
 	mut actor := Actor{
-		name: name
+		name:    name
 		objects: objects
 		// mod: generate_actor_module(name, objects)!
 	}
@@ -115,9 +140,9 @@ pub fn (a Actor) generate_module() !Module {
 	actor_struct := generate_actor_struct(a.name)
 
 	readme := File{
-		name: 'README'
+		name:      'README'
 		extension: 'md'
-		content: '# ${a.name}\n${a.description}'
+		content:   '# ${a.name}\n${a.description}'
 	}
 	mut files := [
 		generate_factory_file(a.name),
@@ -131,17 +156,23 @@ pub fn (a Actor) generate_module() !Module {
 	}
 
 	// generate code files for each of the objects the actor is responsible for
-	mut methods_file := CodeFile {}
-	mut items :=
-
+	mut methods_file := CodeFile{
+		mod:  texttools.name_fix(a.name)
+		name: 'methods'
+	}
+	mut items := []CodeItem{}
+	for method in a.methods {
+		items << CodeItem(method.func)
+	}
+	methods_file.items = items
+	files << methods_file
 
 	return Module{
-		name: a.name
-		files: files
+		name:       a.name
+		files:      files
 		misc_files: [readme]
 	}
 }
-
 
 pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
 	obj_name := texttools.name_fix_pascal_to_snake(object.structure.name)
@@ -154,19 +185,19 @@ pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
 
 	items << generate_object_methods(actor, object)
 	mut file := codemodel.new_file(
-		mod: texttools.name_fix(actor.name)
-		name: obj_name
+		mod:     texttools.name_fix(actor.name)
+		name:    obj_name
 		imports: [
 			Import{
-				mod: object.structure.mod
+				mod:   object.structure.mod
 				types: [object_type]
 			},
 			Import{
-				mod: 'freeflowuniverse.crystallib.baobab.backend'
+				mod:   'freeflowuniverse.crystallib.baobab.backend'
 				types: ['FilterParams']
 			},
 		]
-		items: items
+		items:   items
 	)
 
 	if object.structure.fields.any(it.attrs.any(it.name == 'index')) {
@@ -184,9 +215,9 @@ pub fn (a Actor) generate_openrpc_specification() !File {
 	openrpc_json := openrpc_obj.encode()!
 
 	openrpc_file := File{
-		name: 'openrpc'
+		name:      'openrpc'
 		extension: 'json'
-		content: openrpc_json
+		content:   openrpc_json
 	}
 
 	// sshrpc_files(a)!
@@ -197,7 +228,7 @@ pub fn (a Actor) generate_openrpc_specification() !File {
 pub fn (a Actor) generate_model_files() ![]CodeFile {
 	structs := a.objects.map(it.structure)
 	return a.objects.map(codemodel.new_file(
-		mod: texttools.name_fix(a.name)
+		mod:  texttools.name_fix(a.name)
 		name: '${texttools.name_fix(it.structure.name)}_model'
 		// imports: [Import{mod:'freeflowuniverse.crystallib.baobab.actor'}]
 		items: [it.structure]
@@ -214,7 +245,7 @@ pub fn generate_actor_module(name string, objects []BaseObject) !Module {
 		files << generate_object_test_code(actor, object)!
 	}
 	return Module{
-		name: name
+		name:  name
 		files: files
 	}
 }
@@ -227,19 +258,19 @@ pub fn generate_factory_file(name string) CodeFile {
 	actor_struct := generate_actor_struct(name)
 	actor_factory := generate_actor_factory(actor_struct)
 	return codemodel.new_file(
-		mod: texttools.name_fix(name)
-		name: 'actor'
+		mod:     texttools.name_fix(name)
+		name:    'actor'
 		imports: [Import{
 			mod: 'freeflowuniverse.crystallib.baobab.actor'
 		}]
-		items: [actor_struct, actor_factory]
+		items:   [actor_struct, actor_factory]
 	)
 }
 
 pub fn generate_actor_struct(name string) Struct {
 	return Struct{
 		is_pub: true
-		name: '${name.title()}'
+		name:   '${name.title()}'
 		embeds: [Struct{
 			name: 'actor.Actor'
 		}]
@@ -254,7 +285,6 @@ pub fn generate_actor_factory(actor Struct) Function {
 	function.body = 'return ${actor.name}{Actor: actor.new(config)!}'
 	return function
 }
-
 
 pub fn generate_actor_from_spec(openrpc_doc openrpc.OpenRPC) !Actor {
 	// Extract Actor metadata from OpenRPC info
@@ -284,9 +314,9 @@ pub fn generate_actor_from_spec(openrpc_doc openrpc.OpenRPC) !Actor {
 
 	// Build the Actor struct
 	actor := Actor{
-		name: actor_name
+		name:        actor_name
 		description: actor_description
-		methods: methods
+		methods:     methods
 		// objects: objects
 	}
 

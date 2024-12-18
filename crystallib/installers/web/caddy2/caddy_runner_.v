@@ -38,92 +38,92 @@ pub fn play(args_ InstallPlayArgs) ! {
 }
 
 // load from disk and make sure is properly intialized
-pub fn (mut self CaddyServer) reload() ! {
-	switch(self.name)
-	obj_init()!
-}
+// pub fn (mut self CaddyServer) reload() ! {
+// 	switch(self.name)
+// 	obj_init()!
+// }
 
-pub fn (mut self CaddyServer) start() ! {
-	switch(self.name)
-	if self.running()! {
-		return
-	}
+// pub fn (mut self CaddyServer) start() ! {
+// 	switch(self.name)
+// 	if self.running()! {
+// 		return
+// 	}
 
-	console.print_header('caddy start')
+// 	console.print_header('caddy start')
 
-	configure()!
+// 	configure()!
 
-	start_pre()!
+// 	start_pre()!
 
-	mut sm := startupmanager.get()!
+// 	mut sm := startupmanager.get()!
 
-	for zprocess in startupcmd()! {
-		sm.start(zprocess.name)!
-	}
+// 	for zprocess in startupcmd()! {
+// 		sm.start(zprocess.name)!
+// 	}
 
-	start_post()!
+// 	start_post()!
 
-	for _ in 0 .. 50 {
-		if self.running()! {
-			return
-		}
-		time.sleep(100 * time.millisecond)
-	}
-	return error('caddy did not install properly.')
-}
+// 	for _ in 0 .. 50 {
+// 		if self.running()! {
+// 			return
+// 		}
+// 		time.sleep(100 * time.millisecond)
+// 	}
+// 	return error('caddy did not install properly.')
+// }
 
-pub fn (mut self CaddyServer) install_start(args RestartArgs) ! {
-	switch(self.name)
-	self.install(args)!
-	self.start()!
-}
+// pub fn (mut self CaddyServer) install_start(args RestartArgs) ! {
+// 	switch(self.name)
+// 	self.install(args)!
+// 	self.start()!
+// }
 
-pub fn (mut self CaddyServer) stop() ! {
-	switch(self.name)
-	stop_pre()!
-	mut sm := startupmanager.get()!
-	for zprocess in startupcmd()! {
-		sm.stop(zprocess.name)!
-	}
-	stop_post()!
-}
+// pub fn (mut self CaddyServer) stop() ! {
+// 	switch(self.name)
+// 	stop_pre()!
+// 	mut sm := startupmanager.get()!
+// 	for zprocess in startupcmd()! {
+// 		sm.stop(zprocess.name)!
+// 	}
+// 	stop_post()!
+// }
 
-pub fn (mut self CaddyServer) restart() ! {
-	switch(self.name)
-	self.stop()!
-	self.start()!
-}
+// pub fn (mut self CaddyServer) restart() ! {
+// 	switch(self.name)
+// 	self.stop()!
+// 	self.start()!
+// }
 
-pub fn (mut self CaddyServer) running() !bool {
-	switch(self.name)
-	mut sm := startupmanager.get()!
+// pub fn (mut self CaddyServer) running() !bool {
+// 	switch(self.name)
+// 	mut sm := startupmanager.get()!
 
-	// walk over the generic processes, if not running return
-	for zprocess in startupcmd()! {
-		r := sm.running(zprocess.name)!
-		if r == false {
-			return false
-		}
-	}
-	return running()!
-}
+// 	// walk over the generic processes, if not running return
+// 	for zprocess in startupcmd()! {
+// 		r := sm.running(zprocess.name)!
+// 		if r == false {
+// 			return false
+// 		}
+// 	}
+// 	return running()!
+// }
 
-@[params]
-pub struct RestartArgs {
-pub mut:
-	reset bool
-}
+// @[params]
+// pub struct RestartArgs {
+// pub mut:
+// 	reset bool
+// }
 
-pub fn (mut self CaddyServer) install(args RestartArgs) ! {
-	switch(self.name)
-	if args.reset || (!installed()!) {
-		install()!
-	}
-}
+// pub fn (mut self CaddyServer) install(args RestartArgs) ! {
+// 	switch(self.name)
+// 	if args.reset || (!installed()!) {
+// 		install()!
+// 	}
+// }
 
-pub fn (mut self CaddyServer) destroy() ! {
-	switch(self.name)
+// pub fn (mut self CaddyServer) destroy() ! {
+// 	switch(self.name)
 
-	self.stop()!
-	destroy()!
-}
+// 	self.stop()!
+// 	destroy()!
+// }

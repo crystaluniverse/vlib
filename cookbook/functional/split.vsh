@@ -58,23 +58,28 @@ _coreaudiod        268   0.0  0.0 408185328   1344   ??  S    16Dec23   0:35.49 
 '
 
 r4 := texttools.to_list_map('name,-,-,-,-,pid,-,-,-,-,path', t, '')
-assert [{
-	'name': '_cmiodalassistants'
-	'pid':  '1360'
-	'path': '/usr/sbin/distnoted'
-}, {
-	'name': '_locationd'
-	'pid':  '1344'
-	'path': '/usr/sbin/distnoted'
-}, {
-	'name': 'root'
-	'pid':  '7296'
-	'path': '/usr/libexec/storagekitd'
-}, {
-	'name': '_coreaudiod'
-	'pid':  '1344'
-	'path': '/usr/sbin/distnoted'
-}] == r4
+assert [
+	{
+		'name': '_cmiodalassistants'
+		'pid':  '1360'
+		'path': '/usr/sbin/distnoted'
+	},
+	{
+		'name': '_locationd'
+		'pid':  '1344'
+		'path': '/usr/sbin/distnoted'
+	},
+	{
+		'name': 'root'
+		'pid':  '7296'
+		'path': '/usr/libexec/storagekitd'
+	},
+	{
+		'name': '_coreaudiod'
+		'pid':  '1344'
+		'path': '/usr/sbin/distnoted'
+	},
+] == r4
 
 t2 := '
 	11849.mysession	(Detached)

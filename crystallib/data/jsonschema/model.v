@@ -24,19 +24,15 @@ pub mut:
 	required              []string
 	items                 Items
 	defs                  map[string]SchemaRef
-<<<<<<< HEAD
 	one_of                []SchemaRef @[json: 'oneOf']
-=======
-	one_of                []SchemaRef          @[json: 'oneOf']
-	format string
->>>>>>> ee79fcfbd4550057c55102c66e1f2a0f6de6beb1
+	format                string
 	// todo: make fields optional upon the fixing of https://github.com/vlang/v/issues/18775
 	// from https://git.sr.ht/~emersion/go-jsonschema/tree/master/item/schema.go
 	// Validation for numbers
-	multiple_of       int @[json: 'multipleOf'; omitempty]
-	maximum           int @[omitempty]
-	exclusive_maximum int @[json: 'exclusiveMaximum'; omitempty]
-	minimum           int @[omitempty]
-	exclusive_minimum int @[json: 'exclusiveMinimum'; omitempty]
-	enum_ []string @[json: 'enum'; omitempty]
+	multiple_of       int      @[json: 'multipleOf'; omitempty]
+	maximum           int      @[omitempty]
+	exclusive_maximum int      @[json: 'exclusiveMaximum'; omitempty]
+	minimum           int      @[omitempty]
+	exclusive_minimum int      @[json: 'exclusiveMinimum'; omitempty]
+	enum_             []string @[json: 'enum'; omitempty]
 }

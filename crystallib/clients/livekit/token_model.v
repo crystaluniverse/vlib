@@ -7,40 +7,43 @@ import crypto.sha256
 import encoding.base64
 import json
 
+// TTLValue represents either an integer or string value for TTL
+pub type TTLValue = int | string
+
 // Struct representing grants
-pub struct ClaimGrants {
-pub mut:
-		video     VideoGrant
-		iss string
-		exp i64
-		nbf int
-		sub string
-		name      string
-}
+// pub struct ClaimGrants {
+// pub mut:
+// 	video VideoGrant
+// 	iss   string
+// 	exp   i64
+// 	nbf   int
+// 	sub   string
+// 	name  string
+// }
 
 // VideoGrant struct placeholder
 pub struct VideoGrant {
 pub mut:
-		room       string
-		room_join  bool @[json: 'roomJoin']
-		room_list  bool @[json: 'roomList']
-		can_publish bool @[json: 'canPublish']
-		can_publish_data bool @[json: 'canPublishData']
-		can_subscribe bool @[json: 'canSubscribe']
+	room             string
+	room_join        bool @[json: 'roomJoin']
+	room_list        bool @[json: 'roomList']
+	can_publish      bool @[json: 'canPublish']
+	can_publish_data bool @[json: 'canPublishData']
+	can_subscribe    bool @[json: 'canSubscribe']
 }
 
 // SIPGrant struct placeholder
 struct SIPGrant {}
 
 // AccessToken class
-pub struct AccessToken {
-	mut:
-		api_key    string
-		api_secret string
-		grants     ClaimGrants
-		identity   string
-		ttl        int | string
-}
+// pub struct AccessToken {
+// mut:
+// 	api_key    string
+// 	api_secret string
+// 	grants     ClaimGrants
+// 	identity   string
+// 	ttl        TTLValue
+// }
 
 // Method to add a video grant to the token
 pub fn (mut token AccessToken) add_video_grant(grant VideoGrant) {
@@ -65,7 +68,8 @@ pub fn (token AccessToken) to_jwt() !string {
 	unsigned_token := '${header_encoded}.${payload_encoded}'
 
 	// Create the HMAC-SHA256 signature
-	signature := hmac.new(token.api_secret.bytes(), unsigned_token.bytes(), sha256.sum, sha256.block_size)
+	signature := hmac.new(token.api_secret.bytes(), unsigned_token.bytes(), sha256.sum,
+		sha256.block_size)
 
 	// Encode the signature in base64
 	signature_encoded := base64.url_encode(signature)

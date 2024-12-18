@@ -1,3 +1,6 @@
+
+
+
 import os
 import regex
 
@@ -17,40 +20,43 @@ fn cleaner(code string) !string {
 
   // Precompile regex patterns for efficiency
   mut pub_line_re := regex.regex_opt(r'^\s*pub\s*(\s+mut\s*)?:')!
+  mut pub_prefix_re := regex.regex_opt(r'^\s*pub\s+')!
   mut struct_enum_start_re := regex.regex_opt(r'(struct|enum)\s+\w+\s*{')!
   mut fn_start_re := regex.regex_opt(r'fn\s+')!
 
 	for line in lines {
-		line = line.replace('\t', '    ')
-		stripped_line := line.trim_space()
+		mut line2 := line.replace('\t', '    ')
+		stripped_line := line2.trim_space()
 
 		// Skip lines starting with 'pub mut:'
-		if pub_line_re.match_string(stripped_line) != (-1, -1) {
+		if pub_line_re.match_string(stripped_line) != -1 -1 {
 			continue
 		}
 
 		// Remove 'pub ' at the start of struct and function lines
-    line = re.replace(line, r'^\s*pub\s+', '') // Using regex for replacement
+		line2 = line2.replace_with_fn(pub_prefix_re, fn (re regex.RE, line string, start int, end int) string {
+			return ''
+		})
 
 		// Check if we're entering or exiting a struct or enum
-		if struct_enum_start_re.match_string(stripped_line) != (-1, -1) {
+		if struct_enum_start_re.match_string(stripped_line) != -1 -1 {
 			in_struct_or_enum = true
-			processed_lines << line
+			processed_lines << line2
 		} else if in_struct_or_enum && '}' in stripped_line {
 			in_struct_or_enum = false
-			processed_lines << line
+			processed_lines << line2
 		} else if in_struct_or_enum {
 			// Ensure consistent indentation within structs and enums
-			processed_lines << line
+			processed_lines << line2
 		} else {
 			// Handle function declarations
-			if fn_start_re.match_string(stripped_line) != (-1, -1) {
+			if fn_start_re.match_string(stripped_line) != -1 -1 {
 				if '{' in stripped_line {
 					// Function declaration and opening brace on the same line
 					in_function = true
-					processed_lines << line
+					processed_lines << line2
 				} else {
-					panic('Accolade needs to be in fn line.\n${line}')
+					panic('Accolade needs to be in fn line.\n${line2}')
 				}
 			} else if in_function {
 				if stripped_line == '}' {
@@ -60,7 +66,7 @@ fn cleaner(code string) !string {
 				}
 				// Skip all other lines inside the function
 			} else {
-				processed_lines << line
+				processed_lines << line2
 			}
 		}
 	}

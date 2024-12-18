@@ -122,7 +122,7 @@ pub fn (mut q RedisRpc) process(op fn (string, string) !string, params ProcessPa
 			q.redis.lpush(returnqueue, encoded)!
 			return returnqueue
 		}
-		if (params.timeout != 0) && u64(time.now().unix_milli()) > (start + params.timeout) {
+		if params.timeout != 0 && u64(time.now().unix_milli()) > (start + params.timeout) {
 			break
 		}
 		time.sleep(time.millisecond)

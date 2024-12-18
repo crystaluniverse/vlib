@@ -20,10 +20,12 @@ fn run_machines_ops(mut client tfgrid.TFGridClient, mut logger log.Logger) ! {
 		env_vars:             {
 			'SSH_KEY': 'ssh-rsa ...'
 		}
-		disks:                [tfgrid.Disk{
-			size:       10
-			mountpoint: '/mnt/disk1'
-		}]
+		disks:                [
+			tfgrid.Disk{
+				size:       10
+				mountpoint: '/mnt/disk1'
+			},
+		]
 		description:          'description'
 	})!
 	logger.info('${res}')

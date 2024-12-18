@@ -1,8 +1,5 @@
 module raft
 
-
-module main
-
 import redis
 import time
 import rand
