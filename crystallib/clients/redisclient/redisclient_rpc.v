@@ -73,11 +73,10 @@ pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
 		if r != '' {
 			res := json.decode(Response, r)!
 			if res.error != '' {
-				return error(res.error)
+				return res.error
 			}
 			return res.result
 		}
-
 		if u64(time.now().unix_milli()) > (start + timeout) {
 			break
 		}
@@ -86,9 +85,15 @@ pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
 	return error('timeout on returnqueue: ${retqueue}')
 }
 
+@[params]
+pub struct ProcessParams {
+pub:
+	timeout u64
+}
+
 // to be used by processor, to get request and execute, this is the server side of a RPC mechanism
 // 2nd argument is a function which needs to execute the job: fn (string,string) !string
-pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !string {
+pub fn (mut q RedisRpc) process(op fn (string, string) !string, params ProcessParams) !string {
 	start := u64(time.now().unix_milli())
 	for {
 		r := q.redis.rpop(q.key) or { '' }
@@ -117,10 +122,10 @@ pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !st
 			q.redis.lpush(returnqueue, encoded)!
 			return returnqueue
 		}
-		if u64(time.now().unix_milli()) > (start + timeout) {
+		if (params.timeout != 0) && u64(time.now().unix_milli()) > (start + params.timeout) {
 			break
 		}
-		time.sleep(time.microsecond)
+		time.sleep(time.millisecond)
 	}
 	return error('timeout for waiting for cmd on ${q.key}')
 }
