@@ -11,8 +11,8 @@ struct App {
 	root_dir pathlib.Path      @[vweb_global]
 pub mut:
 	lock_manager LockManager
-	server_port int
-	middlewares map[string][]vweb.Middleware
+	server_port  int
+	middlewares  map[string][]vweb.Middleware
 }
 
 @[params]
@@ -26,8 +26,8 @@ pub mut:
 pub fn new_app(args AppArgs) !&App {
 	root_dir := pathlib.get_dir(path: args.root_dir, create: true)!
 	mut app := &App{
-		user_db: args.user_db.clone()
-		root_dir: root_dir
+		user_db:     args.user_db.clone()
+		root_dir:    root_dir
 		server_port: args.server_port
 	}
 
@@ -54,5 +54,15 @@ pub fn (mut app App) run(args RunArgs) {
 
 pub fn (mut app App) not_found() vweb.Result {
 	app.set_status(404, 'Not Found')
-	return app.html('<h1>Page not found</h1>')
+	return app.text('Not Found')
+}
+
+pub fn (mut app App) server_error() vweb.Result {
+	app.set_status(500, 'Inernal Server Error')
+	return app.text('Internal Server Error')
+}
+
+pub fn (mut app App) bad_request(message string) vweb.Result {
+	app.set_status(400, 'Bad Request')
+	return app.text(message)
 }
