@@ -1,5 +1,3 @@
-
-
 # Docker Module Documentation
 
 The Docker module provides a comprehensive set of tools for working with Docker containers, images, and compose files in V. It offers high-level abstractions for common Docker operations while maintaining flexibility for advanced use cases.
@@ -138,6 +136,46 @@ The recipe system supports various Dockerfile instructions through specialized c
 - **VolumeItem**: Volume mounting
 - **ZinitItem**: Process management
 
+## Advanced Features
+
+### Platform Support
+- Linux/amd64
+- Linux/arm64
+- Automatic platform detection and configuration
+
+### Process Management
+- Zinit integration for process supervision
+- Service dependencies
+- Logging configuration
+- Process lifecycle management
+
+### Development Tools
+- Go builder integration
+- Rust builder integration
+- NodeJS support
+- V language support
+
+## Best Practices
+
+1. **Container Management**
+   - Use meaningful container names
+   - Implement proper cleanup with `delete()`
+   - Handle container lifecycle appropriately
+
+2. **Image Building**
+   - Leverage multi-stage builds for smaller images
+   - Use the recipe system for reproducible builds
+   - Implement proper caching strategies
+
+3. **Compose Usage**
+   - Define service dependencies clearly
+   - Use environment variables for configuration
+   - Implement proper volume management
+
+4. **Error Handling**
+   - Always check for errors in operations
+   - Implement proper cleanup in error cases
+   - Use the provided error types for specific scenarios
 
 ## Examples
 
@@ -211,14 +249,3 @@ engine.image_get(
     }
     return err
 }
-
-
-## Builders 
-
-see https://github.com/threefoldtech/vbuilders/tree/development/builders for examples
-
-How to get started see
-
-https://github.com/threefoldtech/vbuilders/blob/development/docsrc/src/gettingstarted/ubuntu/ubuntu.md
-
-
