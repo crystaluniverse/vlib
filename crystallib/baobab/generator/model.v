@@ -1,6 +1,6 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel { Function, Module, Struct }
+import freeflowuniverse.crystallib.core.codemodel
 import os
 
 pub struct ActorGenerator {

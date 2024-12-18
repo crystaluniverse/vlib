@@ -6,14 +6,18 @@ DIR_OF_THIS_SCRIPT="$( dirname "$SOURCE" )"
 cd $DIR_OF_THIS_SCRIPT
 CRYSTAL_HOME="$( realpath $DIR_OF_THIS_SCRIPT )"
 
+cd ${CRYSTAL_HOME}
+
+v fmt -w examples
+v fmt -w crystallib
+
 cd ${CRYSTAL_HOME}/crystallib
 
 
 rm -rf _docs
 rm -rf docs
 
-# v fmt -w examples
-# v fmt -w crystallib
+
 v doc -m -f html . -readme -comments -no-timestamp
 
 mv _docs ../docs
