@@ -7,10 +7,8 @@ import flag
 import log
 import os
 
-const (
-	default_server_address    = 'ws://127.0.0.1:8080'
-	mainnet_ethereum_node_url = 'ws://185.69.167.224:8546'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
+const mainnet_ethereum_node_url = 'ws://185.69.167.224:8546'
 
 fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, secret string) ! {
 	mut eth_client := eth.new(mut client)

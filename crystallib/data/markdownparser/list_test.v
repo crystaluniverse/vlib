@@ -35,7 +35,7 @@ this text is not part of the list
 hamada'
 
 fn test_wiki_headers_paragraphs() {
-	mut docs := new(content: markdownparser.text)!
+	mut docs := new(content: text)!
 
 	assert docs.children.len == 9
 	assert docs.children[0] is elements.Paragraph
@@ -50,7 +50,7 @@ fn test_wiki_headers_paragraphs() {
 }
 
 fn test_deterministic_output() {
-	mut doc1 := new(content: markdownparser.text)!
+	mut doc1 := new(content: text)!
 	md1 := doc1.markdown()!
 
 	mut doc2 := new(content: md1)!

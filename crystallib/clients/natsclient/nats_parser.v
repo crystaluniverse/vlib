@@ -24,9 +24,9 @@ mut:
 	headers        map[string]string
 pub mut:
 	on_nats_message fn (message NATSMessage, headers map[string]string) = fn (message NATSMessage, headers map[string]string) {}
-	on_nats_info    fn (data string) = fn (data string) {}
-	on_nats_ping    fn () = fn () {}
-	on_nats_pong    fn () = fn () {}
+	on_nats_info    fn (data string)  = fn (data string) {}
+	on_nats_ping    fn ()             = fn () {}
+	on_nats_pong    fn ()             = fn () {}
 	on_nats_error   fn (error string) = fn (error string) {}
 }
 
@@ -45,10 +45,10 @@ pub fn (mut n NATSMessageParser) parse(data string) ! {
 			72 { // "HMSG"
 				n.parse_hmsg()!
 				n.on_nats_message(NATSMessage{
-					subject: n.subject
-					sid: n.sid
+					subject:  n.subject
+					sid:      n.sid
 					reply_to: n.reply_to
-					message: n.message
+					message:  n.message
 				}, n.headers)
 			}
 			73 { //"INFO"
@@ -59,18 +59,18 @@ pub fn (mut n NATSMessageParser) parse(data string) ! {
 			77 { // MSG
 				n.parse_msg()!
 				n.on_nats_message(NATSMessage{
-					subject: n.subject
-					sid: n.sid
+					subject:  n.subject
+					sid:      n.sid
 					reply_to: n.reply_to
-					message: n.message
+					message:  n.message
 				}, n.headers)
 			}
 			80 { // PING or PONG
-				if n.data[n.i..].starts_with(natsclient.msg_ping) {
-					n.i += natsclient.msg_ping.len
+				if n.data[n.i..].starts_with(msg_ping) {
+					n.i += msg_ping.len
 					n.on_nats_ping()
-				} else if n.data[n.i..].starts_with(natsclient.msg_pong) {
-					n.i += natsclient.msg_pong.len
+				} else if n.data[n.i..].starts_with(msg_pong) {
+					n.i += msg_pong.len
 					n.on_nats_pong()
 				}
 			}

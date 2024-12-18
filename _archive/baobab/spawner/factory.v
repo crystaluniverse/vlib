@@ -39,7 +39,7 @@ pub fn (mut s Spawner) thread_add(name string, op fn (&sync.Channel, &sync.Chann
 pub fn (mut s Spawner) channels_add(name string, mut ch_send sync.Channel, mut ch_return sync.Channel) !&OurThread {
 	mut ot := OurThread{
 		// ourthread:t
-		ch_send: ch_send
+		ch_send:   ch_send
 		ch_return: ch_return
 	}
 

@@ -36,7 +36,7 @@ pub fn websocket_example() ! {
 
 	mut ws_client := new_petstore_json_rpc_ws_client(
 		address: 'ws://127.0.0.1:8080'
-		logger: logger
+		logger:  logger
 	)!
 	pets := ws_client.get_pet('test_pet')!
 	// handler.run()!

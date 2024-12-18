@@ -39,7 +39,7 @@ pub enum LinkType {
 }
 
 pub enum LinkState {
-	init // the original state (prob means already processed)
+	init          // the original state (prob means already processed)
 	linkprocessed // means we have found the original information
 	ok
 	missing
@@ -121,7 +121,8 @@ pub fn (self Link) markdown() !string {
 
 	anchor := if self.anchor != '' { '#${self.anchor}' } else { '' }
 	mut out := ''
-	if self.cat == LinkType.page || self.cat == LinkType.code || self.cat == LinkType.file || self.cat == LinkType.image {
+	if self.cat == LinkType.page || self.cat == LinkType.code || self.cat == LinkType.file
+		|| self.cat == LinkType.image {
 		if self.filename.contains(':') {
 			return error("should not have ':' in link for image, page or file.\n${self}")
 		}
@@ -145,14 +146,14 @@ pub fn (self Link) markdown() !string {
 	} else {
 		panic('bug, LinkType ${self.cat} to markdown not implemented')
 	}
-	
+
 	return out
 }
 
 pub fn (self Link) html() !string {
 	return match self.cat {
-		.image {'<img src="${self.url}" alt="${self.description}" />'}
-	 	else {'<a href="${self.url}">${self.description}</a>'}
+		.image { '<img src="${self.url}" alt="${self.description}" />' }
+		else { '<a href="${self.url}">${self.description}</a>' }
 	}
 }
 

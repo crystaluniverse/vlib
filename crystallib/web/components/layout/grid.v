@@ -1,7 +1,7 @@
 module layout
 
-import freeflowuniverse.crystallib.web.components {IComponent}
-import freeflowuniverse.crystallib.web.components.navigation {Sidebar}
+import freeflowuniverse.crystallib.web.components { IComponent }
+import freeflowuniverse.crystallib.web.components.navigation { Sidebar }
 
 pub struct GridLayout {
 pub:
@@ -14,7 +14,7 @@ pub fn (layout GridLayout) html() string {
 
 pub struct SidebarLayout {
 pub:
-	sidebar Sidebar
+	sidebar    Sidebar
 	components []IComponent
 }
 

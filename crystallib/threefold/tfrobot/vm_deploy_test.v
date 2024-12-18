@@ -3,7 +3,6 @@ module tfrobot
 import os
 import freeflowuniverse.crystallib.osal
 
-
 const testdata_dir = '${os.dir(@FILE)}/testdata'
 
 fn testsuite_begin() ! {
@@ -14,16 +13,16 @@ fn test_vm_deploy() ! {
 	mneumonics := os.getenv('MNEUMONICS')
 	ssh_key := os.getenv('SSH_KEY')
 
-	mut robot := configure('testrobot', 
+	mut robot := configure('testrobot',
 		mnemonics: mneumonics
-		network: 'main'
+		network:   'main'
 	)!
 	result := robot.vm_deploy(
 		deployment_name: 'test_deployment'
-		name: 'test_vm'
-		cores: 1
-		memory: 256
-		pub_sshkeys: [ssh_key]
+		name:            'test_vm'
+		cores:           1
+		memory:          256
+		pub_sshkeys:     [ssh_key]
 	)!
 	panic(result)
 

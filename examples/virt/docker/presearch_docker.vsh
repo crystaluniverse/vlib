@@ -18,10 +18,9 @@ presearch_node.volume_add('/presearch-node-storage', '/app/node')!
 presearch_node.env_add('REGISTRATION_CODE', '${registration_code}')
 
 mut presearch_updater := recipe.service_new(
-	name: 'presearch_updater'
+	name:  'presearch_updater'
 	image: 'presearch/auto-updater'
 )!
 presearch_updater.volume_add('/var/run/docker.sock', '/var/run/docker.sock')!
 
 recipe.start()!
-

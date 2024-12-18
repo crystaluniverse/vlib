@@ -259,10 +259,10 @@ pub mut:
 	free_sru           OptionU64  = EmptyOption{}
 	free_hru           OptionU64  = EmptyOption{}
 	free_ips           ?u64
-	total_mru          OptionU64  = EmptyOption{}
-	total_sru          OptionU64  = EmptyOption{}
-	total_hru          OptionU64  = EmptyOption{}
-	total_cru          OptionU64  = EmptyOption{}
+	total_mru          OptionU64 = EmptyOption{}
+	total_sru          OptionU64 = EmptyOption{}
+	total_hru          OptionU64 = EmptyOption{}
+	total_cru          OptionU64 = EmptyOption{}
 	city               string
 	city_contains      string
 	country            string
@@ -274,7 +274,7 @@ pub mut:
 	domain             OptionBool = EmptyOption{}
 	status             string
 	dedicated          OptionBool = EmptyOption{}
-	healthy          	 OptionBool = EmptyOption{}
+	healthy            OptionBool = EmptyOption{}
 	rentable           OptionBool = EmptyOption{}
 	rented_by          OptionU64  = EmptyOption{}
 	rented             OptionBool = EmptyOption{}
@@ -339,11 +339,11 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 		}
 	}
 
-	if v := p.free_ips{
+	if v := p.free_ips {
 		m['free_ips'] = v.str()
 	}
 
-	if v := p.has_ipv6{
+	if v := p.has_ipv6 {
 		m['has_ipv6'] = v.str()
 	}
 
@@ -452,7 +452,7 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 	if p.node_ids.len > 0 {
 		m['node_ids'] = json.encode(p.node_ids).all_after('[').all_before(']')
 	}
-	if n := p.node_id{
+	if n := p.node_id {
 		m['node_id'] = n.str()
 	}
 	match p.twin_id {

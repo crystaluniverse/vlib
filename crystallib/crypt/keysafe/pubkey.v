@@ -20,7 +20,7 @@ pub fn pubkey_new(name string, myself PrivKey, remote string) !PubKey {
 	libsodium.crypto_sign_ed25519_pk_to_curve25519(target.data, parsed[0])
 
 	return PubKey{
-		name: name
+		name:   name
 		source: myself
 		remote: target
 	}

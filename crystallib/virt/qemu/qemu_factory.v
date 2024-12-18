@@ -21,16 +21,16 @@ pub fn (mut lf QemuFactory) vm_get_all() ![]VM {
 	for vm in raw.list()! {
 		// console.print_debug(vm)
 		mut vm2 := VM{
-			name: vm.name
-			dir: vm.dir
-			arch: vm.arch
-			cpus: vm.cpus
-			memory: vm.memory / 1000000
-			disk: vm.disk / 1000000
+			name:           vm.name
+			dir:            vm.dir
+			arch:           vm.arch
+			cpus:           vm.cpus
+			memory:         vm.memory / 1000000
+			disk:           vm.disk / 1000000
 			ssh_local_port: vm.ssh_local_port
-			ssh_address: vm.ssh_address
-			identity_file: vm.identity_file
-			factory: &lf
+			ssh_address:    vm.ssh_address
+			identity_file:  vm.identity_file
+			factory:        &lf
 		}
 		match vm.status {
 			'Running' {

@@ -22,11 +22,11 @@ pub mut:
 // to do something like: 'Add alpine:latest'
 pub fn (mut b DockerBuilderRecipe) add_copy(args CopyArgs) ! {
 	mut item := CopyItem{
-		from: args.from
-		source: args.source
-		dest: args.dest
+		from:            args.from
+		source:          args.source
+		dest:            args.dest
 		make_executable: args.make_executable
-		recipe: &b
+		recipe:          &b
 	}
 	if item.source == '' {
 		return error('source cant be empty, \n${b}')

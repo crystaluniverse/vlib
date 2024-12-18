@@ -9,10 +9,10 @@ import freeflowuniverse.crystallib.data.ourtime
 pub struct Track {
 	db.Base
 pub mut:
-	issues       []smartid.GID   @[root_object: Issue]
-	stories      []smartid.GID   @[root_object: Story]
-	requirements []smartid.GID   @[root_object: Requirement]
-	tasks        []smartid.GID   @[root_object: Task]
+	issues       []smartid.GID @[root_object: Issue]
+	stories      []smartid.GID @[root_object: Story]
+	requirements []smartid.GID @[root_object: Requirement]
+	tasks        []smartid.GID @[root_object: Task]
 	time         ourtime.OurTime
 	description  string
 }

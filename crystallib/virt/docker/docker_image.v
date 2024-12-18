@@ -110,13 +110,13 @@ pub fn (mut e DockerEngine) image_get(args ImageGetArgs) !&DockerImage {
 	}
 	if counter > 0 {
 		return ImageGetError{
-			args: args
+			args:    args
 			toomany: true
 		}
 	}
 	if counter == 0 {
 		return ImageGetError{
-			args: args
+			args:     args
 			notfound: true
 		}
 	}

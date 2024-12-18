@@ -43,14 +43,14 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 9000
-		dest: '/tmp/rfs'
-		reset: true
+		dest:       '/tmp/rfs'
+		reset:      true
 	)!
 
 	osal.cmd_add(
 		cmdname: 'rfs'
-		source: '${dest.path}'
+		source:  '${dest.path}'
 	)!
 }

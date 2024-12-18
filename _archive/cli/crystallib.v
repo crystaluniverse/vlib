@@ -4,15 +4,13 @@ import os
 import cli { Command }
 import freeflowuniverse.crystallib.baobab.hero.herocmds
 
-const (
-	external_tools = ['build-examples.v']
-)
+const external_tools = ['build-examples.v']
 
 fn do() ! {
 	mut cmd := Command{
-		name: 'crystallib'
+		name:        'crystallib'
 		description: 'Crystallib CLI'
-		version: '1.0.0'
+		version:     '1.0.0'
 		disable_man: true
 	}
 
@@ -28,11 +26,11 @@ fn main() {
 
 pub fn cmd_build_examples(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'build_examples'
-		description: 'Build the examples in crystallib.'
-		usage: ''
+		name:          'build_examples'
+		description:   'Build the examples in crystallib.'
+		usage:         ''
 		required_args: 0
-		execute: cmd_build_examples_execute
+		execute:       cmd_build_examples_execute
 	}
 	cmdroot.add_command(cmd_run)
 }

@@ -46,11 +46,11 @@ pub fn (mut b DockerBuilderRecipe) add_zinit_cmd(args ZinitAddArgs) ! {
 	}
 	// TODO: make sure after is lowercase and trimmed
 	mut item := ZinitItem{
-		name: args.name
-		exec: args.exec
-		test: args.test
-		log: args.log
-		signal: args.signal
+		name:    args.name
+		exec:    args.exec
+		test:    args.test
+		log:     args.log
+		signal:  args.signal
 		oneshot: args.oneshot
 	}
 
@@ -73,10 +73,10 @@ pub fn (mut b DockerBuilderRecipe) add_zinit_cmd(args ZinitAddArgs) ! {
 			content = 'set -ex\n\n${content}'
 		}
 		b.write_file(
-			dest: '/cmds/${args.name}.sh'
-			content: content
+			dest:            '/cmds/${args.name}.sh'
+			content:         content
 			make_executable: true
-			name: args.name + '.sh'
+			name:            args.name + '.sh'
 		)!
 		zinitfilecontent += 'exec: /bin/bash /cmds/${args.name}.sh\n'
 	} else {

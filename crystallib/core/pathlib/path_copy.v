@@ -5,8 +5,8 @@ import os
 @[params]
 pub struct CopyArgs {
 pub mut:
-	dest           string   // path
-	delete         bool     // if true will remove files which are on dest which are not on source
+	dest           string // path
+	delete         bool   // if true will remove files which are on dest which are not on source
 	rsync          bool = true // we use rsync as default
 	ssh_target     string   // e.g. root@195.192.213.2:999
 	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
@@ -28,11 +28,11 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 	}
 	if args.rsync == true {
 		rsync(
-			source: path.path
-			dest: args.dest
-			delete: args.delete
-			ipaddr_dst: args.ssh_target
-			ignore: args.ignore
+			source:         path.path
+			dest:           args.dest
+			delete:         args.delete
+			ipaddr_dst:     args.ssh_target
+			ignore:         args.ignore
 			ignore_default: args.ignore_default
 		)!
 	} else {

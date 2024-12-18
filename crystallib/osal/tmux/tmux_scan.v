@@ -33,7 +33,7 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 
 	mut w := Window{
 		session: s
-		name: name
+		name:    name
 	}
 
 	if !(s.window_exist(name: window_name, id: wid)) {

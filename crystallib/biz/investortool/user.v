@@ -20,15 +20,15 @@ fn play_user(mut investortool InvestorTool, mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'investortool.user_define')! {
 		mut p := action.params
 		mut user := User{
-			oid: p.get_default('oid', '')!
-			usercode: p.get_default('usercode', '')!
-			name: p.get_default('name', '')!
+			oid:          p.get_default('oid', '')!
+			usercode:     p.get_default('usercode', '')!
+			name:         p.get_default('name', '')!
 			investor_ids: p.get_list_default('investor_ids', [])!
-			status: p.get_default('status', '')!
-			info_links: p.get_list_default('info_links', [])!
-			telnrs: p.get_telnrs_default('telnrs', [])!
-			emails: p.get_emails_default('emails', [])!
-			secret: p.get_default('secret', '')!
+			status:       p.get_default('status', '')!
+			info_links:   p.get_list_default('info_links', [])!
+			telnrs:       p.get_telnrs_default('telnrs', [])!
+			emails:       p.get_emails_default('emails', [])!
+			secret:       p.get_default('secret', '')!
 		}
 		// println(user)
 		investortool.user_add(user)!

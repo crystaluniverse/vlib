@@ -3,7 +3,6 @@ module bizmodel
 import freeflowuniverse.crystallib.core.playbook { Action }
 import freeflowuniverse.crystallib.core.texttools
 
-
 fn (mut m BizModel) cost_define_action(action Action) ! {
 	mut name := action.params.get_default('name', '')!
 	mut descr := action.params.get_default('descr', '')!
@@ -29,8 +28,8 @@ fn (mut m BizModel) cost_define_action(action Action) ! {
 		}
 		// TODO: need to be able to go from e.g. month 6 and still do indexation
 		mut cost_ := cost.int()
-		cost2 := cost_ * (1 + indexation) * (1 + indexation) * (1 + indexation) * (1 +
-			indexation) * (1 + indexation) * (1 + indexation) // 6 years, maybe need to look at months
+		cost2 := cost_ * (1 + indexation) * (1 + indexation) * (1 + indexation) * (1 + indexation) * (
+			1 + indexation) * (1 + indexation) // 6 years, maybe need to look at months
 		cost = '0:${cost},59:${cost2}'
 		// console.print_debug(cost)
 	}
@@ -50,10 +49,10 @@ fn (mut m BizModel) cost_define_action(action Action) ! {
 	}
 
 	mut cost_row := m.sheet.row_new(
-		name: 'cost_${name}'
-		growth: cost
-		tags: 'department:${department} ocost'
-		descr: 'cost overhead for department ${department}'
+		name:        'cost_${name}'
+		growth:      cost
+		tags:        'department:${department} ocost'
+		descr:       'cost overhead for department ${department}'
 		extrapolate: extrap
 	)!
 	cost_row.action(action: .reverse)!
@@ -61,29 +60,26 @@ fn (mut m BizModel) cost_define_action(action Action) ! {
 	if cost_percent_revenue > 0 {
 		mut revtotal := m.sheet.row_get('revenue_total')!
 		mut cost_min := revtotal.action(
-			action: .multiply
-			val: cost_percent_revenue
-			name: 'tmp3'
+			action:        .multiply
+			val:           cost_percent_revenue
+			name:          'tmp3'
 			aggregatetype: .avg
 		)!
 		cost_min.action(action: .forwardavg)! // avg out forward looking for 12 months	
 		cost_min.action(action: .reverse)!
 		cost_row.action(
 			action: .min
-			rows: [cost_min]
+			rows:   [cost_min]
 		)!
 		m.sheet.row_delete('tmp3')
 	}
 }
 
-
 fn (mut sim BizModel) cost_total() ! {
-
 	sim.sheet.group2row(
-		name: 'hr_cost_total'
+		name:    'hr_cost_total'
 		include: ['hrcost']
-		tags: 'pl'
-		descr: 'total cost for hr'
-	)!	
-
+		tags:    'pl'
+		descr:   'total cost for hr'
+	)!
 }

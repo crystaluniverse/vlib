@@ -2,16 +2,15 @@
 
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
-//will call the installer underneith
+// will call the installer underneith
 
-mut dserver:=daguserver.new()!
+mut dserver := daguserver.new()!
 dserver.install()!
 dserver.restart()!
 
-println("DAGU installed & running")
+println('DAGU installed & running')
 
-mut dagucl:=dserver.client()!
-
+mut dagucl := dserver.client()!
 
 // name                 string  // The name of the DAG, which is optional. The default name is the name of the file.
 // description          ?string // A brief description of the DAG.
@@ -23,9 +22,8 @@ mut dagucl:=dserver.client()!
 // max_active_runs      ?int // The maximum number of parallel running steps.
 // max_cleanup_time_sec ?int // The maximum time to wait after sending a TERM signal to running steps before killing them.
 
-
-mut mydag:=dagucl.dag_new(
-	nameswhere:"test11"
+mut mydag := dagucl.dag_new(
+	nameswhere: 'test11'
 )
 
 // nr                int     @[required]
@@ -43,19 +41,18 @@ mut mydag:=dagucl.dag_new(
 // retry_interval 	int = 5
 
 mydag.step_add(
-		script : "ls /tmp"
-		retry_interval:1
-		retry_nr:3
-		)!
+	script:         'ls /tmp'
+	retry_interval: 1
+	retry_nr:       3
+)!
 
 mydag.step_add(
-		script : "ls /root"
-		retry_interval:1
-		retry_nr:3
-		)!
+	script:         'ls /root'
+	retry_interval: 1
+	retry_nr:       3
+)!
 
-
-dagresult:=dagucl.dag_register(mydag,start:true)!
+dagresult := dagucl.dag_register(mydag, start: true)!
 println(dagresult)
 
-println("DAGU should have new steps")
+println('DAGU should have new steps')

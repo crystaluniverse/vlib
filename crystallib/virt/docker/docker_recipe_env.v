@@ -14,7 +14,7 @@ pub fn (mut b DockerBuilderRecipe) add_env(name string, val string) ! {
 		return error('min length of val is 3')
 	}
 	mut item := EnvItem{
-		name: name.to_upper()
+		name:  name.to_upper()
 		value: val
 	}
 	b.items << item

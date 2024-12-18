@@ -19,11 +19,11 @@ import freeflowuniverse.crystallib.ui.console
 pub fn test_generate_get_method() {
 	generator := ActorGenerator{'test'}
 	actor_struct := codemodel.Struct{
-		name: 'TestActor'
+		name:   'TestActor'
 		fields: [
 			codemodel.StructField{
 				name: 'test_struct_map'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'map[string]&TestStruct'
 				}
 			},
@@ -35,11 +35,11 @@ pub fn test_generate_get_method() {
 	}
 	field := get_child_field(
 		parent: actor_struct
-		child: test_struct
+		child:  test_struct
 	)
 
 	method := generator.generate_get_method(
-		actor_name: actor_struct.name
+		actor_name:  actor_struct.name
 		actor_field: field
 		root_struct: test_struct
 	)

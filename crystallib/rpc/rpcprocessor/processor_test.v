@@ -14,8 +14,8 @@ const ws_port = 8080
 fn test_new_processor() ! {
 	processor := new(
 		redis_url: redisclient.RedisURL{
-			address: rpcprocessor.redis_addr
-			port: rpcprocessor.redis_port
+			address: redis_addr
+			port:    redis_port
 		}
 	)!
 
@@ -23,8 +23,7 @@ fn test_new_processor() ! {
 		level: .debug
 	})
 
-	mut ws_server := rpcwebsocket.new_rpcwsserver(rpcprocessor.ws_port, processor.handler,
-		logger)!
+	mut ws_server := rpcwebsocket.new_rpcwsserver(ws_port, processor.handler, logger)!
 
 	spawn ws_server.run()
 	time.sleep(100 * time.millisecond)
@@ -39,8 +38,8 @@ fn test_new_processor() ! {
 // and handles echo rpc
 fn run_rpc_handler() ! {
 	mut redis_client := redisclient.new(
-		address: rpcprocessor.redis_addr
-		port: rpcprocessor.redis_port
+		address: redis_addr
+		port:    redis_port
 	) or { return error('Failed to create Redis client: ${err}') }
 	for {
 		results := redis_client.brpop(['echo'], 0) or {

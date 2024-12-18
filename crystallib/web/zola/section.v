@@ -106,7 +106,7 @@ pub struct Page {
 	weight      int
 	description string
 	taxonomies  map[string][]string
-	extra       map[string]Extra    @[skip; str: skip]
+	extra       map[string]Extra @[skip; str: skip]
 }
 
 type Extra = []string | string

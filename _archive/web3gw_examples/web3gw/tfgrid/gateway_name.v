@@ -6,9 +6,7 @@ import flag { FlagParser }
 import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_gateway_name(mut fp FlagParser, mut t TFGridClient) !GatewayName {
 	fp.usage_example('deploy [options]')
@@ -20,10 +18,10 @@ fn deploy_gateway_name(mut fp FlagParser, mut t TFGridClient) !GatewayName {
 	_ := fp.finalize()!
 
 	return t.deploy_gateway_name(GatewayName{
-		name: name
-		node_id: u32(node_id)
+		name:            name
+		node_id:         u32(node_id)
 		tls_passthrough: tls_passthrough
-		backends: [backend]
+		backends:        [backend]
 	})!
 }
 
@@ -80,7 +78,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Load{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

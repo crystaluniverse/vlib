@@ -24,7 +24,7 @@ pub mut:
 pub fn (mut self UserManager) user_add(args_ UserArgs) ! {
 	mut args := args_
 	self.users[args.name] = User{
-		name: args.name
+		name:   args.name
 		passwd: args.passwd
 	}
 }

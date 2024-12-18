@@ -15,7 +15,7 @@ pub mut:
 
 pub fn new(mut rpc RpcWsClient, logger &Logger, mut wg_clients Clients) Web3GWHandler {
 	mut h := Web3GWHandler{
-		logger: logger
+		logger:  logger
 		clients: wg_clients
 	}
 	h.handlers = {

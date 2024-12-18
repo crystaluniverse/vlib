@@ -50,10 +50,10 @@ fn (mut self HRData) extract_company_information(mut action playbook.Action) !Co
 	address := p.get_default('address', '')!.trim_space()
 
 	return Company{
-		name: name
-		country: &country
+		name:        name
+		country:     &country
 		description: if description != '' { description } else { none }
-		purpose: if purpose != '' { purpose } else { none }
-		address: if address != '' { address } else { none }
+		purpose:     if purpose != '' { purpose } else { none }
+		address:     if address != '' { address } else { none }
 	}
 }

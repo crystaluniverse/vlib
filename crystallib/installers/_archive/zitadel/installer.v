@@ -24,19 +24,19 @@ pub fn install() ! {
 	url := 'https://github.com/zitadel/zitadel/releases/download/v${version}/zitadel-linux-amd64.tar.gz'
 	console.print_debug(' download ${url}')
 	mut dest := osal.download(
-		url: url
-		minsize_kb: 30000
-		reset: true
+		url:         url
+		minsize_kb:  30000
+		reset:       true
 		expand_file: '/tmp/download/zitadel'
 	)!
 
 	binpath := pathlib.get_file(
-		path: '/tmp/download/zitadel/zitadel-linux-amd64/zitadel'
+		path:   '/tmp/download/zitadel/zitadel-linux-amd64/zitadel'
 		create: false
 	)!
 	osal.cmd_add(
 		cmdname: 'zitadel'
-		source: binpath.path
+		source:  binpath.path
 	)!
 
 	osal.done_set('zitadel_install', 'OK')!

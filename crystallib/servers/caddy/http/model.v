@@ -10,7 +10,7 @@ pub mut:
 pub struct Server {
 pub mut:
 	listen []string = [':443'] // Ports the server listens on
-	routes []Route  @[omitempty]
+	routes []Route @[omitempty]
 }
 
 // Route defines an HTTP route with match conditions and handlers.
@@ -32,15 +32,15 @@ pub mut:
 pub struct Handle {
 pub mut:
 	handler       string // Type of handler
-	routes        []Route             @[omitempty]   // Nested routes
+	routes        []Route             @[omitempty] // Nested routes
 	providers     Providers           @[omitempty] // Authentication providers
-	root          string              @[omitempty]    // Root directory for file server
-	hide          []string            @[omitempty]  // Paths to hide
+	root          string              @[omitempty] // Root directory for file server
+	hide          []string            @[omitempty] // Paths to hide
 	upstreams     []map[string]string @[omitempty] // Upstream servers for reverse proxy
 	portal_name   string              @[omitempty] // Portal name for authentication
 	route_matcher string              @[omitempty] // Route matcher for authentication
 	body          string              @[omitempty] // Body content
-	status_code   int                 @[omitempty]    // Status code for response
+	status_code   int                 @[omitempty] // Status code for response
 }
 
 // Providers contains different authentication providers.
@@ -54,7 +54,7 @@ pub mut:
 pub struct HTTPBasic {
 pub mut:
 	hash       Hash
-	accounts   []Account // List of accounts for basic auth
+	accounts   []Account         // List of accounts for basic auth
 	hash_cache map[string]string // Cache for hashed passwords
 }
 

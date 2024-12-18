@@ -7,7 +7,6 @@ import freeflowuniverse.crystallib.security.authentication
 import freeflowuniverse.crystallib.clients.mailclient
 import freeflowuniverse.crystallib.osal
 
-
 pub struct Context {
 	veb.Context
 pub mut:
@@ -15,7 +14,6 @@ pub mut:
 	// for each request. Like a User struct or a session id
 	user_id string
 }
-
 
 //  mut db := Authorizer{}
 
@@ -27,17 +25,16 @@ pub mut:
 
 //     println(db)
 
-pub fn main()  {
+pub fn main() {
 	osal.load_env_file('${os.dir(@FILE)}/.env')!
 	mail_client := mailclient.configure(
-		name: 'myweb',
-		mail_from: 'myweb@info.tf'
+		name:          'myweb'
+		mail_from:     'myweb@info.tf'
 		mail_username: os.getenv('BREVO_SMTP_USERNAME')
 		mail_password: os.getenv('BREVO_SMTP_PASSWORD')
-		mail_port: 465
-		mail_server: 'smtp-relay.brevo.com'
-
-	) or {panic(err)}
+		mail_port:     465
+		mail_server:   'smtp-relay.brevo.com'
+	) or { panic(err) }
 
 	mut app := heroweb.new(
 		authenticator: authentication.new(

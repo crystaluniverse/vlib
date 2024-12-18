@@ -12,7 +12,7 @@ mut:
 // return a cache object starting from a redis connection
 pub fn (mut r Redis) cache(namespace string) RedisCache {
 	return RedisCache{
-		redis: &r
+		redis:     &r
 		namespace: namespace
 	}
 }

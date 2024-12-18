@@ -4,7 +4,7 @@ module redisclient
 pub struct RedisURL {
 	address string = '127.0.0.1'
 	port    int    = 6379
-	//db      int
+	// db      int
 }
 
 pub fn get_redis_url(url string) !RedisURL {
@@ -13,7 +13,7 @@ pub fn get_redis_url(url string) !RedisURL {
 	} else {
 		return RedisURL{
 			address: url.all_before_last(':')
-			port: url.all_after_last(':').u16()
+			port:    url.all_after_last(':').u16()
 		}
 	}
 }

@@ -79,46 +79,46 @@ pub fn amount_get(amount_ string) !Amount {
 	if code == '' {
 		num = amount
 		code = 'USD'
-	// } else {
-	// 	rlock currencies {
-	// 		if code !in currencies {
-	// 			rates_get([code], false)! // not sure this will work
-	// 			rates_get([code], true)!
-	// 		}
-	// 	}
+		// } else {
+		// 	rlock currencies {
+		// 		if code !in currencies {
+		// 			rates_get([code], false)! // not sure this will work
+		// 			rates_get([code], true)!
+		// 		}
+		// 	}
 	}
 
 	mut num2 := num.f64()
 
-	if code.starts_with("E+"){
-		return error("found currency code with E+ notation, is overflow: ${amount_}")
+	if code.starts_with('E+') {
+		return error('found currency code with E+ notation, is overflow: ${amount_}')
 	}
 	if code.len == 1 {
 		if code.starts_with('K') {
-			code = "USD"
+			code = 'USD'
 			num2 = num2 * 1000
-		}else if code.starts_with('M') {
-			code = "USD"
+		} else if code.starts_with('M') {
+			code = 'USD'
 			num2 = num2 * 1000000
-		}else{
-			return error("found currency code with 1 letter but did not start with k or m (killo or million): ${code}")
+		} else {
+			return error('found currency code with 1 letter but did not start with k or m (killo or million): ${code}')
 		}
-	}	else if code.len == 4 {
+	} else if code.len == 4 {
 		if code.starts_with('K') {
 			code = code[1..4]
 			num2 = num2 * 1000
-		}else if code.starts_with('M') {
+		} else if code.starts_with('M') {
 			code = code[1..4]
 			num2 = num2 * 1000000
-		}else{
-			return error("found currency code with 4 letters but did not start with k or m (killo or million): ${code}")
+		} else {
+			return error('found currency code with 4 letters but did not start with k or m (killo or million): ${code}')
 		}
 	}
 
-	mut mycurr:=get(code)!
+	mut mycurr := get(code)!
 
 	mut amount2 := Amount{
-		val: num2
+		val:      num2
 		currency: mycurr
 	}
 

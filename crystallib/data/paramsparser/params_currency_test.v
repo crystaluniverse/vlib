@@ -6,11 +6,11 @@ import os
 const testparams = Params{
 	params: [
 		Param{
-			key: 'dollars'
+			key:   'dollars'
 			value: '100USD'
 		},
 		Param{
-			key: 'euros'
+			key:   'euros'
 			value: '100EUR'
 		},
 	]
@@ -19,13 +19,13 @@ const testparams = Params{
 fn test_get_currencyamount() ! {
 	// testusd
 	os.setenv('OFFLINE', 'true', true)
-	mut amount := paramsparser.testparams.get_currencyamount('dollars')!
+	mut amount := testparams.get_currencyamount('dollars')!
 	assert amount.currency.name == 'USD'
 	assert amount.currency.usdval == 1.0
 	assert amount.val == 100.0
 
 	// testeuro
-	amount = paramsparser.testparams.get_currencyamount('euros')!
+	amount = testparams.get_currencyamount('euros')!
 	assert amount.currency.name == 'EUR'
 	assert amount.currency.usdval >= 0.9 // may need revision in future
 	assert amount.val == 100.0
@@ -34,7 +34,7 @@ fn test_get_currencyamount() ! {
 fn test_get_currencyamount_default() ! {
 	// testeuro
 	os.setenv('OFFLINE', 'true', true)
-	mut amount := paramsparser.testparams.get_currencyamount_default('na', '20EUR')!
+	mut amount := testparams.get_currencyamount_default('na', '20EUR')!
 	assert amount.currency.name == 'EUR'
 	assert amount.currency.usdval >= 0.9 // may need revision in future
 	assert amount.val == 20

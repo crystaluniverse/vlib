@@ -10,7 +10,7 @@ fn test_run() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		root_dir: root_dir
-		user_db: {
+		user_db:  {
 			'mario': '123'
 		}
 	)!
@@ -21,8 +21,8 @@ fn test_get() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		server_port: rand.int_in_range(8000, 9000)!
-		root_dir: root_dir
-		user_db: {
+		root_dir:    root_dir
+		user_db:     {
 			'mario': '123'
 		}
 	)!
@@ -45,8 +45,8 @@ fn test_put() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		server_port: rand.int_in_range(8000, 9000)!
-		root_dir: root_dir
-		user_db: {
+		root_dir:    root_dir
+		user_db:     {
 			'mario': '123'
 		}
 	)!
@@ -81,8 +81,8 @@ fn test_copy() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		server_port: rand.int_in_range(8000, 9000)!
-		root_dir: root_dir
-		user_db: {
+		root_dir:    root_dir
+		user_db:     {
 			'mario': '123'
 		}
 	)!
@@ -111,8 +111,8 @@ fn test_move() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		server_port: rand.int_in_range(8000, 9000)!
-		root_dir: root_dir
-		user_db: {
+		root_dir:    root_dir
+		user_db:     {
 			'mario': '123'
 		}
 	)!
@@ -140,8 +140,8 @@ fn test_delete() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		server_port: rand.int_in_range(8000, 9000)!
-		root_dir: root_dir
-		user_db: {
+		root_dir:    root_dir
+		user_db:     {
 			'mario': '123'
 		}
 	)!
@@ -164,8 +164,8 @@ fn test_mkcol() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		server_port: rand.int_in_range(8000, 9000)!
-		root_dir: root_dir
-		user_db: {
+		root_dir:    root_dir
+		user_db:     {
 			'mario': '123'
 		}
 	)!
@@ -188,8 +188,8 @@ fn test_propfind() {
 	root_dir := '/tmp/webdav'
 	mut app := new_app(
 		server_port: rand.int_in_range(8000, 9000)!
-		root_dir: root_dir
-		user_db: {
+		root_dir:    root_dir
+		user_db:     {
 			'mario': '123'
 		}
 	)!

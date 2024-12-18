@@ -115,9 +115,9 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 			downloadpath.delete() or { panic(err) }
 		}
 		_ := osal.download(
-			url: urllocal
-			reset: args.reset
-			dest: downloadpath.path
+			url:        urllocal
+			reset:      args.reset
+			dest:       downloadpath.path
 			minsize_kb: args.minsize_kb
 			maxsize_kb: args.maxsize_kb
 		)!
@@ -150,11 +150,11 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		return error("Cannot download for runner, max size requirement not met (${size_kb} -> min:${args.maxsize_kb}): '${downloadpath.path}':\n${args}")
 	}
 	mut metaobj := DownloadMeta{
-		args: args
-		size_kb: u32(size_kb)
-		hash: md5hex
+		args:         args
+		size_kb:      u32(size_kb)
+		hash:         md5hex
 		downloadtype: downloadtype
-		path: downloadpath.path
+		path:         downloadpath.path
 	}
 	if args.metapath.len > 0 {
 		mut metapatho := pathlib.get(args.metapath)

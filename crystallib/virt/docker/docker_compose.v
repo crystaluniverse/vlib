@@ -12,7 +12,7 @@ pub mut:
 	name    string
 	content string
 	params  Params
-	engine  &DockerEngine     @[str: skip]
+	engine  &DockerEngine @[str: skip]
 	items   []&ComposeService
 	path    string
 }
@@ -35,8 +35,8 @@ pub fn (mut e DockerEngine) compose_new(args_ ComposeArgs) DockerComposeRecipe {
 	}
 	return DockerComposeRecipe{
 		engine: &e
-		name: args.name
-		path: args.composepath + '/${args.name}'
+		name:   args.name
+		path:   args.composepath + '/${args.name}'
 	}
 }
 

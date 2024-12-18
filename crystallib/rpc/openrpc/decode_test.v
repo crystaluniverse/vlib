@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.data.jsonschema
 const doc_path = '${os.dir(@FILE)}/testdata/openrpc.json'
 
 fn test_decode() ! {
-	mut doc_file := pathlib.get_file(path: openrpc.doc_path)!
+	mut doc_file := pathlib.get_file(path: doc_path)!
 	content := doc_file.read()!
 	object := decode(content)!
 

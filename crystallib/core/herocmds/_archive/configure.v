@@ -12,52 +12,52 @@ import freeflowuniverse.crystallib.ui.console
 
 pub fn cmd_configure(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'configure'
-		description: 'configure parameters for hero environment.'
+		name:          'configure'
+		description:   'configure parameters for hero environment.'
 		required_args: 0
-		execute: cmd_configure_execute
+		execute:       cmd_configure_execute
 	}
 
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'category'
-		abbrev: 'c'
+		flag:        .string
+		required:    false
+		name:        'category'
+		abbrev:      'c'
 		description: 'name of the configure item e.g. mail, postgres.'
 	})
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'instance'
-		abbrev: 'i'
+		flag:        .string
+		required:    false
+		name:        'instance'
+		abbrev:      'i'
 		description: 'instance name'
 	})
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'reset'
-		abbrev: 'r'
+		flag:        .bool
+		required:    false
+		name:        'reset'
+		abbrev:      'r'
 		description: 'will reset.'
 	})
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'show'
-		abbrev: 's'
+		flag:        .bool
+		required:    false
+		name:        'show'
+		abbrev:      's'
 		description: 'will show the command.'
 	})
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'test'
-		abbrev: 't'
+		flag:        .bool
+		required:    false
+		name:        'test'
+		abbrev:      't'
 		description: 'do a test.'
 	})
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'push'
-		abbrev: 'p'
+		flag:        .string
+		required:    false
+		name:        'push'
+		abbrev:      'p'
 		description: 'push this config to a destination over ssh e.g. root@212.3.247.26'
 	})
 

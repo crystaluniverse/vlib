@@ -15,7 +15,7 @@ fn main() {
 
 	// Test data
 	test_string := 'Hello World'
-	
+
 	// Store data
 	db.set(1, test_string.bytes()) or {
 		println('Failed to store data: ${err}')
@@ -29,7 +29,7 @@ fn main() {
 		exit(1)
 	}
 	retrieved_string := data.bytestr()
-	
+
 	if retrieved_string != test_string {
 		println('Data verification failed!')
 		println('Expected: ${test_string}')

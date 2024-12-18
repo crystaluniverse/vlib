@@ -22,7 +22,7 @@ pub mut:
 	cost_fixed_min &finance.Amount
 	cost_fixed_max &finance.Amount
 	vat_extra      &finance.Amount // auto-calculated for office and people, manual elsewhere
-	vat_percent    f64 // 0 - 100
+	vat_percent    f64             // 0 - 100
 }
 
 pub enum GenericType {
@@ -72,22 +72,22 @@ pub fn (mut budget Budget) item_add(args ItemAddArgs) !&BudgetItemGeneric {
 	}
 
 	item := BudgetItemGeneric{
-		id: id
-		name: args.name
-		remark: args.remark
-		start: time_from_string(args.start) or {
+		id:             id
+		name:           args.name
+		remark:         args.remark
+		start:          time_from_string(args.start) or {
 			return error('Failed to get time from start string: ${args.start}')
 		}
-		stop: time_from_string(args.stop) or {
+		stop:           time_from_string(args.stop) or {
 			return error('Failed to get time from stop string: ${args.stop}')
 		}
-		cost_fixed: cost_fixed
+		cost_fixed:     cost_fixed
 		cost_fixed_min: cost_fixed
 		cost_fixed_max: cost_fixed
-		country: args.country
-		generic_type: generic_type
-		vat_extra: vat_extra
-		vat_percent: vat_percent
+		country:        args.country
+		generic_type:   generic_type
+		vat_extra:      vat_extra
+		vat_percent:    vat_percent
 	}
 
 	budget.planning << item

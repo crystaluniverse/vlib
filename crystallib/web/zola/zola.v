@@ -20,10 +20,10 @@ pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 	mut site := ZolaSite{
-		name: args.name
-		title: args.title
+		name:        args.name
+		title:       args.title
 		description: args.description
-		url: args.url
+		url:         args.url
 		// zola: &self
 		tree: doctree.new(name: 'ws_${args.name}')!
 	}
@@ -31,14 +31,14 @@ pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
 	self.sites[site.name] = &site
 
 	site.path_build = pathlib.get_dir(
-		path: '${self.path_build}/${args.name}'
+		path:   '${self.path_build}/${args.name}'
 		create: true
 	)!
 	if args.path_publish == '' {
 		args.path_publish = '${self.path_publish}/${args.name}'
 	}
 	site.path_publish = pathlib.get_dir(
-		path: args.path_publish
+		path:   args.path_publish
 		create: true
 	)!
 	// make sure we have clean env

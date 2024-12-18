@@ -21,7 +21,7 @@ pub:
 
 pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
 	site.header = Header{
-		logo: args.logo
+		logo:     args.logo
 		template: args.template
 	}
 }

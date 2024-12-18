@@ -27,7 +27,7 @@ pub fn configurator_new[T](args ConfiguratorArgs) !Configurator[T] {
 	return Configurator[T]{
 		// context: args.context
 		configtype: T.name.to_lower()
-		instance: args.instance
+		instance:   args.instance
 	}
 }
 
@@ -51,7 +51,7 @@ pub fn (mut self Configurator[T]) exists() !bool {
 
 pub fn (mut self Configurator[T]) new() !T {
 	return T{
-		instance: self.instance
+		instance:    self.instance
 		description: self.description
 	}
 }

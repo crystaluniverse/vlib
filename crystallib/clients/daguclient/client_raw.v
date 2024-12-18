@@ -18,7 +18,7 @@ fn (mut client DaguClient) dag_create(name string) !CreateDagResponse {
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags'
-		data: json.encode(CreateDag{ action: 'new', value: name })
+		data:   json.encode(CreateDag{ action: 'new', value: name })
 	) or { return error('Failed to create request: ${err}') }
 	result := client.connection.send(request) or { return error('Failed to send request: ${err}') }
 
@@ -143,7 +143,7 @@ fn (mut client DaguClient) post_dag_action(dag_id string, params PostDagAction) 
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags/${dag_id}'
-		data: json.encode(params)
+		data:   json.encode(params)
 	)!
 
 	result := client.connection.send(request)!

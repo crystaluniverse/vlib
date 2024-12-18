@@ -23,7 +23,7 @@ fn get_collection_name(filepath string) string {
 	if contents.len == 0 {
 		return os.base(filepath)
 	}
-	
+
 	// Look for a line starting with 'name:' and extract the value
 	lines := contents.split('\n')
 	for line in lines {
@@ -31,7 +31,7 @@ fn get_collection_name(filepath string) string {
 			return line.trim()[5..].trim() // Extract text after "name:"
 		}
 	}
-	
+
 	// Return base filename if no name field found
 	return os.base(filepath)
 }

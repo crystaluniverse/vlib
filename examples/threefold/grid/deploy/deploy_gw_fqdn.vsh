@@ -17,8 +17,8 @@ fn main() {
 
 	gw := models.GatewayFQDNProxy{
 		tls_passthrough: false
-		backends: ['http://1.1.1.1:9000']
-		fqdn: 'domaind.gridtesting.xyz'
+		backends:        ['http://1.1.1.1:9000']
+		fqdn:            'domaind.gridtesting.xyz'
 	}
 	wl := gw.to_workload(name: 'mywlname')
 	node_id := u32(14)
@@ -30,16 +30,16 @@ fn main() {
 	logger.info('preparing the deployment..')
 	signature_requirement := models.SignatureRequirement{
 		weight_required: 1
-		requests: [
+		requests:        [
 			models.SignatureRequest{
 				twin_id: deployer.twin_id
-				weight: 1
+				weight:  1
 			},
 		]
 	}
 	mut deployment := models.new_deployment(
-		twin_id: deployer.twin_id
-		workloads: [wl]
+		twin_id:               deployer.twin_id
+		workloads:             [wl]
 		signature_requirement: signature_requirement
 	)
 

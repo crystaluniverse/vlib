@@ -39,13 +39,13 @@ struct APIClient {
 
 pub fn generate_client_module(config ClientConfig) !Module {
 	mut generator := ClientGenerator{
-		api_name: texttools.name_fix(config.api_name)
+		api_name:      texttools.name_fix(config.api_name)
 		client_struct: Struct{
 			name: '${config.api_name.title()}Client'
 		}
 	}
 	return Module{
-		name: '${config.api_name}_client'
+		name:  '${config.api_name}_client'
 		files: [
 			generator.generate_factory(),
 			generator.generate_client(),

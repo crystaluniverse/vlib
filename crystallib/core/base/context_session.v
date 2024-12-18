@@ -69,11 +69,11 @@ pub fn (mut context Context) session_get(args_ ContextSessionGetArgs) !Session {
 	config := json.decode(SessionConfig, datajson)!
 	t := ourtime.new(config.start)!
 	mut s := Session{
-		name: args.name
-		start: t
+		name:    args.name
+		start:   t
 		context: &context
-		params: paramsparser.new(config.params)!
-		config: config
+		params:  paramsparser.new(config.params)!
+		config:  config
 	}
 	return s
 }

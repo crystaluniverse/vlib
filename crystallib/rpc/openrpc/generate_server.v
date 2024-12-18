@@ -29,14 +29,14 @@ pub fn (o OpenRPC) generate_server_file() !CodeFile {
 	items := handle_ws_fn
 
 	return CodeFile{
-		mod: name
-		name: 'server'
+		mod:     name
+		name:    'server'
 		imports: [
 			parse_import('log'),
 			parse_import('net.websocket'),
 			parse_import('freeflowuniverse.crystallib.rpc.rpcwebsocket {RpcWsServer}'),
 		]
-		items: [handle_ws_fn, run_wsserver_fn]
+		items:   [handle_ws_fn, run_wsserver_fn]
 	}
 }
 
@@ -56,8 +56,8 @@ pub fn (o OpenRPC) generate_server_test_file() !CodeFile {
 	test_fn.body = 'spawn run_wsserver(port)'
 
 	return CodeFile{
-		mod: name
-		name: 'server_test'
+		mod:   name
+		name:  'server_test'
 		items: [
 			CustomCode{'const port = 3000'},
 			test_fn,

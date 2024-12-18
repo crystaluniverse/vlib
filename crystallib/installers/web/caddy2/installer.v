@@ -88,7 +88,7 @@ pub fn install_caddy_from_release() ! {
 	}
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 10000
 		expand_dir: '/tmp/caddyserver'
 	)!
@@ -96,7 +96,7 @@ pub fn install_caddy_from_release() ! {
 	mut binpath := dest.file_get('caddy')!
 	osal.cmd_add(
 		cmdname: 'caddy'
-		source: binpath.path
+		source:  binpath.path
 	)!
 }
 
@@ -149,7 +149,7 @@ pub fn install_caddy_with_xcaddy(plugins []string) ! {
 	}
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 1000
 		expand_dir: '/tmp/xcaddy_dir'
 	)!
@@ -157,7 +157,7 @@ pub fn install_caddy_with_xcaddy(plugins []string) ! {
 	mut binpath := dest.file_get('xcaddy')!
 	osal.cmd_add(
 		cmdname: 'xcaddy'
-		source: binpath.path
+		source:  binpath.path
 	)!
 
 	console.print_header('Installing Caddy with xcaddy')
@@ -170,8 +170,8 @@ pub fn install_caddy_with_xcaddy(plugins []string) ! {
 	osal.exec(cmd: cmd)!
 	osal.cmd_add(
 		cmdname: 'caddy'
-		source: path
-		reset: true
+		source:  path
+		reset:   true
 	)!
 }
 
@@ -274,8 +274,8 @@ pub fn start(args_ InstallArgs) ! {
 	mut sm := startupmanager.get()!
 
 	sm.new(
-		name: 'caddy'
-		cmd: cmd
+		name:  'caddy'
+		cmd:   cmd
 		start: true
 	)!
 }

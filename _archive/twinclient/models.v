@@ -38,17 +38,17 @@ pub mut:
 pub struct Message {
 pub mut:
 	event      string // Used for web socket events
-	version    int    @[json: ver]    // protocol version, used for update
+	version    int    @[json: ver] // protocol version, used for update
 	id         string @[json: uid] // unique identifier set by server
 	command    string @[json: cmd] // command to request in dot notation
-	expiration int    @[json: exp]    // expiration in seconds, based on epoch
-	retry      int    @[json: try]    // amount of retry if remote is unreachable
+	expiration int    @[json: exp] // expiration in seconds, based on epoch
+	retry      int    @[json: try] // amount of retry if remote is unreachable
 	data       string @[json: dat] // binary payload to send to remote, base64 encoded
-	twin_src   int    @[json: src]    // twinid source, will be set by server
-	twin_dst   []int  @[json: dst]  // twinid of destination, can be more than one
+	twin_src   int    @[json: src] // twinid source, will be set by server
+	twin_dst   []int  @[json: dst] // twinid of destination, can be more than one
 	retqueue   string @[json: ret] // return queue name where to send reply
 	schema     string @[json: shm] // schema to define payload, later could enforce payload
-	epoch      i64    @[json: now]    // unix timestamp when request were created
+	epoch      i64    @[json: now] // unix timestamp when request were created
 	err        string @[json: err] // optional error message if any
 }
 
@@ -108,34 +108,34 @@ pub:
 
 pub struct Machine {
 pub:
-	name        string     @[required]
-	node_id     u32        @[required]
+	name        string @[required]
+	node_id     u32    @[required]
 	disks       []Disk
 	qsfs_disks  []QsfsDisk
-	public_ip   bool       @[required]
-	planetary   bool       @[required]
-	cpu         u32        @[required]
-	memory      u64        @[required]
-	rootfs_size u64        @[required]
-	flist       string     @[required]
-	entrypoint  string     @[required]
+	public_ip   bool   @[required]
+	planetary   bool   @[required]
+	cpu         u32    @[required]
+	memory      u64    @[required]
+	rootfs_size u64    @[required]
+	flist       string @[required]
+	entrypoint  string @[required]
 	env         Env
 }
 
 @[params]
 pub struct AddMachine {
 pub:
-	name        string     @[required]
-	node_id     u32        @[required]
+	name        string @[required]
+	node_id     u32    @[required]
 	disks       []Disk
 	qsfs_disks  []QsfsDisk
-	public_ip   bool       @[required]
-	planetary   bool       @[required]
-	cpu         u32        @[required]
-	memory      u64        @[required]
-	rootfs_size u64        @[required]
-	flist       string     @[required]
-	entrypoint  string     @[required]
+	public_ip   bool   @[required]
+	planetary   bool   @[required]
+	cpu         u32    @[required]
+	memory      u64    @[required]
+	rootfs_size u64    @[required]
+	flist       string @[required]
+	entrypoint  string @[required]
 	env         Env
 }
 
@@ -151,30 +151,30 @@ pub:
 
 pub struct KubernetesNode {
 pub:
-	name        string     @[required]
-	node_id     u32        @[required]
-	cpu         u32        @[required]
-	memory      u64        @[required]
-	rootfs_size u32        @[required]
-	disk_size   u32        @[required]
+	name        string @[required]
+	node_id     u32    @[required]
+	cpu         u32    @[required]
+	memory      u64    @[required]
+	rootfs_size u32    @[required]
+	disk_size   u32    @[required]
 	qsfs_disks  []QsfsDisk
-	public_ip   bool       @[required]
-	planetary   bool       @[required]
+	public_ip   bool @[required]
+	planetary   bool @[required]
 }
 
 @[params]
 pub struct AddKubernetesNode {
 pub:
-	deployment_name string     @[required]
-	name            string     @[required]
-	node_id         u32        @[required]
-	cpu             u32        @[required]
-	memory          u64        @[required]
-	rootfs_size     u32        @[required]
-	disk_size       u32        @[required]
+	deployment_name string @[required]
+	name            string @[required]
+	node_id         u32    @[required]
+	cpu             u32    @[required]
+	memory          u64    @[required]
+	rootfs_size     u32    @[required]
+	disk_size       u32    @[required]
 	qsfs_disks      []QsfsDisk
-	public_ip       bool       @[required]
-	planetary       bool       @[required]
+	public_ip       bool @[required]
+	planetary       bool @[required]
 }
 
 @[params]
@@ -187,7 +187,7 @@ pub:
 	workers     []KubernetesNode
 	metadata    string
 	description string
-	ssh_key     string           @[required]
+	ssh_key     string @[required]
 }
 
 pub struct ZDB {
@@ -332,7 +332,7 @@ pub:
 	id          string
 	ip          string
 	gateway     string
-	contract_id u64    @[json: 'contractId']
+	contract_id u64 @[json: 'contractId']
 }
 
 pub struct ContractResponse {
@@ -434,8 +434,8 @@ pub:
 pub struct Farm {
 pub:
 	name              string
-	farm_id           u32        @[json: 'farmId']
-	twin_id           u32        @[json: 'twinId']
+	farm_id           u32 @[json: 'farmId']
+	twin_id           u32 @[json: 'twinId']
 	version           u32
 	pricing_policy_id u32        @[json: 'pricingPolicyId']
 	stellar_address   string     @[json: 'stellarAddress']
@@ -446,23 +446,23 @@ pub struct Node {
 pub:
 	version            u32
 	id                 string
-	node_id            u32          @[json: 'nodeId']
-	farm_id            u32          @[json: 'farmId']
-	twin_id            u32          @[json: 'twinId']
+	node_id            u32 @[json: 'nodeId']
+	farm_id            u32 @[json: 'farmId']
+	twin_id            u32 @[json: 'twinId']
 	country            string
 	city               string
-	grid_version       u32          @[json: 'gridVersion']
+	grid_version       u32 @[json: 'gridVersion']
 	uptime             u64
 	created            u64
-	farming_policy_id  u32          @[json: 'farmingPolicyId']
-	updated_at         string       @[json: 'updatedAt']
+	farming_policy_id  u32    @[json: 'farmingPolicyId']
+	updated_at         string @[json: 'updatedAt']
 	cru                string
 	mru                string
 	sru                string
 	hru                string
 	public_config      PublicConfig
 	status             string
-	certification_type string       @[json: 'certificationType']
+	certification_type string @[json: 'certificationType']
 }
 
 struct PublicConfig {
@@ -703,8 +703,8 @@ pub struct Workload {
 pub mut:
 	version     int
 	name        string
-	type_       string           @[json: 'type']
-	data        string           @[raw]
+	type_       string @[json: 'type']
+	data        string @[raw]
 	metadata    string
 	description string
 	result      DeploymentResult

@@ -6,7 +6,7 @@ pub struct RegionalInternet {
 pub mut:
 	name      string
 	batches   []NodesBatch
-	simulator &Simulator        @[str: skip]
+	simulator &Simulator @[str: skip]
 	sheet     spreadsheet.Sheet
 }
 
@@ -20,9 +20,9 @@ pub fn (mut sim Simulator) regionalinternet_add(name string) !&RegionalInternet 
 		panic(err)
 	}
 	mut ri := RegionalInternet{
-		name: name
+		name:      name
 		simulator: &sim
-		sheet: sh
+		sheet:     sh
 	}
 
 	mut params := ri.simulator.params
@@ -82,11 +82,11 @@ pub fn (mut ri RegionalInternet) nodes_add(args RegionalInternetNodesAddArgs) ! 
 		price_increase_nodecost := price_increase_nodecost_row.cell_get(month)!
 		hw_cost := args.template.capacity.cost * price_increase_nodecost.val
 		mut nb := NodesBatch{
-			node_template: &args.template
-			hw_cost: hw_cost
-			nrnodes: int(cell.val)
-			start_month: month
-			nrmonths: ri.simulator.nrmonths
+			node_template:     &args.template
+			hw_cost:           hw_cost
+			nrnodes:           int(cell.val)
+			start_month:       month
+			nrmonths:          ri.simulator.nrmonths
 			regional_internet: &ri
 			// sheet: sh_nb
 		}

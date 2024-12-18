@@ -30,9 +30,9 @@ fn test_dbfs3() {
 	mut dbcollection := get(contextid: 1, dbpath: data_dir, secret: '123456')!
 
 	mut db := dbcollection.db_create(
-		name: 'db_a'
-		encrypted: false
-		withkeys: true
+		name:       'db_a'
+		encrypted:  false
+		withkeys:   true
 		keyshashed: true
 	)!
 

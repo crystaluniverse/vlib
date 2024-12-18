@@ -11,11 +11,11 @@ import freeflowuniverse.crystallib.core.texttools
 pub struct Session {
 pub mut:
 	name     string
-	path     pathlib.Path      @[skip] // is the base directory of the session
+	path     pathlib.Path @[skip] // is the base directory of the session
 	vars     map[string]string
 	actions  []playbook.Action @[skip]
 	includes []string
-	runner   &Runner           @[skip; str: skip]
+	runner   &Runner @[skip; str: skip]
 }
 
 @[params]
@@ -42,8 +42,8 @@ pub fn (mut r Runner) session_new(args_ SessionArgs) !Session {
 	mut p := pathlib.get_dir(path: '${r.path.path}/sessions/${args.name}', create: true)!
 	mut session := Session{
 		runner: &r
-		name: args.name
-		path: p
+		name:   args.name
+		path:   p
 	}
 
 	if args.actions_url.len > 0 {
@@ -119,9 +119,9 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 		// if not a dir and not exist we need to download
 		// will link if git
 		_ := downloader.download(
-			url: args.url
-			reset: args.reset
-			dest: downloadpath.path // is now a dir so files will get in dir
+			url:          args.url
+			reset:        args.reset
+			dest:         downloadpath.path // is now a dir so files will get in dir
 			gitstructure: session.runner.args.gitstructure
 		)!
 		actions_path = downloadpath.path
@@ -204,8 +204,8 @@ pub fn (mut s Session) run(args RunArgs) ! {
 					return error('cannot have alias while we expect to process subdirs')
 				}
 				m := downloader.download(
-					url: sourceurl
-					reset: reset
+					url:          sourceurl
+					reset:        reset
 					gitstructure: s.runner.args.gitstructure
 				)!
 				mut downloadpath := pathlib.get_dir(path: m.path)!
@@ -236,9 +236,9 @@ pub fn (mut s Session) run(args RunArgs) ! {
 				}
 				dest := '${s.runner.path.path}/recipes/${alias}'
 				_ := downloader.download(
-					url: sourceurl
-					reset: reset
-					dest: dest
+					url:          sourceurl
+					reset:        reset
+					dest:         dest
 					gitstructure: s.runner.args.gitstructure
 				)!
 				if to_execute {

@@ -2,30 +2,29 @@ module osis
 
 import x.json2
 
-
 // describes a root object
 pub struct RootObject {
 pub mut:
-	id string
-	name string // Story
+	id     string
+	name   string // Story
 	fields []FieldDescription
 }
 
 pub struct FieldDescription {
 pub mut:
-	name string // name of field
-	typ FieldType
-	value string // value of field
-	is_secret bool // whether field should be encrypted upon storage
-	is_index bool // whether object is searchable by field
-	fts_enabled bool // whether full text search on field is enabled
+	name        string // name of field
+	typ         FieldType
+	value       string // value of field
+	is_secret   bool   // whether field should be encrypted upon storage
+	is_index    bool   // whether object is searchable by field
+	fts_enabled bool   // whether full text search on field is enabled
 }
 
 // returns the sql type name of the field
 pub fn (field FieldDescription) sql_type() string {
 	return match field.typ {
-		.text {'TEXT'}
-		.number {'INTEGER'}
+		.text { 'TEXT' }
+		.number { 'INTEGER' }
 	}
 }
 
@@ -35,14 +34,13 @@ pub enum FieldType {
 }
 
 pub fn (obj RootObject) to_json() string {
-	mut obj_map := map[string]json2.Any
+	mut obj_map := map[string]json2.Any{}
 	for field in obj.fields {
 		obj_map[field.name] = field.value
 	}
 
 	return obj_map.str()
 }
-
 
 // returns the lists of the indices of a root objects db table, and corresponding values
 pub fn (obj RootObject) sql_indices_values() ([]string, []string) {
@@ -56,7 +54,7 @@ pub fn (obj RootObject) sql_indices_values() ([]string, []string) {
 	for field in obj.fields {
 		if field.name == 'id' {
 			indices << '${field.name}'
-			values << "${field.value}"
+			values << '${field.value}'
 		}
 
 		if field.typ == .text {
@@ -67,13 +65,12 @@ pub fn (obj RootObject) sql_indices_values() ([]string, []string) {
 		} else if field.typ == .number {
 			if field.is_index {
 				indices << '${field.name}'
-				values << "${field.value}"
+				values << '${field.value}'
 			}
 		}
 	}
 	println('debugzoni ${indices} ${values}')
 	return indices, values
-
 }
 
 // return the description of a given generic
@@ -89,17 +86,16 @@ pub fn root_object[T](object T) RootObject {
 		}
 
 		fields << FieldDescription{
-			name: field.name
-			typ: typ
-			value: object.$(field.name).str()
-			is_index: field.attrs.contains('index')
-			is_secret: field.attrs.contains('secret')
+			name:        field.name
+			typ:         typ
+			value:       object.$(field.name).str()
+			is_index:    field.attrs.contains('index')
+			is_secret:   field.attrs.contains('secret')
 			fts_enabled: field.attrs.contains('fts_enabled')
 		}
 	}
-
-	return RootObject {
-		name: typeof[T]()
+	return RootObject{
+		name:   typeof[T]()
 		fields: fields
 	}
 }
@@ -129,12 +125,11 @@ pub fn root_object_from_json(json string) !RootObject {
 
 	mut obj := RootObject{}
 	for key, val in obj_map {
-		obj.fields << FieldDescription {
-			name: key
+		obj.fields << FieldDescription{
+			name:  key
 			value: val.str()
 		}
 	}
 
 	return obj
-
 }

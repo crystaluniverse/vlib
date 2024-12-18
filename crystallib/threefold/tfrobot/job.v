@@ -21,7 +21,7 @@ pub struct Job {
 pub:
 	name      string
 	network   Network
-	mneumonic string  @[required]
+	mneumonic string @[required]
 pub mut:
 	ssh_keys    map[string]string
 	deployments []Deployment
@@ -80,7 +80,7 @@ pub fn (mut r TFRobot[Config]) job_new(job Job) !Job {
 
 pub fn (mut j Job) deploy_vms(config VMConfig, quantity int) {
 	j.deployments << Deployment{
-		config: config
+		config:   config
 		quantity: quantity
 	}
 }

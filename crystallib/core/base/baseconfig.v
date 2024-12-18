@@ -10,7 +10,7 @@ pub struct BaseConfig[T] {
 mut:
 	configurator_ ?Configurator[T] @[skip; str: skip]
 	config_       ?&T
-	session_      ?&Session        @[skip; str: skip]
+	session_      ?&Session @[skip; str: skip]
 	configtype    string
 pub mut:
 	instance string

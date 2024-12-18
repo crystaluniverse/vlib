@@ -28,7 +28,7 @@ pub mut:
 	ip4       bool = true
 	ip6       bool = true
 	planetary bool = true
-	mycelium bool = true
+	mycelium  bool = true
 	timeout   int  = 120 // timeout in sec
 }
 
@@ -45,7 +45,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 				console.print_debug('SSH port test ok')
 				return b.node_new(
 					ipaddr: 'root@${vm.public_ip4}'
-					name: '${vm.deployment_name}_${vm.name}'
+					name:   '${vm.deployment_name}_${vm.name}'
 				)!
 			}
 		}
@@ -55,7 +55,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 				console.print_debug('SSH port test ok')
 				return b.node_new(
 					ipaddr: 'root@[${vm.public_ip6}]'
-					name: '${vm.deployment_name}_${vm.name}'
+					name:   '${vm.deployment_name}_${vm.name}'
 				)!
 			}
 		}
@@ -65,7 +65,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 				console.print_debug('SSH port test ok')
 				return b.node_new(
 					ipaddr: 'root@[${vm.yggdrasil_ip}]'
-					name: '${vm.deployment_name}_${vm.name}'
+					name:   '${vm.deployment_name}_${vm.name}'
 				)!
 			}
 		}

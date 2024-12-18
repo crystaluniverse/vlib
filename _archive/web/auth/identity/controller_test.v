@@ -25,7 +25,7 @@ fn test_register() {
 		email: 'test@email.com'
 	}
 	data := json.encode(user)
-	req := http.new_request(.post, '${identity.url}/register', data)
+	req := http.new_request(.post, '${url}/register', data)
 	resp := req.do()!
 	assert resp.status_code == 200
 	assert resp.body.len > 0

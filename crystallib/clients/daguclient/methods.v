@@ -45,7 +45,7 @@ pub fn (mut client DaguClient) dag_register(dag DAG, opts NewDagOptions) !PostDa
 fn (mut client DaguClient) edit_dag(name string, dag DAG) !PostDagActionResponse {
 	return client.post_dag_action(name,
 		action: .save
-		value: json.encode(dag)
+		value:  json.encode(dag)
 	) or { return error('Failed to edit dag: ${err}') }
 }
 

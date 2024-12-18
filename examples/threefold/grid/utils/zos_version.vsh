@@ -1,7 +1,7 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.grid as tfgrid
-import freeflowuniverse.crystallib.threefold.griddriver { Client }
+import freeflowuniverse.crystallib.threefold.griddriver
 import freeflowuniverse.crystallib.ui.console
 import log
 

@@ -33,7 +33,7 @@ pub struct OrgReposOptions {
 pub fn (mut client GiteaClient[T]) organization_repos(name string, options OrgReposOptions) ![]Repo {
 	r := client.connection.get_json_list(
 		prefix: 'orgs/${name}/repos'
-		data: json.encode(options)
+		data:   json.encode(options)
 	)!
 
 	mut res := []Repo{}

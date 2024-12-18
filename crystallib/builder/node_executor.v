@@ -44,9 +44,9 @@ pub fn (mut node Node) exec(args ExecArgs) !string {
 pub struct ExecRetryArgs {
 pub:
 	cmd          string
-	retrymax     int  = 10 // how may times maximum to retry
+	retrymax     int  = 10  // how may times maximum to retry
 	period_milli int  = 100 // sleep in between retry in milliseconds
-	timeout      int  = 2 // timeout for al the tries together
+	timeout      int  = 2   // timeout for al the tries together
 	stdout       bool = true
 }
 

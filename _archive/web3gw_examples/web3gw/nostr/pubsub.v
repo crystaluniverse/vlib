@@ -7,9 +7,7 @@ import log
 import os
 import time
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, secret string) ! {
 	mut nostr_client := nostr.new(mut client)
@@ -34,10 +32,10 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, secret string) ! 
 	nostr_client.publish_text_note(tags: [''], content: 'hello world 2!')!
 
 	metadata := nostr.Metadata{
-		tags: ['']
+		tags:     ['']
 		metadata: nostr.NostrMetadata{
-			name: 'test'
-			about: 'about test'
+			name:    'test'
+			about:   'about test'
 			picture: 'test picture'
 		}
 	}

@@ -13,8 +13,8 @@ fn do() ! {
 	println(id)
 
 	mut p := id.new(
-		cmd: '/usr/local/bin/zinit init'
-		name: 'zinit'
+		cmd:         '/usr/local/bin/zinit init'
+		name:        'zinit'
 		description: 'a super easy to use startup manager.'
 	)!
 	p.start()!

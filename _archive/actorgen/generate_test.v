@@ -9,13 +9,13 @@ fn test_generate() {
 	mut test_code := []codemodel.CodeItem{}
 	test_code = [
 		codemodel.Struct{
-			name: 'TestRoot1'
+			name:  'TestRoot1'
 			attrs: [codemodel.Attribute{
 				name: 'root_object'
 			}]
 		},
 		codemodel.Struct{
-			name: 'TestRoot2'
+			name:  'TestRoot2'
 			attrs: [codemodel.Attribute{
 				name: 'root_object'
 			}]

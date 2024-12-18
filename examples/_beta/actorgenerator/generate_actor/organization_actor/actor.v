@@ -141,9 +141,9 @@ pub fn (shared actor ExampleActor) set_sprint(params Params) !Sprint {
 	lock actor {
 		actor.sprint_map[id] = Sprint{
 			...actor.sprint_map[id]
-			title: params.get('title')!
+			title:       params.get('title')!
 			description: params.get('description')!
-			stories: params.get('stories')!
+			stories:     params.get('stories')!
 		}
 	}
 }
@@ -161,9 +161,9 @@ pub fn (shared actor ExampleActor) create_sprint(params Params) ! {
 		return error('Root object with id already exists.')
 	}
 	object := Sprint{
-		title: params.get('title')!
+		title:       params.get('title')!
 		description: params.get('description')!
-		stories: params.get('stories')!
+		stories:     params.get('stories')!
 	}
 	lock actor {
 		actor.sprint_map[id] = object
@@ -186,16 +186,16 @@ pub fn (shared actor ExampleActor) set_story(params Params) !Story {
 	lock actor {
 		actor.story_map[id] = Story{
 			...actor.story_map[id]
-			title: params.get('title')!
+			title:       params.get('title')!
 			description: params.get('description')!
-			tasks: [
+			tasks:       [
 				Task{
-					asignee: params.get('tasks_asignee')!
-					title: params.get('tasks_title')!
+					asignee:     params.get('tasks_asignee')!
+					title:       params.get('tasks_title')!
 					description: params.get('tasks_description')!
-					priority: {
+					priority:    {
 					}
-					tags: params.get('tasks_tags')!
+					tags:        params.get('tasks_tags')!
 				},
 			]
 		}
@@ -215,17 +215,17 @@ pub fn (shared actor ExampleActor) create_story(params Params) ! {
 		return error('Root object with id already exists.')
 	}
 	object := Story{
-		title: params.get('title')!
+		title:       params.get('title')!
 		description: params.get('description')!
-		tasks: [
+		tasks:       [
 			Task{
-				story_id: params.get('tasks_story_id')!
-				asignee: params.get('tasks_asignee')!
-				title: params.get('tasks_title')!
+				story_id:    params.get('tasks_story_id')!
+				asignee:     params.get('tasks_asignee')!
+				title:       params.get('tasks_title')!
 				description: params.get('tasks_description')!
-				priority: {
+				priority:    {
 				}
-				tags: params.get('tasks_tags')!
+				tags:        params.get('tasks_tags')!
 			},
 		]
 	}

@@ -79,7 +79,7 @@ const name_fix_replaces = [
 
 pub fn name_fix_token(name string) string {
 	item := name.to_lower()
-	item_replaced := item.replace_each(texttools.name_fix_replaces)
+	item_replaced := item.replace_each(name_fix_replaces)
 	newitem := item_replaced.trim(' ._')
 	return newitem
 }
@@ -155,7 +155,7 @@ pub fn tokenize(text_ string) TokenizerResult {
 					if word.len > 1 && !word_skip(word) && word !in done {
 						word_with_no_underscores := name_fix_no_underscore_token(word)
 						tr.items << TokenizerItem{
-							toreplace: word
+							toreplace:   word
 							matchstring: word_with_no_underscores.clone()
 						}
 						done << word
@@ -172,7 +172,7 @@ pub fn tokenize(text_ string) TokenizerResult {
 		if word.len > 1 && !word_skip(word) && word !in done {
 			word_with_no_underscores := name_fix_no_underscore_token(word)
 			tr.items << TokenizerItem{
-				toreplace: word
+				toreplace:   word
 				matchstring: word_with_no_underscores.clone()
 			}
 			done << word

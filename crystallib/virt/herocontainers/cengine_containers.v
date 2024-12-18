@@ -12,9 +12,9 @@ fn (mut e CEngine) containers_load() ! {
 	e.containers = []Container{}
 	mut ljob := exec(
 		// we used || because sometimes the command has | in it and this will ruin all subsequent columns
-		cmd: "podman container list -a --no-trunc --size --format '{{.ID}}||{{.Names}}||{{.ImageID}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
+		cmd:                "podman container list -a --no-trunc --size --format '{{.ID}}||{{.Names}}||{{.ImageID}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
 		ignore_error_codes: [6]
-		stdout: false
+		stdout:             false
 	)!
 	lines := ljob.output.split_into_lines()
 	for line in lines {
@@ -33,7 +33,7 @@ fn (mut e CEngine) containers_load() ! {
 		mut image := e.image_get(id_full: fields[2])!
 		mut container := Container{
 			engine: &e
-			image: &image
+			image:  &image
 		}
 		container.id = id
 		container.name = texttools.name_fix(fields[1])
@@ -88,7 +88,7 @@ pub fn (mut e CEngine) containers_get(args_ ContainerGetArgs) ![]&Container {
 	}
 	if res.len == 0 {
 		return ContainerGetError{
-			args: args
+			args:     args
 			notfound: true
 		}
 	}
@@ -102,7 +102,7 @@ pub fn (mut e CEngine) container_get(args_ ContainerGetArgs) !&Container {
 	mut res := e.containers_get(args)!
 	if res.len > 1 {
 		return ContainerGetError{
-			args: args
+			args:     args
 			notfound: true
 		}
 	}

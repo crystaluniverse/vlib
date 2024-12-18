@@ -20,7 +20,7 @@ pub struct NewsAddArgs {
 
 pub struct Article {
 pub:
-	cid         string          @[required]
+	cid         string @[required]
 	title       string
 	page_path   string
 	name        string
@@ -42,12 +42,12 @@ fn (mut site ZolaSite) news_add(args NewsAddArgs) ! {
 
 	news_section := Section{
 		...args.Section
-		name: 'newsroom'
-		title: if args.title != '' { args.title } else { 'Newsroom' }
-		sort_by: if args.sort_by != .@none { args.sort_by } else { .date }
-		template: if args.template != '' { args.template } else { 'layouts/newsroom.html' }
+		name:          'newsroom'
+		title:         if args.title != '' { args.title } else { 'Newsroom' }
+		sort_by:       if args.sort_by != .@none { args.sort_by } else { .date }
+		template:      if args.template != '' { args.template } else { 'layouts/newsroom.html' }
 		page_template: if args.page_template != '' { args.page_template } else { 'newsPage.html' }
-		paginate_by: if args.paginate_by != 0 { args.paginate_by } else { 3 }
+		paginate_by:   if args.paginate_by != 0 { args.paginate_by } else { 3 }
 	}
 
 	site.add_section(news_section)!
@@ -73,19 +73,19 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	image := article.image or { return error('Article must have an image') }
 
 	news_page := new_page(
-		name: article.name
-		Page: article.page or { return error('article page for ${article.name} not found') }
-		title: article.title
-		authors: article.authors
+		name:        article.name
+		Page:        article.page or { return error('article page for ${article.name} not found') }
+		title:       article.title
+		authors:     article.authors
 		description: article.description
-		taxonomies: {
+		taxonomies:  {
 			'people':        article.authors
 			'tags':          article.tags
 			'news-category': article.categories
 		}
-		date: article.date.time()
-		assets: [article.image?.path]
-		extra: {
+		date:        article.date.time()
+		assets:      [article.image?.path]
+		extra:       {
 			'imgPath': image.file_name()
 		}
 	)!
@@ -134,16 +134,16 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 	authors_ := definition.params.get_list_default('authors', [])!
 
 	mut article := Article{
-		page: page
-		cid: definition.params.get_default('cid', '')!
-		name: definition.params.get_default('name', '')!
-		categories: definition.params.get_list_default('categories', [])!
-		tags: definition.params.get_list_default('tags', [])!
-		title: definition.params.get_default('title', '')!
+		page:        page
+		cid:         definition.params.get_default('cid', '')!
+		name:        definition.params.get_default('name', '')!
+		categories:  definition.params.get_list_default('categories', [])!
+		tags:        definition.params.get_list_default('tags', [])!
+		title:       definition.params.get_default('title', '')!
 		description: definition.params.get_default('description', '')!
-		date: definition.params.get_time_default('date', ourtime.now())!
-		authors: authors_
-		page_path: definition.params.get_default('page_path', '')!
+		date:        definition.params.get_time_default('date', ourtime.now())!
+		authors:     authors_
+		page_path:   definition.params.get_default('page_path', '')!
 	}
 
 	if article.cid == '' {

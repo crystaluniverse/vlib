@@ -26,20 +26,20 @@ fn (mut t TFGridHandler) vm(action Action) ! {
 				ssh_key_name: ssh_key
 			}
 			deploy_res := t.tfgrid.deploy_vm(DeployVM{
-				name: name
-				node_id: u32(node_id)
-				farm_id: u32(farm_id)
-				flist: flist
-				entrypoint: entrypoint
-				public_ip: public_ip
-				public_ip6: public_ip6
-				planetary: planetary
-				cpu: u32(cpu)
-				memory: u64(memory)
-				rootfs_size: u64(rootfs)
-				env_vars: env_vars
+				name:                 name
+				node_id:              u32(node_id)
+				farm_id:              u32(farm_id)
+				flist:                flist
+				entrypoint:           entrypoint
+				public_ip:            public_ip
+				public_ip6:           public_ip6
+				planetary:            planetary
+				cpu:                  u32(cpu)
+				memory:               u64(memory)
+				rootfs_size:          u64(rootfs)
+				env_vars:             env_vars
 				add_wireguard_access: add_wireguard_access
-				gateway: gateway
+				gateway:              gateway
 			})!
 
 			t.logger.info('${deploy_res}')
@@ -57,7 +57,7 @@ fn (mut t TFGridHandler) vm(action Action) ! {
 
 			remove_res := t.tfgrid.remove_vm_from_network_deployment(RemoveVMFromNetworkDeployment{
 				network: network
-				vm: machine
+				vm:      machine
 			})!
 			t.logger.info('${remove_res}')
 		}

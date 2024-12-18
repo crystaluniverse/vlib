@@ -12,9 +12,9 @@ pub fn build() ! {
 	if !osal.done_exists('install_zdb') && !osal.cmd_exists('zdb') {
 		mut gs := gittools.new()!
 		mut repo := gs.get_repo(
-			url: 'git@github.com:threefoldtech/0-db.git'
+			url:   'git@github.com:threefoldtech/0-db.git'
 			reset: false
-			pull: true
+			pull:  true
 		)!
 		path := repo.get_path()!
 		cmd := '

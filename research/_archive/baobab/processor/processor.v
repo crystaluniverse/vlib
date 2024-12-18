@@ -5,9 +5,7 @@ import freeflowuniverse.crystallib.baobab.jobs
 import log
 import rand
 
-const (
-	default_timeout_waiting_queues = 1.0
-)
+const default_timeout_waiting_queues = 1.0
 
 // The representation of the Processor. It contains a
 // client that is used to get jobs from redis, a logger
@@ -20,7 +18,7 @@ mut:
 	logger &log.Logger
 pub mut:
 	running                bool
-	timeout_waiting_queues f64 = processor.default_timeout_waiting_queues
+	timeout_waiting_queues f64 = default_timeout_waiting_queues
 }
 
 // Factory method for creating a new processor.
@@ -89,7 +87,7 @@ fn (mut p Processor) assign_job(guid string) ! {
 
 	if !job.check_timeout_ok() {
 		return jobs.JobError{
-			msg: 'Job timeout reached'
+			msg:      'Job timeout reached'
 			job_guid: guid
 		}
 	}

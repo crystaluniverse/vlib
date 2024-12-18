@@ -7,7 +7,7 @@ import os
 
 pub struct LogItem {
 pub mut:
-	session &Session        @[skip; str: skip]
+	session &Session @[skip; str: skip]
 	time    ourtime.OurTime
 	cat     string
 	log     string
@@ -28,9 +28,9 @@ pub fn (session Session) log(args_ LogArgs) !LogItem {
 
 	mut l := LogItem{
 		session: &session
-		cat: args.cat
-		log: args.log
-		time: ourtime.now()
+		cat:     args.cat
+		log:     args.log
+		time:    ourtime.now()
 	}
 
 	// TODO: get string output and put to redis

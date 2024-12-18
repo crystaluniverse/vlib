@@ -28,9 +28,9 @@ pub fn build(args BuildArgs) ! {
 
 	mut gs := gittools.get(coderoot: '/tmp/builder')!
 	mut repo := gs.get_repo(
-		url: restic.url,
-		reset: true,
-		pull: true
+		url:   url
+		reset: true
+		pull:  true
 	)!
 
 	mut gitpath := repo.get_path()!

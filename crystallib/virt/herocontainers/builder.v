@@ -78,8 +78,8 @@ pub mut:
 	stdout             bool = true
 	stdout_log         bool = true
 	raise_error        bool = true // if false, will not raise an error but still error report
-	ignore_error       bool // means if error will just exit and not raise, there will be no error reporting
-	work_folder        string // location where cmd will be executed
+	ignore_error       bool              // means if error will just exit and not raise, there will be no error reporting
+	work_folder        string            // location where cmd will be executed
 	environment        map[string]string // env variables
 	ignore_error_codes []int
 	scriptpath         string // is the path where the script will be put which is executed
@@ -121,22 +121,22 @@ pub fn (mut self Builder) run(cmd Command) ! {
 		self.hero_copy()!
 	}
 	osal.exec(
-		name: cmd.name
-		cmd: cmd_str
-		description: cmd.description
-		timeout: cmd.timeout
-		stdout: cmd.stdout
-		stdout_log: cmd.stdout_log
-		raise_error: cmd.raise_error
-		ignore_error: cmd.ignore_error
+		name:               cmd.name
+		cmd:                cmd_str
+		description:        cmd.description
+		timeout:            cmd.timeout
+		stdout:             cmd.stdout
+		stdout_log:         cmd.stdout_log
+		raise_error:        cmd.raise_error
+		ignore_error:       cmd.ignore_error
 		ignore_error_codes: cmd.ignore_error_codes
-		scriptpath: cmd.scriptpath
-		scriptkeep: cmd.scriptkeep
-		debug: cmd.debug
-		shell: cmd.shell
-		retry: cmd.retry
-		interactive: cmd.interactive
-		async: cmd.async
+		scriptpath:         cmd.scriptpath
+		scriptkeep:         cmd.scriptkeep
+		debug:              cmd.debug
+		shell:              cmd.shell
+		retry:              cmd.retry
+		interactive:        cmd.interactive
+		async:              cmd.async
 	) or {
 		mut epath := pathlib.get_file(path: scriptpath, create: false)!
 		c := epath.read()!

@@ -73,30 +73,30 @@ fn test_list() {
 fn insert_random_inodes(mut fl Flist) ![]Inode {
 	mut input := []Inode{}
 	input << Inode{
-		ino: 1
+		ino:    1
 		parent: 0
-		name: '/'
-		size: rand.u64() % 100
-		uid: rand.u32() % 10000
-		gid: rand.u32() % 10000
-		rdev: 0
-		mode: 16384
-		ctime: time.now().unix()
-		mtime: time.now().unix()
+		name:   '/'
+		size:   rand.u64() % 100
+		uid:    rand.u32() % 10000
+		gid:    rand.u32() % 10000
+		rdev:   0
+		mode:   16384
+		ctime:  time.now().unix()
+		mtime:  time.now().unix()
 	}
 
 	for i in 2 .. 10 {
 		input << Inode{
-			ino: i
+			ino:    i
 			parent: i % 3 + 1
-			name: rand.string(5)
-			size: rand.u64() % 100
-			uid: rand.u32() % 10000
-			gid: rand.u32() % 10000
-			rdev: 0
-			mode: 32768
-			ctime: time.now().unix()
-			mtime: time.now().unix()
+			name:   rand.string(5)
+			size:   rand.u64() % 100
+			uid:    rand.u32() % 10000
+			gid:    rand.u32() % 10000
+			rdev:   0
+			mode:   32768
+			ctime:  time.now().unix()
+			mtime:  time.now().unix()
 		}
 	}
 
@@ -179,12 +179,12 @@ fn test_get_routes() {
 
 	want := [Route{
 		start: 0
-		end: 125
-		url: 'dir:///tmp/store0'
+		end:   125
+		url:   'dir:///tmp/store0'
 	}, Route{
 		start: 126
-		end: 255
-		url: 'dir:///tmp/store1'
+		end:   255
+		url:   'dir:///tmp/store1'
 	}]
 	assert fl.get_routes()! == want
 }
@@ -194,12 +194,12 @@ fn test_add_routes() {
 
 	routes_to_add := [Route{
 		start: 10
-		end: 20
-		url: 'dir:///tmp/store2'
+		end:   20
+		url:   'dir:///tmp/store2'
 	}, Route{
 		start: 20
-		end: 30
-		url: 'dir:///tmp/store3'
+		end:   30
+		url:   'dir:///tmp/store3'
 	}]
 	fl.add_routes(routes_to_add)!
 
@@ -214,16 +214,16 @@ fn test_update_routes() {
 
 	updated_routes := [Route{
 		start: 30
-		end: 40
-		url: 'dir:///tmp/store4'
+		end:   40
+		url:   'dir:///tmp/store4'
 	}, Route{
 		start: 50
-		end: 60
-		url: 'dir:///tmp/store6'
+		end:   60
+		url:   'dir:///tmp/store6'
 	}, Route{
 		start: 100
-		end: 255
-		url: 'dir:///tmp/store7'
+		end:   255
+		url:   'dir:///tmp/store7'
 	}]
 	fl.update_routes(updated_routes)!
 
@@ -267,7 +267,7 @@ fn test_merge() {
 	assert blocks.len == 1
 	assert blocks[0] == Block{
 		ino: 104
-		id: '1234'
+		id:  '1234'
 		key: '1234'
 	}
 
@@ -275,7 +275,7 @@ fn test_merge() {
 	assert blocks.len == 1
 	assert blocks[0] == Block{
 		ino: 107
-		id: '1234'
+		id:  '1234'
 		key: '1234'
 	}
 
@@ -283,7 +283,7 @@ fn test_merge() {
 	assert blocks.len == 1
 	assert blocks[0] == Block{
 		ino: 109
-		id: '5678'
+		id:  '5678'
 		key: '5678'
 	}
 }

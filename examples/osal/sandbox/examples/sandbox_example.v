@@ -11,10 +11,10 @@ fn do() ! {
 	// get 2 bootstraps to work from
 	f.debootstrap(imagename: 'debian', reset: false)! // if reset then will download again
 	f.debootstrap(
-		imagename: 'ubuntu22'
+		imagename:  'ubuntu22'
 		repository: 'http://de.archive.ubuntu.com/ubuntu'
-		release: 'jammy'
-		reset: false
+		release:    'jammy'
+		reset:      false
 	)!
 
 	// mut c := f.container_new(startcmd: ["ls", "/", "/proc"])!

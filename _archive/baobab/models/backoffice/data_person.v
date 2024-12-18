@@ -6,11 +6,11 @@ import time
 
 pub fn (mut memdb MemDB) initialise_person() people.Person {
 	mut new_person := people.Person{
-		firstname: ''
-		lastname: ''
+		firstname:   ''
+		lastname:    ''
 		description: ''
-		contact: &people.Contact{}
-		id: ''
+		contact:     &people.Contact{}
+		id:          ''
 		person_type: .employee
 	}
 
@@ -45,11 +45,11 @@ pub fn (mut memdb MemDB) person_add(o people.PersonNewArgs) !&people.Person {
 	}
 
 	mut obj := people.Person{
-		firstname: o.firstname
-		lastname: o.lastname
+		firstname:   o.firstname
+		lastname:    o.lastname
 		description: o.description
-		contact: &people.Contact{} //? Is this necessary?
-		id: id
+		contact:     &people.Contact{} //? Is this necessary?
+		id:          id
 		person_type: person_type
 	}
 	// sets the start date of the person

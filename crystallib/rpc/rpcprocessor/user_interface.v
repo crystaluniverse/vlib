@@ -21,7 +21,7 @@ pub fn (mut p RPCProcessor) run_ui() ! {
 	client := new_client() or { panic(err) }
 	ui := RPCProcessorUI{
 		processor: p
-		client: client
+		client:    client
 	}
 	vweb.run(ui, 8080)
 }

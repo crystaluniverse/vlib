@@ -21,7 +21,7 @@ pub mut:
 @[table: 'Person']
 struct PersonTable {
 	cid       int    @[primary; sql: serial] // is unique per circle
-	id        string @[unique] // needs to be unique as well per circle
+	id        string @[unique]               // needs to be unique as well per circle
 	firstname string @[nonull]
 	lastname  string @[nonull]
 	data      string @[nonull] // will have the data
@@ -30,7 +30,7 @@ struct PersonTable {
 pub fn new(args NewArgs) !MemDB {
 	mut m := MemDB{
 		circle: args.circle
-		db: args.db
+		db:     args.db
 	}
 	sql m.db {
 		create table PersonTable

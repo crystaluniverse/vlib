@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.data.doctree.collection.data
 @[params]
 pub struct CollectionExportArgs {
 pub mut:
-	destination    pathlib.Path                @[required]
+	destination    pathlib.Path @[required]
 	file_paths     map[string]string
 	reset          bool = true
 	keep_structure bool // wether the structure of the src collection will be preserved or not
@@ -24,13 +24,11 @@ pub fn (c Collection) export(args CollectionExportArgs) ! {
 	cfile.write("name:${c.name} src:'${c.path.path}'")!
 
 	mut errors := c.errors.clone()
-	errors << export_pages(
-		c.path.path,
-		c.pages.values(),
-		dir_src: dir_src
-		file_paths: args.file_paths
+	errors << export_pages(c.path.path, c.pages.values(),
+		dir_src:        dir_src
+		file_paths:     args.file_paths
 		keep_structure: args.keep_structure
-		replacer: args.replacer
+		replacer:       args.replacer
 	)!
 
 	c.export_files(dir_src, args.reset)!
@@ -63,7 +61,7 @@ fn export_pages(col_path string, pages []&data.Page, args ExportPagesArgs) ![]Co
 		}
 
 		not_found := page.process_links(args.file_paths)!
-		
+
 		for pointer_str in not_found {
 			ptr := pointer.pointer_new(text: pointer_str)!
 			cat := match ptr.cat {
@@ -77,10 +75,10 @@ fn export_pages(col_path string, pages []&data.Page, args ExportPagesArgs) ![]Co
 					CollectionErrorCat.file_not_found
 				}
 			}
-			errors << CollectionError {
+			errors << CollectionError{
 				path: page.path
-				msg: '${ptr.cat} ${ptr.str()} not found'
-				cat: cat
+				msg:  '${ptr.cat} ${ptr.str()} not found'
+				cat:  cat
 			}
 		}
 

@@ -24,10 +24,6 @@ engine.hero_build()!
 
 // container_name := 'testarch'
 
-
-
-
-
 // // install rfs
 // osal.exec(
 // 	cmd: 'curl -fsSL https://github.com/threefoldtech/rfs/releases/download/v2.0.4/rfs -o /usr/local/bin/rfs'

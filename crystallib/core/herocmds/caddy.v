@@ -10,8 +10,8 @@ import freeflowuniverse.crystallib.ui.console
 // coderoot string //the location of coderoot if its another one
 pub fn cmd_caddy(mut cmdroot Command) {
 	mut cmd_caddy := Command{
-		name: 'caddy'
-		usage: '
+		name:          'caddy'
+		usage:         '
 ## Manage your Caddy
 
 example:
@@ -22,9 +22,9 @@ If you do -gp it will pull newest caddy content from git and give error if there
 If you do -gr it will pull newest caddy content from git and overwrite local changes (careful).
 
 		'
-		description: 'create, caddys'
+		description:   'create, caddys'
 		required_args: 0
-		execute: cmd_caddy_execute
+		execute:       cmd_caddy_execute
 	}
 
 	// this adds the git command flags to it

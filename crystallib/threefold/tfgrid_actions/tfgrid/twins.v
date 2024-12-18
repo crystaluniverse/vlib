@@ -25,10 +25,10 @@ pub fn (mut h TFGridHandler) twins(action Action) ! {
 			randomize := action.params.get_default_false('randomize')
 
 			req := FindTwins{
-				filters: filter
+				filters:    filter
 				pagination: Limit{
-					page: page
-					size: size
+					page:      page
+					size:      size
 					randomize: randomize
 				}
 			}

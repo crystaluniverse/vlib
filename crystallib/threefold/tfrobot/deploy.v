@@ -15,17 +15,17 @@ pub mut:
 	name        string
 	mnemonic    string
 	network     Network = .main
-	node_groups []NodeGroup       @[required]
-	vms         []VMConfig        @[required]
+	node_groups []NodeGroup @[required]
+	vms         []VMConfig  @[required]
 	ssh_keys    map[string]string
 	debug       bool
 }
 
 pub struct NodeGroup {
 	name        string
-	nodes_count int    @[required]
-	free_cpu    int    @[required] // number of logical cores
-	free_mru    int    @[required] // amount of memory in GB
+	nodes_count int @[required]
+	free_cpu    int @[required] // number of logical cores
+	free_mru    int @[required] // amount of memory in GB
 	free_ssd    int  // amount of ssd storage in GB
 	free_hdd    int  // amount of hdd storage in GB
 	dedicated   bool // are nodes dedicated
@@ -37,17 +37,17 @@ pub struct NodeGroup {
 
 pub struct VMConfig {
 pub mut:
-	name        string            @[required]
-	vms_count   int = 1               @[required]
+	name        string @[required]
+	vms_count   int = 1    @[required]
 	node_group  string
-	cpu         int = 4               @[required]
-	mem         int = 4               @[required] // in GB
+	cpu         int  = 4 @[required]
+	mem         int  = 4 @[required]         // in GB
 	public_ip4  bool = false
 	public_ip6  bool = false
-	ygg_ip   bool = true
-	mycelium_ip    bool = true
-	flist       string            @[required]
-	entry_point string            @[required]
+	ygg_ip      bool = true
+	mycelium_ip bool = true
+	flist       string @[required]
+	entry_point string @[required]
 	root_size   int = 20
 	ssh_key     string
 	env_vars    map[string]string
@@ -63,14 +63,14 @@ pub:
 
 pub struct VMOutput {
 pub mut:
-	name            string  @[json: 'Name'; required]
-	network_name            string  @[json: 'NetworkName'; required]
+	name            string @[json: 'Name'; required]
+	network_name    string @[json: 'NetworkName'; required]
 	node_group      string
 	deployment_name string
 	public_ip4      string  @[json: 'PublicIP4'; required]
 	public_ip6      string  @[json: 'PublicIP6'; required]
 	yggdrasil_ip    string  @[json: 'YggIP'; required]
-	mycelium_ip    string  	@[json: 'MyceliumIP'; required]
+	mycelium_ip     string  @[json: 'MyceliumIP'; required]
 	ip              string  @[json: 'IP'; required]
 	mounts          []Mount @[json: 'Mounts'; required]
 	node_id         u32     @[json: 'NodeID']
@@ -127,11 +127,11 @@ pub fn (mut robot TFRobot[Config]) deploy(config_ DeployConfig) !DeployResult {
 	check_deploy_config(config)!
 
 	mut config_file := pathlib.get_file(
-		path: '${tfrobot.tfrobot_dir}/deployments/${config.name}_config.json'
+		path:   '${tfrobot_dir}/deployments/${config.name}_config.json'
 		create: true
 	)!
 	mut output_file := pathlib.get_file(
-		path: '${tfrobot.tfrobot_dir}/deployments/${config.name}_output.json'
+		path:   '${tfrobot_dir}/deployments/${config.name}_output.json'
 		create: false
 	)!
 	config_json := json.encode(config)
@@ -142,9 +142,9 @@ pub fn (mut robot TFRobot[Config]) deploy(config_ DeployConfig) !DeployResult {
 		console.print_debug(cmd)
 	}
 	_ := osal.exec(
-		cmd: cmd
+		cmd:    cmd
 		stdout: true
-	) or {return error('TFRobot command ${cmd} failed:\n${err}')}
+	) or { return error('TFRobot command ${cmd} failed:\n${err}') }
 	output := output_file.read()!
 	mut res := json.decode(DeployResult, output)!
 

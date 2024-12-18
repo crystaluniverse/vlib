@@ -22,11 +22,11 @@ pub fn play(mut plbook PlayBook) ! {
 	for mut action in my_actions {
 		if action.name == 'run' {
 			mut sim := new(
-				name: action.params.get_default('name', 'default')!
-				path: action.params.get_default('path', '')!
-				git_url: action.params.get_default('git_url', '')!
+				name:      action.params.get_default('name', 'default')!
+				path:      action.params.get_default('path', '')!
+				git_url:   action.params.get_default('git_url', '')!
 				git_reset: action.params.get_default_false('git_reset')
-				git_pull: action.params.get_default_false('git_pull')
+				git_pull:  action.params.get_default_false('git_pull')
 			)!
 			console.print_header('run the grid farming simulator')
 			sim.play(mut plbook)!
@@ -58,15 +58,15 @@ pub fn (mut s Simulator) play(mut plbook PlayBook) ! {
 			mut hru := action_nt.params.get_float_default('hru', 0)!
 			mut sru := action_nt.params.get_float_default('sru', 0)!
 			mut component := Component{
-				name: c_name
+				name:        c_name
 				description: c_description
-				cost: c_cost
-				rackspace: rackspace
-				power: power
-				cru: cru
-				mru: mru
-				hru: hru
-				sru: sru
+				cost:        c_cost
+				rackspace:   rackspace
+				power:       power
+				cru:         cru
+				mru:         mru
+				hru:         hru
+				sru:         sru
 			}
 			s.components[c_name] = &component
 		}

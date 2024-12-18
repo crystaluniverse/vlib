@@ -5,15 +5,15 @@ import freeflowuniverse.crystallib.core.texttools
 @[params]
 pub struct DAGArgs {
 pub:
-	name                 string  // The name of the DAG, which is optional. The default name is the name of the file.
-	description          ?string // A brief description of the DAG.
-	tags                 ?string // Free tags that can be used to categorize DAGs, separated by commas.
+	name                 string             // The name of the DAG, which is optional. The default name is the name of the file.
+	description          ?string            // A brief description of the DAG.
+	tags                 ?string            // Free tags that can be used to categorize DAGs, separated by commas.
 	env                  ?map[string]string // Environment variables that can be accessed by the DAG and its steps.
-	restart_wait_sec     ?int // The number of seconds to wait after the DAG process stops before restarting it.
-	hist_retention_days  ?int // The number of days to retain execution history (not for log files).
-	delay_sec            ?int // The interval time in seconds between steps.
-	max_active_runs      ?int // The maximum number of parallel running steps.
-	max_cleanup_time_sec ?int // The maximum time to wait after sending a TERM signal to running steps before killing them.
+	restart_wait_sec     ?int               // The number of seconds to wait after the DAG process stops before restarting it.
+	hist_retention_days  ?int               // The number of days to retain execution history (not for log files).
+	delay_sec            ?int               // The interval time in seconds between steps.
+	max_active_runs      ?int               // The maximum number of parallel running steps.
+	max_cleanup_time_sec ?int               // The maximum time to wait after sending a TERM signal to running steps before killing them.
 }
 
 // create new DAG
@@ -31,14 +31,14 @@ pub:
 pub fn dag_new(args_ DAGArgs) DAG {
 	mut args := args_
 	mut d := DAG{
-		name: args.name
-		description: args.description
-		tags: args.tags
-		env: args.env
-		restart_wait_sec: args.restart_wait_sec
-		hist_retention_days: args.hist_retention_days
-		delay_sec: args.delay_sec
-		max_active_runs: args.max_active_runs
+		name:                 args.name
+		description:          args.description
+		tags:                 args.tags
+		env:                  args.env
+		restart_wait_sec:     args.restart_wait_sec
+		hist_retention_days:  args.hist_retention_days
+		delay_sec:            args.delay_sec
+		max_active_runs:      args.max_active_runs
 		max_cleanup_time_sec: args.max_cleanup_time_sec
 	}
 	return d
@@ -71,14 +71,14 @@ pub fn (mut d DAG) step_add(args_ StepArgs) !&Step {
 		args.name = 'step_${args.nr}'
 	}
 	mut s := Step{
-		nr: args.nr
-		name: args.name
-		description: args.description
-		dir: args.dir
-		command: args.command
-		stdout: args.stdout
-		output: args.output
-		script: args.script
+		nr:             args.nr
+		name:           args.name
+		description:    args.description
+		dir:            args.dir
+		command:        args.command
+		stdout:         args.stdout
+		output:         args.output
+		script:         args.script
 		signal_on_stop: args.signal_on_stop
 	}
 	scr := s.script or { '' }
@@ -142,7 +142,7 @@ pub:
 //```
 pub fn (mut self Step) retry_policy(args RetryPolicyArgs) {
 	c := RetryPolicy{
-		limit: args.retry_nr
+		limit:        args.retry_nr
 		interval_sec: args.retry_interval
 	}
 	self.retry_policy = c

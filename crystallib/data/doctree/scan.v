@@ -116,7 +116,7 @@ pub fn (mut tree Tree) scan_concurrent(args_ TreeScannerArgs) ! {
 			continue
 		}
 
-		threads << spawn fn (args collection.CollectionNewArgs) !Collection {	
+		threads << spawn fn (args CollectionNewArgs) !Collection {
 			return collection.new(args)!
 		}(
 			name:          col_name
@@ -127,14 +127,12 @@ pub fn (mut tree Tree) scan_concurrent(args_ TreeScannerArgs) ! {
 	}
 
 	for i, t in threads {
-		new_collection := t.wait() or {
-			return error('Error executing thread: ${err}')
-		}
+		new_collection := t.wait() or { return error('Error executing thread: ${err}') }
 		tree.collections[new_collection.name] = &new_collection
 	}
 }
 
-// internal function that recursively returns 
+// internal function that recursively returns
 // the paths of collections in a given path
 fn scan_helper(path_ Path) ![]Path {
 	mut path := path_
@@ -160,9 +158,7 @@ fn scan_helper(path_ Path) ![]Path {
 			continue
 		}
 
-		paths << scan_helper(entry) or { 
-			return error('failed to scan ${entry.path} :${err}') 
-		}
+		paths << scan_helper(entry) or { return error('failed to scan ${entry.path} :${err}') }
 	}
 	return paths
 }
@@ -206,7 +202,7 @@ fn is_ignored_dir(path_ Path) !bool {
 	if !path.is_dir() {
 		return error('path is not a directory')
 	}
-	name := path.name() 
+	name := path.name()
 	return name.starts_with('.') || name.starts_with('_')
 }
 

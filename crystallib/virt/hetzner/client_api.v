@@ -25,8 +25,8 @@ fn (mut h HetznerClient[Config]) request_post(endpoint string, data string) !htt
 
 	mut r := http.Request{
 		method: .post
-		data: data
-		url: h.config()!.baseurl + endpoint
+		data:   data
+		url:    h.config()!.baseurl + endpoint
 	}
 
 	r.add_header(http.CommonHeader.authorization, 'Basic ' + h.auth)

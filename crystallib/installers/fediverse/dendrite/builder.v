@@ -28,9 +28,9 @@ pub fn build(args BuildArgs) ! {
 
 	mut gs := gittools.new(coderoot: '/tmp/builder')!
 	mut repo := gs.get_repo(
-		url: dendrite.url
+		url:   url
 		reset: true
-		pull: true
+		pull:  true
 	)!
 	gitpath := repo.get_path()!
 

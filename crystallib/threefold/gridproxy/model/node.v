@@ -35,46 +35,46 @@ pub:
 pub struct Node_ {
 pub:
 	id                string
-	node_id           u64           @[json: nodeId]
-	farm_id           u64           @[json: farmId]
-	twin_id           u64           @[json: twinId]
-	grid_version      u64           @[json: gridVersion]
+	node_id           u64 @[json: nodeId]
+	farm_id           u64 @[json: farmId]
+	twin_id           u64 @[json: twinId]
+	grid_version      u64 @[json: gridVersion]
 	uptime            SecondUnit
-	created           UnixTime      @[json: created]
-	farming_policy_id u64           @[json: farmingPolicyId]
-	updated_at        UnixTime      @[json: updatedAt]
+	created           UnixTime @[json: created]
+	farming_policy_id u64      @[json: farmingPolicyId]
+	updated_at        UnixTime @[json: updatedAt]
 	total_resources   NodeResources
 	used_resources    NodeResources
 	location          NodeLocation
-	public_config     PublicConfig  @[json: publicConfig]
-	certification     string        @[json: certificationType]
+	public_config     PublicConfig @[json: publicConfig]
+	certification     string       @[json: certificationType]
 	status            string
 	dedicated         bool
-	healthy         	bool
-	rent_contract_id  u64           @[json: rentContractId]
-	rented_by_twin_id u64           @[json: rentedByTwinId]
+	healthy           bool
+	rent_contract_id  u64 @[json: rentContractId]
+	rented_by_twin_id u64 @[json: rentedByTwinId]
 }
 
 pub struct Node {
 pub:
 	id                string
-	node_id           u64          @[json: nodeId]
-	farm_id           u64          @[json: farmId]
-	twin_id           u64          @[json: twinId]
-	grid_version      u64          @[json: gridVersion]
+	node_id           u64 @[json: nodeId]
+	farm_id           u64 @[json: farmId]
+	twin_id           u64 @[json: twinId]
+	grid_version      u64 @[json: gridVersion]
 	uptime            SecondUnit
-	created           UnixTime     @[json: created]
-	farming_policy_id u64          @[json: farmingPolicyId]
-	updated_at        UnixTime     @[json: updatedAt]
+	created           UnixTime @[json: created]
+	farming_policy_id u64      @[json: farmingPolicyId]
+	updated_at        UnixTime @[json: updatedAt]
 	capacity          NodeCapacity
 	location          NodeLocation
 	public_config     PublicConfig @[json: publicConfig]
 	certification     string       @[json: certificationType]
 	status            string
 	dedicated         bool
-	healthy         	bool
-	rent_contract_id  u64          @[json: rentContractId]
-	rented_by_twin_id u64          @[json: rentedByTwinId]
+	healthy           bool
+	rent_contract_id  u64 @[json: rentContractId]
+	rented_by_twin_id u64 @[json: rentedByTwinId]
 }
 
 fn calc_available_resources(total_resources NodeResources, used_resources NodeResources) NodeResources {
@@ -98,26 +98,26 @@ pub fn (n &Node) calc_available_resources() NodeResources {
 // with_nested_capacity enable the client to have one representation of the node model
 pub fn (n &Node_) with_nested_capacity() Node {
 	return Node{
-		id: n.id
-		node_id: n.node_id
-		farm_id: n.farm_id
-		twin_id: n.twin_id
-		grid_version: n.grid_version
-		uptime: n.uptime
-		created: n.created
+		id:                n.id
+		node_id:           n.node_id
+		farm_id:           n.farm_id
+		twin_id:           n.twin_id
+		grid_version:      n.grid_version
+		uptime:            n.uptime
+		created:           n.created
 		farming_policy_id: n.farming_policy_id
-		updated_at: n.updated_at
-		capacity: NodeCapacity{
+		updated_at:        n.updated_at
+		capacity:          NodeCapacity{
 			total_resources: n.total_resources
-			used_resources: n.used_resources
+			used_resources:  n.used_resources
 		}
-		location: n.location
-		public_config: n.public_config
-		certification: n.certification
-		status: n.status
-		dedicated: n.dedicated
-		healthy: n.healthy
-		rent_contract_id: n.rent_contract_id
+		location:          n.location
+		public_config:     n.public_config
+		certification:     n.certification
+		status:            n.status
+		dedicated:         n.dedicated
+		healthy:           n.healthy
+		rent_contract_id:  n.rent_contract_id
 		rented_by_twin_id: n.rented_by_twin_id
 	}
 }

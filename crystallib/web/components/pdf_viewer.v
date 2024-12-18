@@ -2,8 +2,8 @@ module components
 
 pub struct PDFViewer {
 pub:
-	name string
-	pdf_url string
+	name         string
+	pdf_url      string
 	log_endpoint string
 }
 

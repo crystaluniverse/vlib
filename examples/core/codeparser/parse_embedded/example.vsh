@@ -2,7 +2,7 @@
 
 import os
 import freeflowuniverse.crystallib.core.codeparser
-import freeflowuniverse.crystallib.core.codemodel {Struct}
+import freeflowuniverse.crystallib.core.codemodel { Struct }
 
 code_path := '${os.dir(@FILE)}/embedding.v'
 

@@ -5,9 +5,9 @@ pub struct Embedder {
 }
 
 pub struct Embedded {
-	id int
+	id          int
 	related_ids []int
-	name string
-	tags []string
-	date time.Time
+	name        string
+	tags        []string
+	date        time.Time
 }

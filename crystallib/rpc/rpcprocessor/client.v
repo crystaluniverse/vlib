@@ -13,26 +13,26 @@ import rand
 const mock_activity = Activity{
 	caller: '127.0.0.1'
 	method: 'mock_rpc_method'
-	time: time.now()
+	time:   time.now()
 	rpc_id: rand.uuid_v4()
 }
 
 fn new_mock_handler() !Handler {
 	mut redis_client := redisclient.core_get()!
 	return Handler{
-		name: 'Mock handler'
-		description: 'This is a mock handler that is used for examples'
-		queue: redis_client.queue_get('mock')
-		activity: [
-			rpcprocessor.mock_activity,
-			rpcprocessor.mock_activity,
-			rpcprocessor.mock_activity,
+		name:         'Mock handler'
+		description:  'This is a mock handler that is used for examples'
+		queue:        redis_client.queue_get('mock')
+		activity:     [
+			mock_activity,
+			mock_activity,
+			mock_activity,
 		]
-		rpc_no: 405
-		threads: 3
+		rpc_no:       405
+		threads:      3
 		success_rate: 98.5
 		average_time: 365 * time.millisecond
-		typ: 'OpenRPC Handler'
+		typ:          'OpenRPC Handler'
 	}
 }
 
@@ -64,13 +64,13 @@ pub fn (mut c Client) get_handler(name string) !Handler {
 }
 
 pub fn (c Client) get_rpc(id string) !Activity {
-	return rpcprocessor.mock_activity
+	return mock_activity
 }
 
 pub fn (c Client) get_latest_activity() ![]Activity {
 	return [
-		rpcprocessor.mock_activity,
-		rpcprocessor.mock_activity,
-		rpcprocessor.mock_activity,
+		mock_activity,
+		mock_activity,
+		mock_activity,
 	]
 }

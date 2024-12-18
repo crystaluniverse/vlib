@@ -40,7 +40,7 @@ pub fn new(args GDriveNewArgs) !GDrive {
 	}
 
 	drive.key_path = pathlib.get_file(
-		path: '${os.home_dir()}/hero/config/gdrive_key_${name}.json'
+		path:   '${os.home_dir()}/hero/config/gdrive_key_${name}.json'
 		create: true
 	)!
 	drive.key_path.write(key)!

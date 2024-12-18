@@ -31,8 +31,6 @@ pub fn new(args_ NewDocArgs) !elements.Doc {
 		}
 	}
 
-	parsers.parse_doc(mut doc) or {
-		return error('Failed to parse doc ${args.path}\n${err}')
-	}
+	parsers.parse_doc(mut doc) or { return error('Failed to parse doc ${args.path}\n${err}') }
 	return doc
 }

@@ -67,8 +67,8 @@ fn (mut ui UITelegram) handle_update(update vgram.Update) {
 
 fn (ui UITelegram) send(msg string, user_id string) {
 	_ := ui.bot.send_message(
-		chat_id: user_id
-		text: msg
+		chat_id:    user_id
+		text:       msg
 		parse_mode: 'MarkdownV2'
 	)
 }

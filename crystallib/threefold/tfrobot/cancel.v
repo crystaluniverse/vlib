@@ -25,13 +25,13 @@ pub fn (mut robot TFRobot[Config]) cancel(mut config CancelConfig) ! {
 	check_cancel_config(config)!
 
 	mut cancel_file := pathlib.get_file(
-		path: '${tfrobot_dir}/deployments/${config.name}_cancel.json'
+		path:   '${tfrobot_dir}/deployments/${config.name}_cancel.json'
 		create: true
 	)!
 
 	cancel_file.write(json.encode(config))!
 	osal.exec(
-		cmd: 'tfrobot cancel -c ${cancel_file.path}'
+		cmd:    'tfrobot cancel -c ${cancel_file.path}'
 		stdout: true
 	)!
 }

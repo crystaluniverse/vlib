@@ -18,8 +18,8 @@ pub fn build(myargs Config) ! {
 
 	mut gs := gittools.get()!
 	mut repo := gs.get_repo(
-		url: 'https://github.com/mediacms-io/mediacms'
-		pull: true
+		url:   'https://github.com/mediacms-io/mediacms'
+		pull:  true
 		reset: true
 	)!
 	dest := repo.get_path()!

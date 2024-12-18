@@ -8,27 +8,27 @@ const actor_name = 'ProjectManager_test_actor'
 
 //
 pub fn testsuite_begin() {
-	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}') {
-		os.rmdir_all('${projectmanager.db_dir}/${projectmanager.actor_name}')!
+	if os.exists('${db_dir}/${actor_name}') {
+		os.rmdir_all('${db_dir}/${actor_name}')!
 	}
-	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite') {
-		os.rm('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite')!
+	if os.exists('${db_dir}/${actor_name}.sqlite') {
+		os.rm('${db_dir}/${actor_name}.sqlite')!
 	}
 }
 
 //
 pub fn testsuite_end() {
-	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}') {
-		os.rmdir_all('${projectmanager.db_dir}/${projectmanager.actor_name}')!
+	if os.exists('${db_dir}/${actor_name}') {
+		os.rmdir_all('${db_dir}/${actor_name}')!
 	}
-	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite') {
-		os.rm('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite')!
+	if os.exists('${db_dir}/${actor_name}.sqlite') {
+		os.rm('${db_dir}/${actor_name}.sqlite')!
 	}
 }
 
 // creates the Story with the given object id
 pub fn test_create_story() ! {
-	mut actor := get(name: projectmanager.actor_name)!
+	mut actor := get(name: actor_name)!
 	mut story_id := actor.create_story(Story{ name: 'mock_string_SXz' })!
 	assert story_id == 1
 
@@ -38,7 +38,7 @@ pub fn test_create_story() ! {
 
 // creates the Story with the given object id
 pub fn test_read_story() ! {
-	mut actor := get(name: projectmanager.actor_name)!
+	mut actor := get(name: actor_name)!
 	mut story := Story{
 		name: 'mock_string_fqW'
 	}
@@ -48,7 +48,7 @@ pub fn test_read_story() ! {
 
 // creates the Story with the given object id
 pub fn test_filter_story() ! {
-	mut actor := get(name: projectmanager.actor_name)!
+	mut actor := get(name: actor_name)!
 
 	story_id0 := actor.create_story(Story{ tag: 'mock_string_DWn', name: 'mock_string_EZN' })!
 	story_list0 := actor.filter_story(

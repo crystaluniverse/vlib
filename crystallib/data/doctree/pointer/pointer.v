@@ -86,10 +86,10 @@ pub fn pointer_new(args NewPointerArgs) !Pointer {
 	}
 
 	return Pointer{
-		name: file_name_no_extension
+		name:       file_name_no_extension
 		collection: collection_name
-		extension: extension
-		cat: file_cat
+		extension:  extension
+		cat:        file_cat
 	}
 }
 

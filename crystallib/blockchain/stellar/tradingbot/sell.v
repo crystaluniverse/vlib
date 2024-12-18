@@ -5,15 +5,15 @@ import math
 
 @[params]
 struct SellHighArgs {
-	order_book   stellar.OrderBook   @[required]
+	order_book   stellar.OrderBook @[required]
 	active_offer ?stellar.OfferModel
 }
 
 // Sell if price is above target
 fn (mut bot StellarTradingBot) sell_high(args SellHighArgs) ! {
 	mut asset_info := stellar.GetOfferAssetInfo{
-		asset_type: bot.selling_asset_type
-		asset_code: bot.selling_asset_code
+		asset_type:   bot.selling_asset_type
+		asset_code:   bot.selling_asset_code
 		asset_issuer: bot.selling_asset_issuer
 	}
 
@@ -41,11 +41,11 @@ fn (mut bot StellarTradingBot) sell_high(args SellHighArgs) ! {
 	offer_args := stellar.OfferArgs{
 		selling: stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
 			bot.selling_asset_issuer)
-		buying: stellar.get_offer_asset_type(bot.buying_asset_type, bot.buying_asset_code,
+		buying:  stellar.get_offer_asset_type(bot.buying_asset_type, bot.buying_asset_code,
 			bot.buying_asset_issuer)
-		amount: amount
-		sell: true
-		price: f32(selling_price)
+		amount:  amount
+		sell:    true
+		price:   f32(selling_price)
 	}
 
 	if active_offer := args.active_offer {

@@ -47,8 +47,8 @@ pub enum StatusTypes {
 
 pub fn new_sms_client(cred Credentials, mut logger log.Log) !Client {
 	return Client{
-		sid: cred.sid
-		token: cred.token
+		sid:    cred.sid
+		token:  cred.token
 		source: cred.source
 		logger: logger
 	}
@@ -97,7 +97,7 @@ pub fn (mut c Client) send(msg Message) !Result {
 	form := c.get_data_form(msg)!
 
 	post_form := http.PostMultipartFormConfig{
-		form: form
+		form:   form
 		header: headers
 	}
 
@@ -108,16 +108,16 @@ pub fn (mut c Client) send(msg Message) !Result {
 		return Result{}
 	}
 
-	if get_value(res_obj, 'status') != sms.success_status {
+	if get_value(res_obj, 'status') != success_status {
 		return Result{
-			level: .error
-			content: get_value(res_obj, 'message')
+			level:     .error
+			content:   get_value(res_obj, 'message')
 			more_info: get_value(res_obj, 'more_info')
 		}
 	}
 
 	return Result{
-		level: .success
+		level:   .success
 		content: get_value(res_obj, 'body')
 	}
 }

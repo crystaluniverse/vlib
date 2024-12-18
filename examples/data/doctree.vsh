@@ -17,7 +17,7 @@ mut p := tree.page_get_processed('riverlov:introduction.md')!
 // println(mydoc)
 
 mut p2 := tree.page_get_processed('riverlov:aboutus.md')!
-//mut mydoc2 := p2.doc()!
+// mut mydoc2 := p2.doc()!
 // // println(mydoc2.defpointers())	
 // println(mydoc2)
 println(p2.get_markdown()!)

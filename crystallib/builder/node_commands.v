@@ -16,7 +16,7 @@ pub struct NodeExecCmd {
 pub mut:
 	name               string = 'default'
 	cmd                string
-	period             int  // period in which we check when this was done last, if 0 then period is indefinite
+	period             int // period in which we check when this was done last, if 0 then period is indefinite
 	reset              bool = true // means do again or not
 	remove_installer   bool = true // delete the installer
 	description        string

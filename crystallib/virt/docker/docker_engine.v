@@ -59,9 +59,9 @@ pub fn (mut e DockerEngine) containers_load() ! {
 	e.containers = []DockerContainer{}
 	mut ljob := exec(
 		// we used || because sometimes the command has | in it and this will ruin all subsequent columns
-		cmd: "docker ps -a --no-trunc --format '{{.ID}}||{{.Names}}||{{.Image}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
+		cmd:                "docker ps -a --no-trunc --format '{{.ID}}||{{.Names}}||{{.Image}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
 		ignore_error_codes: [6]
-		stdout: false
+		stdout:             false
 	)!
 	lines := ljob.output
 	for line in lines {
@@ -75,7 +75,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		id := fields[0]
 		mut container := DockerContainer{
 			engine: &e
-			image: e.image_get(id: fields[2])!
+			image:  e.image_get(id: fields[2])!
 		}
 
 		container.id = id
@@ -161,7 +161,7 @@ pub fn (mut e DockerEngine) containers_get(args_ ContainerGetArgs) ![]&DockerCon
 	}
 	if res.len == 0 {
 		return ContainerGetError{
-			args: args
+			args:     args
 			notfound: true
 		}
 	}
@@ -175,7 +175,7 @@ pub fn (mut e DockerEngine) container_get(args_ ContainerGetArgs) !&DockerContai
 	mut res := e.containers_get(args)!
 	if res.len > 1 {
 		return ContainerGetError{
-			args: args
+			args:     args
 			notfound: true
 		}
 	}

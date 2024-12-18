@@ -2,7 +2,7 @@ module juggler
 
 pub struct GiteaEvent {
 pub:
-	ref           string          @[required]
+	ref           string @[required]
 	before        string
 	after         string
 	compare_url   string
@@ -40,7 +40,7 @@ pub:
 	id                                int
 	owner                             User
 	name                              string
-	full_name                         string          @[required]
+	full_name                         string @[required]
 	description                       string
 	empty                             bool
 	private                           bool
@@ -52,10 +52,10 @@ pub:
 	language                          string
 	languages_url                     string
 	html_url                          string
-	url                               string          @[required]
+	url                               string @[required]
 	link                              string
 	ssh_url                           string
-	clone_url                         string          @[required]
+	clone_url                         string @[required]
 	original_url                      string
 	website                           string
 	stars_count                       int

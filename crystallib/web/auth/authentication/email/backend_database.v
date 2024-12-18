@@ -8,7 +8,7 @@ import time
 @[noinit]
 struct DatabaseBackend {
 mut:
-	db     sqlite.DB
+	db sqlite.DB
 }
 
 @[params]

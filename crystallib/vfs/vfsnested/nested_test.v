@@ -1,4 +1,5 @@
 module vfsnested
+
 import os
 
 fn test_nested() ! {
@@ -15,7 +16,7 @@ fn test_nested() ! {
 	mut vfs3 := vfscore.new_local_vfs('/tmp/test_nested_vfs/vfs3') or { panic(err) }
 
 	// Create nested VFS
-	mut nested_vfs := vfsnested.new()
+	mut nested_vfs := new()
 
 	// Add VFS instances at different paths
 	nested_vfs.add_vfs('/data', vfs1) or { panic(err) }
@@ -74,7 +75,7 @@ fn test_nested() ! {
 	println('Copied file content: ${copy_data.bytestr()}')
 
 	println('\nCleanup...')
-	
+
 	// Cleanup
 	nested_vfs.destroy() or { panic(err) }
 	os.rmdir_all('/tmp/test_nested_vfs') or { panic(err) }

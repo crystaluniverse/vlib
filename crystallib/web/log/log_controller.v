@@ -28,7 +28,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 	if event_filter != '' {
 // 		query += ' event = ${event_filter}'
 // 	}
-    
+
 // 	subject_filter := ctx.query['subject'] or { '' }
 // 	if subject_filter != '' {
 // 		query += ' subject = ${subject_filter}'
@@ -52,7 +52,7 @@ import freeflowuniverse.crystallib.core.pathlib
 
 //     // Build the SQL query dynamically based on the provided filters
 //     logs := sql app.db {
-//         select from Log where 
+//         select from Log where
 //             object == object_filter &&
 //             (event_filter == '' || event.contains(event_filter)) &&
 //             (subject_filter == '' || subject.contains(subject_filter)) &&

@@ -6,11 +6,10 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-pub const  version = '3.4.12'
+pub const version = '3.4.12'
 
 // checks if a certain version or above is installed
 fn installed() !bool {
-
 	res := os.execute('tailwind -h')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.contains('tailwindcss v'))
@@ -22,13 +21,13 @@ fn installed() !bool {
 		if v < texttools.version(version) {
 			return false
 		}
-        return true
-    }
-    return false
+		return true
+	}
+	return false
 }
 
 pub fn install() ! {
-    console.print_header('install tailwind')
+	console.print_header('install tailwind')
 
 	mut url := ''
 	if osal.is_linux_arm() {
@@ -44,18 +43,16 @@ pub fn install() ! {
 	}
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 40000
 		// reset: true
 	)!
 
 	osal.cmd_add(
 		cmdname: 'tailwind'
-		source: dest.path
+		source:  dest.path
 	)!
 }
 
-
 fn destroy() ! {
 }
-

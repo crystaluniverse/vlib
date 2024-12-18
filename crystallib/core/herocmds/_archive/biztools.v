@@ -8,34 +8,34 @@ import cli { Command, Flag }
 
 pub fn cmd_biztools(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'bizmodel'
-		description: 'Run a bizmodel simulation.'
-		usage: '-s ~/mymodels/greenworld/mybook -i ~/mymodels/greenworld/wiki  -o /tmp/outputdir'
+		name:          'bizmodel'
+		description:   'Run a bizmodel simulation.'
+		usage:         '-s ~/mymodels/greenworld/mybook -i ~/mymodels/greenworld/wiki  -o /tmp/outputdir'
 		required_args: 0
-		execute: cmd_biztools_execute
+		execute:       cmd_biztools_execute
 	}
 
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'summarydir'
-		abbrev: 's'
+		flag:        .string
+		required:    false
+		name:        'summarydir'
+		abbrev:      's'
 		description: 'location of the summary file, if not specified will try current dir, if not current dir will try inputdir.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'outputdir'
-		abbrev: 'o'
+		flag:        .string
+		required:    false
+		name:        'outputdir'
+		abbrev:      'o'
 		description: 'where the html will be generated, is optional, default: /tmp/bizmodel/output'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'inputdir'
-		abbrev: 'i'
+		flag:        .string
+		required:    false
+		name:        'inputdir'
+		abbrev:      'i'
 		description: 'path to the playbooks, can be more than 1, if not specifieds is current dir.'
 	})
 

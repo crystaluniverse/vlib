@@ -18,7 +18,7 @@ pub struct SummaryItem {
 pub mut:
 	level       int
 	description string
-	relpath        string // relative path of summary item to source
+	relpath     string // relative path of summary item to source
 	collection  string
 	pagename    string
 }
@@ -116,11 +116,11 @@ pub fn (mut book MDBook) summary(production bool) !Summary {
 		// }
 
 		summary.items << SummaryItem{
-			level: level
+			level:       level
 			description: description
-			pagename: pagename
-			relpath: file_path.all_after('${book.args.build_path}/src/') // relative path of page to src dir
-			collection: collection
+			pagename:    pagename
+			relpath:     file_path.all_after('${book.args.build_path}/src/') // relative path of page to src dir
+			collection:  collection
 		}
 	}
 
@@ -130,10 +130,10 @@ pub fn (mut book MDBook) summary(production bool) !Summary {
 fn (mut self Summary) add_error_page(collectionname string, pagename string) {
 	description := 'errors ${collectionname}'
 	self.errors << SummaryItem{
-		level: 2
+		level:       2
 		description: description
-		pagename: pagename
-		collection: collectionname
+		pagename:    pagename
+		collection:  collectionname
 	}
 }
 
@@ -174,10 +174,10 @@ fn (mut self Summary) add_page_additional(collectionname string, pagename string
 	shortname := pagename.all_before_last('.').to_lower()
 	description := '${shortname}'
 	self.addpages << SummaryItem{
-		level: 2
+		level:       2
 		description: description
-		pagename: pagename
-		collection: collectionname
+		pagename:    pagename
+		collection:  collectionname
 	}
 }
 

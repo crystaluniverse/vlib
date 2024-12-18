@@ -13,7 +13,7 @@ pub:
 pub struct Table {
 pub:
 	headers []string
-	rows []Row
+	rows    []Row
 }
 
 pub fn (table Table) html() string {
@@ -94,9 +94,9 @@ pub fn (table Table) html() string {
 }
 
 pub fn (component Row) html() string {
-	return "<tr>\n${component.cells.map(it.html()).join('\n')}\n</tr>"
+	return '<tr>\n${component.cells.map(it.html()).join('\n')}\n</tr>'
 }
 
 pub fn (component Cell) html() string {
-    return "<td>${component.content}</td>"
+	return '<td>${component.content}</td>'
 }

@@ -15,7 +15,7 @@ pub struct Indexer {
 @[params]
 pub struct IndexerConfig {
 	db_path string
-	reset bool
+	reset   bool
 }
 
 pub fn new_indexer(config IndexerConfig) !Indexer {
@@ -54,7 +54,7 @@ pub fn (mut backend Indexer) set(obj RootObject) ! {
 	for i in 0 .. indices.len {
 		sql_stmts << '${indices[i]}=${values[i]}'
 	}
-	backend.db.exec("update ${table_name} set ${sql_stmts.join(' ')} where id=${obj.id}")!
+	backend.db.exec('update ${table_name} set ${sql_stmts.join(' ')} where id=${obj.id}')!
 }
 
 // save the session to redis & mem
@@ -124,7 +124,7 @@ pub fn (mut backend Indexer) filter(filter RootObject, params FilterParams) ![]s
 		if field.typ == .text {
 			matchers << "${field.name} == '${field.value}'"
 		} else if field.typ == .number {
-			matchers << "${field.name} == ${field.value}"
+			matchers << '${field.name} == ${field.value}'
 		}
 	}
 	matchers_str := if params.matches_all {
@@ -147,7 +147,7 @@ fn (mut backend Indexer) create_root_object_table(object RootObject) ! {
 }
 
 // deletes an indexer table belonging to a root object
-fn (mut backend Indexer) delete_table(object RootObject)! {
+fn (mut backend Indexer) delete_table(object RootObject) ! {
 	table_name := get_table_name(object)
 	delete_query := 'delete table ${table_name}'
 	backend.db.exec(delete_query)!

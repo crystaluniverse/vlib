@@ -26,12 +26,12 @@ pub mut:
 
 pub fn (p PublicIP) to_workload(args WorkloadArgs) Workload {
 	return Workload{
-		version: args.version or { 0 }
-		name: args.name
-		type_: workload_types.public_ip
-		data: json.encode(p)
-		metadata: args.metadata or { '' }
+		version:     args.version or { 0 }
+		name:        args.name
+		type_:       workload_types.public_ip
+		data:        json.encode(p)
+		metadata:    args.metadata or { '' }
 		description: args.description or { '' }
-		result: args.result or { WorkloadResult{} }
+		result:      args.result or { WorkloadResult{} }
 	}
 }

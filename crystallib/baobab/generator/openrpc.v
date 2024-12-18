@@ -11,9 +11,9 @@ pub fn (actor Actor) generate_openrpc_code() !Module {
 	openrpc_json := openrpc_obj.encode()!
 
 	openrpc_file := File{
-		name: 'openrpc'
+		name:      'openrpc'
 		extension: 'json'
-		content: openrpc_json
+		content:   openrpc_json
 	}
 
 	mut methods_map := map[string]Function{}
@@ -39,7 +39,7 @@ pub fn (actor Actor) generate_openrpc_code() !Module {
 	server_test_file := openrpc_obj.generate_server_test_file()!
 
 	return Module{
-		files: [
+		files:      [
 			client_file,
 			client_test_file,
 			handler_file,
@@ -60,11 +60,11 @@ pub fn (actor Actor) generate_openrpc() OpenRPC {
 		}
 	}
 	return OpenRPC{
-		info: openrpc.Info{
-			title: actor.name.title()
+		info:       openrpc.Info{
+			title:   actor.name.title()
 			version: '1.0.0'
 		}
-		methods: actor.methods.map(openrpc.fn_to_method(it.func))
+		methods:    actor.methods.map(openrpc.fn_to_method(it.func))
 		components: Components{
 			schemas: schemas
 		}
@@ -74,7 +74,7 @@ pub fn (actor Actor) generate_openrpc() OpenRPC {
 pub fn (mut a Actor) export_playground(path string, openrpc_path string) ! {
 	dollar := '$'
 	openrpc.export_playground(
-		dest: pathlib.get_dir(path: '${path}/playground')!
+		dest:  pathlib.get_dir(path: '${path}/playground')!
 		specs: [
 			pathlib.get(openrpc_path),
 		]

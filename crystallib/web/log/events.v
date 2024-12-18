@@ -5,6 +5,6 @@ import time
 @[params]
 pub struct ViewEvent {
 pub mut:
-	page string
+	page     string
 	duration time.Duration
 }

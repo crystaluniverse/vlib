@@ -8,14 +8,14 @@ const username = 'test_username'
 const password = 'test_password'
 const dag_name = 'methods_test_dag'
 const test_dag = dagu_osal.DAG{
-	name: 'methods_test_dag'
+	name:  'methods_test_dag'
 	steps: [
 		dagu_osal.Step{
-			name: 'step 1'
+			name:    'step 1'
 			command: 'echo step 1'
 		},
 		dagu_osal.Step{
-			name: 'step 2'
+			name:    'step 2'
 			command: 'echo step 2'
 		},
 	]

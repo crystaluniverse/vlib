@@ -5,14 +5,12 @@ import flag
 import os
 import log
 
-const (
-	default_server_address = 'http://localhost:8080/api/v2'
-)
+const default_server_address = 'http://localhost:8080/api/v2'
 
 fn folders_crud(mut cl sftpgo.SFTPGoClient, mut logger log.Logger) {
 	// create folder struct
 	mut folder := sftpgo.Folder{
-		name: 'folder2'
+		name:        'folder2'
 		mapped_path: '/folder2'
 		description: 'folder 2 description'
 	}
@@ -75,7 +73,7 @@ fn main() {
 
 	args := sftpgo.SFTPGOClientArgs{
 		address: address
-		key: key
+		key:     key
 	}
 	mut cl := sftpgo.new(args) or {
 		println(err)

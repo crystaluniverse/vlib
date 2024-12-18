@@ -10,10 +10,10 @@ import freeflowuniverse.crystallib.ui.console
 // git_pull     bool // means when getting new repo will pull even when repo is already there
 // git_pullreset bool // means we will force a pull and reset old content
 // coderoot string //the location of coderoot if its another one
-pub fn cmd_publisher(pre_func fn(Command)!) Command {
+pub fn cmd_publisher(pre_func fn (Command) !) Command {
 	mut cmd_publisher := Command{
-		name: 'publisher'
-		usage: '
+		name:          'publisher'
+		usage:         '
 ## Manage your publications
 
 example:
@@ -24,55 +24,55 @@ If you do -gp it will pull newest book content from git and give error if there 
 If you do -gr it will pull newest book content from git and overwrite local changes (careful).
 
 		'
-		description: 'create, edit, show mdbooks'
+		description:   'create, edit, show mdbooks'
 		required_args: 0
-		execute: cmd_publisher_execute
-		pre_execute: pre_func
+		execute:       cmd_publisher_execute
+		pre_execute:   pre_func
 	}
 
 	// cmd_run_add_flags(mut cmd_publisher)
 
 	cmd_publisher.add_flag(Flag{
-		flag: .string
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		name:        'name'
+		abbrev:      'n'
 		description: 'name of the publication.'
 	})
 
 	cmd_publisher.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'edit'
+		flag:        .bool
+		required:    false
+		name:        'edit'
 		description: 'will open vscode for collections & summary.'
 	})
 
 	cmd_publisher.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'open'
-		abbrev: 'o'
+		flag:        .bool
+		required:    false
+		name:        'open'
+		abbrev:      'o'
 		description: 'will open the generated book.'
 	})
 
 	mut cmd_list := Command{
-		sort_flags: true
-		name: 'list_books'
-		execute: cmd_publisher_list_books
+		sort_flags:  true
+		name:        'list_books'
+		execute:     cmd_publisher_list_books
 		description: 'will list existing mdbooks'
 		pre_execute: pre_func
 	}
 
 	mut cmd_open := Command{
-		name: 'open'
-		execute: cmd_publisher_open
+		name:        'open'
+		execute:     cmd_publisher_open
 		description: 'will open the publication with the provided name'
 		pre_execute: pre_func
 	}
 
 	cmd_open.add_flag(Flag{
-		flag: .string
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		name:        'name'
+		abbrev:      'n'
 		description: 'name of the publication.'
 	})
 
@@ -133,7 +133,6 @@ fn cmd_publisher_execute(cmd Command) ! {
 // fn pre_func(cmd Command) ! {
 // 	herocmds.plbook_run(cmd)!
 // }
-
 
 fn publisher_help(cmd Command) {
 	console.clear()

@@ -9,7 +9,9 @@ pub fn playmacro(action Action) !string {
 	sheet_name := action.params.get('sheetname') or {
 		return error("can't find sheetname from spreadsheet macro's, define it as sheetname:... .")
 	}
-	mut sh := sheet_get(sheet_name) or { return error("Couldn't find sheetname: ${sheet_name} \nerror:\n${err}") }
+	mut sh := sheet_get(sheet_name) or {
+		return error("Couldn't find sheetname: ${sheet_name} \nerror:\n${err}")
+	}
 
 	// sheet_name := action.params.get('sheetname') or {return error("can't find sheetname from sheet.chart macro.")}
 	// mut sh:= sheet_get(sheet_name)!	
@@ -18,10 +20,8 @@ pub fn playmacro(action Action) !string {
 	supported_actions := ['sheet_wiki', 'graph_pie_row', 'graph_line_row', 'graph_bar_row',
 		'graph_title_row', 'wiki_row_overview']
 
-		
-	if ! (action.name in supported_actions) {
+	if action.name !in supported_actions {
 		return error("Couldn't find macro ${action.name} for spreadsheet:${sheet_name}.")
-
 	}
 	// rowname       string   // if specified then its one name
 	// namefilter    []string // only include the exact names as secified for the rows
@@ -71,17 +71,17 @@ pub fn playmacro(action Action) !string {
 	descr_show := p.get_default_true('descr_show')
 
 	args := RowGetArgs{
-		rowname: rowname
-		namefilter: namefilter
+		rowname:       rowname
+		namefilter:    namefilter
 		includefilter: includefilter
 		excludefilter: excludefilter
-		period_type: period_type_e
-		unit: unit_e
-		title_sub: title_sub
-		title: title
-		size: size
-		rowname_show: rowname_show
-		descr_show: descr_show
+		period_type:   period_type_e
+		unit:          unit_e
+		title_sub:     title_sub
+		title:         title
+		size:          size
+		rowname_show:  rowname_show
+		descr_show:    descr_show
 	}
 
 	mut content := ''

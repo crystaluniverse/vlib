@@ -21,7 +21,7 @@ pub fn (s Security) export() SiteBlock {
 
 	// Add security block directives
 	site_block.directives << Directive{
-		name: 'security'
+		name:          'security'
 		subdirectives: [
 			// OAuth provider subdirective
 			s.oauth_provider.to_directive(),
@@ -79,7 +79,7 @@ pub fn (oauth_provider OAuthProvider) to_directive() Directive {
 	})
 
 	return Directive{
-		name: 'oauth identity provider ${oauth_provider.driver}'
+		name:          'oauth identity provider ${oauth_provider.driver}'
 		subdirectives: subdirectives
 	}
 }
@@ -112,14 +112,14 @@ pub fn (transform UserTransform) to_directive() Directive {
 	}
 
 	return Directive{
-		name: 'transform user'
+		name:          'transform user'
 		subdirectives: subdirectives
 	}
 }
 
 pub fn (crypto Crypto) to_directives() []Directive {
 	mut directives := []Directive{}
-	
+
 	if crypto.default_token_lifetime != 0 {
 		directives << Directive{
 			name: 'crypto default token lifetime'
@@ -151,7 +151,7 @@ pub fn (authentication AuthenticationPortal) to_directive() Directive {
 		args: [authentication.cookie_domain]
 	}
 	subdirectives << Directive{
-		name: 'ui'
+		name:          'ui'
 		subdirectives: [
 			Directive{
 				name: 'template'
@@ -165,40 +165,40 @@ pub fn (authentication AuthenticationPortal) to_directive() Directive {
 	}
 
 	return Directive{
-		name: 'authentication portal ${authentication.name}'
+		name:          'authentication portal ${authentication.name}'
 		subdirectives: subdirectives
 	}
 }
 
 pub fn (authorization AuthorizationPolicy) to_directive() Directive {
 	mut subdirectives := [
-			Directive{
-				name: 'set auth url'
-				args: [authorization.auth_url]
-			},
-			Directive{
-				name: 'allow roles'
-				args: authorization.allowed_roles
-			},
-			Directive{
-				name: 'validate bearer'
-				args: [if authorization.validate_bearer { 'header' } else { 'header' }]
-			},
-			Directive{
-				name: 'inject headers'
-				args: [if authorization.inject_headers { 'with claims' } else { 'with claims' }]
-			},
-		]
+		Directive{
+			name: 'set auth url'
+			args: [authorization.auth_url]
+		},
+		Directive{
+			name: 'allow roles'
+			args: authorization.allowed_roles
+		},
+		Directive{
+			name: 'validate bearer'
+			args: [if authorization.validate_bearer { 'header' } else { 'header' }]
+		},
+		Directive{
+			name: 'inject headers'
+			args: [if authorization.inject_headers { 'with claims' } else { 'with claims' }]
+		},
+	]
 
 	if authorization.crypto_key_verify != '' {
 		subdirectives << Directive{
-				name: 'crypto key verify'
-				args: [authorization.crypto_key_verify]
-			}
+			name: 'crypto key verify'
+			args: [authorization.crypto_key_verify]
+		}
 	}
-	
+
 	return Directive{
-		name: 'authorization policy ${authorization.name}'
+		name:          'authorization policy ${authorization.name}'
 		subdirectives: subdirectives
 	}
 }

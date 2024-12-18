@@ -23,7 +23,7 @@ pub mut:
 pub fn get(instance string, cfg Config) !CouchDBClient[Config] {
 	mut self := CouchDBClient[Config]{
 		connection: &httpconnection.HTTPConnection{}
-		username: cfg.username
+		username:   cfg.username
 	}
 
 	if cfg.username.len > 0 {
@@ -35,7 +35,7 @@ pub fn get(instance string, cfg Config) !CouchDBClient[Config] {
 
 	mut conn := httpconnection.new(
 		name: 'CouchDB'
-		url: 'http://${cfg.url}'
+		url:  'http://${cfg.url}'
 	)!
 
 	// TODO: ...

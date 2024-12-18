@@ -36,10 +36,10 @@ pub fn install(args_ InstallArgs) ! {
 	}
 	console.print_debug(' download ${url}')
 	_ = osal.download(
-		url: url
+		url:        url
 		minsize_kb: 5000
-		reset: args.reset
-		dest: '/tmp/googlechrome.dmg'
+		reset:      args.reset
+		dest:       '/tmp/googlechrome.dmg'
 	)!
 
 	cmd := "

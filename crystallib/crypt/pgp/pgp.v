@@ -29,5 +29,5 @@ fn init2() PGPFactory {
 const factory = init2()
 
 pub fn get() &PGPFactory {
-	return &pgp.factory
+	return &factory
 }

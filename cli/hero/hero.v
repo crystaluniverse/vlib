@@ -12,66 +12,64 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playcmds
 
-fn shebang(path string)!{
+fn shebang(path string) ! {
 	mut plbook := playbook.new(path: path)!
-	playcmds.run(mut plbook,false)!
+	playcmds.run(mut plbook, false)!
 }
 
 fn do() ! {
-
-	if os.args.len == 2{
-		mypath:=os.args[1]
-		if mypath.to_lower().ends_with(".hero"){
-			//hero was called from a file
+	if os.args.len == 2 {
+		mypath := os.args[1]
+		if mypath.to_lower().ends_with('.hero') {
+			// hero was called from a file
 			shebang(mypath)!
 			return
 		}
 	}
 
 	mut cmd := Command{
-		name: 'hero'
+		name:        'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.31'
+		version:     '1.0.31'
 	}
 
 	cmd.add_flag(Flag{
-		flag: .string
-		name: 'url'
-		abbrev: 'u'
+		flag:        .string
+		name:        'url'
+		abbrev:      'u'
 		global:      true
 		description: 'url of playbook'
 	})
-	
+
 	// herocmds.cmd_run_add_flags(mut cmd)
 
-	mut toinstall:=false
+	mut toinstall := false
 	if !osal.cmd_exists('mc') || !osal.cmd_exists('redis-cli') {
-		toinstall=true
+		toinstall = true
 	}
 
-	if osal.is_osx(){
+	if osal.is_osx() {
 		if !osal.cmd_exists('brew') {
 			console.clear()
 			mut myui := ui.new()!
 			toinstall = myui.ask_yesno(
-				question: 'we didn\'t find brew installed is it ok to install for you?'
-				default: true
+				question: "we didn't find brew installed is it ok to install for you?"
+				default:  true
 			)!
-			if toinstall{
+			if toinstall {
 				installerbase.install()!
-			}			
+			}
 			console.clear()
-			console.print_stderr("Brew installed, please follow instructions and do hero ... again.")
+			console.print_stderr('Brew installed, please follow instructions and do hero ... again.')
 			exit(0)
-
-		}	
-	}else{
-		if toinstall{
+		}
+	} else {
+		if toinstall {
 			installerbase.install()!
 		}
 	}
 
-	redis.install()!	
+	redis.install()!
 
 	herocmds.cmd_bootstrap(mut cmd)
 	herocmds.cmd_run(mut cmd)

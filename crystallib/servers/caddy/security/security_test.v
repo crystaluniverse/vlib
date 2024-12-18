@@ -4,9 +4,9 @@ pub fn test_add_role() ! {
 	mut s := Security{}
 
 	s.add_oauth(
-		name: 'gitea'
-		domain: 'git.ourworld.tf'
-		client_id: 'client_id'
+		name:          'gitea'
+		domain:        'git.ourworld.tf'
+		client_id:     'client_id'
 		client_secret: 'client_secret'
 	)!
 
@@ -16,8 +16,8 @@ pub fn test_add_role() ! {
 		config: Config{
 			authentication_portals: [
 				AuthenticationPortal{
-					name: 'gitea'
-					ui: UIConfig{
+					name:                     'gitea'
+					ui:                       UIConfig{
 						templates: {
 							'login': '/Users/timurgordon/.local/caddy/ui/custom/login.template'
 						}
@@ -25,37 +25,37 @@ pub fn test_add_role() ! {
 					user_transformer_configs: [
 						UserTransformerConfig{
 							matchers: ['exact match email example@example.com']
-							actions: ['action add role admin']
+							actions:  ['action add role admin']
 						},
 					]
-					cookie_config: CookieConfig{
+					cookie_config:            CookieConfig{
 						domains: {
 							'git.ourworld.tf': DomainConfig{
 								domain: 'git.ourworld.tf'
 							}
 						}
 					}
-					identity_providers: [
+					identity_providers:       [
 						'generic',
 					]
-					crypto_key_configs: [
+					crypto_key_configs:       [
 						CryptoKeyConfig{
-							usage: 'sign-verify'
-							token_name: 'access_token'
-							source: 'config'
-							algorithm: 'hmac'
-							token_lifetime: 3600
-							token_secret: 'u7XjDawOgGijydKxa5kK2uKONsaFalljkcXsLTuY/UM='
+							usage:             'sign-verify'
+							token_name:        'access_token'
+							source:            'config'
+							algorithm:         'hmac'
+							token_lifetime:    3600
+							token_secret:      'u7XjDawOgGijydKxa5kK2uKONsaFalljkcXsLTuY/UM='
 							token_sign_method: ''
-							token_eval_expr: []
+							token_eval_expr:   []
 						},
 					]
 				},
 			]
-			identity_providers: [
+			identity_providers:     [
 				IdentityProvider{
-					name: 'generic'
-					kind: 'oauth'
+					name:   'generic'
+					kind:   'oauth'
 					params: {
 						'base_auth_url': 'https://git.ourworld.tf/login/oauth/authorize'
 						'client_id':     'client_id'

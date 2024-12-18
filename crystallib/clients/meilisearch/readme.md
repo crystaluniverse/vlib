@@ -4,11 +4,13 @@ This is a simple V client for interacting with a [self-hosted Meilisearch instan
 
 ### Getting Started with Self-Hosted Meilisearch
 
-To use this V client, ensure you have a **self-hosted Meilisearch instance installed and running**. This quick start will walk you through installing Meilisearch, adding documents, and performing your first search.
+To use this V client, ensure you have a **self-hosted Meilisearch instance installed and running**. 
+
+This quick start will walk you through installing Meilisearch, adding documents, and performing your first search.
 
 #### Requirements
 
-To follow this setup, you will need `cURL` installed
+To follow this setup, you will need `curl` installed
 
 ### Setup and Installation
 
@@ -25,7 +27,7 @@ Start Meilisearch with the following command, replacing `"aSampleMasterKey"` wit
 
 ```bash
 # Launch Meilisearch
-./meilisearch --master-key="aSampleMasterKey"
+meilisearch --master-key="aSampleMasterKey"
 ```
 ---
 
@@ -48,11 +50,10 @@ Here is a quick example of how to retrieve the Meilisearch server version using 
 ```v
 import freeflowuniverse.crystallib.clients.meilisearch
 
-fn main() {
-    mut client := meilisearch.get() or { panic(err) }
-    version := client.version() or { panic(err) }
-    println('Meilisearch version: $version')
-}
+mut client := meilisearch.get() or { panic(err) }
+version := client.version() or { panic(err) }
+println('Meilisearch version: $version')
+
 ```
 
 This example connects to your local Meilisearch instance and prints the server version to verify your setup is correct.

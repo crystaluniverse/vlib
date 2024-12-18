@@ -17,14 +17,14 @@ fn (mut t TFGridHandler) taiga(action Action) ! {
 			disk_size := action.params.get_storagecapacity_in_gigabytes('disk_size') or { 50 }
 
 			deploy_res := t.tfgrid.deploy_taiga(
-				name: name
-				farm_id: u64(farm_id)
-				capacity: capacity
-				ssh_key: ssh_key
+				name:           name
+				farm_id:        u64(farm_id)
+				capacity:       capacity
+				ssh_key:        ssh_key
 				admin_username: admin_username
 				admin_password: admin_password
-				admin_email: admin_email
-				disk_size: u32(disk_size)
+				admin_email:    admin_email
+				disk_size:      u32(disk_size)
 			)!
 
 			t.logger.info('${deploy_res}')

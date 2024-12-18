@@ -8,7 +8,7 @@ import json
 // client for telegram bot
 struct TelegramClient {
 	bot        vgram.Bot
-	baobab     client.Client // Baobab client
+	baobab     client.Client         // Baobab client
 	waiting_qs map[string]RedisQueue // where string is user_id
 }
 
@@ -16,10 +16,10 @@ struct TelegramClient {
 pub fn new_client(bot_token string, supervisor_key string) !TelegramClient {
 	baobab := client.new()!
 	return TelegramClient{
-		baobab: baobab
-		bot: vgram.new_bot(bot_token)
+		baobab:          baobab
+		bot:             vgram.new_bot(bot_token)
 		flow_supervisor: baobab.redis.queue_get(supervisor_key) //? Why are these necessary?
-		in_q: baobab.redis.queue_get('client.telegram.in') //? Why are these necessary?
+		in_q:            baobab.redis.queue_get('client.telegram.in') //? Why are these necessary?
 	}
 }
 
@@ -46,12 +46,12 @@ pub fn (mut client TelegramClient) execute() {
 pub fn (mut client TelegramClient) clear_old_updates() string {
 	mut last_offset := 0
 	mut updates := client.bot.get_updates(
-		timeout: 0
+		timeout:         0
 		allowed_updates: json.encode([
 			'message',
 		])
-		offset: last_offset
-		limit: 100
+		offset:          last_offset
+		limit:           100
 	)
 	for update in updates {
 		if last_offset < update.update_id {
@@ -119,8 +119,8 @@ fn (mut ui UITelegram) handle_update(update vgram.Update) {
 
 fn (ui UITelegram) send(msg string, user_id string) {
 	_ := ui.bot.send_message(
-		chat_id: user_id
-		text: msg
+		chat_id:    user_id
+		text:       msg
 		parse_mode: 'MarkdownV2'
 	)
 }

@@ -7,10 +7,10 @@ zinitinstaller.install()!
 
 mut systemdfactory := systemd.new()!
 mut systemdprocess := systemdfactory.new(
-	cmd: '/usr/local/bin/zinit init'
-	name: 'zinit'
+	cmd:         '/usr/local/bin/zinit init'
+	name:        'zinit'
 	description: 'a super easy to use startup manager.'
 )!
 
-l:=systemd.process_list()!
+l := systemd.process_list()!
 println(l)

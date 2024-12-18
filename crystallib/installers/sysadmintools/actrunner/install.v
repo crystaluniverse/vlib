@@ -50,7 +50,7 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 15000
 	)!
 
@@ -58,7 +58,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	osal.cmd_add(
 		cmdname: 'actrunner'
-		source: dest.path
+		source:  dest.path
 	)!
 
 	return

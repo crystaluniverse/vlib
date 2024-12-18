@@ -7,9 +7,7 @@ import log
 import os
 import time
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn create_stall_and_product(mut client RpcWsClient, mut logger log.Logger, secret string) ! {
 	mut nostr_client := nostr.new(mut client)
@@ -33,41 +31,41 @@ fn create_stall_and_product(mut client RpcWsClient, mut logger log.Logger, secre
 	nostr_client.subscribe_to_product_creation()!
 
 	stall := nostr.Stall{
-		id: 'stall1'
-		name: 'stall1'
+		id:          'stall1'
+		name:        'stall1'
 		description: 'stall1'
-		currency: 'TFT'
-		shipping: [
+		currency:    'TFT'
+		shipping:    [
 			nostr.Shipping{
-				id: 'shipping1'
-				name: 'shipping1'
-				cost: 10000.00
+				id:        'shipping1'
+				name:      'shipping1'
+				cost:      10000.00
 				countries: ['']
 			},
 		]
 	}
 
 	input := nostr.StallCreateInput{
-		tags: ['']
+		tags:  ['']
 		stall: stall
 	}
 
 	nostr_client.publish_stall(input)!
 
 	product := nostr.Product{
-		id: 'product1'
-		stall_id: 'stall1'
-		name: 'product1'
+		id:          'product1'
+		stall_id:    'stall1'
+		name:        'product1'
 		description: 'product1'
-		images: ['']
-		currency: 'TFT'
-		price: 10000.00
-		quantity: 1
-		specs: [][]string{}
+		images:      ['']
+		currency:    'TFT'
+		price:       10000.00
+		quantity:    1
+		specs:       [][]string{}
 	}
 
 	product_input := nostr.ProductCreateInput{
-		tags: ['']
+		tags:    ['']
 		product: product
 	}
 

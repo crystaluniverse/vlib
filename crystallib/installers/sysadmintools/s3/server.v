@@ -77,7 +77,7 @@ pub fn get(name_ string) !Server {
 		data := kvs.get(key)!
 		args := json.decode(Config, data)!
 		mut server := Server{
-			name: name
+			name:   name
 			config: args
 		}
 		mut z := zinit.new()!
@@ -109,7 +109,7 @@ pub fn (mut server Server) start() ! {
 	mut z := zinit.new()!
 	mut p := z.process_new(
 		name: 's3_${args.name}'
-		cmd: cmd
+		cmd:  cmd
 	)!
 
 	p.status()!

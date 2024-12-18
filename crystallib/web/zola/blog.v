@@ -13,7 +13,7 @@ mut:
 
 pub struct Post {
 pub:
-	cid         string          @[required]
+	cid         string @[required]
 	title       string
 	name        string
 	image       ?&data.File
@@ -37,16 +37,16 @@ pub struct BlogAddArgs {
 pub fn (mut site ZolaSite) blog_add(args BlogAddArgs) ! {
 	blog_section := Section{
 		...args.Section
-		name: 'blog'
-		title: if args.title != '' { args.title } else { 'Blog' }
-		sort_by: if args.sort_by != .@none { args.sort_by } else { .date }
-		template: if args.template != '' { args.template } else { 'layouts/blog.html' }
+		name:          'blog'
+		title:         if args.title != '' { args.title } else { 'Blog' }
+		sort_by:       if args.sort_by != .@none { args.sort_by } else { .date }
+		template:      if args.template != '' { args.template } else { 'layouts/blog.html' }
 		page_template: if args.page_template != '' {
 			args.page_template
 		} else {
 			'partials/postCard.html'
 		}
-		paginate_by: if args.paginate_by != 0 { args.paginate_by } else { 3 }
+		paginate_by:   if args.paginate_by != 0 { args.paginate_by } else { 3 }
 	}
 	site.add_section(blog_section)!
 }
@@ -70,17 +70,17 @@ pub fn (mut site ZolaSite) post_add(args_ PostAddArgs) ! {
 	post := site.get_post(args)!
 	image := post.image or { return error('Post must have an image') }
 	mut post_page := new_page(
-		Page: post.page or { return error('post page not attached') }
-		title: post.title
-		date: post.date.time()
+		Page:        post.page or { return error('post page not attached') }
+		title:       post.title
+		date:        post.date.time()
 		description: post.description
-		taxonomies: {
+		taxonomies:  {
 			'people':     post.authors
 			'tags':       post.tags
 			'categories': post.categories
 		}
-		assets: [post.image?.path]
-		extra: {
+		assets:      [post.image?.path]
+		extra:       {
 			'imgPath': image.file_name()
 		}
 	)!
@@ -128,15 +128,15 @@ fn (site ZolaSite) get_post(args PostAddArgs) !Post {
 	name := definition.params.get_default('name', '')!
 	image_ := definition.params.get_default('image_path', '')!
 	mut post := Post{
-		name: name
-		page: page
-		date: definition.params.get_time_default('date', ourtime.now())!
-		cid: definition.params.get_default('cid', '')!
-		title: definition.params.get_default('title', '')!
+		name:        name
+		page:        page
+		date:        definition.params.get_time_default('date', ourtime.now())!
+		cid:         definition.params.get_default('cid', '')!
+		title:       definition.params.get_default('title', '')!
 		description: definition.params.get_default('description', '')!
-		tags: definition.params.get_list_default('tags', [])!
-		categories: definition.params.get_list_default('categories', [])!
-		authors: definition.params.get_list_default('authors', [])!
+		tags:        definition.params.get_list_default('tags', [])!
+		categories:  definition.params.get_list_default('categories', [])!
+		authors:     definition.params.get_list_default('authors', [])!
 	}
 
 	if post.cid == '' {

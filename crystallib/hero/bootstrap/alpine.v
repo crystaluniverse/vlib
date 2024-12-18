@@ -63,10 +63,10 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 
 	mut url := self.alpine_url[cpu_name]
 	mut iso_path0 := osal.download(
-		reset: args.reset
-		url: url
+		reset:      args.reset
+		url:        url
 		minsize_kb: 90000
-		dest: '/tmp/alpine_std_${cpu_name}.iso'
+		dest:       '/tmp/alpine_std_${cpu_name}.iso'
 	)!
 	iso_path := iso_path0.path
 
@@ -101,7 +101,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
         mkfifo /tmp/alpine.in /tmp/alpine.out'
 	)!
 	osal.exec(
-		cmd: '
+		cmd:   '
         qemu-system-x86_64 -m 1024 -cdrom "${iso_path}" -drive file="${hdd_path}",index=0,media=disk,format=qcow2 -boot c -enable-kvm -smp cores=2,maxcpus=2 -net nic -net user,hostfwd=tcp::2225-:22 -virtfs local,path="${SHARED_DIR}",mount_tag="${TAG}",security_model=mapped,id=shared -serial pipe:/tmp/alpine -qmp unix:/tmp/qmp-sock,server,nowait -vnc :0,password=on -monitor stdio
         '
 		debug: true
@@ -132,7 +132,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 		} else if line_str.contains('localhost:~#') {
 			console_input.writeln('setup-alpine')!
 		} else if line_str.contains(' [localhost]') {
-			console_input.writeln(bootstrap.hostname)!
+			console_input.writeln(hostname)!
 		} else if line_str.contains(' [eth0]') {
 			console_input.writeln('')!
 		} else if line_str.contains(' [dhcp]') {
@@ -166,7 +166,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 			console_input.writeln('y')!
 		} else if line_str.contains('Installation is complete.') {
 			console_input.writeln('reboot')!
-		} else if line_str.contains('${bootstrap.hostname} login:') {
+		} else if line_str.contains('${hostname} login:') {
 			console.print_debug('[+] ====================================================================')
 			console.print_debug('[+] virtual machine configured, up and running, root password: root')
 			console.print_debug('[+] you can ssh this machine with the local reverse port:')

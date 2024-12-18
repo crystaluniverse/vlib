@@ -129,9 +129,9 @@ pub mut:
 	access_list_configs      []AccessListConfig      @[omitempty]
 	token_validator_options  TokenValidatorOptions   @[omitempty]
 	crypto_key_configs       []CryptoKeyConfig
-	crypto_key_store_config  map[string]string       @[omitempty]
-	token_grantor_options    TokenGrantorOptions     @[omitempty]
-	api                      APIConfig               @[omitempty]
+	crypto_key_store_config  map[string]string   @[omitempty]
+	token_grantor_options    TokenGrantorOptions @[omitempty]
+	api                      APIConfig           @[omitempty]
 }
 
 pub struct BypassConfig {

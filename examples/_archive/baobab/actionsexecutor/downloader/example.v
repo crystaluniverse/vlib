@@ -5,16 +5,14 @@ import freeflowuniverse.crystallib.baobab.actionsexecutor
 import os
 import log
 
-const (
-	example_git_root  = ''
-	example_repo_url  = 'https://github.com/threefoldfoundation/www_mycelium.git'
-	example_repo_name = 'www_mycelium'
-	example_file_url  = 'httpsfile://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js'
-	example_file_name = 'echarts.min.js'
-	example_file_dest = ''
+const example_git_root = ''
+const example_repo_url = 'https://github.com/threefoldfoundation/www_mycelium.git'
+const example_repo_name = 'www_mycelium'
+const example_file_url = 'httpsfile://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js'
+const example_file_name = 'echarts.min.js'
+const example_file_dest = ''
 
-	script_path       = '${os.dir(@FILE)}/heroscript.md'
-)
+const script_path = '${os.dir(@FILE)}/heroscript.md'
 
 fn main() {
 	do() or { panic(err) }

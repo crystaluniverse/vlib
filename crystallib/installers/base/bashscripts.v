@@ -12,7 +12,7 @@ fn script_write(mybase string, name string, cmd_ string) ! {
 	for line in cmd.split_into_lines() {
 		out += '${line}\n'
 	}
-	mut p := pathlib.get_file(path: '${base.scriptspath}/${name}.sh', create: true)!
+	mut p := pathlib.get_file(path: '${scriptspath}/${name}.sh', create: true)!
 	p.write(out)!
 	os.chmod(p.path, 0o777)!
 }
@@ -40,7 +40,7 @@ pub fn bash_installers_package() !string {
 		if name == '' {
 			continue
 		}
-		mut p := pathlib.get_file(path: '${base.scriptspath}/lib/${name}', create: false)!
+		mut p := pathlib.get_file(path: '${scriptspath}/lib/${name}', create: false)!
 		c := p.read()!
 		out += c
 	}
@@ -69,6 +69,6 @@ pub fn bash_installers_package() !string {
 		echo 'OK'
 		")!
 
-	mut p4 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
+	mut p4 := pathlib.get_dir(path: '${scriptspath}', create: false)!
 	return p4.path
 }

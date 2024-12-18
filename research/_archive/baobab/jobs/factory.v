@@ -40,11 +40,11 @@ pub mut:
 // Creates new actionjob
 pub fn new(args JobNewArgs) !ActionJob {
 	mut j := ActionJob{
-		guid: rand.uuid_v4()
-		twinid: args.twinid
-		action: args.action
-		args: args.args
-		start: time.now()
+		guid:       rand.uuid_v4()
+		twinid:     args.twinid
+		action:     args.action
+		args:       args.args
+		start:      time.now()
 		src_action: args.actionsource
 		src_twinid: args.src_twinid
 	}

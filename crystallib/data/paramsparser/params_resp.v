@@ -34,7 +34,7 @@ pub fn from_resp(data []u8) !Params {
 		key_rstring := param_string.values[0] as resp.RString
 		value_rstring := param_string.values[1] as resp.RString
 		p.params << Param{
-			key: key_rstring.value
+			key:   key_rstring.value
 			value: value_rstring.value
 		}
 	}

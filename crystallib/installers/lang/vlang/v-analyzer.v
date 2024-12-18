@@ -46,7 +46,7 @@ pub fn v_analyzer_install(args_ InstallArgs) ! {
 		osal.execute_stdout(cmd) or { return error('Cannot install hero.\n${err}') }
 		osal.cmd_add(
 			cmdname: 'v-analyzer'
-			source: '${os.home_dir()}/_code/v-analyzer/bin/v-analyzer'
+			source:  '${os.home_dir()}/_code/v-analyzer/bin/v-analyzer'
 		)!
 	}
 

@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.core.texttools
 @[heap]
 pub struct Collection {
 pub mut:
-	name          string                @[required]
-	path          Path                  @[required]
+	name          string @[required]
+	path          Path   @[required]
 	fail_on_error bool
 	heal          bool = true
 	pages         map[string]&data.Page
@@ -34,16 +34,14 @@ pub fn new(args_ CollectionNewArgs) !Collection {
 
 	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist
 	mut collection := Collection{
-		name: args.name
-		path: pp
-		heal: args.heal
+		name:          args.name
+		path:          pp
+		heal:          args.heal
 		fail_on_error: args.fail_on_error
 	}
 
 	if args.load {
-		collection.scan() or {
-			return error('Error scanning collection ${args.name}:\n${err}')
-		}
+		collection.scan() or { return error('Error scanning collection ${args.name}:\n${err}') }
 	}
 
 	return collection

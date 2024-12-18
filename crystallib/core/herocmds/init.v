@@ -9,8 +9,8 @@ import cli { Command, Flag }
 
 pub fn cmd_init(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'init'
-		usage: '
+		name:          'init'
+		usage:         '
 Initialization Helpers for Hero
 
 -r will reset everything e.g. done states (when installing something)
@@ -18,55 +18,55 @@ Initialization Helpers for Hero
 -c will compile hero on local platform (requires local crystallib)
 
 '
-		description: 'initialize hero environment (reset, development mode, )'
+		description:   'initialize hero environment (reset, development mode, )'
 		required_args: 0
-		execute: cmd_init_execute
+		execute:       cmd_init_execute
 	}
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'reset'
-		abbrev: 'r'
+		flag:        .bool
+		required:    false
+		name:        'reset'
+		abbrev:      'r'
 		description: 'will reset.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'develop'
-		abbrev: 'd'
+		flag:        .bool
+		required:    false
+		name:        'develop'
+		abbrev:      'd'
 		description: 'will put system in development mode.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'compile'
-		abbrev: 'c'
+		flag:        .bool
+		required:    false
+		name:        'compile'
+		abbrev:      'c'
 		description: 'will compile hero.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'redis'
+		flag:        .bool
+		required:    false
+		name:        'redis'
 		description: 'will make sure redis is in system and is running.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'gitpull'
-		abbrev: 'gp'
+		flag:        .bool
+		required:    false
+		name:        'gitpull'
+		abbrev:      'gp'
 		description: 'will try to pull git repos for crystallib.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'gitreset'
-		abbrev: 'gr'
+		flag:        .bool
+		required:    false
+		name:        'gitreset'
+		abbrev:      'gr'
 		description: 'will reset the git repo if there are changes inside, will also pull, CAREFUL.'
 	})
 
@@ -81,12 +81,12 @@ fn cmd_init_execute(cmd Command) ! {
 	mut git_reset := cmd.flags.get_bool('gitreset') or { false }
 	mut git_pull := cmd.flags.get_bool('gitpull') or { false }
 
-	if redis{
-		redisinstaller.install(reset:true)!
+	if redis {
+		redisinstaller.install(reset: true)!
 	}
 
 	if develop {
-		console.print_header("init in development mode: reset:${reset}")		
+		console.print_header('init in development mode: reset:${reset}')
 		base.install(reset: reset, develop: true)!
 		return
 	}

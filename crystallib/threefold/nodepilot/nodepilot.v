@@ -12,8 +12,8 @@ mut:
 pub fn nodepilot_new(name string, ipaddr string) ?NodePilot {
 	node := builder.node_new(name: name, ipaddr: ipaddr)?
 	return NodePilot{
-		node: node
-		noderoot: '/root/node-pilot-light'
+		node:       node
+		noderoot:   '/root/node-pilot-light'
 		repository: 'https://github.com/threefoldtech/node-pilot-light'
 	}
 }

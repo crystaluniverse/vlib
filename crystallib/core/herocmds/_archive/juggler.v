@@ -14,8 +14,8 @@ import os
 // coderoot string //the location of coderoot if its another one
 pub fn cmd_juggler(mut cmdroot Command) {
 	mut cmd_juggler := Command{
-		name: 'juggler'
-		usage: '
+		name:          'juggler'
+		usage:         '
 ## Continuous Integration and Deployment for Hero 
 
 example:
@@ -26,32 +26,32 @@ If you do -gp it will pull newest book content from git and give error if there 
 If you do -gr it will pull newest book content from git and overwrite local changes (careful).
 
 		'
-		description: 'configure ci/cd for repos'
+		description:   'configure ci/cd for repos'
 		required_args: 0
-		execute: cmd_juggler_execute
+		execute:       cmd_juggler_execute
 	}
 
 	cmd_run_add_flags(mut cmd_juggler)
 
 	cmd_juggler.add_flag(Flag{
-		flag: .int
-		required: false
-		name: 'port'
-		abbrev: ''
+		flag:        .int
+		required:    false
+		name:        'port'
+		abbrev:      ''
 		description: 'will open the juggler user interface.'
 	})
 	cmd_juggler.add_flag(Flag{
-		flag: .string
-		required: true
-		name: 'username'
-		abbrev: 'n'
+		flag:        .string
+		required:    true
+		name:        'username'
+		abbrev:      'n'
 		description: 'username for juggler.'
 	})
 	cmd_juggler.add_flag(Flag{
-		flag: .string
-		required: true
-		name: 'password'
-		abbrev: 'p'
+		flag:        .string
+		required:    true
+		name:        'password'
+		abbrev:      'p'
 		description: 'password for juggler.'
 	})
 
@@ -67,10 +67,10 @@ fn cmd_juggler_execute(cmd Command) ! {
 
 	if url.len > 0 {
 		mut j := juggler.configure(
-			url: url
+			url:      url
 			username: username
 			password: password
-			reset: true
+			reset:    true
 		)!
 		j.run(8000)!
 	} else {
@@ -111,9 +111,9 @@ fn juggler_code_get(cmd Command) !string {
 	mut gs := gittools.get(coderoot: coderoot)!
 	if url.len > 0 {
 		mut repo := gs.get_repo(
-			pull: pull
-			reset: reset
-			url: url
+			pull:   pull
+			reset:  reset
+			url:    url
 			reload: true
 		)!
 		return repo.get_path()!

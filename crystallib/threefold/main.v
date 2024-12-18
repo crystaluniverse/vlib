@@ -1,7 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.threefold.deploy 
+import freeflowuniverse.crystallib.threefold.deploy
 
-fn main(){
-
+fn main() {
 }

@@ -28,7 +28,7 @@ mut:
 	factory &BuilderFactory @[skip; str: skip]
 pub mut:
 	name        string = 'unknown'
-	executor    Executor          @[skip; str: skip]
+	executor    Executor @[skip; str: skip]
 	platform    PlatformType
 	cputype     CPUType
 	done        map[string]string

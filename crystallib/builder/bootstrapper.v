@@ -56,9 +56,9 @@ pub fn (mut node Node) upgrade() ! {
 	install_base_content := install_base_content_.to_string()
 	cmd := '${install_base_content}\n'
 	node.exec_cmd(
-		cmd: cmd
-		period: 48 * 3600
-		reset: false
+		cmd:         cmd
+		period:      48 * 3600
+		reset:       false
 		description: 'upgrade operating system packages'
 	)!
 }
@@ -113,7 +113,7 @@ pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 		mut myui := ui.new()!
 		toinstall := myui.ask_yesno(
 			question: 'Ok to reset?'
-			default: true
+			default:  true
 		)!
 		if !toinstall {
 			exit(1)
@@ -162,10 +162,10 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 
 	if args.sync_from_local {
 		if args.sync_full {
-			node.sync_code('crystal', builder.crystalpath_ + '/..', '~/code/github/freeflowuniverse/crystallib',
+			node.sync_code('crystal', crystalpath_ + '/..', '~/code/github/freeflowuniverse/crystallib',
 				args.sync_fast)!
 		} else {
-			node.sync_code('crystal_lib', builder.crystalpath_, '~/code/github/freeflowuniverse/crystallib/crystallib',
+			node.sync_code('crystal_lib', crystalpath_, '~/code/github/freeflowuniverse/crystallib/crystallib',
 				args.sync_fast)!
 		}
 		return
@@ -202,15 +202,15 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 pub fn (mut node Node) sync_code(name string, src_ string, dest string, fast_rsync bool) ! {
 	mut src := pathlib.get_dir(path: os.abs_path(src_), create: false)!
 	node.upload(
-		source: src.path
-		dest: dest
-		ignore: [
+		source:     src.path
+		dest:       dest
+		ignore:     [
 			'.git/*',
 			'_archive',
 			'.vscode',
 			'examples',
 		]
-		delete: true
+		delete:     true
 		fast_rsync: fast_rsync
 	)!
 }
@@ -254,9 +254,9 @@ pub fn (mut node Node) vscript(args_ VScriptArgs) ! {
 	mut args := args_
 	node.crystal_update(
 		sync_from_local: args.sync_from_local
-		git_reset: args.git_reset
-		git_pull: args.git_pull
-		branch: args.branch
+		git_reset:       args.git_reset
+		git_pull:        args.git_pull
+		branch:          args.branch
 	)!
 	mut p := pathlib.get_file(path: args.path, create: false)!
 

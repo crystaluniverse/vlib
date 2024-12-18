@@ -12,14 +12,14 @@ mut logger := log.Log{}
 logger.set_level(.info)
 
 cred := sms.Credentials{
-	sid: sid
-	token: token
+	sid:    sid
+	token:  token
 	source: source
 }
 mut client := new_sms_client(cred, mut logger)!
 
 msg := sms.Message{
-	content: 'hello_world'
+	content:     'hello_world'
 	destination: '+201005001050'
 }
 

@@ -24,8 +24,8 @@ const header_size = 12
 @[params]
 pub struct OurDBConfig {
 pub:
-	record_nr_max   u32 = 16777216 - 1 // max size of records
-	record_size_max u32 = 1024 * 4 // max size in bytes of a record, is 4 KB default
+	record_nr_max   u32 = 16777216 - 1    // max size of records
+	record_size_max u32 = 1024 * 4        // max size in bytes of a record, is 4 KB default
 	file_size       u32 = 500 * (1 << 20) // 500MB
 	path            string // directory where we will stor the DB
 
@@ -46,21 +46,21 @@ pub fn new(args OurDBConfig) !OurDB {
 		return error('max supported records is 4294967296 in OurDB')
 	}
 
-	if f64(args.record_size_max * args.record_nr_max) / 2 > ourdb.mbyte_ * 10 {
+	if f64(args.record_size_max * args.record_nr_max) / 2 > mbyte_ * 10 {
 		keysize = 6 // will use multiple files
 	}
 
 	mut l := new_lookup(
-		size: args.record_nr_max
-		keysize: keysize
+		size:             args.record_nr_max
+		keysize:          keysize
 		incremental_mode: args.incremental_mode
 	)!
 
 	os.mkdir_all(args.path)!
 	mut db := OurDB{
-		path: args.path
-		lookup: &l
-		file_size: args.file_size
+		path:             args.path
+		lookup:           &l
+		file_size:        args.file_size
 		incremental_mode: args.incremental_mode
 	}
 

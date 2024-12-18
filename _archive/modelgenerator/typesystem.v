@@ -55,8 +55,8 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 	match data {
 		u8 {
 			o.crtype = CRType{
-				cat: .u8
-				size: u32(1)
+				cat:   .u8
+				size:  u32(1)
 				model: &Model{}
 			}
 			o.data = [data]
@@ -64,8 +64,8 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 		u16 {
 			o.data = []u8{len: 2}
 			o.crtype = CRType{
-				cat: .u16
-				size: u32(2)
+				cat:   .u16
+				size:  u32(2)
 				model: &Model{}
 			}
 			bin.little_endian_put_u16(mut o.data, data)
@@ -73,8 +73,8 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 		u32 {
 			o.data = []u8{len: 4}
 			o.crtype = CRType{
-				cat: .u32
-				size: u32(4)
+				cat:   .u32
+				size:  u32(4)
 				model: &Model{}
 			}
 			bin.little_endian_put_u32(mut o.data, data)
@@ -82,8 +82,8 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 		int {
 			o.data = []u8{len: 4}
 			o.crtype = CRType{
-				cat: .int
-				size: u32(4)
+				cat:   .int
+				size:  u32(4)
 				model: &Model{}
 			}
 			bin.little_endian_put_u32(mut o.data, u32(data)) // is wrong: TODO:
@@ -91,8 +91,8 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 		i64 {
 			o.data = []u8{len: 8}
 			o.crtype = CRType{
-				cat: .u64
-				size: u32(8)
+				cat:   .u64
+				size:  u32(8)
 				model: &Model{}
 			}
 			bin.little_endian_put_u64(mut o.data, u64(data)) // is wrong: TODO:
@@ -100,7 +100,7 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 		string {
 			o.data = data.bytes()
 			o.crtype = CRType{
-				cat: .string
+				cat:   .string
 				model: &Model{}
 			}
 		}
@@ -109,8 +109,8 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			o.data = []u8{len: 8}
 			bin.little_endian_put_u64(mut o.data, epoch)
 			o.crtype = CRType{
-				cat: .time
-				size: u32(8)
+				cat:   .time
+				size:  u32(8)
 				model: &Model{}
 			}
 		}
@@ -118,9 +118,9 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			for childdata in data {
 				mut primitive_obj := new_primitive(childdata)
 				o.crtype = CRType{
-					list: true
-					cat: .u8
-					size: u32(1)
+					list:  true
+					cat:   .u8
+					size:  u32(1)
 					model: &Model{}
 				}
 				o.data << primitive_obj.data
@@ -130,9 +130,9 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			for childdata in data {
 				mut primitive_obj := new_primitive(childdata)
 				o.crtype = CRType{
-					list: true
-					cat: .u16
-					size: u32(2)
+					list:  true
+					cat:   .u16
+					size:  u32(2)
 					model: &Model{}
 				}
 				o.data << primitive_obj.data
@@ -142,9 +142,9 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			for childdata in data {
 				mut primitive_obj := new_primitive(childdata)
 				o.crtype = CRType{
-					list: true
-					cat: .u32
-					size: u32(4)
+					list:  true
+					cat:   .u32
+					size:  u32(4)
 					model: &Model{}
 				}
 				o.data << primitive_obj.data
@@ -154,9 +154,9 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			for childdata in data {
 				mut primitive_obj := new_primitive(childdata)
 				o.crtype = CRType{
-					list: true
-					cat: .u32
-					size: u32(4)
+					list:  true
+					cat:   .u32
+					size:  u32(4)
 					model: &Model{}
 				}
 				o.data << primitive_obj.data
@@ -166,9 +166,9 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			for childdata in data {
 				mut primitive_obj := new_primitive(childdata)
 				o.crtype = CRType{
-					list: true
-					cat: .u64
-					size: u32(8)
+					list:  true
+					cat:   .u64
+					size:  u32(8)
 					model: &Model{}
 				}
 				o.data << primitive_obj.data
@@ -178,8 +178,8 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			for childdata in data {
 				mut primitive_obj := new_primitive(childdata)
 				o.crtype = CRType{
-					list: true
-					cat: .string
+					list:  true
+					cat:   .string
 					model: &Model{}
 				}
 				o.data << primitive_obj.data
@@ -189,9 +189,9 @@ pub fn new_primitive(data PrimTypeSum) CRTypeInstance {
 			for childdata in data {
 				mut primitive_obj := new_primitive(childdata)
 				o.crtype = CRType{
-					list: true
-					cat: .time
-					size: u32(8)
+					list:  true
+					cat:   .time
+					size:  u32(8)
 					model: &Model{}
 				}
 				o.data << primitive_obj.data

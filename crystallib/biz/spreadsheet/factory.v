@@ -11,7 +11,7 @@ pub struct SheetNewArgs {
 pub mut:
 	name          string = 'main'
 	nrcol         int    = 60
-	visualize_cur bool   = true // if we want to show e.g. $44.4 in a cell or just 44.4
+	visualize_cur bool   = true  // if we want to show e.g. $44.4 in a cell or just 44.4
 	curr          string = 'usd' // preferred currency to work with
 }
 
@@ -24,12 +24,12 @@ pub mut:
 // 	visualize_cur bool //if we want to show e.g. $44.4 in a cell or just 44.4
 pub fn sheet_new(args SheetNewArgs) !&Sheet {
 	mut sh := Sheet{
-		nrcol: args.nrcol
-		params: SheetParams{
+		nrcol:    args.nrcol
+		params:   SheetParams{
 			visualize_cur: args.visualize_cur
 		}
 		currency: currency.get(args.curr)!
-		name: args.name
+		name:     args.name
 	}
 	sheet_set(&sh)
 	return &sh
@@ -52,10 +52,9 @@ pub fn sheet_set(sh &Sheet) {
 	}
 }
 
-
 pub fn sheets_keys() []string {
 	rlock sheets {
 		return sheets.keys()
 	}
-	panic("bug")
+	panic('bug')
 }

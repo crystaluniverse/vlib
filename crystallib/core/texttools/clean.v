@@ -9,7 +9,7 @@ pub fn name_clean(r string) string {
 	mut res := []string{}
 	for ch in r {
 		mut c := ch.ascii_str()
-		if texttools.ignore_for_name.contains(c) {
+		if ignore_for_name.contains(c) {
 			continue
 		}
 		res << c
@@ -22,7 +22,7 @@ pub fn ascii_clean(r string) string {
 	mut res := []string{}
 	for ch in r {
 		mut c := ch.ascii_str()
-		if texttools.keep_ascii.contains(c) {
+		if keep_ascii.contains(c) {
 			res << c
 		}
 	}

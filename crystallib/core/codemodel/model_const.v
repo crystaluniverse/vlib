@@ -11,7 +11,7 @@ pub fn parse_const(code_ string) !Const {
 		return error('code <${code_}> is not of const')
 	}
 	return Const{
-		name: code.split('=')[0].trim_space()
+		name:  code.split('=')[0].trim_space()
 		value: code.split('=')[1].trim_space()
 	}
 }

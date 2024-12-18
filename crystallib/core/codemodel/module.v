@@ -14,7 +14,7 @@ pub mut:
 
 pub fn (mod Module) write_v(path string, options WriteOptions) ! {
 	mut module_dir := pathlib.get_dir(
-		path: '${path}/${mod.name}'
+		path:  '${path}/${mod.name}'
 		empty: options.overwrite
 	)!
 

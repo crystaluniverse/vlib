@@ -34,7 +34,7 @@ pub fn get(instance string, cfg Config) !OpenAIClient[Config] {
 
 	mut conn := httpconnection.new(
 		name: 'openai'
-		url: 'https://api.openai.com/v1/'
+		url:  'https://api.openai.com/v1/'
 	)!
 	conn.default_header.add(.authorization, 'Bearer ${self.config()!.openaikey}')
 	// req.add_custom_header('x-disable-pagination', 'True') !
@@ -52,7 +52,7 @@ pub fn configure(instance_ string) ! {
 	if instance == '' {
 		instance = ui.ask_question(
 			question: 'name for Dagu client'
-			default: instance
+			default:  instance
 		)!
 	}
 

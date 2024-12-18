@@ -45,7 +45,7 @@ fn (mut indexer Indexer) generic_create_root_object_table[T]() ! {
 }
 
 // deletes an indexer table belonging to a base object
-fn (mut indexer Indexer) generic_delete_table[T]()! {
+fn (mut indexer Indexer) generic_delete_table[T]() ! {
 	table_name := generic_get_table_name[T]()
 	delete_query := 'delete table ${table_name}'
 	indexer.db.exec(delete_query)!

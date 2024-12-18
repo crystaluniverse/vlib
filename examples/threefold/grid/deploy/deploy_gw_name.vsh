@@ -17,8 +17,8 @@ fn main() {
 
 	gw := models.GatewayNameProxy{
 		tls_passthrough: false
-		backends: ['http://1.1.1.1']
-		name: 'hamada_gw'
+		backends:        ['http://1.1.1.1']
+		name:            'hamada_gw'
 	}
 
 	wl := gw.to_workload(name: 'hamada_gw')
@@ -28,17 +28,17 @@ fn main() {
 
 	signature_requirement := models.SignatureRequirement{
 		weight_required: 1
-		requests: [
+		requests:        [
 			models.SignatureRequest{
 				twin_id: deployer.twin_id
-				weight: 1
+				weight:  1
 			},
 		]
 	}
 
 	mut deployment := models.new_deployment(
-		twin_id: deployer.twin_id
-		workloads: [wl]
+		twin_id:               deployer.twin_id
+		workloads:             [wl]
 		signature_requirement: signature_requirement
 	)
 

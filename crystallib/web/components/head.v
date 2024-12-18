@@ -2,8 +2,8 @@ module components
 
 pub struct Head {
 pub:
-	title string
-	links []Link
+	title   string
+	links   []Link
 	scripts []Script
 }
 
@@ -12,11 +12,11 @@ pub fn (head Head) html() string {
 }
 
 pub struct Link {
-	rel string
-	@as string
-	href string
+	rel             string
+	@as             string
+	href            string
 	data_precedence string
-	fetch_priority string
+	fetch_priority  string
 }
 
 pub fn (link Link) html() string {
@@ -37,13 +37,13 @@ pub fn (link Link) html() string {
 		parts << 'as="${link.data_precedence}"'
 	}
 
-    return '<link ${parts.join(' ')}/>'
+	return '<link ${parts.join(' ')}/>'
 }
 
 pub struct Script {
 pub:
 	source string
-	async string
+	async  string
 }
 
 pub fn (script Script) html() string {
@@ -52,9 +52,9 @@ pub fn (script Script) html() string {
 		parts << 'src="${script.source}"'
 	}
 	// if script.async != '' {
-		parts << 'async="${script.async}"'
+	parts << 'async="${script.async}"'
 	// }
-    return '<script ${parts.join(' ')}></script>'
+	return '<script ${parts.join(' ')}></script>'
 }
 
-    // <script src="/_next/static/chunks/app/page-940af5eda4277d81.js" async=""></script>
+// <script src="/_next/static/chunks/app/page-940af5eda4277d81.js" async=""></script>

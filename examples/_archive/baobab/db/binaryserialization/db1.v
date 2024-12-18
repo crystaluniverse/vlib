@@ -12,12 +12,12 @@ fn do() ! {
 	mydb.find() or { println('this should fail, tables are still not created. ${err}') }
 
 	mut o1 := mydb.new(
-		name: 'my name'
-		nr: 2
-		color: 'red'
+		name:        'my name'
+		nr:          2
+		color:       'red'
 		description: 'is this a serious descripion'
-		nr2: 10
-		listu32: [u32(2), u32(3), u32(4)]
+		nr2:         10
+		listu32:     [u32(2), u32(3), u32(4)]
 	)!
 	mydb.set(o1)!
 
@@ -28,10 +28,10 @@ fn do() ! {
 	assert objs_4.len == 1
 
 	mut o2 := mydb.new(
-		name: 'my second name'
-		nr: 2
-		color: 'blue'
-		nr2: 11
+		name:    'my second name'
+		nr:      2
+		color:   'blue'
+		nr2:     11
 		listu32: [u32(5), u32(6), u32(7)]
 	)!
 	mydb.set(o2)!
@@ -98,11 +98,11 @@ fn perf_write(mydb mystruct.MyDB) ! {
 	now := time.now()
 	for i in 0 .. 1000 {
 		o := mystruct.MyStruct{
-			gid: mydb.cid.gid()!
-			name: 'my ${i} record'
-			nr: 1
-			color: 'blue'
-			nr2: 2
+			gid:     mydb.cid.gid()!
+			name:    'my ${i} record'
+			nr:      1
+			color:   'blue'
+			nr2:     2
 			listu32: [u32(5), u32(6), u32(7)]
 		}
 		mydb.set(o)!

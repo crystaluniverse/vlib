@@ -14,7 +14,7 @@ mut:
 @[openrpc: exclude]
 pub fn new(mut client RpcWsClient) TFGridClient {
 	return TFGridClient{
-		client: &client
+		client:  &client
 		timeout: 500000
 	}
 }

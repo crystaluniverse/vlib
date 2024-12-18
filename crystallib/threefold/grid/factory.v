@@ -56,13 +56,13 @@ pub fn (mut self TFGridClient[Config]) config_interactive() ! {
 
 	cfg.mnemonics = myui.ask_question(
 		question: 'please enter your mnemonics here'
-		minlen: 24
-		default: cfg.mnemonics
+		minlen:   24
+		default:  cfg.mnemonics
 	)!
 
 	cfg.network = myui.ask_dropdown(
 		question: 'choose environment'
-		items: envs.values()
+		items:    envs.values()
 	)!
 
 	self.config_save()!

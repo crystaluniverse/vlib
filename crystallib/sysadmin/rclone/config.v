@@ -18,8 +18,8 @@ const configfile = '${HOME}/.config/rclone/rclone.conf'
 //```
 pub fn configure() ! {
 	actions := playbook.new(
-		path: rclone.configfile
-		actor_filter: ['config']
+		path:          configfile
+		actor_filter:  ['config']
 		action_filter: [
 			's3server_define',
 		]

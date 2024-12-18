@@ -49,7 +49,7 @@ pub mut:
 
 pub fn doc_new(args DocNewArgs) !Doc {
 	mut d := Doc{
-		pre: args.pre
+		pre:             args.pre
 		collection_name: args.collection_name
 	}
 	return d

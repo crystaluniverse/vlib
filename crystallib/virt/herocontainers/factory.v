@@ -21,12 +21,10 @@ pub fn new(args_ NewArgs) !CEngine {
 	}
 
 	if args.install {
-		
-		mut podman_installer0:= podman_installer.get()!
-		mut buildah_installer0:= buildah_installer.get()!
+		mut podman_installer0 := podman_installer.get()!
+		mut buildah_installer0 := buildah_installer.get()!
 		podman_installer0.install()!
 		buildah_installer0.install()!
-
 	}
 
 	if args.herocompile {

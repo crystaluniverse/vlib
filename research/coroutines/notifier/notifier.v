@@ -89,16 +89,14 @@ fn foo2(ch chan string) {
 	}
 }
 
-
 fn main() {
 	ch1 := chan string{}
 	ch2 := chan string{}
 
-
 	go server()
 	go foo1(ch1)
 	go foo2(ch2)
-	go monitor(ch2,mycounter)
+	go monitor(ch2, mycounter)
 
 	$if is_coroutine ? {
 		println('IS COROUTINE=true')

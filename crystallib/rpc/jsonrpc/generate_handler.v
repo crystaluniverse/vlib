@@ -44,14 +44,14 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 	}
 
 	handler_struct := Struct{
-		name: '${args.receiver.name}Handler'
+		name:   '${args.receiver.name}Handler'
 		is_pub: true
-		attrs: [codemodel.Attribute{
+		attrs:  [codemodel.Attribute{
 			name: 'heap'
 		}]
 		fields: [
 			codemodel.StructField{
-				name: 'state'
+				name:      'state'
 				structure: args.receiver
 			},
 		]
@@ -70,32 +70,31 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 			return error('method \${method} not handled')
 		}
 	}
-	return error('this should never happen')"
+	return error('this should never happen')" // handler method responsible for handling JSONRPC Request
 
-	// handler method responsible for handling JSONRPC Request
 	handle_method := codemodel.Function{
-		name: 'handle'
+		name:        'handle'
 		description: 'handle handles an incoming JSON-RPC encoded message and returns an encoded response'
-		receiver: codemodel.Param{
-			name: 'handler'
+		receiver:    codemodel.Param{
+			name:    'handler'
 			mutable: true
 			struct_: handler_struct
 		}
-		params: [
+		params:      [
 			codemodel.Param{
 				name: 'msg'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'string'
 				}
 			},
 		]
-		result: codemodel.Result{
-			typ: codemodel.Type{
+		result:      codemodel.Result{
+			typ:    codemodel.Type{
 				symbol: 'string'
 			}
 			result: true
 		}
-		body: body
+		body:        body
 	}
 	return [handler_struct, handle_method]
 }

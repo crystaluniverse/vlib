@@ -10,7 +10,7 @@ pub fn (mut h TFGridHandler) contracts(action Action) ! {
 			network := action.params.get_default('network', 'main')!
 			h.tfgrid.load(
 				mnemonic: mnemonics
-				network: network
+				network:  network
 			)!
 			mut filter := ContractFilter{}
 			if action.params.exists('contract_id') {
@@ -46,10 +46,10 @@ pub fn (mut h TFGridHandler) contracts(action Action) ! {
 			randomize := action.params.get_default_false('randomize')
 
 			req := FindContracts{
-				filters: filter
+				filters:    filter
 				pagination: Limit{
-					page: page
-					size: size
+					page:      page
+					size:      size
 					randomize: randomize
 				}
 			}

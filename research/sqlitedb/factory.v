@@ -106,8 +106,8 @@ pub fn get(args DBTableGetArgs) ![]u8 {
 @[params]
 struct DBFindArgsI {
 mut:
-	cid               smartid.CID       @[required]
-	objtype           string            @[required]
+	cid               smartid.CID @[required]
+	objtype           string      @[required]
 	query_int         map[string]int
 	query_string      map[string]string
 	query_int_less    map[string]int
@@ -126,9 +126,9 @@ pub fn find(args DBFindArgsI) ![][]u8 {
 @[params]
 pub struct DBDeleteArgs {
 pub mut:
-	cid     smartid.CID  @[required]
+	cid     smartid.CID @[required]
 	gid     ?smartid.GID
-	objtype string       @[required]
+	objtype string @[required]
 }
 
 pub fn delete(args DBDeleteArgs) ! {

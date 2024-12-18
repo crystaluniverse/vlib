@@ -38,14 +38,14 @@ pub fn rsync(args_ RsyncArgs) ! {
 		pathlib.get(args.source)
 	}
 	args2 := pathlib.RsyncArgs{
-		source: args.source
-		dest: args.dest
-		ipaddr_src: args.ipaddr_src
-		ipaddr_dst: args.ipaddr_dst
-		delete: args.delete
-		ignore: args.ignore
+		source:         args.source
+		dest:           args.dest
+		ipaddr_src:     args.ipaddr_src
+		ipaddr_dst:     args.ipaddr_dst
+		delete:         args.delete
+		ignore:         args.ignore
 		ignore_default: args.ignore_default
-		fast_rsync: args.fast_rsync
+		fast_rsync:     args.fast_rsync
 	}
 
 	// TODO: is only for ssh right now, we prob need support for a real ssh server as well

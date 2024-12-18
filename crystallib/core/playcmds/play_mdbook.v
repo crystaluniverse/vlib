@@ -71,11 +71,11 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		}
 
 		tree.scan(
-			path: path
-			git_url: url
+			path:      path
+			git_url:   url
 			git_reset: reset
-			git_root: coderoot
-			git_pull: pull
+			git_root:  coderoot
+			git_pull:  pull
 		)!
 		action.done = true
 	}
@@ -90,8 +90,8 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 
 		tree.export(
 			destination: build_path
-			reset: reset2
-			toreplace: toreplace
+			reset:       reset2
+			toreplace:   toreplace
 		)!
 		action.done = true
 	}
@@ -121,15 +121,15 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		cfg.path_publish = publishroot
 
 		mdbooks.generate(
-			name: name
-			title: title
+			name:         name
+			title:        title
 			summary_path: summary_path
 			publish_path: publish_path
-			build_path: build_path
-			printbook: printbook
-			foldlevel: foldlevel
-			production: production
-			collections: collections
+			build_path:   build_path
+			printbook:    printbook
+			foldlevel:    foldlevel
+			production:   production
+			collections:  collections
 		)!
 		action.done = true
 	}

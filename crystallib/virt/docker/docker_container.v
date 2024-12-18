@@ -29,9 +29,9 @@ pub mut:
 	ssh_port        int // ssh port on node that is used to get ssh
 	ports           []string
 	networks        []string
-	labels          map[string]string       @[str: skip]
-	image           &DockerImage            @[str: skip]
-	engine          &DockerEngine           @[str: skip]
+	labels          map[string]string @[str: skip]
+	image           &DockerImage      @[str: skip]
+	engine          &DockerEngine     @[str: skip]
 	status          utils.ContainerStatus
 	memsize         int // in MB
 	command         string
@@ -41,8 +41,8 @@ pub mut:
 pub struct DockerContainerCreateArgs {
 	name             string
 	hostname         string
-	forwarded_ports  []string // ["80:9000/tcp", "1000, 10000/udp"]
-	mounted_volumes  []string // ["/root:/root", ]
+	forwarded_ports  []string          // ["80:9000/tcp", "1000, 10000/udp"]
+	mounted_volumes  []string          // ["/root:/root", ]
 	env              map[string]string // map of environment variables that will be passed to the container
 	privileged       bool
 	remove_when_done bool = true // remove the container when it shuts down

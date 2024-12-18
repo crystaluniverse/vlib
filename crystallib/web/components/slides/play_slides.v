@@ -22,7 +22,7 @@ pub fn play(mut plbook playbook.PlayBook) !&SlidesViewData {
 	for action in slide_actions {
 		mut p := action.params
 		slide := Slide{
-			name: p.get('name')!
+			name:  p.get('name')!
 			title: p.get('title')!
 			notes: p.get('notes')!
 		}
@@ -42,9 +42,9 @@ pub fn play(mut plbook playbook.PlayBook) !&SlidesViewData {
 		reset := p.get_default_false('reset')
 		pull := p.get_default_false('pull')
 		tree.scan(
-			git_url: url
+			git_url:   url
 			git_reset: reset
-			git_pull: pull
+			git_pull:  pull
 		)!
 		tree.export(destination: '~/hero/var/collections/')!
 		action.done = true

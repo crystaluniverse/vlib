@@ -36,8 +36,8 @@ fn (mut h HTTPConnection) auth(url string, login string, passwd string) !AuthDet
 	}
 
 	data := h.post_json_str(
-		prefix: 'auth'
-		postdata: '{
+		prefix:        'auth'
+		postdata:      '{
 			"password": "${passwd}",
 			"type": "normal",
 			"username": "${login}"

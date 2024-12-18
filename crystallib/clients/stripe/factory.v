@@ -52,13 +52,13 @@ pub fn (mut self StripeClient[Config]) config_interactive() ! {
 
 	self.instance = myui.ask_question(
 		question: 'name for Stripe client'
-		default: self.instance
+		default:  self.instance
 	)!
 
 	cfg.api_key = myui.ask_question(
 		question: 'stripe api_key'
-		minlen: 10
-		default: cfg.api_key
+		minlen:   10
+		default:  cfg.api_key
 	)!
 
 	self.config_save()!

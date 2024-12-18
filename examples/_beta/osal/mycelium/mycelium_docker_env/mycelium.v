@@ -24,11 +24,11 @@ fn do() ! {
 	mut name := 'mycelium_1'
 	mut keypath := os.join_path(pwd, 'keys', name + '_key.bin')
 	engine.container_create(
-		name: name
-		hostname: name
-		privileged: true
-		image_repo: 'mycelium'
-		command: ''
+		name:            name
+		hostname:        name
+		privileged:      true
+		image_repo:      'mycelium'
+		command:         ''
 		forwarded_ports: ['20001:22']
 		mounted_volumes: ['${keypath}:${keypath_in_container}']
 	)!
@@ -38,11 +38,11 @@ fn do() ! {
 	name = 'mycelium_2'
 	keypath = os.join_path(pwd, 'keys', name + '_key.bin')
 	engine.container_create(
-		name: name
-		hostname: name
-		privileged: true
-		image_repo: 'mycelium'
-		command: ''
+		name:            name
+		hostname:        name
+		privileged:      true
+		image_repo:      'mycelium'
+		command:         ''
 		forwarded_ports: ['20002:22']
 		mounted_volumes: ['${keypath}:${keypath_in_container}']
 	)!
@@ -51,11 +51,11 @@ fn do() ! {
 	name = 'mycelium_3'
 	keypath = os.join_path(pwd, 'keys', name + '_key.bin')
 	engine.container_create(
-		name: name
-		hostname: name
-		privileged: true
-		image_repo: 'mycelium'
-		command: ''
+		name:            name
+		hostname:        name
+		privileged:      true
+		image_repo:      'mycelium'
+		command:         ''
 		forwarded_ports: ['20003:22']
 		mounted_volumes: ['${keypath}:${keypath_in_container}']
 	)!
@@ -72,7 +72,7 @@ fn do() ! {
 
 pub fn get_ipaddress(container_name string) !string {
 	mut ljob := exec(
-		cmd: "docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${container_name}"
+		cmd:    "docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${container_name}"
 		stdout: false
 	)!
 	lines := ljob.output

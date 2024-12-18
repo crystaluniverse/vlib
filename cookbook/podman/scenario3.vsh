@@ -48,9 +48,9 @@ println('after flist is fully uploaded to test the container do: `podman run -it
 rfs.mount(meta_path: '/tmp/output.fl', target: '/tmp/mount_fl')!
 println('flist is mounted..., switching to the container')
 time.sleep(time.second * 10)
-println("exec bash into container")
+println('exec bash into container')
 osal.exec(
-	cmd: 'podman run -it --rm --read-only  --rootfs /tmp/mount_fl bash'
+	cmd:   'podman run -it --rm --read-only  --rootfs /tmp/mount_fl bash'
 	shell: true
 	debug: true
 )!

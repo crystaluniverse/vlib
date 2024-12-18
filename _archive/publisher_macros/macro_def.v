@@ -22,7 +22,7 @@ fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	mut defobj := Def{
 		pageid: state.page.id
-		name: defname2
+		name:   defname2
 	}
 
 	defid := state.publisher.def_add(defobj)?

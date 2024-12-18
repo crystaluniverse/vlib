@@ -1,6 +1,6 @@
 module code
 
-import freeflowuniverse.crystallib.core.codemodel { Function, Param, Result, Struct, Type }
+import freeflowuniverse.crystallib.core.codemodel
 import freeflowuniverse.crystallib.rpc.openrpc
 import os
 

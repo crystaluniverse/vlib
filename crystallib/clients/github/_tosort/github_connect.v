@@ -33,7 +33,7 @@ const connection = init_connection()
 // Make sure to use new first, so that the connection has been initiated
 // then you can get it everywhere
 pub fn connection_get() &GithubConnection {
-	return &github.connection
+	return &connection
 }
 
 pub fn new(cache_timeout int) ?&GithubConnection {

@@ -1,19 +1,16 @@
 
 
 struct DeploymentStateDB{
-	secret ... //to encrypt symmetric
-	//...
-
-
+	secret string //to encrypt symmetric
+	data map[string]string // stores encrypted data
 }
 
 
 struct DeploymentState{
-	name ...
+	name string
 	vms []VMDeployed
 	zdbs []ZDBDeployed
-	...
-
+	metadata map[string]string
 }
 
 pub fn (db DeploymentStateDB) set(deployment_name string, key string, val string)! {

@@ -7,9 +7,7 @@ import log { Logger }
 import os
 import time
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn create_channel(mut fp FlagParser, mut nostr_client NostrClient, mut logger Logger) ! {
 	fp.usage_example('create channel_name [-d description] [-p picture_url]')
@@ -67,7 +65,7 @@ fn send_message(mut fp FlagParser, mut nostr_client NostrClient, mut logger Logg
 	_ := fp.finalize()!
 
 	nostr_client.create_channel_message(CreateChannelMessageInput{
-		content: content
+		content:    content
 		channel_id: channel_id
 		message_id: message_id
 		public_key: public_key

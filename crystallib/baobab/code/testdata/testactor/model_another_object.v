@@ -1,7 +1,6 @@
 module testactor
 
 pub struct AnotherObject {
-	text string 
+	text   string
 	number int @[index]
 }
-

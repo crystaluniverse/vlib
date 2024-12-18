@@ -8,10 +8,8 @@ import libsodium
 import toml
 import os
 
-const (
-	redirect_url = 'https://login.threefold.me'
-	sign_len     = 64
-)
+const redirect_url = 'https://login.threefold.me'
+const sign_len = 64
 
 @['/login']
 fn (mut client ClientApp) login() !vweb.Result {

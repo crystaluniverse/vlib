@@ -12,26 +12,24 @@ import freeflowuniverse.crystallib.ui.console
 // }
 
 pub fn test_rates_get() {
-
-	lock currencies{
-
+	lock currencies {
 		refresh()!
 
 		println(currencies)
 
 		currencies['TFT'] = Currency{
-			name: 'TFT'
+			name:   'TFT'
 			usdval: 0.01
 		}
 		currencies['AED'] = Currency{
-			name: 'AED'
+			name:   'AED'
 			usdval: 0.25
 		}
 
 		currencies['USD'] = Currency{
-			name: 'USD'
+			name:   'USD'
 			usdval: 1.0
-		}		
+		}
 
 		mut u := amount_get('1$')!
 		u2 := u.exchange(get('tft')!)!
@@ -46,8 +44,6 @@ pub fn test_rates_get() {
 		c := a.exchange(get('tft ')!)!
 		assert c.val == 250.0
 
-
-
 		mut aa2 := amount_get('0')!
 		assert aa2.val == 0.0
 
@@ -56,19 +52,17 @@ pub fn test_rates_get() {
 		assert aa.currency.name == 'USD'
 		assert aa.currency.usdval == 1.0
 
-
-
-		mut a3:=amount_get('20 tft')!
+		mut a3 := amount_get('20 tft')!
 		println(a3)
 		assert a3.currency.usdval == 0.01
-		assert a3.usd() == 20.0*0.01		
+		assert a3.usd() == 20.0 * 0.01
 
-		mut a4:=amount_get('20 k tft')!
+		mut a4 := amount_get('20 k tft')!
 		println(a4)
 		assert a4.currency.usdval == 0.01
-		assert a4.usd() == 20*1000.0*0.01	
+		assert a4.usd() == 20 * 1000.0 * 0.01
 
-		mut a5:=amount_get('20mtft')!
-		assert a5.usd() == 20*1000000.0*0.01						
+		mut a5 := amount_get('20mtft')!
+		assert a5.usd() == 20 * 1000000.0 * 0.01
 	}
 }

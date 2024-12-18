@@ -168,16 +168,16 @@ fn test_wiki_action() {
 		assert action.action.name == 'nodemanager_define'
 		assert action.action.params == Params{
 			params: [Param{
-				key: 'has_public_config'
+				key:   'has_public_config'
 				value: '1'
 			}, Param{
-				key: 'has_public_ip'
+				key:   'has_public_ip'
 				value: 'yes'
 			}, Param{
-				key: 'twinid'
+				key:   'twinid'
 				value: '20'
 			}]
-			args: []
+			args:   []
 		}
 	}
 	r := '# This is an action
@@ -309,7 +309,7 @@ fn test_wiki_header_too_long() {
 
 fn test_wiki_all_together() {
 	// TODO: not working, fix
-	content := markdownparser.text
+	content := text
 	mut docs := new(content: content)!
 
 	assert docs.children.len == 16
@@ -333,7 +333,7 @@ fn test_wiki_all_together() {
 
 fn test_deterministic_output() {
 	mut doc1 := new(
-		content: markdownparser.text
+		content: text
 	)!
 	content1 := doc1.markdown()!
 	mut doc2 := new(content: content1)!

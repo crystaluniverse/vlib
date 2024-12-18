@@ -18,10 +18,10 @@ fn test_encode_decode() ! {
 
 	// Initialize VFS
 	mut fs := vfsourdb_core.new(
-		data_dir: data_dir
+		data_dir:     data_dir
 		metadata_dir: meta_dir
 	)!
-	
+
 	// Get root directory
 	mut root := fs.get_root()!
 	println('Created root directory')
@@ -33,17 +33,17 @@ fn test_encode_decode() ! {
 
 	// Create symlink
 	mut symlink := vfsourdb_core.Symlink{
-		metadata: vfsourdb_core.Metadata{
-			id: 3
-			name: 'link'
+		metadata:  vfsourdb_core.Metadata{
+			id:        3
+			name:      'link'
 			file_type: .symlink
-			mode: 0o777
-			owner: 'test'
-			group: 'test'
+			mode:      0o777
+			owner:     'test'
+			group:     'test'
 		}
 		parent_id: root.metadata.id
-		target: '/target/path'
-		myvfs: fs
+		target:    '/target/path'
+		myvfs:     fs
 	}
 	root.add_symlink(symlink)!
 	println('Added symlink')

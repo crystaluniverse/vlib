@@ -44,10 +44,10 @@ pub fn (mut t DAO) pool_set(arg LPParams) !&Pool {
 	}
 
 	mut a := Pool{
-		currency: arg.currency
+		currency:      arg.currency
 		usdprice_sell: arg.usdprice_sell
-		usdprice_buy: arg.usdprice_buy
-		modtime: t.time_current
+		usdprice_buy:  arg.usdprice_buy
+		modtime:       t.time_current
 	}
 	asset_check(a)!
 
@@ -119,6 +119,6 @@ fn (mut dao DAO) pools_wallet_get(account &Account, currency string, ispool bool
 	return PoolsWalletResult{
 		poolusd: lpusd
 		poolcur: lp
-		wallet: &p
+		wallet:  &p
 	}
 }

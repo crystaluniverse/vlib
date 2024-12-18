@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.osal { exec }
 
 fn do() ! {
 	exec(
-		cmd: 'eecho sometext'
+		cmd:   'eecho sometext'
 		retry: 5
 	) or {
 		println(err.code())
@@ -13,15 +13,15 @@ fn do() ! {
 	// should print code 127
 
 	exec(
-		cmd: 'eecho sometext'
+		cmd:                'eecho sometext'
 		ignore_error_codes: [127]
-		retry: 5
+		retry:              5
 	)!
 
 	r := exec(
-		cmd: 'echo sometext'
+		cmd:                'echo sometext'
 		ignore_error_codes: [127]
-		retry: 5
+		retry:              5
 	)!
 
 	println(r)

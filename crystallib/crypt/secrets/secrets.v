@@ -12,7 +12,7 @@ import encoding.base64
 @[params]
 pub struct SecretArgs {
 pub mut:
-	key       string     @[required]
+	key       string @[required]
 	default   string // if it doesn't exist yet, will create it with this value
 	overwrite string // will overwrite the secret with this value even if it exists
 	cat       SecretType

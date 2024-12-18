@@ -7,31 +7,31 @@ import vweb
 
 fn (mut app App) generate_response_element(path string) xml.XMLNode {
 	href := xml.XMLNode{
-		name: 'D:href'
+		name:     'D:href'
 		children: ['${path.all_after(app.root_dir.path)}']
 	}
 
 	propstat := app.generate_propstat_element(path)
 
 	return xml.XMLNode{
-		name: 'D:response'
+		name:     'D:response'
 		children: [href, propstat]
 	}
 }
 
 fn (mut app App) generate_propstat_element(path string) xml.XMLNode {
 	mut status := xml.XMLNode{
-		name: 'D:status'
+		name:     'D:status'
 		children: ['HTTP/1.1 200 OK']
 	}
 
 	prop := app.generate_prop_element(path) or {
 		// TODO: status should be according to returned error
 		return xml.XMLNode{
-			name: 'D:propstat'
+			name:     'D:propstat'
 			children: [
 				xml.XMLNode{
-					name: 'D:status'
+					name:     'D:status'
 					children: ['HTTP/1.1 500 Internal Server Error']
 				},
 			]
@@ -39,7 +39,7 @@ fn (mut app App) generate_propstat_element(path string) xml.XMLNode {
 	}
 
 	return xml.XMLNode{
-		name: 'D:propstat'
+		name:     'D:propstat'
 		children: [prop, status]
 	}
 }
@@ -66,19 +66,19 @@ fn (mut app App) generate_prop_element(path string) !xml.XMLNode {
 
 	content_length := if os.is_dir(path) { 0 } else { stat.size }
 	get_content_length := xml.XMLNode{
-		name: 'D:getcontentlength'
+		name:     'D:getcontentlength'
 		children: ['${content_length}']
 	}
 
 	ctime := format_iso8601(time.unix(stat.ctime))
 	creation_date := xml.XMLNode{
-		name: 'D:creationdate'
+		name:     'D:creationdate'
 		children: ['${ctime}']
 	}
 
 	mtime := format_iso8601(time.unix(stat.mtime))
 	get_last_mod := xml.XMLNode{
-		name: 'D:getlastmodified'
+		name:     'D:getlastmodified'
 		children: ['${mtime}']
 	}
 
@@ -92,7 +92,7 @@ fn (mut app App) generate_prop_element(path string) !xml.XMLNode {
 	}
 
 	get_content_type := xml.XMLNode{
-		name: 'D:getcontenttype'
+		name:     'D:getcontenttype'
 		children: ['${content_type}']
 	}
 
@@ -104,12 +104,12 @@ fn (mut app App) generate_prop_element(path string) !xml.XMLNode {
 	}
 
 	get_resource_type := xml.XMLNode{
-		name: 'D:resourcetype'
+		name:     'D:resourcetype'
 		children: get_resource_type_children
 	}
 
 	return xml.XMLNode{
-		name: 'D:prop'
+		name:     'D:prop'
 		children: [
 			// display_name,
 			get_content_length,

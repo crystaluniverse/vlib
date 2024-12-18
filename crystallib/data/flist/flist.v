@@ -24,7 +24,7 @@ pub fn new(args FlistGetArgs) !Flist {
 
 	return Flist{
 		path: args.path
-		con: con
+		con:  con
 	}
 }
 
@@ -67,14 +67,14 @@ pub fn (mut f Flist) copy(source string, destination string) ! {
 	dest_parent_inode := f.get_inode_from_path(dest_parent)!
 	dest_inode := Inode{
 		parent: dest_parent_inode.ino
-		ctime: time.now().unix()
-		mtime: time.now().unix()
-		mode: src_inode.mode
-		name: dest.all_after_last('/')
-		rdev: src_inode.rdev
-		size: src_inode.size
-		gid: u32(os.getgid())
-		uid: u32(os.getuid())
+		ctime:  time.now().unix()
+		mtime:  time.now().unix()
+		mode:   src_inode.mode
+		name:   dest.all_after_last('/')
+		rdev:   src_inode.rdev
+		size:   src_inode.size
+		gid:    u32(os.getgid())
+		uid:    u32(os.getuid())
 	}
 
 	f.add_inode(dest_inode)!

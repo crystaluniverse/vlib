@@ -10,19 +10,19 @@ fn test_generate_handler_method() {
 
 	test_methods := [
 		codemodel.Function{
-			name: 'test_func1'
+			name:     'test_func1'
 			receiver: codemodel.Param{
 				name: 'test_actor'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'TestActor'
 				}
 			}
 		},
 		codemodel.Function{
-			name: 'test_func2'
+			name:     'test_func2'
 			receiver: codemodel.Param{
 				name: 'test_actor'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'TestActor'
 				}
 			}

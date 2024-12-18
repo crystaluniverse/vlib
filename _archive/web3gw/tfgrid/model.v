@@ -24,22 +24,22 @@ pub mut:
 
 pub struct VMConfiguration {
 pub mut:
-	name        string            @[required] // machine name
-	node_id     u32    // node id to deploy on, if 0, a random eligible node will be selected
-	farm_id     u32    // farm id to deploy on, if 0, a random eligible farm will be selected
+	name        string @[required] // machine name
+	node_id     u32 // node id to deploy on, if 0, a random eligible node will be selected
+	farm_id     u32 // farm id to deploy on, if 0, a random eligible farm will be selected
 	flist       string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist' // flist of the machine
 	entrypoint  string = '/sbin/zinit init' // entry point for the machine
-	public_ip   bool   // if true, a public ipv4 will be added to the node
-	public_ip6  bool   // if true, a public ipv6 will be added to the node
+	public_ip   bool // if true, a public ipv4 will be added to the node
+	public_ip6  bool // if true, a public ipv6 will be added to the node
 	planetary   bool = true // if true, a planetary ip will be added to the node
-	cpu         u32  = 1 // number of vcpu cores
+	cpu         u32  = 1    // number of vcpu cores
 	memory      u64  = 1024 // memory of the machine in MBs
-	rootfs_size u64    // root file system size in MBs
-	zlogs       []Zlog // zlogs configs
-	disks       []Disk // disks configs
-	qsfss       []QSFS // qsfss configs
+	rootfs_size u64               // root file system size in MBs
+	zlogs       []Zlog            // zlogs configs
+	disks       []Disk            // disks configs
+	qsfss       []QSFS            // qsfss configs
 	env_vars    map[string]string // env vars to attach to the machine
-	description string // machine description
+	description string            // machine description
 	// computed
 	computed_ip4 string // public ipv4 attached to this machine, if any
 	computed_ip6 string // public ipv6 attached to this machine, if any
@@ -49,7 +49,7 @@ pub mut:
 
 pub struct Disk {
 pub:
-	size        u32    @[required]    // disk size in GBs
+	size        u32    @[required] // disk size in GBs
 	mountpoint  string @[required] // mountpoint of the disk on the machine
 	description string // disk description
 	// computed
@@ -58,17 +58,17 @@ pub:
 
 pub struct QSFS {
 pub:
-	mountpoint            string   @[required] // mountpoint of the qsfs on the machine
-	encryption_key        string   @[required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
-	cache                 u32      @[required]    // The size of the fuse mountpoint on the node in MBs (holds qsfs local data before pushing).
-	minimal_shards        u32      @[required]    // The minimum amount of shards which are needed to recover the original data.
-	expected_shards       u32      @[required]    // The amount of shards which are generated when the data is encoded. Essentially, this is the amount of shards which is needed to be able to recover the data, and some disposable shards which could be lost. The amount of disposable shards can be calculated as expected_shards - minimal_shards.
-	redundant_groups      u32      @[required]    // The amount of groups which one should be able to loose while still being able to recover the original data.
-	redundant_nodes       u32      @[required]    // The amount of nodes that can be lost in every group while still being able to recover the original data.
-	encryption_algorithm  string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
+	mountpoint            string @[required] // mountpoint of the qsfs on the machine
+	encryption_key        string @[required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
+	cache                 u32    @[required] // The size of the fuse mountpoint on the node in MBs (holds qsfs local data before pushing).
+	minimal_shards        u32    @[required] // The minimum amount of shards which are needed to recover the original data.
+	expected_shards       u32    @[required] // The amount of shards which are generated when the data is encoded. Essentially, this is the amount of shards which is needed to be able to recover the data, and some disposable shards which could be lost. The amount of disposable shards can be calculated as expected_shards - minimal_shards.
+	redundant_groups      u32    @[required] // The amount of groups which one should be able to loose while still being able to recover the original data.
+	redundant_nodes       u32    @[required] // The amount of nodes that can be lost in every group while still being able to recover the original data.
+	encryption_algorithm  string = 'AES'    // configuration to use for the encryption stage. Currently only AES is supported.
 	compression_algorithm string = 'snappy' // configuration to use for the compression stage. Currently only snappy is supported.
 	metadata              Metadata @[required] // metadata configs
-	description           string              // qsfs description
+	description           string // qsfs description
 
 	max_zdb_data_dir_size u32     @[required] // Maximum size of the data dir in MiB, if this is set and the sum of the file sizes in the data dir gets higher than this value, the least used, already encoded file will be removed.
 	groups                []Group @[required] // groups configs
@@ -79,11 +79,11 @@ pub:
 
 pub struct Metadata {
 pub:
-	type_                string = 'zdb'    @[json: 'type'] // configuration for the metadata store to use, currently only ZDB is supported.
-	prefix               string    @[required]     // Data stored on the remote metadata is prefixed with.
+	type_                string = 'zdb' @[json: 'type']         // configuration for the metadata store to use, currently only ZDB is supported.
+	prefix               string @[required]     // Data stored on the remote metadata is prefixed with.
 	encryption_algorithm string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
-	encryption_key       string    @[required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
-	backends             []Backend         // backends configs
+	encryption_key       string @[required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
+	backends             []Backend // backends configs
 }
 
 pub struct Group {
@@ -106,9 +106,9 @@ pub:
 @[params]
 pub struct NetworkDeployment {
 pub mut:
-	name        string // identifier for the network deployment, must be unique
-	metadata    string // metadata for the model
-	description string // description of the model
+	name        string               // identifier for the network deployment, must be unique
+	metadata    string               // metadata for the model
+	description string               // description of the model
 	network     NetworkConfiguration // network configuration
 	vms         []VMConfiguration    // VM configurations
 }
@@ -157,8 +157,8 @@ pub mut:
 	public_ip6 bool   // if true, a public ipv6 will be added to the node
 	planetary  bool   = true // if true, a yggdrasil ip will be added to the node
 	flist      string = 'https://hub.grid.tf/tf-official-apps/threefoldtech-k3s-latest.flist' // flist for kubernetes
-	cpu        u32    // number of vcpu cores.
-	memory     u32    // node memory in MBs
+	cpu        u32 // number of vcpu cores.
+	memory     u32 // node memory in MBs
 	disk_size  u32 = 10 // size of disk mounted on the node in GB, monted in /mydisk
 	// computed
 	computed_ip4 string // public ipv4 attached to this node, if any
@@ -200,10 +200,10 @@ pub mut:
 @[params]
 pub struct GatewayName {
 pub mut:
-	name            string   @[json: 'name']    // identifier for the gateway, must be unique
-	node_id         u32      @[json: 'node_id']    // node to deploy the gateway workload on, if 0, a random elibile node will be selected
+	name            string   @[json: 'name']            // identifier for the gateway, must be unique
+	node_id         u32      @[json: 'node_id']         // node to deploy the gateway workload on, if 0, a random elibile node will be selected
 	tls_passthrough bool     @[json: 'tls_passthrough'] // True to enable TLS encryption
-	backends        []string @[json: 'backends'] // The backend that the gateway will point to
+	backends        []string @[json: 'backends']        // The backend that the gateway will point to
 	// computed
 	fqdn             string // the full domain name for this instance
 	name_contract_id u32    // name contract id
@@ -213,11 +213,11 @@ pub mut:
 @[params]
 pub struct GatewayFQDN {
 pub mut:
-	name            string   @[json: 'name']    // name of the instance
-	node_id         u32      @[json: 'node_id']    // node id that the instance was deployed on
+	name            string   @[json: 'name']            // name of the instance
+	node_id         u32      @[json: 'node_id']         // node id that the instance was deployed on
 	tls_passthrough bool     @[json: 'tls_passthrough'] // whether or not tls was enables
-	backends        []string @[json: 'backends'] // backends that this gateway is pointing to
-	fqdn            string   @[json: 'fqdn']       // fully qualified domain name pointing to this gatewat
+	backends        []string @[json: 'backends']        // backends that this gateway is pointing to
+	fqdn            string   @[json: 'fqdn']            // fully qualified domain name pointing to this gatewat
 	// computed
 	contract_id u32 // contract id for the gateway
 }
@@ -460,12 +460,12 @@ pub:
 	nodes              i64
 	farms              i64
 	countries          i64
-	total_cru          i64            @[json: 'totalCru']
-	total_sru          i64            @[json: 'totalSru']
-	total_mru          i64            @[json: 'totalMru']
-	total_hru          i64            @[json: 'totalHru']
-	public_ips         i64            @[json: 'publicIps']
-	access_nodes       i64            @[json: 'accessNodes']
+	total_cru          i64 @[json: 'totalCru']
+	total_sru          i64 @[json: 'totalSru']
+	total_mru          i64 @[json: 'totalMru']
+	total_hru          i64 @[json: 'totalHru']
+	public_ips         i64 @[json: 'publicIps']
+	access_nodes       i64 @[json: 'accessNodes']
 	gateways           i64
 	twins              i64
 	contracts          i64
@@ -486,8 +486,8 @@ pub:
 	smtp_username   string // smtp server username
 	smtp_password   string // smtp server password
 	smtp_address    string = 'smtp.gmail.com' // smtp server domain address
-	smtp_port       u32    = 587 // smtp server port
-	smtp_enable_tls bool   // if true, tls encryption will be used in the smtp server
+	smtp_port       u32    = 587              // smtp server port
+	smtp_enable_tls bool // if true, tls encryption will be used in the smtp server
 }
 
 pub struct DiscourseDeployment {
@@ -623,7 +623,7 @@ pub struct SystemSection {
 pub:
 	handleline   string
 	typestr      string
-	section_type int                @[json: 'type']
+	section_type int @[json: 'type']
 	subsections  []SystemSubsection
 }
 
@@ -651,7 +651,7 @@ pub struct Workload {
 pub:
 	version       u32
 	name          string
-	workload_type string         @[json: 'type']
+	workload_type string @[json: 'type']
 	data          ZDBWorkload
 	metadata      string
 	description   string

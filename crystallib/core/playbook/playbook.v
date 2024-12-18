@@ -32,15 +32,15 @@ pub mut:
 fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
 	plbook.nractions += 1
 	mut a := Action{
-		id: plbook.nractions
-		cid: args.cid
-		name: args.name
-		actor: args.actor
+		id:       plbook.nractions
+		cid:      args.cid
+		name:     args.name
+		actor:    args.actor
 		priority: args.priority
 		// run: args.run
 		actiontype: args.actiontype
-		params: paramsparser.Params{}
-		result: paramsparser.Params{}
+		params:     paramsparser.Params{}
+		result:     paramsparser.Params{}
 	}
 	plbook.actions << &a
 	return &a

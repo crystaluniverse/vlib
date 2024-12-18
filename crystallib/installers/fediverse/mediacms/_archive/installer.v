@@ -25,8 +25,8 @@ pub fn install(args Config) ! {
 
 	mut gs := gittools.get()!
 	mut repo := gs.get_repo(
-		url: 'https://github.com/mediacms-io/mediacms'
-		pull: true
+		url:   'https://github.com/mediacms-io/mediacms'
+		pull:  true
 		reset: true
 	)!
 	path := repo.get_path()!
@@ -35,31 +35,31 @@ pub fn install(args Config) ! {
 	dest := 'frontend/src/templates/config/installation'
 	ti << TemplateItem{
 		source: 'contents.config.js'
-		dest: dest
+		dest:   dest
 	}
 	ti << TemplateItem{
 		source: 'features.config.js'
-		dest: dest
+		dest:   dest
 	}
 	ti << TemplateItem{
 		source: 'site.config.js'
-		dest: dest
+		dest:   dest
 	}
 	ti << TemplateItem{
 		source: 'pages.config.js'
-		dest: dest
+		dest:   dest
 	}
 	ti << TemplateItem{
 		source: 'Dockerfile.py'
-		dest: ''
+		dest:   ''
 	}
 	ti << TemplateItem{
 		source: 'docker-compose.yaml'
-		dest: ''
+		dest:   ''
 	}
 	ti << TemplateItem{
 		source: 'settings.py'
-		dest: 'cms'
+		dest:   'cms'
 	}
 
 	// for i in ti{

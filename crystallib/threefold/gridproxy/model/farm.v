@@ -12,11 +12,11 @@ pub:
 pub struct Farm {
 pub:
 	name               string
-	farm_id            u64        @[json: farmId]
-	twin_id            u64        @[json: twinId]
-	pricing_policy_id  u64        @[json: pricingPolicyId]
-	certification_type string     @[json: certificationType]
-	stellar_address    string     @[json: stellarAddress]
+	farm_id            u64    @[json: farmId]
+	twin_id            u64    @[json: twinId]
+	pricing_policy_id  u64    @[json: pricingPolicyId]
+	certification_type string @[json: certificationType]
+	stellar_address    string @[json: stellarAddress]
 	dedicated          bool
 	public_ips         []PublicIP @[json: publicIps]
 }

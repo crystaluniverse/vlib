@@ -66,13 +66,13 @@ const text2 = "
 
 fn test_filter_on_circle_aaa() ! {
 	// test filter circle:aaa
-	mut parser := new(text: playbook.text2)!
+	mut parser := new(text: text2)!
 	assert parser.actions.len == 13
 }
 
 // test filter with names:[*]
 fn test_filter_with_names_asterix() ! {
-	mut parser := new(text: playbook.text2)!
+	mut parser := new(text: text2)!
 	assert parser.actions.len == 13
 	assert parser.actions.map(it.name) == ['select_actor', 'select_circle', 'person_delete',
 		'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add',
@@ -92,7 +92,7 @@ fn test_filter_with_names_list_with_empty_string() ! {
 
 	// NOTE: empty name does not filter by name, it's simply ignored
 	mut parser := new(
-		text: playbook.text2
+		text: text2
 	)!
 
 	assert parser.actions.len == 13
@@ -110,7 +110,7 @@ fn test_filter_with_names_list_with_empty_string() ! {
 // test filter with names in same order as parser
 fn test_filter_with_names_in_same_order() ! {
 	mut parser := new(
-		text: playbook.text2
+		text: text2
 	)!
 
 	sorted := parser.find(filter: 'person_define,circle_link,circle_comment,digital_payment_add')!
@@ -122,7 +122,7 @@ fn test_filter_with_names_in_same_order() ! {
 // test filter with names in different order than parser
 fn test_filter_with_names_in_different_order() ! {
 	mut parser := new(
-		text: playbook.text2
+		text: text2
 	)!
 
 	sorted := parser.find(
@@ -139,7 +139,7 @@ fn test_filter_with_only_two_names_in_filter() ! {
 	// QUESTION: if we only have one name, is it just that action?
 	// ANSWER: yes
 	mut parser := new(
-		text: playbook.text2
+		text: text2
 	)!
 
 	sorted := parser.find(filter: 'person_define,person_delete')!

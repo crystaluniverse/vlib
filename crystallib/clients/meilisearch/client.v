@@ -339,7 +339,7 @@ pub fn (mut client MeilisearchClient) update_filterable_attributes(uid string, a
 	req := httpconnection.Request{
 		prefix: 'indexes/${uid}/settings/filterable-attributes'
 		method: .put
-		data: json.encode(attributes)
+		data:   json.encode(attributes)
 	}
 	mut http := client.httpclient()!
 	response := http.send(req)!
@@ -434,22 +434,21 @@ pub fn (mut client MeilisearchClient) reset_typo_tolerance(uid string) !string {
 	return http.delete(req)
 }
 
-
 @[params]
-pub struct EperimentalFeaturesArgs{
+pub struct EperimentalFeaturesArgs {
 pub mut:
-	vector_store 				bool @[json: 'vectorStore']
-	metrics 					bool @[json: 'metrics']
-	logs_route 					bool @[json: 'logsRoute']
-	contains_filter 			bool @[json: 'containsFilter']
-	edit_documents_by_function 	bool @[json: 'editDocumentsByFunction']
+	vector_store               bool @[json: 'vectorStore']
+	metrics                    bool @[json: 'metrics']
+	logs_route                 bool @[json: 'logsRoute']
+	contains_filter            bool @[json: 'containsFilter']
+	edit_documents_by_function bool @[json: 'editDocumentsByFunction']
 }
 
 pub fn (mut client MeilisearchClient) enable_eperimental_feature(args EperimentalFeaturesArgs) !EperimentalFeaturesArgs {
 	req := httpconnection.Request{
 		prefix: 'experimental-features'
-		method: .patch,
-		data: json.encode(args)
+		method: .patch
+		data:   json.encode(args)
 	}
 
 	mut http := client.httpclient()!

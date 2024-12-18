@@ -12,7 +12,7 @@ pub fn (mut client TwinClient) stellar_create(name string) !BlockChainCreateMode
 
 pub fn (mut client TwinClient) stellar_sign(name string, content string) !BlockChainSignResponseModel {
 	data := BlockchainSignModel{
-		name: name
+		name:    name
 		content: content
 	}
 	response := client.transport.send('stellar.sign', json.encode(data).str())!
@@ -22,7 +22,7 @@ pub fn (mut client TwinClient) stellar_sign(name string, content string) !BlockC
 pub fn (mut client TwinClient) stellar_init(name string, secret string) !string {
 	// Returns pub key.
 	data := NameSecretModel{
-		name: name
+		name:   name
 		secret: secret
 	}
 	response := client.transport.send('stellar.init', json.encode(data).str())!
@@ -39,7 +39,7 @@ pub fn (mut client TwinClient) stellar_get(name string) !StellarWallet {
 
 pub fn (mut client TwinClient) stellar_update(name string, secret string) !NameSecretModel {
 	data := NameSecretModel{
-		name: name
+		name:   name
 		secret: secret
 	}
 	client.transport.send('stellar.update', json.encode(data).str())!
@@ -69,11 +69,11 @@ pub fn (mut client TwinClient) stellar_balance_by_address(address string) ![]Ste
 
 pub fn (mut client TwinClient) stellar_pay(name string, address_dest string, amount f64, asset string, description string) !string {
 	data := StellarPayModel{
-		name: name
+		name:         name
 		address_dest: address_dest
-		amount: amount
-		asset: asset
-		description: description
+		amount:       amount
+		asset:        asset
+		description:  description
 	}
 	response := client.transport.send('stellar.pay', json.encode(data).str())!
 	return response.data

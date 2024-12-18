@@ -8,55 +8,55 @@ const receiver = codemodel.Struct{
 }
 const methods = [
 	codemodel.Function{
-		name: 'test_notification_method'
+		name:   'test_notification_method'
 		params: [
 			codemodel.Param{
 				name: 'key'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'string'
 				}
 			},
 		]
 	},
 	codemodel.Function{
-		name: 'test_invocation_method'
+		name:   'test_invocation_method'
 		result: codemodel.Result{
 			name: 'value'
-			typ: codemodel.Type{
+			typ:  codemodel.Type{
 				symbol: 'string'
 			}
 		}
 	},
 	codemodel.Function{
-		name: 'test_method'
+		name:   'test_method'
 		params: [
 			codemodel.Param{
 				name: 'key'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'string'
 				}
 			},
 		]
 		result: codemodel.Result{
 			name: 'value'
-			typ: codemodel.Type{
+			typ:  codemodel.Type{
 				symbol: 'string'
 			}
 		}
 	},
 	codemodel.Function{
-		name: 'test_method_structs'
+		name:   'test_method_structs'
 		params: [
 			codemodel.Param{
 				name: 'key_struct'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'Key'
 				}
 			},
 		]
 		result: codemodel.Result{
 			name: 'value_struct'
-			typ: codemodel.Type{
+			typ:  codemodel.Type{
 				symbol: 'Value'
 			}
 		}
@@ -69,8 +69,8 @@ fn test_method_to_call() ! {
 
 pub fn test_generate_handler() ! {
 	handler_code := generate_handler(
-		receiver: jsonrpc.receiver
-		methods: jsonrpc.methods
+		receiver: receiver
+		methods:  methods
 	)!
 
 	v_code := codemodel.vgen(handler_code)

@@ -17,7 +17,7 @@ pub:
 	contract_id     string @[json: contractID]
 	deployment_data string @[json: deploymentData]
 	state           string
-	node_id         u32    @[json: nodeID]
+	node_id         u32 @[json: nodeID]
 	name            string
 }
 
@@ -94,7 +94,7 @@ struct QueryRequest {
 // Query queries graphql
 fn (g GraphQl) query(body string, variables map[string]u32) !map[string]json2.Any {
 	mut request_body := QueryRequest{
-		query: body
+		query:     body
 		variables: variables
 	}
 	json_body := json.encode(request_body)

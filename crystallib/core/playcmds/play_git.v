@@ -35,16 +35,16 @@ pub fn play_git_action(action playbook.Action) !playbook.Action {
 	}
 
 	gitpath := gs.do(
-		cmd: cmd
-		filter: action.params.get_default('filter', '')!
-		repo: repo
-		account: account
+		cmd:      cmd
+		filter:   action.params.get_default('filter', '')!
+		repo:     repo
+		account:  account
 		provider: provider
-		script: action.params.get_default_false('script')
-		reset: action.params.get_default_false('reset')
-		pull: action.params.get_default_false('pull')
-		msg: action.params.get_default('message', '')!
-		url: url
+		script:   action.params.get_default_false('script')
+		reset:    action.params.get_default_false('reset')
+		pull:     action.params.get_default_false('pull')
+		msg:      action.params.get_default('message', '')!
+		url:      url
 	)!
 	console.print_debug('play git action: ${cmd} ${account}:${repo} path:${gitpath}')
 	mut action2 := action

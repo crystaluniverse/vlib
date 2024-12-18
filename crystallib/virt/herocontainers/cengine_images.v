@@ -79,14 +79,14 @@ pub fn (mut e CEngine) image_get(args ImageGetArgs) !Image {
 		}
 		if counter > 1 {
 			return ImageGetError{
-				args: args
+				args:    args
 				toomany: true
 			}
 		}
 		return e.image_get(digest: result_digest)!
 	}
 	return ImageGetError{
-		args: args
+		args:     args
 		notfound: true
 	}
 }

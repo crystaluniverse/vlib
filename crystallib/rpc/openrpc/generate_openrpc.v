@@ -9,8 +9,8 @@ import freeflowuniverse.crystallib.core.texttools
 // configuration parameters for OpenRPC Document generation.
 @[params]
 pub struct DocGenConfig {
-	title         string   // Title of the JSON-RPC API
-	description   string   // Description of the JSON-RPC API
+	title         string // Title of the JSON-RPC API
+	description   string // Description of the JSON-RPC API
 	version       string = '1.0.0' // OpenRPC Version used
 	source        string   // Source code directory to generate doc from
 	strict        bool     // Strict mode generates document for only methods and struct with the attribute `openrpc`
@@ -28,10 +28,10 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 
 	// parse source code into code items
 	code := codeparser.parse_v(config.source,
-		exclude_dirs: config.exclude_dirs
+		exclude_dirs:  config.exclude_dirs
 		exclude_files: config.exclude_files
-		only_pub: config.only_pub
-		recursive: true
+		only_pub:      config.only_pub
+		recursive:     true
 	)!
 
 	mut schemas := map[string]jsonschema.SchemaRef{}
@@ -56,11 +56,11 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 	}
 
 	return OpenRPC{
-		info: Info{
-			title: config.title
+		info:       Info{
+			title:   config.title
 			version: config.version
 		}
-		methods: methods
+		methods:    methods
 		components: Components{
 			schemas: schemas
 		}
@@ -94,17 +94,17 @@ pub fn fn_to_method(function Function) Method {
 		pascal_name
 	}
 	m := Method{
-		name: function_name
+		name:        function_name
 		description: function.description
-		params: params
-		result: result_to_descriptor(function.result)
+		params:      params
+		result:      result_to_descriptor(function.result)
 	}
 
 	return Method{
-		name: function_name
+		name:        function_name
 		description: function.description
-		params: params
-		result: result_to_descriptor(function.result)
+		params:      params
+		result:      result_to_descriptor(function.result)
 	}
 }
 
@@ -121,10 +121,10 @@ fn params_to_descriptors(params []codemodel.Param) []ContentDescriptorRef {
 fn param_to_descriptor(param codemodel.Param) ContentDescriptorRef {
 	schemaref := jsonschema.param_to_schema(param)
 	return ContentDescriptorRef(ContentDescriptor{
-		name: param.name
-		schema: schemaref
+		name:        param.name
+		schema:      schemaref
 		description: param.description
-		required: param.required
+		required:    param.required
 	})
 }
 
@@ -140,8 +140,8 @@ pub fn result_to_descriptor(result codemodel.Result) ContentDescriptorRef {
 		'null'
 	}
 	return ContentDescriptorRef(ContentDescriptor{
-		name: name
-		schema: schemaref
+		name:        name
+		schema:      schemaref
 		description: result.description
 	})
 }

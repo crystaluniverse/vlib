@@ -7,11 +7,11 @@ pub:
 
 pub struct Message {
 pub:
-    timestamp string
-    sender    string
-    content   string
+	timestamp string
+	sender    string
+	content   string
 }
 
 pub fn (chat Chat) html() string {
-    return $tmpl('./templates/chat.html')
+	return $tmpl('./templates/chat.html')
 }

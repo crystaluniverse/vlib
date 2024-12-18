@@ -6,48 +6,48 @@ import freeflowuniverse.crystallib.ui.console
 
 pub fn cmd_installers(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'installers'
-		description: 'a set of installers'
+		name:          'installers'
+		description:   'a set of installers'
 		required_args: 0
-		execute: cmd_installers_execute
+		execute:       cmd_installers_execute
 	}
 
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'names'
-		abbrev: 'n'
+		flag:        .string
+		required:    false
+		name:        'names'
+		abbrev:      'n'
 		description: 'Comma separated list of installers to call.'
 	})
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'reset'
-		abbrev: 'r'
+		flag:        .bool
+		required:    false
+		name:        'reset'
+		abbrev:      'r'
 		description: 'will reset.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'uninstall'
-		abbrev: 'u'
+		flag:        .bool
+		required:    false
+		name:        'uninstall'
+		abbrev:      'u'
 		description: 'will uninstall in stead of install.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'gitpull'
-		abbrev: 'gp'
+		flag:        .bool
+		required:    false
+		name:        'gitpull'
+		abbrev:      'gp'
 		description: 'e.g. in crystallib or other git repo pull changes.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'gitreset'
-		abbrev: 'gr'
+		flag:        .bool
+		required:    false
+		name:        'gitreset'
+		abbrev:      'gr'
 		description: 'e.g. in crystallib or other git repo pull & reset changes.'
 	})
 	cmdroot.add_command(cmd_run)
@@ -74,10 +74,10 @@ fn cmd_installers_execute(cmd Command) ! {
 	}
 
 	installers.install_multi(
-		reset: reset
-		names: names
+		reset:     reset
+		names:     names
 		uninstall: uninstall
-		gitpull: gitpull
-		gitreset: gitreset
+		gitpull:   gitpull
+		gitreset:  gitreset
 	)!
 }

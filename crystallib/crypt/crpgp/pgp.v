@@ -9,8 +9,8 @@ import encoding.hex
 // KeyParams
 @[params]
 pub struct KeyParams {
-	name     string      @[required]
-	email    string      @[required]
+	name     string @[required]
+	email    string @[required]
 	key_type CipherSuite
 	length   u32 = 3072
 	comment  string
@@ -18,7 +18,7 @@ pub struct KeyParams {
 
 pub enum CipherSuite {
 	cv25519 // ed_dsa primary, ecdh sub
-	rsa // rsa primary (rsa and bitsize can be parameterized)
+	rsa     // rsa primary (rsa and bitsize can be parameterized)
 }
 
 fn (self KeyParams) id() string {

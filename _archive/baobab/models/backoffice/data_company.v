@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.texttools
 // TODO company_add
 pub fn (mut memdb MemDB) company_add(o organization.CompanyNewArgs) &organization.Company {
 	mut obj := organization.Company{
-		name: o.name
+		name:                 o.name
 		registration_country: o.registration_country
 	}
 	// sets the start date of the person

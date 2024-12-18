@@ -39,9 +39,9 @@ pub fn install(args_ InstallArgs) ! {
 
 	mut gs := gittools.get(coderoot: '${os.home_dir()}/_code')!
 	mut repo := gs.get_repo(
-		pull: true
+		pull:  true
 		reset: true
-		url: 'https://github.com/vlang/v/tree/master'
+		url:   'https://github.com/vlang/v/tree/master'
 	)!
 
 	mut path1 := repo.get_path()!

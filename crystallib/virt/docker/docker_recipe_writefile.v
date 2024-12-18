@@ -28,8 +28,8 @@ pub fn (mut r DockerBuilderRecipe) write_file(args WriteFileArgs) ! {
 	content := texttools.dedent(args.content)
 	ff.write(content)!
 	r.add_copy(
-		source: 'snippets/${args.name}'
-		dest: args.dest
+		source:          'snippets/${args.name}'
+		dest:            args.dest
 		make_executable: args.make_executable
 	)!
 }

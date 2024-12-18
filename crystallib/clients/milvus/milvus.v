@@ -11,7 +11,7 @@ pub struct Client {
 pub fn new(endpoint string, token string) Client {
 	return Client{
 		endpoint: endpoint
-		token: token
+		token:    token
 	}
 }
 

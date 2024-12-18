@@ -11,13 +11,13 @@ pub fn (meet Meet) html() string {
 
 pub struct Room {
 pub:
-	url string
-	id           string
-	name         string
-	creation_time time.Time
+	url              string
+	id               string
+	name             string
+	creation_time    time.Time
 	num_participants int
-	is_active    bool
-	metadata     string
+	is_active        bool
+	metadata         string
 }
 
 pub fn (room Room) html() string {
@@ -27,7 +27,7 @@ pub fn (room Room) html() string {
 
 pub struct Lobby {
 pub:
-	rooms []Room
+	rooms    []Room
 	meetings []Meeting
 }
 
@@ -36,6 +36,7 @@ pub struct Meeting {}
 pub fn (lobby Lobby) html() string {
 	return $tmpl('./templates/lobby.html')
 }
+
 // pub struct LiveKitRoom {
 //     pub mut:
 //         server_url           string

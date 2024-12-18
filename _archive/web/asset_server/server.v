@@ -11,10 +11,10 @@ pub struct ResourceServer {
 	vweb.Context
 pub mut:
 	auth   auth_server.Client
-	assets []Resource         @[required; vweb_global]
+	assets []Resource  @[required; vweb_global]
 	logger &log.Logger = &log.Logger(&log.Log{
 	level: .debug
-})        @[vweb_global]
+}) @[vweb_global]
 }
 
 pub struct Resource {
@@ -42,7 +42,7 @@ pub fn new(config ResourceServerConfig) !ResourceServer {
 		access: access
 	}
 	mut server := ResourceServer{
-		auth: authenticator
+		auth:   authenticator
 		assets: config.assets
 	}
 
@@ -69,8 +69,8 @@ pub fn (mut server ResourceServer) before_request() {
 
 		if user := server.auth.get_user() {
 			if !server.auth.authorize(
-				accessor: user.email
-				asset_id: resource
+				accessor:    user.email
+				asset_id:    resource
 				access_type: .read
 			) {
 				server.logger.error('Unauthorized access attempt to resource ${resource}')

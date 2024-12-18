@@ -15,7 +15,7 @@ import io
 // telnet 127.0.0.1 12345
 fn server1() {
 	mut server := net.listen_tcp(.ip6, ':12345') or { panic(err) }
-	//mut server := net.listen_tcp(.ip, ':12345') or {panic(err)}
+	// mut server := net.listen_tcp(.ip, ':12345') or {panic(err)}
 	laddr := server.addr() or { panic(err) }
 	eprintln('Listen on ${laddr} ...')
 	for {
@@ -25,9 +25,9 @@ fn server1() {
 }
 
 fn handle_client1(mut socket net.TcpConn) {
-	println("handle client 1")
+	println('handle client 1')
 	defer {
-		print("socket close")
+		print('socket close')
 		socket.close() or { panic(err) }
 	}
 	client_addr := socket.peer_addr() or { return }
@@ -40,12 +40,12 @@ fn handle_client1(mut socket net.TcpConn) {
 	}
 	socket.write_string('server: hello\n') or { return }
 	for {
-		received_line := reader.read_line() or { 
-				print("error read line")
-				return 
-			}
+		received_line := reader.read_line() or {
+			print('error read line')
+			return
+		}
 		if received_line == '' {
-			print("empty line")
+			print('empty line')
 			return
 		}
 		println('client ${client_addr}: ${received_line}')

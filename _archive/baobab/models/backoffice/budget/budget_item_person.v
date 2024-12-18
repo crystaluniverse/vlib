@@ -17,7 +17,7 @@ pub mut:
 	car_cost_month       &finance.Amount
 	travel_cost_month    &finance.Amount
 	other_cost_month     &finance.Amount
-	salary_increase_year int // is in percent e.g. 10 is 10% per year, 0 is not planned
+	salary_increase_year int                     // is in percent e.g. 10 is 10% per year, 0 is not planned
 	bonus_months         map[int]&finance.Amount // if bonuses need to be added per month, is done per year e.g. on month 10 is 1000 USD bonus
 }
 
@@ -31,7 +31,7 @@ pub struct PersonAddArgs {
 	car_cost_month       string
 	travel_cost_month    string
 	other_cost_month     string
-	salary_increase_year int // is in percent e.g. 10 is 10% per year, 0 is not planned
+	salary_increase_year int            // is in percent e.g. 10 is 10% per year, 0 is not planned
 	bonus_months         map[int]string // if bonuses need to be added per month, is done per year e.g. on month 10 is 1000 USD bonus
 }
 
@@ -67,33 +67,33 @@ pub fn (mut budget Budget) person_add(args PersonAddArgs) !&BudgetItemPerson {
 	if args.person.person_type == .consultant {
 		vat_extra = finance.Amount{
 			currency: car_cost_month.currency
-			val: total_cost.val * vat_percent / 100
+			val:      total_cost.val * vat_percent / 100
 		}
 	}
 
 	item := BudgetItemPerson{
-		id: id
-		name: ('Budget for ${args.person.firstname} ${args.person.lastname}')
-		remark: args.remark
-		start: time_from_string(args.start) or {
+		id:                   id
+		name:                 ('Budget for ${args.person.firstname} ${args.person.lastname}')
+		remark:               args.remark
+		start:                time_from_string(args.start) or {
 			return error('Failed to get time from start string: ${args.start}')
 		}
-		stop: time_from_string(args.stop) or {
+		stop:                 time_from_string(args.stop) or {
 			return error('Failed to get time from stop string: ${args.stop}')
 		}
-		cost_fixed: &total_cost
-		cost_fixed_min: &total_cost
-		cost_fixed_max: &total_cost
-		country: args.country // TODO how best to do this? enum or custom struct?
-		person: args.person
-		salary_cost_month: salary_cost_month
-		car_cost_month: car_cost_month
-		travel_cost_month: travel_cost_month
-		other_cost_month: other_cost_month
+		cost_fixed:           &total_cost
+		cost_fixed_min:       &total_cost
+		cost_fixed_max:       &total_cost
+		country:              args.country // TODO how best to do this? enum or custom struct?
+		person:               args.person
+		salary_cost_month:    salary_cost_month
+		car_cost_month:       car_cost_month
+		travel_cost_month:    travel_cost_month
+		other_cost_month:     other_cost_month
 		salary_increase_year: args.salary_increase_year
-		bonus_months: bonus_months
-		vat_extra: &vat_extra
-		vat_percent: vat_percent
+		bonus_months:         bonus_months
+		vat_extra:            &vat_extra
+		vat_percent:          vat_percent
 	}
 
 	budget.planning << item

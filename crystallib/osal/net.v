@@ -6,9 +6,8 @@ import freeflowuniverse.crystallib.ui.console
 
 pub enum PingResult {
 	ok
-	timeout // timeout from ping
+	timeout     // timeout from ping
 	unknownhost // means we don't know the hostname its a dns issue
-
 }
 
 @[params]
@@ -34,22 +33,26 @@ pub fn ping(args PingArgs) !PingResult {
 	} else if platform_ == .ubuntu {
 		cmd += ' -c ${args.count} -w ${args.timeout} ${args.address}'
 	} else {
-		return error ('Unsupported platform for ping')
+		return error('Unsupported platform for ping')
 	}
 	console.print_debug(cmd)
 	_ := exec(cmd: cmd, retry: args.retry, timeout: 0, stdout: false) or {
-		//println("ping failed.error.\n${err}")
+		// println("ping failed.error.\n${err}")
 		if err.code() == 9999 {
 			return .timeout
 		}
 		if platform_ == .osx {
 			return match err.code() {
-				2 { .timeout }
-				68 { .unknownhost }
-				else { 
-					//println("${err} ${err.code()}")
-					error("can't ping on osx (${err.code()})\n${err}") 
-					}
+				2 {
+					.timeout
+				}
+				68 {
+					.unknownhost
+				}
+				else {
+					// println("${err} ${err.code()}")
+					error("can't ping on osx (${err.code()})\n${err}")
+				}
 			}
 		} else if platform_ == .ubuntu {
 			return match err.code() {
@@ -58,7 +61,7 @@ pub fn ping(args PingArgs) !PingResult {
 				else { error("can't ping on ubuntu (${err.code()})\n${err}") }
 			}
 		} else {
-			panic("bug, should never get here")
+			panic('bug, should never get here')
 		}
 	}
 	return .ok

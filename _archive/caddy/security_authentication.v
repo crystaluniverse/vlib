@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub fn authentication_portal(config AuthenticationPortal) !AuthenticationPortal {
 	mut file := pathlib.get_file(
-		path: '${os.home_dir()}/.local/caddy/ui/custom/login.template',
+		path:   '${os.home_dir()}/.local/caddy/ui/custom/login.template'
 		create: true
 	)!
 
@@ -24,15 +24,14 @@ pub fn authentication_portal(config AuthenticationPortal) !AuthenticationPortal 
 </body>
 </html>
 ')!
-	
+
 	return AuthenticationPortal{
-		name: config.name
-		crypto: Crypto{
+		name:                      config.name
+		crypto:                    Crypto{
 			default_token_lifetime: 3600
 		}
 		enable_identity_providers: ['generic']
-		cookie_domain: config.cookie_domain
-		
+		cookie_domain:             config.cookie_domain
 	}
 }
 
@@ -44,7 +43,7 @@ pub fn (mut portal AuthenticationPortal) assign_email_role(email string, role st
 	portal.transforms << UserTransform{
 		match_realm: 'gitea'
 		match_email: email
-		action: 'add role'
-		role: role
+		action:      'add role'
+		role:        role
 	}
 }

@@ -10,29 +10,29 @@ fn test_params_to_descriptors() {
 	// an exhaustive type_to_schema test is done at jsonschema/schema_test.v
 	params := [
 		codemodel.Param{
-			name: 'test_param'
+			name:        'test_param'
 			description: 'a parameter to test if params are also included in the method description.'
-			required: true
-			typ: codemodel.Type{
+			required:    true
+			typ:         codemodel.Type{
 				symbol: 'string'
 			}
 		},
 		codemodel.Param{
-			name: 'another_param'
+			name:        'another_param'
 			description: 'a second parameter to test if method description works with multiple params.'
-			typ: codemodel.Type{
+			typ:         codemodel.Type{
 				symbol: 'int'
 			}
 		},
 		codemodel.Param{
 			name: 'array_param'
-			typ: codemodel.Type{
+			typ:  codemodel.Type{
 				symbol: '[]string'
 			}
 		},
 		codemodel.Param{
 			name: 'object_param'
-			typ: codemodel.Type{
+			typ:  codemodel.Type{
 				symbol: 'Object'
 			}
 		},
@@ -88,22 +88,22 @@ fn test_params_to_descriptors() {
 // test_fn_to_method tests whether
 fn test_fn_to_method() {
 	function := codemodel.Function{
-		name: 'test_function'
+		name:        'test_function'
 		description: 'tests whether OpenRPC method description can be generated from function.'
 		// testing only with single simple param since params_to_descriptors is tested above
-		params: [
+		params:     [
 			codemodel.Param{
 				name: 'test_param'
-				typ: codemodel.Type{
+				typ:  codemodel.Type{
 					symbol: 'string'
 				}
 			},
 		]
 		has_return: true
-		result: codemodel.Result{
-			name: 'string_list'
+		result:     codemodel.Result{
+			name:        'string_list'
 			description: 'a list of strings which the function will return'
-			typ: codemodel.Type{
+			typ:         codemodel.Type{
 				symbol: '[]string'
 			}
 		}
@@ -145,7 +145,7 @@ fn test_fn_to_method() {
 fn test_docgen() ! {
 	client_path := os.dir(@FILE) + '/testdata/petstore_client'
 	doc := docgen(
-		title: 'test'
+		title:  'test'
 		source: client_path
 	)!
 	// assert doc == {}

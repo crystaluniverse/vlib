@@ -39,7 +39,6 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-
 	if args.reset {
 		console.print_header('install mycelium')
 
@@ -57,9 +56,9 @@ pub fn install(args_ InstallArgs) ! {
 		}
 		// console.print_debug(url)
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 1000
-			reset: true
+			reset:      true
 			expand_dir: '/tmp/myceliumnet'
 		)!
 
@@ -142,8 +141,8 @@ pub fn start(args InstallArgs) ! {
 	} else {
 		mut sm := startupmanager.get()!
 		sm.new(
-			name: name
-			cmd: cmd
+			name:  name
+			cmd:   cmd
 			start: true
 		)!
 	}
@@ -174,8 +173,8 @@ pub fn check() bool {
 
 	// TODO: might be dangerous if that one goes out
 	ping_result := osal.ping(address: '40a:152c:b85b:9646:5b71:d03a:eb27:2462', retry: 2) or {
-			return false
-		}
+		return false
+	}
 	if ping_result == .ok {
 		console.print_debug('could reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462')
 		return true

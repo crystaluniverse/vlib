@@ -44,9 +44,9 @@ pub mut:
 // check docker has been installed & enabled on node
 pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 	mut registry := DockerRegistry{
-		name: args.name
+		name:     args.name
 		datapath: args.datapath
-		ssl: args.ssl
+		ssl:      args.ssl
 	}
 
 	if registry.datapath.len < 4 {
@@ -93,8 +93,8 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 	}
 
 	mut conn := httpconnection.new(
-		name: 'localdockerhub'
-		url: 'https://localhost:5000/v2/'
+		name:  'localdockerhub'
+		url:   'https://localhost:5000/v2/'
 		retry: 10
 	)!
 

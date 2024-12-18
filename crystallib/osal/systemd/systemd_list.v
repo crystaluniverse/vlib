@@ -21,18 +21,18 @@ pub mut:
 }
 
 pub enum LoadState {
-	loaded // The unit's configuration file has been successfully loaded into memory.
+	loaded    // The unit's configuration file has been successfully loaded into memory.
 	not_found // The unit's configuration file could not be found.
-	error // There was an error loading the unit's configuration file.
-	masked // The unit has been masked, which means it has been explicitly disabled and cannot be started.
+	error     // There was an error loading the unit's configuration file.
+	masked    // The unit has been masked, which means it has been explicitly disabled and cannot be started.
 }
 
 pub enum ActiveState {
-	active // The unit has been started successfully and is running as expected.
-	inactive // The unit is not running.
-	activating // The unit is in the process of being started.
+	active       // The unit has been started successfully and is running as expected.
+	inactive     // The unit is not running.
+	activating   // The unit is in the process of being started.
 	deactivating // The unit is in the process of being stopped.
-	failed // The unit tried to start but failed.
+	failed       // The unit tried to start but failed.
 }
 
 // This provides more detailed information about the unit's state, often referred to as the "sub-state". This can vary significantly between different types of units (services, sockets, timers, etc.)
@@ -40,8 +40,8 @@ pub enum SubState {
 	unknown
 	start
 	running // The service is currently running.
-	exited // The service has completed its process and exited. For services that do something at startup and then exit (oneshot services), this is a normal state.
-	failed // The service has failed after starting.
+	exited  // The service has completed its process and exited. For services that do something at startup and then exit (oneshot services), this is a normal state.
+	failed  // The service has failed after starting.
 	waiting // The service is waiting for some condition to be met.
 	autorestart
 	dead
@@ -59,7 +59,7 @@ pub fn process_list() ![]SystemdProcessInfo {
 	mut res := []SystemdProcessInfo{}
 	for item in items {
 		mut unit := SystemdProcessInfo{
-			unit: item.unit
+			unit:        item.unit
 			description: item.description
 		}
 		match item.load {

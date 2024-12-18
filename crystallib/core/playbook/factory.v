@@ -38,14 +38,14 @@ pub fn new(args_ PlayBookNewArgs) !PlayBook {
 	}
 	if args.path.len > 0 || args.text.len > 0 || args.git_url.len > 0 {
 		plbook.add(
-			path: args.path
-			text: args.text
-			git_url: args.git_url
-			git_pull: args.git_pull
+			path:       args.path
+			text:       args.text
+			git_url:    args.git_url
+			git_pull:   args.git_pull
 			git_branch: args.git_branch
-			git_reset: args.git_reset
-			prio: args.prio
-			session: args.session
+			git_reset:  args.git_reset
+			prio:       args.prio
+			session:    args.session
 		)!
 	}
 

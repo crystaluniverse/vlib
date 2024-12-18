@@ -7,12 +7,12 @@ import json
 pub struct Collection {
 pub mut:
 	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to create.
-	db_name       ?string @[json: 'dbName'] // The name of the database.
+	db_name       ?string @[json: 'dbName']                 // The name of the database.
 	description   ?string // The description of the playbook
-	dimension     u16     @[required] // The number of dimensions for the vector field of the playbook. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
-	metric_type   string   = 'L2'  @[json: 'metricType'] // The distance metric used for the playbook. The value defaults to L2.
-	primary_field string = 'id'  @[json: 'primaryField'] // The primary key field. The value defaults to id.
-	vector_field  string  = 'vector'  @[json: 'vectorField'] // The vector field. The value defaults to vector.
+	dimension     u16    @[required]             // The number of dimensions for the vector field of the playbook. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
+	metric_type   string = 'L2' @[json: 'metricType']                  // The distance metric used for the playbook. The value defaults to L2.
+	primary_field string = 'id' @[json: 'primaryField']                  // The primary key field. The value defaults to id.
+	vector_field  string = 'vector' @[json: 'vectorField']              // The vector field. The value defaults to vector.
 }
 
 pub fn (c Client) create_playbook(playbook Collection) ! {
@@ -33,11 +33,11 @@ possible errors:
 
 pub struct Field {
 pub mut:
-	auto_id     bool   @[json: 'autoId'] // Whether the primary key automatically increments.
+	auto_id     bool @[json: 'autoId'] // Whether the primary key automatically increments.
 	description string // An optional description of the field.
 	name        string // The name of the field.
 	primary_key bool   @[json: 'primaryKey'] // Whether the field is a primary field.
-	type_       string @[json: 'type'] // The data type of the values in this field.
+	type_       string @[json: 'type']       // The data type of the values in this field.
 }
 
 pub struct Index {
@@ -49,18 +49,18 @@ pub mut:
 
 pub struct CollectionDescription {
 pub mut:
-	playbook_name        string  @[json: 'playbookName'] // The name of the playbook.
+	playbook_name        string @[json: 'playbookName'] // The name of the playbook.
 	description          string // An optional description of the playbook.
 	fields               []Field
 	indexes              []Index
 	load                 string // The load status of the playbook. Possible values are unload, loading, and loaded.
-	shards_number        u32     @[json: 'shardsNum'] // The number of shards in the playbook.
-	enable_dynamic_field bool    @[json: 'enableDynamicField'] // Whether the dynamic JSON feature is enabled for this playbook.
+	shards_number        u32  @[json: 'shardsNum']          // The number of shards in the playbook.
+	enable_dynamic_field bool @[json: 'enableDynamicField'] // Whether the dynamic JSON feature is enabled for this playbook.
 }
 
 @[params]
 pub struct DescribeCollectionArgs {
-	playbook_name string  @[required] // The name of the playbook to describe.
+	playbook_name string @[required] // The name of the playbook to describe.
 	db_name       ?string // The name of the database.
 }
 
@@ -154,7 +154,7 @@ fn decode_playbook_description(data json2.Any) CollectionDescription {
 @[params]
 pub struct DropCollectionArgs {
 	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to describe.
-	db_name       ?string @[json: 'dbName'] // The name of the database.
+	db_name       ?string @[json: 'dbName']                 // The name of the database.
 }
 
 pub fn (c Client) drop_playbook(args DropCollectionArgs) ! {

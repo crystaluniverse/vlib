@@ -1,10 +1,10 @@
 module redisclient
+
 import os
 import net
 import freeflowuniverse.crystallib.data.resp
 import time
 import net.unix
-
 
 pub struct SetOpts {
 	ex       int = -4
@@ -25,7 +25,6 @@ pub enum KeyType {
 	t_unknown
 }
 
-
 fn (mut r Redis) socket_connect() ! {
 	// print_backtrace()
 	addr := os.expand_tilde_to_home(r.addr)
@@ -34,7 +33,7 @@ fn (mut r Redis) socket_connect() ! {
 		unix_socket := unix.connect_stream(addr)!
 		tcp_socket := net.tcp_socket_from_handle_raw(unix_socket.sock.Socket.handle)
 		tcp_conn := net.TcpConn{
-			sock: tcp_socket
+			sock:   tcp_socket
 			handle: unix_socket.sock.Socket.handle
 		}
 		r.socket = tcp_conn
@@ -96,7 +95,7 @@ const cr_lf_bytes = [u8(`\r`), `\n`]
 
 fn (mut r Redis) write_line(data []u8) ! {
 	r.write(data)!
-	r.write(redisclient.cr_lf_bytes)!
+	r.write(cr_lf_bytes)!
 }
 
 // write resp value to the redis channel

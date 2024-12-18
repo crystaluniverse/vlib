@@ -18,13 +18,13 @@ fn play_investor(mut investortool InvestorTool, mut plbook playbook.PlayBook) ! 
 	for mut action in plbook.find(filter: 'investortool.investor_define')! {
 		mut p := action.params
 		mut investor := Investor{
-			oid: p.get_default('oid', '')!
-			name: p.get_default('name', '')!
-			code: p.get_default('code', '')!
+			oid:         p.get_default('oid', '')!
+			name:        p.get_default('name', '')!
+			code:        p.get_default('code', '')!
 			description: p.get_default('description', '')!
-			user_refs: p.get_list_default('user_refs', [])!
-			admins: p.get_list_default('admins', [])!
-			comments: p.get_list_default('comments', [])!
+			user_refs:   p.get_list_default('user_refs', [])!
+			admins:      p.get_list_default('admins', [])!
+			comments:    p.get_list_default('comments', [])!
 		}
 		// println(investor)
 

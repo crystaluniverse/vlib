@@ -7,9 +7,7 @@ import log
 import os
 // import freeflowuniverse.crystallib.clients.redisclient
 
-const (
-	db_path = '${os.dir(@FILE)}/example.sqlite'
-)
+const db_path = '${os.dir(@FILE)}/example.sqlite'
 
 @[table: 'example_structs']
 @[root_struct]
@@ -33,7 +31,7 @@ pub fn do() ! {
 	mut backend := actor_backend.new(db_path)!
 
 	example_obj := ExampleStruct{
-		name: 'example'
+		name:        'example'
 		description: 'an example root object'
 	}
 	logger.info('Created new root object: ${example_obj}')
@@ -52,7 +50,7 @@ pub fn do() ! {
 	backend.get[ExampleStruct](id + 1) or { logger.error('Backend returned error: ${err}') }
 
 	example_obj1 := ExampleStruct{
-		name: 'another_example'
+		name:        'another_example'
 		description: 'another example root object'
 	}
 	logger.info('Created new root object: ${example_obj1}')

@@ -49,7 +49,7 @@ pub fn (mut params Params) set(key string, value string) {
 	key2 := key.to_lower().trim_space().trim_left('/')
 	params.delete(key2)
 	params.params << Param{
-		key: key2
+		key:   key2
 		value: str_normalize(value)
 	}
 }
@@ -58,8 +58,8 @@ pub fn (mut params Params) set_with_comment(key string, value string, comment st
 	key2 := key.to_lower().trim_space().trim_left('/')
 	params.delete(key2)
 	params.params << Param{
-		key: key2
-		value: str_normalize(value)
+		key:     key2
+		value:   str_normalize(value)
 		comment: comment_normalize(comment)
 	}
 }
@@ -134,11 +134,11 @@ pub fn (p Params) empty() bool {
 pub fn (p Params) heroscript() string {
 	mut out := ''
 	out = p.export(
-		presort: ['id', 'cid', 'oid', 'name']
-		postsort: ['mtime', 'ctime', 'time']
-		indent: '    '
+		presort:    ['id', 'cid', 'oid', 'name']
+		postsort:   ['mtime', 'ctime', 'time']
+		indent:     '    '
 		maxcolsize: 30
-		multiline: true
+		multiline:  true
 	)
 	return out
 }

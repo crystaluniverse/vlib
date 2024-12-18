@@ -8,11 +8,11 @@ fn get_gateway_nodes_example() ! {
 
 	myfilter.status = 'up'
 
-	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mut gp_client := gridproxy.new(net: .dev, cache: true)!
 	mygateways := gp_client.get_gateways(myfilter)!
-	
-	console.print_debug("${mygateways}")
-	console.print_debug("${mygateways.len}")
+
+	console.print_debug('${mygateways}')
+	console.print_debug('${mygateways.len}')
 }
 
 fn get_gateway_by_id_example(node_id u64) ! {
@@ -20,10 +20,10 @@ fn get_gateway_by_id_example(node_id u64) ! {
 
 	myfilter.node_id = node_id
 
-	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mut gp_client := gridproxy.new(net: .dev, cache: true)!
 	mygateways := gp_client.get_gateways(myfilter)!
 
-	console.print_debug("${mygateways}")
+	console.print_debug('${mygateways}')
 }
 
 get_gateway_nodes_example()!

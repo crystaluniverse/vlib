@@ -19,15 +19,15 @@ fn (mut t TFGridHandler) discourse(action Action) ! {
 			smtp_tls := action.params.get_default_false('smtp_tls')
 
 			deploy_res := t.tfgrid.deploy_discourse(
-				name: name
-				farm_id: u64(farm_id)
-				capacity: capacity
-				ssh_key: ssh_key
+				name:            name
+				farm_id:         u64(farm_id)
+				capacity:        capacity
+				ssh_key:         ssh_key
 				developer_email: developer_email
-				smtp_address: smtp_address
-				smtp_port: u32(smtp_port)
-				smtp_username: smtp_username
-				smtp_password: smtp_password
+				smtp_address:    smtp_address
+				smtp_port:       u32(smtp_port)
+				smtp_username:   smtp_username
+				smtp_password:   smtp_password
 				smtp_enable_tls: smtp_tls
 			)!
 

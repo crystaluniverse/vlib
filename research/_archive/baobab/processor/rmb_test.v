@@ -10,10 +10,10 @@ import rand
 
 struct RMBTestCase {
 	job          jobs.ActionJob // job
-	actor_queue  string     // correct actor queue for job
-	return_queue string     // correct return queue for job
-	error_msg    string     // correct error message for job
-	rmb_msg      RMBMessage // RMB message carrying job over msgbus
+	actor_queue  string         // correct actor queue for job
+	return_queue string         // correct return queue for job
+	error_msg    string         // correct error message for job
+	rmb_msg      RMBMessage     // RMB message carrying job over msgbus
 }
 
 // reset redis on test begin and run servers
@@ -46,10 +46,10 @@ fn generate_test_cases() ![]RMBTestCase {
 		ret: rand.uuid_v4()
 	}
 	test_cases << RMBTestCase{
-		job: job
-		actor_queue: 'jobs.actors.crystallib.git'
+		job:          job
+		actor_queue:  'jobs.actors.crystallib.git'
 		return_queue: msg.ret
-		rmb_msg: msg
+		rmb_msg:      msg
 	}
 
 	return test_cases

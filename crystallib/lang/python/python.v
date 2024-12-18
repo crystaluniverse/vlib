@@ -35,40 +35,39 @@ pub fn new(args_ PythonEnvArgs) !PythonEnv {
 	mut py := PythonEnv{
 		name: name
 		path: pathlib.get_dir(path: pp, create: true)!
-		db: c.db_get("python_${args.name}")!
+		db:   c.db_get('python_${args.name}')!
 	}
 
-	key_install:='pips_${py.name}_install'
-	key_update:='pips_${py.name}_update'
-	if ! os.exists("${pp}/bin/activate"){
+	key_install := 'pips_${py.name}_install'
+	key_update := 'pips_${py.name}_update'
+	if !os.exists('${pp}/bin/activate') {
 		console.print_debug('Python environment directory does not exist, triggering reset')
 		args.reset = true
 	}
 	if args.reset {
 		console.print_debug('Resetting Python environment')
 		py.pips_done_reset()!
-		py.db.delete(key:key_install)!
-		py.db.delete(key:key_update)!
-	}	
+		py.db.delete(key: key_install)!
+		py.db.delete(key: key_update)!
+	}
 
-	toinstall:=! py.db.exists(key: key_install)!
-	if  toinstall{
+	toinstall := !py.db.exists(key: key_install)!
+	if toinstall {
 		console.print_debug('Installing Python environment')
 		python.install()!
 		py.init_env()!
-		py.db.set(key: key_install,value:'done')!
+		py.db.set(key: key_install, value: 'done')!
 		console.print_debug('Python environment setup complete')
 	}
 
-	toupdate:=! py.db.exists(key: key_update)!
-	if  toupdate{
+	toupdate := !py.db.exists(key: key_update)!
+	if toupdate {
 		console.print_debug('Updating Python environment')
 		py.update()!
-		py.db.set(key: key_update,value:'done')!
+		py.db.set(key: key_update, value: 'done')!
 		console.print_debug('Python environment update complete')
 	}
 
-	
 	return py
 }
 
@@ -108,7 +107,7 @@ pub fn (mut py PythonEnv) pip(packages string) ! {
 	if to_install.len == 0 {
 		return
 	}
-	console.print_debug('Installing Python packages: ${packages}')	
+	console.print_debug('Installing Python packages: ${packages}')
 	packages2 := to_install.join(' ')
 	cmd := '
 	cd ${py.path.path}
@@ -129,7 +128,7 @@ pub fn (mut py PythonEnv) pips_done_reset() ! {
 }
 
 pub fn (mut py PythonEnv) pips_done() ![]string {
-	//console.print_debug('Getting list of installed packages for environment: ${py.name}')
+	// console.print_debug('Getting list of installed packages for environment: ${py.name}')
 	mut res := []string{}
 	pips := py.db.get(key: 'pips_${py.name}') or { '' }
 	for pip_ in pips.split_into_lines() {
@@ -138,7 +137,7 @@ pub fn (mut py PythonEnv) pips_done() ![]string {
 			res << pip
 		}
 	}
-	//console.print_debug('Found ${res.len} installed packages')
+	// console.print_debug('Found ${res.len} installed packages')
 	return res
 }
 
@@ -146,7 +145,7 @@ pub fn (mut py PythonEnv) pips_done_add(name string) ! {
 	console.print_debug('Adding package ${name} to installed packages list')
 	mut pips := py.pips_done()!
 	if name in pips {
-		//console.print_debug('Package ${name} already marked as installed')
+		// console.print_debug('Package ${name} already marked as installed')
 		return
 	}
 	pips << name
@@ -156,7 +155,7 @@ pub fn (mut py PythonEnv) pips_done_add(name string) ! {
 }
 
 pub fn (mut py PythonEnv) pips_done_check(name string) !bool {
-	//console.print_debug('Checking if package ${name} is installed')
+	// console.print_debug('Checking if package ${name} is installed')
 	mut pips := py.pips_done()!
 	return name in pips
 }

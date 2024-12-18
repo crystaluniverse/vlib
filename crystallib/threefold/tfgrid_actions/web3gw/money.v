@@ -19,14 +19,14 @@ pub fn (mut h Web3GWHandler) money_send(action Action) ! {
 	if bridge_to != '' {
 		if channel == 'ethereum' && bridge_to == 'stellar' {
 			hash_bridge_to_stellar := h.clients.eth_client.bridge_to_stellar(
-				amount: amount
+				amount:      amount
 				destination: to
 			)!
 			h.clients.str_client.await_transaction_on_eth_bridge(hash_bridge_to_stellar)!
 			h.logger.info('bridge to stellar done')
 		} else if channel == 'stellar' && bridge_to == 'ethereum' {
 			res := h.clients.str_client.bridge_to_eth(
-				amount: amount
+				amount:      amount
 				destination: to
 			)!
 			h.logger.info(res)
@@ -39,14 +39,14 @@ pub fn (mut h Web3GWHandler) money_send(action Action) ! {
 			}
 
 			hash_bridge_to_tfchain := h.clients.str_client.bridge_to_tfchain(
-				amount: amount
+				amount:  amount
 				twin_id: u32(twin_id)
 			)!
 			h.clients.tfc_client.await_transaction_on_tfchain_bridge(hash_bridge_to_tfchain)!
 			h.logger.info('bridge to tfchain done')
 		} else if channel == 'tfchain' && bridge_to == 'stellar' {
 			h.clients.tfc_client.swap_to_stellar(
-				amount: amount.u64()
+				amount:                 amount.u64()
 				target_stellar_address: to
 			)!
 		} else {
@@ -57,28 +57,28 @@ pub fn (mut h Web3GWHandler) money_send(action Action) ! {
 			'bitcoin' {
 				res := h.clients.btc_client.send_to_address(
 					address: to
-					amount: amount.i64()
+					amount:  amount.i64()
 				)!
 				h.logger.info(res)
 			}
 			'stellar' {
 				res := h.clients.str_client.transfer(
 					destination: to
-					amount: amount
+					amount:      amount
 				)!
 				h.logger.info(res)
 			}
 			'ethereum' {
 				res := h.clients.eth_client.transfer(
 					destination: to
-					amount: amount
+					amount:      amount
 				)!
 				h.logger.info(res)
 			}
 			'tfchain' {
 				h.clients.tfc_client.transfer(
 					destination: to
-					amount: amount.u64()
+					amount:      amount.u64()
 				)!
 				h.logger.info('transfered')
 			}
@@ -102,15 +102,15 @@ pub fn (mut h Web3GWHandler) money_swap(action Action) ! {
 		h.logger.info(res)
 	} else if from == 'tft' && to == 'xlm' {
 		res := h.clients.str_client.swap(
-			amount: amount
-			source_asset: from
+			amount:            amount
+			source_asset:      from
 			destination_asset: to
 		)!
 		h.logger.info(res)
 	} else if from == 'xlm' && to == 'tft' {
 		res := h.clients.str_client.swap(
-			amount: amount
-			source_asset: from
+			amount:            amount
+			source_asset:      from
 			destination_asset: to
 		)!
 		h.logger.info(res)
@@ -124,7 +124,7 @@ pub fn (mut h Web3GWHandler) money_balance(action Action) ! {
 	mut currency := action.params.get_default('currency', '')!
 
 	if currency == '' {
-		currency = web3gw.default_currencies[channel]!
+		currency = default_currencies[channel]!
 	}
 
 	if channel == 'bitcoin' {
@@ -147,6 +147,6 @@ pub fn (mut h Web3GWHandler) money_balance(action Action) ! {
 		res := h.clients.tfc_client.balance(address)!
 		h.logger.info('balance on ${channel} is ${res}')
 	} else {
-		return error('unsupported channel. should be one of: ${web3gw.default_currencies.keys()}')
+		return error('unsupported channel. should be one of: ${default_currencies.keys()}')
 	}
 }

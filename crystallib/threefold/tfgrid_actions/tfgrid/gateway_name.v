@@ -13,10 +13,10 @@ fn (mut t TFGridHandler) gateway_name(action Action) ! {
 			backend := action.params.get('backend')!
 
 			gw_deploy := t.tfgrid.deploy_gateway_name(GatewayName{
-				name: name
-				node_id: u32(node_id)
+				name:            name
+				node_id:         u32(node_id)
 				tls_passthrough: tls_passthrough
-				backends: [backend]
+				backends:        [backend]
 			})!
 
 			t.logger.info('${gw_deploy}')

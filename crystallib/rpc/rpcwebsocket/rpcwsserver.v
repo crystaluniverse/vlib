@@ -50,9 +50,9 @@ pub fn new_rpcwsserver(port int, handler MessageHandler, logger &log.Logger) !&R
 		logger: unsafe { logger }
 	})
 	rpcwsserver := RpcWsServer{
-		server: server
+		server:  server
 		handler: handler
-		logger: unsafe { logger }
+		logger:  unsafe { logger }
 	}
 
 	server.on_connect(rpcwsserver.on_connect)!

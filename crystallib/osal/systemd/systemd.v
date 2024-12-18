@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 
 __global (
-    systemd_global []&Systemd
+	systemd_global []&Systemd
 )
 
 @[heap]
@@ -15,25 +15,25 @@ pub mut:
 	processes []&SystemdProcess
 	path      pathlib.Path
 	path_cmd  pathlib.Path
-	status SystemdFactoryStatus	
+	status    SystemdFactoryStatus
 }
 
-pub enum SystemdFactoryStatus{
+pub enum SystemdFactoryStatus {
 	init
 	ok
 	error
 }
 
 pub fn new() !&Systemd {
-	if systemd_global.len>0{
+	if systemd_global.len > 0 {
 		return systemd_global[0]
 	}
 	mut systemd := Systemd{
-		path: pathlib.get_dir(path: '/etc/systemd/system', create: false)!
+		path:     pathlib.get_dir(path: '/etc/systemd/system', create: false)!
 		path_cmd: pathlib.get_dir(path: '/etc/systemd_cmds', create: true)!
 	}
 	systemd.load()!
-	systemd_global<<&systemd
+	systemd_global << &systemd
 	return systemd_global[0]
 }
 
@@ -47,35 +47,35 @@ pub fn check() !bool {
 }
 
 fn (mut systemd Systemd) load() ! {
-	if systemd.status==.ok{
-		return 
+	if systemd.status == .ok {
+		return
 	}
 	console.print_header('Systemd load')
-	osal.execute_silent("systemctl daemon-reload")!
+	osal.execute_silent('systemctl daemon-reload')!
 	systemd.processes = []&SystemdProcess{}
 	for item in process_list()! {
 		mut sdprocess := SystemdProcess{
 			description: item.description
-			systemd: &systemd
-			unit: item.unit
-			info: item
+			systemd:     &systemd
+			unit:        item.unit
+			info:        item
 		}
 		systemd.setinternal(mut sdprocess)
 	}
 
-	systemd.status=.ok
+	systemd.status = .ok
 }
 
 pub fn (mut systemd Systemd) reload() ! {
-	systemd.status=.init
+	systemd.status = .init
 	systemd.load()!
 }
 
 @[params]
 pub struct SystemdProcessNewArgs {
 pub mut:
-	name        string            @[required]
-	cmd         string            @[required]
+	name        string @[required]
+	cmd         string @[required]
 	description string
 	env         map[string]string
 	start       bool = true
@@ -91,22 +91,22 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 	mut args := args_
 	args.name = name_fix(args.name)
 
-	if args.cmd==""{
-		return error("cmd needs to be filled in in:\n${args}")
+	if args.cmd == '' {
+		return error('cmd needs to be filled in in:\n${args}')
 	}
 
 	mut sdprocess := SystemdProcess{
-		name: args.name
+		name:        args.name
 		description: args.description
-		cmd: args.cmd
-		restart: true
-		systemd: &systemd
-		info: SystemdProcessInfo{
+		cmd:         args.cmd
+		restart:     true
+		systemd:     &systemd
+		info:        SystemdProcessInfo{
 			unit: args.name
 		}
 	}
 
-	//TODO: maybe systemd can start multiline scripts?
+	// TODO: maybe systemd can start multiline scripts?
 	if args.cmd.contains('\n') {
 		// means we can load the special cmd
 		mut pathcmd := systemd.path_cmd.file_get_new('${args.name}_cmd')!
@@ -121,7 +121,7 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 
 	if args.start || args.restart {
 		sdprocess.stop()!
-	}	
+	}
 
 	if args.start {
 		sdprocess.start()!
@@ -135,7 +135,7 @@ pub fn (mut systemd Systemd) names() []string {
 	return r
 }
 
-fn (mut systemd Systemd) setinternal(mut sdprocess SystemdProcess)  {
+fn (mut systemd Systemd) setinternal(mut sdprocess SystemdProcess) {
 	sdprocess.name = name_fix(sdprocess.info.unit)
 	systemd.processes = systemd.processes.filter(it.name != sdprocess.name)
 	systemd.processes << &sdprocess
@@ -147,7 +147,7 @@ pub fn (mut systemd Systemd) get(name_ string) !&SystemdProcess {
 		systemd.load()!
 	}
 	for item in systemd.processes {
-		if  name_fix(item.name) == name {
+		if name_fix(item.name) == name {
 			return item
 		}
 	}
@@ -157,7 +157,7 @@ pub fn (mut systemd Systemd) get(name_ string) !&SystemdProcess {
 pub fn (mut systemd Systemd) exists(name_ string) bool {
 	name := name_fix(name_)
 	for item in systemd.processes {
-		if  name_fix(item.name) == name {
+		if name_fix(item.name) == name {
 			return true
 		}
 	}
@@ -165,10 +165,10 @@ pub fn (mut systemd Systemd) exists(name_ string) bool {
 }
 
 pub fn (mut systemd Systemd) destroy(name_ string) ! {
-	for i, mut pr in systemd.processes{
-		if name_fix(pr.name) == name_fix(name_){
+	for i, mut pr in systemd.processes {
+		if name_fix(pr.name) == name_fix(name_) {
 			pr.delete()!
-			systemd.processes[i] = systemd.processes[systemd.processes.len-1]
+			systemd.processes[i] = systemd.processes[systemd.processes.len - 1]
 			systemd.processes.delete_last()
 			break
 		}

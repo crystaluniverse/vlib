@@ -8,10 +8,8 @@ import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.installers.web.mdbook as mdbookinstaller
 import os
 
-
 console.print_header('Lets use a heroscript to generate an mdbook')
 mdbookinstaller.install()!
-
 
 // //will create session and run a playbook from a heroscript
 

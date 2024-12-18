@@ -8,7 +8,7 @@ To get started
 
 
 
-import freeflowuniverse.crystallib.installers.something. caddy
+import freeflowuniverse.crystallib.installers.web.caddy
 
 mut installer:= caddy.get()!
 

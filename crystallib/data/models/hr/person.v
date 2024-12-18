@@ -123,10 +123,10 @@ fn (mut self HRData) extract_share_holder_infomation(mut action playbook.Action)
 	comment := p.get_default('comment', '')!.trim_space()
 
 	return ShareHolder{
-		person: &person
-		amount: amount
+		person:       &person
+		amount:       amount
 		company_name: compay_name
-		comment: if comment != '' { comment } else { none }
+		comment:      if comment != '' { comment } else { none }
 	}
 }
 
@@ -176,12 +176,12 @@ fn (mut self HRData) extract_digital_payout_information(mut action playbook.Acti
 	months_behind := p.get_u32_default('nrmonths_behind', 0)!
 
 	return name, DigitalPayout{
-		amount: amount
+		amount:                  amount
 		number_of_months_behind: months_behind
-		period: period
-		wallet_address: wallet_address
-		wallet_currency: wallet_currency
-		wallet_type: wallet_type
+		period:                  period
+		wallet_address:          wallet_address
+		wallet_currency:         wallet_currency
+		wallet_type:             wallet_type
 	}
 }
 
@@ -209,17 +209,17 @@ fn (mut self HRData) extract_remuneration_information(mut action playbook.Action
 	}
 
 	remuneration := Remuneration{
-		car_per_month: car_month
-		expense_average: expense_avg
-		expense_max: expense_max
-		lodging_per_month: lodging_month
-		monthly_salary: salary_month
+		car_per_month:      car_month
+		expense_average:    expense_avg
+		expense_max:        expense_max
+		lodging_per_month:  lodging_month
+		monthly_salary:     salary_month
 		reward_pool_points: reward_pool_points
-		travel_average: travel_avg
-		travel_max: travel_max
-		comment: if comment != '' { comment } else { none }
-		url: if url != '' { url } else { none }
-		payout_digital: payout_digital
+		travel_average:     travel_avg
+		travel_max:         travel_max
+		comment:            if comment != '' { comment } else { none }
+		url:                if url != '' { url } else { none }
+		payout_digital:     payout_digital
 	}
 
 	return username, remuneration
@@ -252,12 +252,12 @@ fn (mut self HRData) extract_loan_outstanding_information(mut action playbook.Ac
 	url := p.get_default('url', '')!.trim_space()
 
 	loan := LoanOutstanding{
-		amount: amount
-		start_date: start_date
-		payback_period: payback_period
+		amount:                amount
+		start_date:            start_date
+		payback_period:        payback_period
 		payback_period_number: payback_period_number
-		comment: if comment != '' { comment } else { none }
-		url: if url != '' { url } else { none }
+		comment:               if comment != '' { comment } else { none }
+		url:                   if url != '' { url } else { none }
 	}
 
 	return username, loan
@@ -289,11 +289,11 @@ fn (mut self HRData) extract_tokens_information(mut action playbook.Action) !(st
 	comment := p.get_default('comment', '')!.trim_space()
 
 	tokens := Tokens{
-		amount: amount
-		comment: if comment != '' { comment } else { none }
-		wallet_address: wallet_address
+		amount:          amount
+		comment:         if comment != '' { comment } else { none }
+		wallet_address:  wallet_address
 		wallet_currency: wallet_currency
-		wallet_type: wallet_type
+		wallet_type:     wallet_type
 	}
 
 	return username, tokens
@@ -324,9 +324,9 @@ fn (mut self HRData) extract_salary_outstanding_information(mut action playbook.
 
 	salary := SalaryOutstanding{
 		company: company
-		amount: amount
+		amount:  amount
 		comment: if comment != '' { comment } else { none }
-		url: if url != '' { url } else { none }
+		url:     if url != '' { url } else { none }
 	}
 
 	return username, salary
@@ -367,16 +367,16 @@ fn (mut self HRData) extract_person_information(mut action playbook.Action) !Per
 	country := country_id_from_str(country_of_residence_str)!
 
 	person := Person{
-		username: username
-		first_name: firstname
-		last_name: lastname
-		telephone_numbers: telephone_numbers
-		emails: emails
-		linkedin: if linkedin != '' { linkedin } else { none }
-		github: if github != '' { github } else { none }
-		gitourworld: if gitourworld != '' { gitourworld } else { none }
-		url: if url != '' { url } else { none }
-		description: if description != '' { description } else { none }
+		username:             username
+		first_name:           firstname
+		last_name:            lastname
+		telephone_numbers:    telephone_numbers
+		emails:               emails
+		linkedin:             if linkedin != '' { linkedin } else { none }
+		github:               if github != '' { github } else { none }
+		gitourworld:          if gitourworld != '' { gitourworld } else { none }
+		url:                  if url != '' { url } else { none }
+		description:          if description != '' { description } else { none }
 		country_of_residence: country
 	}
 

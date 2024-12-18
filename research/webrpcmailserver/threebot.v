@@ -14,8 +14,8 @@ pub fn (bot Threebot) run() ! {
 	})
 
 	mail_handler := mail.new_handler(
-		logger: &logger
-		state: &bot.mail
+		logger:       &logger
+		state:        &bot.mail
 		openrpc_path: '.'
 	)!
 

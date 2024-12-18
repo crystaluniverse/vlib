@@ -43,7 +43,7 @@ fn install() ! {
 	}
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 9000
 		expand_dir: '/tmp/dagu'
 	)!
@@ -51,7 +51,7 @@ fn install() ! {
 	mut binpath := dest.file_get('dagu')!
 	osal.cmd_add(
 		cmdname: 'dagu'
-		source: binpath.path
+		source:  binpath.path
 	)!
 }
 
@@ -61,18 +61,18 @@ fn startupcmd() ![]zinit.ZProcessNewArgs {
 
 	res << zinit.ZProcessNewArgs{
 		name: 'dagu'
-		cmd: 'dagu server'
-		env: {
-			'HOME ': os.home_dir()
-			'DAGU_HOME ': cfg.configpath //config for dagu is called admin.yml and is in this dir
+		cmd:  'dagu server'
+		env:  {
+			'HOME ':      os.home_dir()
+			'DAGU_HOME ': cfg.configpath // config for dagu is called admin.yml and is in this dir
 		}
 	}
 
 	res << zinit.ZProcessNewArgs{
 		name: 'dagu_scheduler'
-		cmd: 'dagu scheduler'
-		env: {
-			'HOME ': os.home_dir()
+		cmd:  'dagu scheduler'
+		env:  {
+			'HOME ':      os.home_dir()
 			'DAGU_HOME ': cfg.configpath
 		}
 	}

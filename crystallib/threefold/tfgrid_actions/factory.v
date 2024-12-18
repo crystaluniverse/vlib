@@ -53,10 +53,10 @@ pub fn new(args RunnerArgs, debug_log bool) !Runner {
 	stellar_handler := stellar.new(mut rpc_client, &logger, mut gw_clients.str_client)
 
 	mut runner := Runner{
-		path: args.path
-		tfgrid_handler: tfgrid_handler
-		web3gw_handler: web3gw_handler
-		clients: gw_clients
+		path:            args.path
+		tfgrid_handler:  tfgrid_handler
+		web3gw_handler:  web3gw_handler
+		clients:         gw_clients
 		stellar_handler: stellar_handler
 	}
 

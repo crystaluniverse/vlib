@@ -20,7 +20,7 @@ pub mut:
 pub fn configure(instance string, cfg_ Config) !PostgresClient[Config] {
 	mut config := cfg_
 
-	mut server := PostgresClient[Config] {}
+	mut server := PostgresClient[Config]{}
 	server.init('postgres', instance, .set, config)!
 	return get(instance)!
 }
@@ -35,35 +35,35 @@ pub fn configure_interactive(args_ Config, mut session base.Session) ! {
 
 	instance := myui.ask_question(
 		question: 'name for postgres client'
-		default: args.instance
+		default:  args.instance
 	)!
 
 	args.user = myui.ask_question(
 		question: 'user'
-		minlen: 3
-		default: args.user
+		minlen:   3
+		default:  args.user
 	)!
 
 	args.password = myui.ask_question(
 		question: 'password'
-		minlen: 3
-		default: args.password
+		minlen:   3
+		default:  args.password
 	)!
 
 	args.dbname = myui.ask_question(
 		question: 'dbname'
-		minlen: 3
-		default: args.dbname
+		minlen:   3
+		default:  args.dbname
 	)!
 
 	args.host = myui.ask_question(
 		question: 'host'
-		minlen: 3
-		default: args.host
+		minlen:   3
+		default:  args.host
 	)!
 	mut port := myui.ask_question(
 		question: 'port'
-		default: '${args.port}'
+		default:  '${args.port}'
 	)!
 	args.port = port.int()
 

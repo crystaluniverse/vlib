@@ -7,60 +7,60 @@ import os
 
 fn main() {
 	mut cmd := Command{
-		name: 'openrpc'
+		name:        'openrpc'
 		description: 'OpenRPC Library CLI'
-		version: '1.0.0'
+		version:     '1.0.0'
 	}
 	mut docgen_cmd := Command{
-		name: 'docgen'
-		description: 'Generates docs for a given OpenRPC Client Module in V'
-		usage: '<client_path>'
+		name:          'docgen'
+		description:   'Generates docs for a given OpenRPC Client Module in V'
+		usage:         '<client_path>'
 		required_args: 1
-		execute: cli_docgen
+		execute:       cli_docgen
 	}
 	docgen_cmd.add_flag(Flag{
-		flag: .string
-		required: true
-		name: 'title'
-		abbrev: 't'
+		flag:        .string
+		required:    true
+		name:        'title'
+		abbrev:      't'
 		description: 'Title of the OpenRPC Document.'
 	})
 	docgen_cmd.add_flag(Flag{
-		flag: .string
-		name: 'version'
-		abbrev: 'v'
+		flag:          .string
+		name:          'version'
+		abbrev:        'v'
 		default_value: ['1.0.0']
-		description: 'OpenRPC Version of the document.'
+		description:   'OpenRPC Version of the document.'
 	})
 	docgen_cmd.add_flag(Flag{
-		flag: .string
-		name: 'output_path'
-		abbrev: 'o'
+		flag:          .string
+		name:          'output_path'
+		abbrev:        'o'
 		default_value: ['.']
-		description: 'Path the OpenRPC client will be created at.'
+		description:   'Path the OpenRPC client will be created at.'
 	})
 	docgen_cmd.add_flag(Flag{
-		flag: .string
-		name: 'description'
-		abbrev: 'd'
+		flag:        .string
+		name:        'description'
+		abbrev:      'd'
 		description: 'Description of the OpenRPC Document'
 	})
 	docgen_cmd.add_flag(Flag{
-		flag: .string_array
-		name: 'exclude_dirs'
-		abbrev: 'ed'
+		flag:        .string_array
+		name:        'exclude_dirs'
+		abbrev:      'ed'
 		description: 'Directories to be excluded from source code to generate document from.'
 	})
 	docgen_cmd.add_flag(Flag{
-		flag: .string_array
-		name: 'exclude_files'
-		abbrev: 'f'
+		flag:        .string_array
+		name:        'exclude_files'
+		abbrev:      'f'
 		description: 'Files to be excluded from source code to generate document from.'
 	})
 	docgen_cmd.add_flag(Flag{
-		flag: .bool
-		name: 'public_only'
-		abbrev: 'p'
+		flag:        .bool
+		name:        'public_only'
+		abbrev:      'p'
 		description: 'Generates document only from public functions.'
 	})
 
@@ -71,21 +71,23 @@ fn main() {
 
 fn cli_docgen(cmd Command) ! {
 	config := openrpc.DocGenConfig{
-		title: cmd.flags.get_string('title') or { panic('Failed to get `title` flag: ${err}') }
-		description: cmd.flags.get_string('description') or {
+		title:         cmd.flags.get_string('title') or {
+			panic('Failed to get `title` flag: ${err}')
+		}
+		description:   cmd.flags.get_string('description') or {
 			panic('Failed to get `description` flag: ${err}')
 		}
-		version: cmd.flags.get_string('version') or {
+		version:       cmd.flags.get_string('version') or {
 			panic('Failed to get `version` flag: ${err}')
 		}
-		source: cmd.args[0]
-		exclude_dirs: cmd.flags.get_strings('exclude_dirs') or {
+		source:        cmd.args[0]
+		exclude_dirs:  cmd.flags.get_strings('exclude_dirs') or {
 			panic('Failed to get `exclude_dirs` flag: ${err}')
 		}
 		exclude_files: cmd.flags.get_strings('exclude_files') or {
 			panic('Failed to get `exclude_files` flag: ${err}')
 		}
-		only_pub: cmd.flags.get_bool('public_only') or {
+		only_pub:      cmd.flags.get_bool('public_only') or {
 			panic('Failed to get `public_only` flag: ${err}')
 		}
 	}

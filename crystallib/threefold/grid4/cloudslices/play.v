@@ -45,14 +45,14 @@ pub fn play(mut plbook PlayBook) !map[string]&Node {
 			}
 
 			mut subobj := CloudBox{
-				amount: action.params.get_int_default('amount', 1)!
-				description: action.params.get_default('description', '')!
-				ssd_nr: action.params.get_int_default('ssd_nr', 1)!
-				storage_gb: action.params.get_float('storage_gb')! // required
-				passmark: action.params.get_int_default('passmark', 1)!
-				vcores: action.params.get_int('vcores')!
-				mem_gb: action.params.get_float('mem_gb')!
-				price_range: action.params.get_list_f64('price_range')!
+				amount:           action.params.get_int_default('amount', 1)!
+				description:      action.params.get_default('description', '')!
+				ssd_nr:           action.params.get_int_default('ssd_nr', 1)!
+				storage_gb:       action.params.get_float('storage_gb')! // required
+				passmark:         action.params.get_int_default('passmark', 1)!
+				vcores:           action.params.get_int('vcores')!
+				mem_gb:           action.params.get_float('mem_gb')!
+				price_range:      action.params.get_list_f64('price_range')!
 				price_simulation: action.params.get_float('price_simulation')!
 			}
 
@@ -73,9 +73,9 @@ pub fn play(mut plbook PlayBook) !map[string]&Node {
 			}
 
 			mut subobj := StorageBox{
-				amount: action.params.get_int_default('amount', 1)!
-				description: action.params.get_default('description', '')!
-				price_range: action.params.get_list_f64('price_range')!
+				amount:           action.params.get_int_default('amount', 1)!
+				description:      action.params.get_default('description', '')!
+				price_range:      action.params.get_list_f64('price_range')!
 				price_simulation: action.params.get_float('price_simulation')!
 			}
 
@@ -95,18 +95,18 @@ pub fn play(mut plbook PlayBook) !map[string]&Node {
 			}
 
 			mut subobj := AIBox{
-				amount: action.params.get_int_default('amount', 1)!
-				description: action.params.get_default('description', '')!
-				ssd_nr: action.params.get_int_default('ssd_nr', 1)!
-				storage_gb: action.params.get_float('storage_gb')! // required
-				mem_gb_gpu: action.params.get_float('mem_gb_gpu')!
-				passmark: action.params.get_int_default('passmark', 1)!
-				vcores: action.params.get_int('vcores')!
-				mem_gb: action.params.get_float('mem_gb')!
-				price_range: action.params.get_list_f64('price_range')!
+				amount:           action.params.get_int_default('amount', 1)!
+				description:      action.params.get_default('description', '')!
+				ssd_nr:           action.params.get_int_default('ssd_nr', 1)!
+				storage_gb:       action.params.get_float('storage_gb')! // required
+				mem_gb_gpu:       action.params.get_float('mem_gb_gpu')!
+				passmark:         action.params.get_int_default('passmark', 1)!
+				vcores:           action.params.get_int('vcores')!
+				mem_gb:           action.params.get_float('mem_gb')!
+				price_range:      action.params.get_list_f64('price_range')!
 				price_simulation: action.params.get_float('price_simulation')!
-				gpu_brand: action.params.get_default('gpu_brand', '')!
-				gpu_version: action.params.get_default('gpu_version', '')!
+				gpu_brand:        action.params.get_default('gpu_brand', '')!
+				gpu_version:      action.params.get_default('gpu_version', '')!
 			}
 
 			if subobj.price_range.len != 2 {

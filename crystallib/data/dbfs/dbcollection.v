@@ -51,9 +51,9 @@ pub fn (mut dbcollection DBCollection) db_create(args_ DBCreateArgs) !DB {
 	args.name = texttools.name_fix(args.name)
 	mut p := pathlib.get_dir(create: true, path: '${dbcollection.path.path}/${args.name}')!
 	cfg := DBConfig{
-		withkeys: args.withkeys
-		name: args.name
-		encrypted: args.encrypted
+		withkeys:   args.withkeys
+		name:       args.name
+		encrypted:  args.encrypted
 		keyshashed: args.keyshashed
 	}
 	mut path_meta := p.file_get('.meta') or {
@@ -74,9 +74,9 @@ pub fn (mut dbcollection DBCollection) db_get_create(args_ DBCreateArgs) !DB {
 	args.name = texttools.name_fix(args.name)
 	mut p := pathlib.get_dir(create: true, path: '${dbcollection.path.path}/${args.name}')!
 	cfg := DBConfig{
-		withkeys: args.withkeys
-		name: args.name
-		encrypted: args.encrypted
+		withkeys:   args.withkeys
+		name:       args.name
+		encrypted:  args.encrypted
 		keyshashed: args.keyshashed
 	}
 	mut path_meta := p.file_get('.meta') or {
@@ -106,7 +106,7 @@ pub fn (mut dbcollection DBCollection) db_get(name_ string) !DB {
 		cfg = json.decode(DBConfig, data)!
 	}
 	mut db := DB{
-		path: p
+		path:   p
 		config: cfg
 		parent: &dbcollection
 	}

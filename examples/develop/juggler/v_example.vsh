@@ -8,16 +8,16 @@ import veb
 osal.load_env_file('${os.dir(@FILE)}/.env')!
 
 mut j := juggler.configure(
-	url: 'https://git.ourworld.tf/projectmycelium/itenv'
+	url:      'https://git.ourworld.tf/projectmycelium/itenv'
 	username: os.getenv('JUGGLER_USERNAME')
 	password: os.getenv('JUGGLER_PASSWORD')
-	reset: true
+	reset:    true
 )!
 
 spawn j.run(8000)
 println(j.info())
 
-for{}
+for {}
 
 // TODO
 // - automate caddy install/start

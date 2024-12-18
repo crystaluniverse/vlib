@@ -34,7 +34,7 @@ pub fn new(args ZeroHubClientArgs) !ZeroHubClient {
 	// }
 
 	mut cl := ZeroHubClient{
-		url: args.url
+		url:    args.url
 		secret: args.secret
 	}
 	// TODO: there should be a check here that its accessible

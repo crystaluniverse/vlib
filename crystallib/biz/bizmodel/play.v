@@ -7,7 +7,6 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.biz.spreadsheet
 
 pub fn play(mut plbook PlayBook) ! {
-
 	// first make sure we find a run action to know the name
 	mut actions4 := plbook.actions_find(actor: 'bizmodel')!
 
@@ -15,76 +14,71 @@ pub fn play(mut plbook PlayBook) ! {
 		return
 	}
 
-	knownactions:= ["revenue_define","employee_define","department_define",	
-						"funding_define","costcenter_define","cost_define"]
+	knownactions := ['revenue_define', 'employee_define', 'department_define', 'funding_define',
+		'costcenter_define', 'cost_define']
 
 	for action in actions4 {
-		//biz name needs to be specified in the the bizmodel hero actions
-		bizname:=action.params.get("bizname") or { 
+		// biz name needs to be specified in the the bizmodel hero actions
+		bizname := action.params.get('bizname') or {
 			return error("Can't find param: 'bizname' for ${action.actor}.${action.name} macro, is a requirement argument.")
-		 }
-		mut sim:=getset(bizname)!
+		}
+		mut sim := getset(bizname)!
 
-		if !(action.name in knownactions){
+		if action.name !in knownactions {
 			return error("Can't find macro with name: ${action.name} for macro's for bizmodel.")
 		}
 
 		console.print_debug(action.name)
-		match action.name {			
-			"revenue_define" {				
+		match action.name {
+			'revenue_define' {
 				sim.revenue_action(action)!
 			}
-			"funding_define" {
+			'funding_define' {
 				sim.funding_define_action(action)!
 			}
-			"costcenter_define" {
+			'costcenter_define' {
 				sim.costcenter_define_action(action)!
-			}			
-			else{				
 			}
+			else {}
 		}
 	}
 
-	console.print_debug("TOTALS for bizmodel play")
-	//now we have processed the macro's, we can calculate the totals
+	console.print_debug('TOTALS for bizmodel play')
+	// now we have processed the macro's, we can calculate the totals
 	rlock bizmodels {
-		for _,mut sim in bizmodels{
-			//sim.hr_total()!
+		for _, mut sim in bizmodels {
+			// sim.hr_total()!
 			sim.cost_total()!
 			sim.revenue_total()!
 			sim.funding_total()!
 		}
 	}
 
-
-
-	for action in actions4 {	
+	for action in actions4 {
 		console.print_debug(action.name)
-		//biz name needs to be specified in the the bizmodel hero actions
-		bizname:=action.params.get("bizname") or { 
+		// biz name needs to be specified in the the bizmodel hero actions
+		bizname := action.params.get('bizname') or {
 			return error("Can't find param: 'bizname' for bizmodel macro, is a requirement argument.")
 		}
 
-		mut sim:=get(bizname)!
+		mut sim := get(bizname)!
 
-		if !(action.name in knownactions){
+		if action.name !in knownactions {
 			return error("Can't find macro with name: ${action.name} for macro's for bizmodel.")
 		}
 
 		match action.name {
-			"cost_define" {
+			'cost_define' {
 				sim.cost_define_action(action)!
 			}
-			"department_define" {				
+			'department_define' {
 				sim.department_define_action(action)!
 			}
-			"employee_define" {
+			'employee_define' {
 				sim.employee_define_action(action)!
 			}
-			else{				
-			}
+			else {}
 		}
-
 	}
 
 	// mut sim:=get("test")!
@@ -92,6 +86,4 @@ pub fn play(mut plbook PlayBook) ! {
 	// //println(spreadsheet.sheets_keys())
 	// println(spreadsheet.sheet_get('bizmodel_test')!)
 	// if true{panic("sss")}
-
-
 }

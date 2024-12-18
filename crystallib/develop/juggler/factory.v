@@ -38,17 +38,17 @@ pub fn configure(cfg Config) !&Juggler {
 	mut c := caddy.configure('juggler')!
 
 	mut j := Juggler{
-		Actor: actor.new(
-			name: 'admin'
+		Actor:       actor.new(
+			name:   'admin'
 			secret: cfg.password
 		)!
-		name: cfg.name
-		url: cfg.url
-		port: cfg.port
-		host: cfg.host
-		username: cfg.username
-		password: cfg.password
-		secret: cfg.secret
+		name:        cfg.name
+		url:         cfg.url
+		port:        cfg.port
+		host:        cfg.host
+		username:    cfg.username
+		password:    cfg.password
+		secret:      cfg.secret
 		config_path: config_path
 	}
 

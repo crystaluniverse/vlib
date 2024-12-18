@@ -1,6 +1,5 @@
 module mailclient
 
-
 import freeflowuniverse.crystallib.core.texttools
 import net.smtp
 import time
@@ -48,25 +47,25 @@ pub fn (mut cl MailClient) send(args_ SendArgs) ! {
 		body_type = smtp.BodyType.html
 	}
 	mut m := smtp.Mail{
-		from: args.from
-		to: args.to
-		cc: args.cc
-		bcc: args.bcc
-		date: args.date
-		subject: args.subject
-		body: args.body
+		from:      args.from
+		to:        args.to
+		cc:        args.cc
+		bcc:       args.bcc
+		date:      args.date
+		subject:   args.subject
+		body:      args.body
 		body_type: body_type
 	}
 
 	mut smtp_client := smtp.new_client(
-			server: cl.mail_server
-			port: cl.mail_port
-			username: cl.mail_username
-			password: cl.mail_password
-			from: cl.mail_from
-			ssl: cl.ssl
-			starttls: cl.tls
-		)!
+		server:   cl.mail_server
+		port:     cl.mail_port
+		username: cl.mail_username
+		password: cl.mail_password
+		from:     cl.mail_from
+		ssl:      cl.ssl
+		starttls: cl.tls
+	)!
 
 	return smtp_client.send(m)
 }

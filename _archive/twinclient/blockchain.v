@@ -11,9 +11,9 @@ pub fn (mut client TwinClient) blockchain_select(name string) ! {
 
 pub fn (mut client TwinClient) blockchain_create(name string, blockchain_type string, ip string) !BlockChainCreateModel {
 	data := BlockChainCreateModel{
-		name: name
+		name:            name
 		blockchain_type: blockchain_type
-		ip: ip
+		ip:              ip
 	}
 	response := client.transport.send('blockchain.create', json.encode(data).str())!
 	println(json.decode(BlockChainCreateModel, response.data)!)
@@ -30,9 +30,9 @@ pub fn (mut client TwinClient) blockchain_sign(content string) !BlockChainSignRe
 
 pub fn (mut client TwinClient) blockchain_init(name string, blockchain_type string, secret string) !NameAddressMnemonicModel {
 	data := BlockchainInitModel{
-		name: name
+		name:            name
 		blockchain_type: blockchain_type
-		secret: secret
+		secret:          secret
 	}
 	response := client.transport.send('blockchain.init', json.encode(data).str())!
 	return json.decode(NameAddressMnemonicModel, response.data)

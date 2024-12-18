@@ -24,19 +24,19 @@ pub fn generate_client_factory(name string) !CodeFile {
 	code << generate_ws_factory_code(name)!
 
 	return CodeFile{
-		mod: name
+		mod:     name
 		imports: []
-		items: code
+		items:   code
 	}
 }
 
 pub fn generate_client_struct(name string) Struct {
 	return Struct{
-		name: texttools.name_fix_snake_to_pascal(name)
+		name:   texttools.name_fix_snake_to_pascal(name)
 		fields: [
 			StructField{
-				name: 'transport'
-				typ: Type{
+				name:   'transport'
+				typ:    Type{
 					symbol: 'jsonrpc.IRpcTransportClient'
 				}
 				is_mut: true
@@ -48,15 +48,15 @@ pub fn generate_client_struct(name string) Struct {
 pub fn generate_ws_factory_code(name_ string) ![]CodeItem {
 	name := texttools.name_fix_snake_to_pascal(name_)
 	ws_factory_param := Struct{
-		name: 'WsClientConfig'
+		name:   'WsClientConfig'
 		is_pub: true
-		attrs: [Attribute{
+		attrs:  [Attribute{
 			name: 'params'
 		}]
 		fields: [
 			StructField{
-				name: 'address'
-				typ: Type{
+				name:  'address'
+				typ:   Type{
 					symbol: 'string'
 				}
 				attrs: [Attribute{
@@ -65,7 +65,7 @@ pub fn generate_ws_factory_code(name_ string) ![]CodeItem {
 			},
 			StructField{
 				name: 'logger'
-				typ: Type{
+				typ:  Type{
 					symbol: 'log.Logger'
 				}
 			},
@@ -124,13 +124,13 @@ pub fn generate_client_method(client_struct Struct, method Function) !Function {
 	mut func := Function{
 		...method
 		receiver: Param{
-			name: 'client'
-			typ: Type{
+			name:    'client'
+			typ:     Type{
 				symbol: client_struct.name
 			}
 			mutable: true
 		}
-		body: '${request_stmt}\n${return_stmt}'
+		body:     '${request_stmt}\n${return_stmt}'
 	}
 	func.result.result = true
 	return func

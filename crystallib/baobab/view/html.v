@@ -2,36 +2,36 @@ module view
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.webcomponents.htmx
-import freeflowuniverse.webcomponents.view {Page, PageHeading, Section, SectionHeading, Button, table}
+import freeflowuniverse.webcomponents.view { Button, Page, PageHeading, Section, SectionHeading, table }
 import net.http
 
-pub fn list_object_page[U] (u []U, routes ObjectRoutes) Page {
+pub fn list_object_page[U](u []U, routes ObjectRoutes) Page {
 	object_name := typeof[U]().all_after_last('.')
-	return Page {
-		heading: PageHeading {
-			title: object_name.title()
+	return Page{
+		heading: PageHeading{
+			title:   object_name.title()
 			buttons: [
 				Button{
 					label: 'Manual'
-				}
+				},
 			]
 		}
-		content: Section {
-			heading: SectionHeading {
-				title: '${object_name.title()} List'
+		content: Section{
+			heading: SectionHeading{
+				title:       '${object_name.title()} List'
 				description: ''
-				buttons: [
+				buttons:     [
 					Button{
-						label: 'Filter'
-						get: '${routes.object_route}/filter'
+						label:    'Filter'
+						get:      '${routes.object_route}/filter'
 						push_url: 'true'
-					}
+					},
 					Button{
-						label: 'New ${object_name}'
-						get: '${routes.object_route}/new'
+						label:    'New ${object_name}'
+						get:      '${routes.object_route}/new'
 						push_url: 'true'
-						color: .violet
-					}
+						color:    .violet
+					},
 				]
 			}
 			content: table(u).html()
@@ -39,15 +39,19 @@ pub fn list_object_page[U] (u []U, routes ObjectRoutes) Page {
 	}
 }
 
-pub fn list_objectsection[U] (u []U) Section {
+pub fn list_objectsection[U](u []U) Section {
 	object_name := typeof[U]().all_after_last('.')
-	return Section {
-		heading: SectionHeading {
-			title: '${object_name.title()} List'
+	return Section{
+		heading: SectionHeading{
+			title:       '${object_name.title()} List'
 			description: ''
-			buttons: [
-				Button{label: 'Filter'}
-				Button{label: 'New ${object_name}'}
+			buttons:     [
+				Button{
+					label: 'Filter'
+				},
+				Button{
+					label: 'New ${object_name}'
+				},
 			]
 		}
 		content: to_list(u)
@@ -56,17 +60,17 @@ pub fn list_objectsection[U] (u []U) Section {
 
 pub struct ObjectRoutes {
 pub mut:
-	object_route string
-	new_object_route string
+	object_route        string
+	new_object_route    string
 	filter_object_route string
-	edit_object_route fn (string) string
-	object_page_route fn (string) string
+	edit_object_route   fn (string) string
+	object_page_route   fn (string) string
 }
 
-pub fn new_object_page[T]() Page {	
-	return Page {
-		heading: PageHeading {
-			title: typeof[T]().title()
+pub fn new_object_page[T]() Page {
+	return Page{
+		heading: PageHeading{
+			title:       typeof[T]().title()
 			description: ''
 		}
 		content: new_object_form[T]()
@@ -155,8 +159,5 @@ pub fn filter_object_form[T](endpoint string) string {
 
 pub struct Response {
 	target string
-	html string
+	html   string
 }
-
-
-

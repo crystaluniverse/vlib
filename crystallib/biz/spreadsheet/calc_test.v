@@ -7,20 +7,20 @@ fn test_sheets() {
 	mut sh := sheet_new() or { panic(err) }
 
 	mut nrnodes := sh.row_new(
-		name: 'nrnodes'
+		name:   'nrnodes'
 		growth: '5:100,55:1000'
-		tags: 'cat:nodes color:yellow urgent'
+		tags:   'cat:nodes color:yellow urgent'
 	)!
 	mut curtest := sh.row_new(name: 'curtest', growth: '1:100EUR,55:1000AED,56:0')!
 
 	mut nrnodes2 := sh.row_new(
-		name: 'nrnodes2'
+		name:   'nrnodes2'
 		growth: '5:100,55:1000,60:500'
-		tags: 'cat:nodes delay color:green'
+		tags:   'cat:nodes delay color:green'
 	)!
 
 	mut nrnodes3 := sh.row_new(
-		name: 'nrnodes3'
+		name:   'nrnodes3'
 		growth: '0:100'
 	)!
 
@@ -116,12 +116,12 @@ fn test_sheets() {
 fn test_curr() {
 	mut sh := sheet_new(name: 'test2') or { panic(err) }
 
-	currency.set_default('AED',0.25)!
-	currency.set_default('EUR',0.9)!
+	currency.set_default('AED', 0.25)!
+	currency.set_default('EUR', 0.9)!
 
 	mut pricetft := sh.row_new(name: 'something', growth: '0:100aed,55:1000eur')!
 
-	console.print_debug(sh.rows["something"].cells[0])
+	console.print_debug(sh.rows['something'].cells[0])
 	assert sh.rows['something']!.cells[0].val == 25.0
 	assert sh.rows['something']!.cells[60 - 1].val == 900.0
 

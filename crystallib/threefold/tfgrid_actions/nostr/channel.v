@@ -22,7 +22,7 @@ fn (mut n NostrHandler) channel(action Action) ! {
 
 			n.client.create_channel_message(
 				channel_id: channel_id
-				content: content
+				content:    content
 				message_id: message_id
 				public_key: public_key
 			)!

@@ -1,18 +1,18 @@
 module ourdb_fs
+
 import freeflowuniverse.crystallib.data.ourdb
 
 // OurDBFS represents the virtual filesystem
 @[heap]
 pub struct OurDBFS {
 pub mut:
-	root_id u32        // ID of root directory
-	block_size u32     // Size of data blocks in bytes
-	data_dir string    // Directory to store OurDBFS data
-	metadata_dir string //Directory where we store the metadata
-	db_data &ourdb.OurDB   // Database instance for persistent storage
-	db_meta &ourdb.OurDB   // Database instance for metadata storage
+	root_id      u32          // ID of root directory
+	block_size   u32          // Size of data blocks in bytes
+	data_dir     string       // Directory to store OurDBFS data
+	metadata_dir string       // Directory where we store the metadata
+	db_data      &ourdb.OurDB // Database instance for persistent storage
+	db_meta      &ourdb.OurDB // Database instance for metadata storage
 }
-
 
 // get_root returns the root directory
 pub fn (mut fs OurDBFS) get_root() !&Directory {
@@ -25,10 +25,10 @@ pub fn (mut fs OurDBFS) get_root() !&Directory {
 		return &loaded_root
 	}
 	// Save new root to DB
-	mut myroot:= Directory {
-		metadata: Metadata{}
-		parent_id:0
-		myvfs:&fs
+	mut myroot := Directory{
+		metadata:  Metadata{}
+		parent_id: 0
+		myvfs:     &fs
 	}
 	myroot.save()!
 
@@ -39,9 +39,9 @@ pub fn (mut fs OurDBFS) get_root() !&Directory {
 fn (mut fs OurDBFS) load_entry(id u32) !FSEntry {
 	if data := fs.db_meta.get(id) {
 		// First byte is version, second byte indicates the type
-		//TODO: check we dont overflow filetype (u8 in boundaries of filetype)
+		// TODO: check we dont overflow filetype (u8 in boundaries of filetype)
 		entry_type := unsafe { FileType(data[1]) }
-		
+
 		match entry_type {
 			.directory {
 				mut dir := decode_directory(data) or {
@@ -51,9 +51,7 @@ fn (mut fs OurDBFS) load_entry(id u32) !FSEntry {
 				return dir
 			}
 			.file {
-				mut file := decode_file(data) or {
-					return error('Failed to decode file: ${err}')
-				}
+				mut file := decode_file(data) or { return error('Failed to decode file: ${err}') }
 				file.myvfs = unsafe { &fs }
 				return file
 			}
@@ -95,7 +93,5 @@ pub fn (mut fs OurDBFS) save_entry(entry FSEntry) !u32 {
 
 // delete_entry deletes an entry from the database
 pub fn (mut fs OurDBFS) delete_entry(id u32) ! {
-	fs.db_meta.delete(id) or {
-		return error('Failed to delete entry: ${err}')
-	}
+	fs.db_meta.delete(id) or { return error('Failed to delete entry: ${err}') }
 }

@@ -24,11 +24,11 @@ fn (mut h StellarHandler) account(action Action) ! {
 			ascending := action.params.get_default_false('ascending')
 
 			res := h.client.transactions(
-				account: account
-				limit: limit
+				account:        account
+				limit:          limit
 				include_failed: include_failed
-				cursor: cursor
-				ascending: ascending
+				cursor:         cursor
+				ascending:      ascending
 			)!
 
 			h.logger.info('Transactions: ${res}')

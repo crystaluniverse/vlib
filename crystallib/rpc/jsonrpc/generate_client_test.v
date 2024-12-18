@@ -11,16 +11,16 @@ pub fn test_generate_client_factory() ! {
 pub fn test_generate_client_method() ! {
 	client_struct := generate_client_struct('TestJsonRpcClient')
 	test_method := Function{
-		name: 'test_jsonrpc_call'
+		name:   'test_jsonrpc_call'
 		params: [Param{
 			name: 'key'
-			typ: Type{
+			typ:  Type{
 				symbol: 'string'
 			}
 		}]
 		result: Result{
 			name: 'result'
-			typ: Type{
+			typ:  Type{
 				symbol: 'string'
 			}
 		}

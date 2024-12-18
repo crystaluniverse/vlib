@@ -10,9 +10,9 @@ struct RoomOrderFlow {
 fn (mut f RoomOrderFlow) room_select() ! {
 	i := f.ui.ask_dropdown_int(
 		description: 'Which type of room do you want?'
-		items: ['penthouse', 'normal', 'single', 'appartment_room']
-		warning: 'Please select your right type of room'
-		reset: true
+		items:       ['penthouse', 'normal', 'single', 'appartment_room']
+		warning:     'Please select your right type of room'
+		reset:       true
 	)
 	// match	
 	smoker := f.ui.ask_yesno(description: 'Are you a smoker?')

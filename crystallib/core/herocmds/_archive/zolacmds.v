@@ -11,8 +11,8 @@ import cli { Command, Flag }
 // coderoot string //the location of coderoot if its another one
 pub fn cmd_zola(mut cmdroot Command) {
 	mut cmd_zola := Command{
-		name: 'zola'
-		description: '
+		name:          'zola'
+		description:   '
 ## Manage your ZolaSites
 
 example:
@@ -24,16 +24,16 @@ The -r will run it, can also do -e or -st to see sourcetree
 		
 		'
 		required_args: 0
-		usage: ''
-		execute: cmd_zola_execute
+		usage:         ''
+		execute:       cmd_zola_execute
 	}
 
 	cmd_run_add_flags(mut cmd_zola)
 
 	cmd_zola.add_flag(Flag{
-		flag: .string
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		name:        'name'
+		abbrev:      'n'
 		description: 'name of the zola.'
 	})
 

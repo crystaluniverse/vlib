@@ -68,7 +68,7 @@ pub fn do(args_ GeneratorArgs) ! {
 			if args.interactive {
 				args.name = myui.ask_question(
 					question: '\nwhat is the name of your module?'
-					default: name
+					default:  name
 				)!
 			} else {
 				args.name = name
@@ -78,7 +78,7 @@ pub fn do(args_ GeneratorArgs) ! {
 			if args.interactive {
 				args.title = myui.ask_question(
 					question: 'what is the tile of your installer, if empy same as name?'
-					default: args.name
+					default:  args.name
 				)!
 			} else {
 				args.title = args.name
@@ -91,7 +91,7 @@ pub fn do(args_ GeneratorArgs) ! {
 			if args.interactive {
 				args.build_deps = myui.ask_dropdown_multiple(
 					question: 'Which build deps do you want?'
-					items: [
+					items:    [
 						'none',
 						'docker',
 						'golang',
@@ -108,7 +108,7 @@ pub fn do(args_ GeneratorArgs) ! {
 			if args.interactive {
 				args.install_deps = myui.ask_dropdown_multiple(
 					question: 'Which install deps do you want?'
-					items: [
+					items:    [
 						'none',
 						'docker',
 						'golang',
@@ -126,7 +126,7 @@ pub fn do(args_ GeneratorArgs) ! {
 			if args.interactive {
 				args.supported_platforms = myui.ask_dropdown_multiple(
 					question: 'Which platforms do you support?'
-					items: ['ubuntu', 'osx', 'arch']
+					items:    ['ubuntu', 'osx', 'arch']
 				)!
 			} else {
 				return error('please specify supported_platforms')
@@ -136,19 +136,14 @@ pub fn do(args_ GeneratorArgs) ! {
 		// call the generic ones
 		mut args_generic := generic.GeneratorArgs
 		{
-			name:
-			args.name
-			configure_interactive:
-			args.configure_interactive
-			reset:
-			args.reset
-			interactive:
-			args.interactive
-			path:
-			args.path
-			clients:
-			args.clients
+			name:                  args.name
+			configure_interactive: args.configure_interactive
+			reset:                 args.reset
+			interactive:           args.interactive
+			path:                  args.path
+			clients:               args.clients
 		}
+
 		generic.clients_ask(args_generic)!
 		generic.generate(args_generic)!
 

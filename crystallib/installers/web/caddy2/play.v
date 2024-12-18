@@ -35,15 +35,15 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 			}
 
 			install(
-				reset: reset
-				start: start
-				restart: restart
-				stop: stop
-				homedir: homedir
+				reset:     reset
+				start:     start
+				restart:   restart
+				stop:      stop
+				homedir:   homedir
 				file_path: file_path
-				file_url: file_url
-				xcaddy: xcaddy
-				plugins: plugins
+				file_url:  file_url
+				xcaddy:    xcaddy
+				plugins:   plugins
 			)!
 		}
 	}

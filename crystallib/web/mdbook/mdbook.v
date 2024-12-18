@@ -12,7 +12,7 @@ import freeflowuniverse.crystallib.develop.gittools
 pub struct MDBook {
 pub mut:
 	name         string
-	books        &MDBooks[Config]             @[skip; str: skip]
+	books        &MDBooks[Config] @[skip; str: skip]
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	args         MDBookArgs
@@ -25,8 +25,8 @@ pub mut:
 	name  string @[required]
 	title string
 
-	foldlevel    int
-	printbook    bool
+	foldlevel int
+	printbook bool
 	// summary_url  string // url of the summary.md file
 	summary_path string // can also give the path to the summary file (can be the dir or the summary itself)
 	// doctree_url  string
@@ -35,8 +35,8 @@ pub mut:
 	build_path   string
 	production   bool
 	collections  []string
-	description string
-	export bool // whether mdbook should be built
+	description  string
+	export       bool // whether mdbook should be built
 }
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
@@ -70,12 +70,12 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		// link collections from col_path to src
 		mut p := pathlib.get_dir(path: col_path)!
 		mut entries := p.list(dirs_only: true, recursive: false)!
-		
+
 		if _ := collection_set[p.name()] {
 			return error('collection with name ${p.name()} already exists')
 		}
 		p.link('${src_path.path}/${p.name()}', true)!
-		
+
 		// QUESTION: why was this ever implemented per entry?
 		// for mut entry in entries.paths {
 		// 	if _ := collection_set[entry.name()] {
@@ -89,10 +89,10 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	}
 
 	mut book := MDBook{
-		args: args
-		path_build: pathlib.get_dir(path: args.build_path, create: true)!
+		args:         args
+		path_build:   pathlib.get_dir(path: args.build_path, create: true)!
 		path_publish: pathlib.get_dir(path: args.publish_path, create: true)!
-		books: &books
+		books:        &books
 	}
 
 	mut summary := book.summary(args_.production)!
@@ -169,10 +169,10 @@ You can ignore these pages, they are just to get links to work.
 		book.errors_report()!
 
 		summary.errors << SummaryItem{
-			level: 2
+			level:       2
 			description: 'errors mdbook'
-			pagename: 'errors_mdbook.md'
-			collection: 'additional'
+			pagename:    'errors_mdbook.md'
+			collection:  'additional'
 		}
 	}
 
@@ -215,8 +215,8 @@ pub fn (mut book MDBook) error(args ErrorArgs) {
 	path2 := pathlib.get(args.path)
 	e := collection.CollectionError{
 		path: path2
-		msg: args.msg
-		cat: args.cat
+		msg:  args.msg
+		cat:  args.cat
 	}
 	book.errors << e
 	console.print_stderr(args.msg)
@@ -235,7 +235,7 @@ pub fn (mut book MDBook) generate() ! {
 
 	book.summary_image_set()!
 	osal.exec(
-		cmd: '	
+		cmd:   '	
 			cd ${book.path_build.path}
 			mdbook build --dest-dir ${book.path_publish.path}
 			'

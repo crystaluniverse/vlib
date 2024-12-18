@@ -18,7 +18,7 @@ pub:
 
 pub fn (mut site ZolaSite) footer_add(args FooterAddArgs) ! {
 	site.footer = Footer{
-		logo: args.logo
+		logo:     args.logo
 		template: args.template
 	}
 }

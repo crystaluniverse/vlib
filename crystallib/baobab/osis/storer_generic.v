@@ -38,7 +38,7 @@ fn (mut storer Storer) generic_create_root_object_table[T]() ! {
 }
 
 // deletes an storer table belonging to a base object
-fn (mut storer Storer) generic_delete_table[T]()! {
+fn (mut storer Storer) generic_delete_table[T]() ! {
 	table_name := generic_get_table_name[T]()
 	delete_query := 'delete table ${table_name}'
 	storer.db.exec(delete_query)!

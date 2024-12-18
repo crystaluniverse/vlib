@@ -14,12 +14,12 @@ import time
 const instance_name = 'testinstance'
 
 pub fn test_juggler_run() ! {
-	mut j := get(name: '${juggler.instance_name}0')!
+	mut j := get(name: '${instance_name}0')!
 	spawn j.run(8085)
 }
 
 pub fn test_juggler_index() {
-	mut j := get(name: '${juggler.instance_name}1')!
+	mut j := get(name: '${instance_name}1')!
 	j.index(mut Context{})
 }
 
@@ -31,13 +31,13 @@ pub fn test_juggler_get_repo_playbook() ! {
 	}
 
 	mut j := get(
-		name: '${juggler.instance_name}3'
+		name:        '${instance_name}3'
 		config_path: '${coderoot}/github/freeflowuniverse/crystallib/crystallib/develop/juggler/testdata'
 	)!
 
 	// should return none since no cicd playbook exists for repo
 	if _ := j.get_repo_playbook(RepoArgs{
-		host: 'github'
+		host:      'github'
 		full_name: 'freeflowuniverse/webcomponents'
 	})
 	{
@@ -49,7 +49,7 @@ pub fn test_juggler_get_repo_playbook() ! {
 	// should return playbook in testdata since mock event is from crystallib
 	if mut pb := j.get_repo_playbook(RepoArgs{
 		full_name: 'freeflowuniverse/crystallib'
-		host: 'github'
+		host:      'github'
 	})
 	{
 		assert true
@@ -59,7 +59,7 @@ pub fn test_juggler_get_repo_playbook() ! {
 }
 
 pub fn test_juggler_trigger() {
-	mut j := get(name: '${juggler.instance_name}2')!
+	mut j := get(name: '${instance_name}2')!
 	j.trigger(mut Context{})
 
 	coderoot := if 'CODEROOT' in os.environ() && os.environ()['CODEROOT'] != '' {
@@ -69,7 +69,7 @@ pub fn test_juggler_trigger() {
 	}
 
 	j = get(
-		name: '${juggler.instance_name}4'
+		name:        '${instance_name}4'
 		config_path: '${coderoot}/github/freeflowuniverse/crystallib/crystallib/develop/juggler/testdata'
 	)!
 
@@ -79,18 +79,18 @@ pub fn test_juggler_trigger() {
 
 	mut con := httpconnection.new(
 		name: 'test'
-		url: 'http://localhost:8000'
+		url:  'http://localhost:8000'
 	)!
 
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'trigger'
-		data: json.encode(GiteaEvent{
-			ref: '/development'
+		data:   json.encode(GiteaEvent{
+			ref:        '/development'
 			repository: Repository{
 				full_name: 'freeflowuniverse/crystallib'
 				clone_url: 'https://github.com/...'
-				url: 'https://github.com/...'
+				url:       'https://github.com/...'
 			}
 		})
 	)!
@@ -109,10 +109,10 @@ pub fn test_juggler_str() {
 	}
 
 	mut j := configure(
-		name: '${juggler.instance_name}4'
+		name:        '${instance_name}4'
 		config_path: '${coderoot}/github/freeflowuniverse/crystallib/crystallib/develop/juggler/testdata'
-		host: '65.21.132.119'
-		port: 8000
+		host:        '65.21.132.119'
+		port:        8000
 	)!
 	juggler_info := j.info()
 	assert juggler_info == '=============== Juggler ===============

@@ -4,7 +4,7 @@ import v.ast
 import v.parser
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.codemodel { Module, CodeFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
+import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Function, Import, Module, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -86,10 +86,10 @@ pub fn parse_file(path string, vparser VParser) !CodeFile {
 	mut table := ast.new_table()
 	items := vparser.parse_vfile(file.path, mut table)
 	return CodeFile{
-		name: file.name().trim_string_right('.v')
+		name:    file.name().trim_string_right('.v')
 		imports: parse_imports(file.read()!)
-		consts: parse_consts(file.read()!)!
-		items: items
+		consts:  parse_consts(file.read()!)!
+		items:   items
 	}
 }
 
@@ -134,10 +134,10 @@ fn (vparser VParser) parse_vfile(path string, mut table ast.Table) []CodeItem {
 			}
 			if fn_decl.is_pub || !vparser.only_pub {
 				code << CodeItem(vparser.parse_vfunc(
-					fn_decl: fn_decl
-					table: table
+					fn_decl:  fn_decl
+					table:    table
 					comments: preceeding_comments
-					text: file_text
+					text:     file_text
 				))
 			}
 			preceeding_comments = []ast.Comment{}
@@ -155,8 +155,8 @@ fn (vparser VParser) parse_vfile(path string, mut table ast.Table) []CodeItem {
 				if sumtype_decl.is_pub || !vparser.only_pub {
 					code << CodeItem(vparser.parse_vsumtype(
 						sumtype_decl: sumtype_decl
-						table: table
-						comments: preceeding_comments
+						table:        table
+						comments:     preceeding_comments
 					))
 				}
 				preceeding_comments = []ast.Comment{}
@@ -174,8 +174,8 @@ fn (vparser VParser) parse_vfile(path string, mut table ast.Table) []CodeItem {
 			if struct_decl.is_pub || !vparser.only_pub {
 				code << CodeItem(vparser.parse_vstruct(
 					struct_decl: struct_decl
-					table: table
-					comments: preceeding_comments
+					table:       table
+					comments:    preceeding_comments
 				))
 			}
 			preceeding_comments = []ast.Comment{}
@@ -196,13 +196,13 @@ pub fn parse_module(path_ string, vparser VParser) !Module {
 	// fpref := &pref.Preferences{ // preferences for parsing
 	// 	is_fmt: true
 	// }
-	mut mod := Module {
+	mut mod := Module{
 		name: path.name()
 	}
 	if path.is_dir() {
 		dir_is_excluded := vparser.exclude_dirs.any(path.path.ends_with(it))
 		if dir_is_excluded {
-			return Module {
+			return Module{
 				...mod
 				files: code
 			}
@@ -224,7 +224,7 @@ pub fn parse_module(path_ string, vparser VParser) !Module {
 		if file_is_excluded || !path.path.ends_with('.v') {
 			return Module{
 				...mod
-				files:code
+				files: code
 			}
 		}
 		code << parse_file(path.path, vparser)!
@@ -258,8 +258,8 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	fn_params := args.fn_decl.params.filter(it.name != receiver_name)
 
 	receiver := Param{
-		name: receiver_name
-		typ: Type{
+		name:    receiver_name
+		typ:     Type{
 			symbol: receiver_type
 		}
 		mutable: args.fn_decl.rec_mut
@@ -267,14 +267,14 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 
 	params := vparser.parse_params(
 		comments: args.comments
-		params: fn_params
-		table: args.table
+		params:   fn_params
+		table:    args.table
 	)
 
 	result := vparser.parse_result(
-		comments: args.comments
+		comments:    args.comments
 		return_type: args.fn_decl.return_type
-		table: args.table
+		table:       args.table
 	)
 
 	mut fn_comments := []string{}
@@ -298,13 +298,13 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	fn_parsed := codemodel.parse_function(fn_text) or { panic(err) }
 
 	return Function{
-		name: args.fn_decl.short_name
+		name:        args.fn_decl.short_name
 		description: fn_comments.join(' ')
-		mod: args.fn_decl.mod
-		receiver: receiver
-		params: params
-		result: fn_parsed.result
-		body: fn_parsed.body
+		mod:         args.fn_decl.mod
+		receiver:    receiver
+		params:      params
+		result:      fn_parsed.result
+		body:        fn_parsed.body
 	}
 }
 
@@ -328,9 +328,9 @@ fn (vparser VParser) parse_params(args ParamsArgs) []Param {
 		}
 
 		params << Param{
-			name: param.name
+			name:        param.name
 			description: description
-			typ: Type{
+			typ:         Type{
 				symbol: args.table.type_to_str(param.typ).all_after_last('.')
 			}
 		}
@@ -356,9 +356,9 @@ fn (vparser VParser) parse_param(args ParamArgs) Param {
 	}
 
 	return Param{
-		name: args.param.name
+		name:        args.param.name
 		description: description
-		typ: Type{
+		typ:         Type{
 			symbol: args.table.type_to_str(args.param.typ).all_after_last('.')
 		}
 	}
@@ -394,9 +394,9 @@ fn (vparser VParser) parse_result(args ReturnArgs) Result {
 	return_symbol := args.table.type_to_str(args.return_type).all_after_last('.')
 
 	return Result{
-		name: name
+		name:        name
 		description: description
-		typ: Type{
+		typ:         Type{
 			symbol: return_symbol
 		}
 	}
@@ -426,12 +426,12 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	mut fields := vparser.parse_fields(args.struct_decl.fields, args.table)
 	fields << vparser.parse_embeds(args.struct_decl.embeds, args.table)
 	return Struct{
-		name: args.struct_decl.name.all_after_last('.')
+		name:        args.struct_decl.name.all_after_last('.')
 		description: comments.join(' ')
-		fields: fields
-		mod: args.struct_decl.name.all_before_last('.')
-		attrs: args.struct_decl.attrs.map(codemodel.Attribute{ name: it.name })
-		is_pub: args.struct_decl.is_pub
+		fields:      fields
+		mod:         args.struct_decl.name.all_before_last('.')
+		attrs:       args.struct_decl.attrs.map(codemodel.Attribute{ name: it.name })
+		is_pub:      args.struct_decl.is_pub
 	}
 }
 
@@ -450,9 +450,9 @@ fn (vparser VParser) parse_vsumtype(args VSumTypeArgs) Sumtype {
 	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
 
 	return Sumtype{
-		name: args.sumtype_decl.name.all_after_last('.')
+		name:        args.sumtype_decl.name.all_after_last('.')
 		description: comments.join(' ')
-		types: vparser.parse_variants(args.sumtype_decl.variants, args.table)
+		types:       vparser.parse_variants(args.sumtype_decl.variants, args.table)
 	}
 }
 
@@ -463,29 +463,29 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 		mut anon_struct := Struct{}
 		if table.type_to_str(field.typ).all_after_last('.').starts_with('_VAnon') {
 			anon_struct = vparser.parse_vstruct(
-				table: table
+				table:       table
 				struct_decl: field.anon_struct_decl
 			)
 		}
 
 		description := field.comments.map(it.text.trim_string_left('\u0001').trim_space()).join(' ')
 		fields_ << StructField{
-			attrs: field.attrs.map(codemodel.Attribute{
-				name: it.name
+			attrs:       field.attrs.map(codemodel.Attribute{
+				name:    it.name
 				has_arg: it.has_arg
-				arg: it.arg
+				arg:     it.arg
 			})
-			name: field.name
+			name:        field.name
 			anon_struct: anon_struct
 			description: description
-			typ: Type{
-				symbol: table.type_to_str(field.typ).all_after_last('.')
+			typ:         Type{
+				symbol:   table.type_to_str(field.typ).all_after_last('.')
 				is_array: table.type_to_str(field.typ).contains('[]')
-				is_map: table.type_to_str(field.typ).contains('map[')
+				is_map:   table.type_to_str(field.typ).contains('map[')
 			}
-			is_pub: field.is_pub
-			is_mut: field.is_mut
-			default: field.default_val
+			is_pub:      field.is_pub
+			is_mut:      field.is_mut
+			default:     field.default_val
 		}
 	}
 	return fields_

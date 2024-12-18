@@ -13,7 +13,7 @@ pub mut:
 // return a rpc mechanism
 pub fn (mut r Redis) rpc_get(key string) RedisRpc {
 	return RedisRpc{
-		key: key
+		key:   key
 		redis: r
 	}
 }
@@ -52,9 +52,9 @@ pub fn (mut q RedisRpc) call(args RPCArgs) !string {
 	now := time.now().unix()
 	message := Message{
 		ret_queue: retqueue
-		now: now
-		cmd: args.cmd
-		data: args.data
+		now:       now
+		cmd:       args.cmd
+		data:      args.data
 	}
 	encoded := json.encode(message)
 	q.redis.lpush(q.key, encoded)!
@@ -103,7 +103,7 @@ pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !st
 			datareturn := op(cmd, data) or {
 				response := Response{
 					result: ''
-					error: err.str()
+					error:  err.str()
 				}
 				encoded := json.encode(response)
 				q.redis.lpush(returnqueue, encoded)!
@@ -111,7 +111,7 @@ pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !st
 			}
 			response := Response{
 				result: datareturn
-				error: ''
+				error:  ''
 			}
 			encoded := json.encode(response)
 			q.redis.lpush(returnqueue, encoded)!

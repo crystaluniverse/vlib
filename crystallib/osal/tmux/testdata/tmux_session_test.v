@@ -25,15 +25,15 @@ fn test_session_create() {
 	tmux.start() or { panic('cannot start tmux: ${err}') }
 
 	mut s := Session{
-		tmux: &tmux
+		tmux:    &tmux
 		windows: map[string]&Window{}
-		name: 'testsession'
+		name:    'testsession'
 	}
 
 	mut s2 := Session{
-		tmux: &tmux
+		tmux:    &tmux
 		windows: map[string]&Window{}
-		name: 'testsession2'
+		name:    'testsession2'
 	}
 
 	// test testsession exists after session_create

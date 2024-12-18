@@ -62,12 +62,12 @@ pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 
 	if choice.contains(',') {
 		return c.ask_dropdown_int(
-			clear: true
+			clear:       true
 			description: args.description
-			all: args.all
-			items: args.items
-			default: args.default
-			warning: 'Choice needs to be a number larger than 0 and smaller than ${nr + 1}, and only 1 return'
+			all:         args.all
+			items:       args.items
+			default:     args.default
+			warning:     'Choice needs to be a number larger than 0 and smaller than ${nr + 1}, and only 1 return'
 		)!
 	}
 
@@ -82,12 +82,12 @@ pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 
 	if choice_int < 1 || choice_int > nr {
 		return c.ask_dropdown_int(
-			clear: true
+			clear:       true
 			description: args.description
-			all: args.all
-			items: args.items
-			default: args.default
-			warning: 'Choice needs to be a number larger than 0 and smaller than ${nr + 1}'
+			all:         args.all
+			items:       args.items
+			default:     args.default
+			warning:     'Choice needs to be a number larger than 0 and smaller than ${nr + 1}'
 		)!
 	}
 	return choice_int
@@ -105,12 +105,12 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
 	mut args := args_
 	args.items.sort()
 	res := c.ask_dropdown_internal(
-		clear: args.clear
-		description: args.description
-		all: args.all
-		items: args.items
-		default: args.default
-		warning: args.warning
+		clear:          args.clear
+		description:    args.description
+		all:            args.all
+		items:          args.items
+		default:        args.default
+		warning:        args.warning
 		choice_message: '(multiple is possible)'
 	)!
 	if res == '999999' {
@@ -133,12 +133,12 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
 
 	if bad {
 		return c.ask_dropdown_multiple(
-			clear: true
+			clear:       true
 			description: args.description
-			all: args.all
-			items: args.items
-			default: args.default
-			warning: 'Choice needs to be a number larger than 0 and smaller than ${nr + 1}'
+			all:         args.all
+			items:       args.items
+			default:     args.default
+			warning:     'Choice needs to be a number larger than 0 and smaller than ${nr + 1}'
 		)!
 	}
 
@@ -162,12 +162,12 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) !string {
 		panic("can't do ask_... when in silent mode")
 	}
 	res := c.ask_dropdown_int(
-		clear: args.clear
+		clear:       args.clear
 		description: args.description
-		all: args.all
-		items: args.items
-		default: args.default
-		warning: ''
+		all:         args.all
+		items:       args.items
+		default:     args.default
+		warning:     ''
 	)!
 	if res == 999998 {
 		if args.default.len > 1 {

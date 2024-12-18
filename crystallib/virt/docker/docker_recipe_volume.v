@@ -16,7 +16,7 @@ pub mut:
 pub fn (mut b DockerBuilderRecipe) add_volume(args VolumeArgs) ! {
 	mut item := VolumeItem{
 		mount_points: args.mount_points
-		recipe: &b
+		recipe:       &b
 	}
 	b.items << item
 }

@@ -33,7 +33,7 @@ pub fn (mut path Path) is_file() bool {
 pub fn is_image(path string) bool {
 	if path.contains('.') {
 		ext := path.all_after_last('.').to_lower()
-		return pathlib.image_exts.contains(ext)
+		return image_exts.contains(ext)
 	}
 	return false
 }
@@ -41,13 +41,13 @@ pub fn is_image(path string) bool {
 pub fn (path Path) is_image() bool {
 	e := path.extension().to_lower()
 	// console.print_debug("is image: $e")
-	return pathlib.image_exts.contains(e)
+	return image_exts.contains(e)
 }
 
 pub fn (path Path) is_image_jpg_png() bool {
 	e := path.extension().to_lower()
 	// console.print_debug("is image: $e")
-	return pathlib.image_exts_basic.contains(e)
+	return image_exts_basic.contains(e)
 }
 
 pub fn (path Path) is_link() bool {

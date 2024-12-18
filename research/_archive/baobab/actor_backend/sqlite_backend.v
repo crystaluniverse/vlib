@@ -9,7 +9,7 @@ pub struct SQLiteBackend {
 
 @[table: 'root_objects']
 pub struct RootObject {
-	id    int    @[primary; sql: serial] // unique serial root object id
+	id    int @[primary; sql: serial] // unique serial root object id
 	table string // name of table root object is in
 }
 
@@ -132,9 +132,9 @@ pub fn (mut backend SQLiteBackend) list[T]() ![]T {
 @[params]
 pub struct FilterParams {
 	indices     map[string]string // map of index values that are being filtered by, in order of priority.
-	limit       int  // limit to the number of values to be returned, in order of priority
-	fuzzy       bool // if fuzzy matching is enabled in matching indices
-	matches_all bool // if results should match all indices or any
+	limit       int               // limit to the number of values to be returned, in order of priority
+	fuzzy       bool              // if fuzzy matching is enabled in matching indices
+	matches_all bool              // if results should match all indices or any
 }
 
 // filter lists root objects of type T that match provided index parameters and params.

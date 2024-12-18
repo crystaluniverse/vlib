@@ -21,7 +21,7 @@ pub fn generate_actor(params GenerateActorParams) !string {
 			return error('error')
 		}
 		methods << generate_actor_method(
-			function: function
+			function:      function
 			params_struct: params_structs[0]
 		)
 	}

@@ -11,7 +11,7 @@ pub struct Client {
 }
 
 enum State {
-	ok  @[json: 'ok']
+	ok     @[json: 'ok']
 	error  @[json: 'error']
 }
 

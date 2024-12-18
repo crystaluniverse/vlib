@@ -62,9 +62,9 @@ pub fn new(args_ RMBClientArgs) !RMBClient {
 	mut redis := redisclient.core_get(RedisURL{})!
 
 	mut cl := RMBClient{
-		redis: redis
-		relay_url: args.relay_url
-		tfchain_url: args.tfchain_url
+		redis:            redis
+		relay_url:        args.relay_url
+		tfchain_url:      args.tfchain_url
 		tfchain_mnemonic: args.tfchain_mnemonic
 	}
 	if args.relay_url == '' || args.tfchain_url == '' {

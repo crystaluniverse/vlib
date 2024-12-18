@@ -7,9 +7,7 @@ import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 import rand
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_k8s(mut fp FlagParser, mut t TFGridClient) !K8sCluster {
 	fp.usage_example('deploy [options]')
@@ -28,10 +26,10 @@ fn deploy_k8s(mut fp FlagParser, mut t TFGridClient) !K8sCluster {
 	mut workers := []K8sNode{}
 	for i in 0 .. number_of_workers {
 		mut worker := K8sNode{
-			name: 'wr${i}'
-			farm_id: u32(farm_id)
-			cpu: cpu
-			memory: memory
+			name:      'wr${i}'
+			farm_id:   u32(farm_id)
+			cpu:       cpu
+			memory:    memory
 			disk_size: disk_size
 			public_ip: public_ip
 		}
@@ -40,14 +38,14 @@ fn deploy_k8s(mut fp FlagParser, mut t TFGridClient) !K8sCluster {
 	}
 
 	cluster := K8sCluster{
-		name: name
-		token: token
+		name:    name
+		token:   token
 		ssh_key: ssh_key
-		master: K8sNode{
-			name: 'master'
-			farm_id: u32(farm_id)
-			cpu: cpu
-			memory: memory
+		master:  K8sNode{
+			name:      'master'
+			farm_id:   u32(farm_id)
+			cpu:       cpu
+			memory:    memory
 			disk_size: disk_size
 			public_ip: public_ip
 		}
@@ -87,17 +85,17 @@ fn add_k8s_worker(mut fp FlagParser, mut t TFGridClient) !K8sCluster {
 	cpu, memory, disk_size := get_k8s_capacity(capacity)!
 
 	worker := K8sNode{
-		name: 'wr' + rand.string(6)
-		farm_id: u32(farm_id)
-		cpu: cpu
-		memory: memory
+		name:      'wr' + rand.string(6)
+		farm_id:   u32(farm_id)
+		cpu:       cpu
+		memory:    memory
 		disk_size: disk_size
 		public_ip: public_ip
 	}
 
 	return t.add_worker_to_k8s_cluster(
 		cluster_name: name
-		worker: worker
+		worker:       worker
 	)!
 }
 
@@ -110,7 +108,7 @@ fn remove_k8s_worker(mut fp FlagParser, mut t TFGridClient) !K8sCluster {
 
 	return t.remove_worker_from_k8s_cluster(
 		cluster_name: name
-		worker_name: worker_name
+		worker_name:  worker_name
 	)!
 }
 
@@ -149,7 +147,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Load{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

@@ -38,25 +38,25 @@ fn new_lookup(config LookupConfig) !LookupTable {
 		}
 
 		// For disk-based lookup, create empty file if it doesn't exist
-		if !os.exists(os.join_path(config.lookuppath, ourdb.data_file_name)) {
+		if !os.exists(os.join_path(config.lookuppath, data_file_name)) {
 			data := []u8{len: int(config.size * config.keysize), init: 0}
-			os.write_file(os.join_path(config.lookuppath, ourdb.data_file_name), data.bytestr())!
+			os.write_file(os.join_path(config.lookuppath, data_file_name), data.bytestr())!
 		}
 
 		return LookupTable{
 			// size: config.size
-			data: []u8{}
-			keysize: config.keysize
-			lookuppath: config.lookuppath
+			data:        []u8{}
+			keysize:     config.keysize
+			lookuppath:  config.lookuppath
 			incremental: get_incremental_info(config)
 		}
 	}
 
 	return LookupTable{
 		// size: config.size
-		data: []u8{len: int(config.size * config.keysize), init: 0}
-		keysize: config.keysize
-		lookuppath: ''
+		data:        []u8{len: int(config.size * config.keysize), init: 0}
+		keysize:     config.keysize
+		lookuppath:  ''
 		incremental: get_incremental_info(config)
 	}
 }
@@ -67,13 +67,14 @@ fn get_incremental_info(config LookupConfig) ?u32 {
 	}
 
 	if config.lookuppath.len > 0 {
-		if !os.exists(os.join_path(config.lookuppath, ourdb.incremental_file_name)) {
+		if !os.exists(os.join_path(config.lookuppath, incremental_file_name)) {
 			// Create a separate file for storing the incremental value
-			os.write_file(os.join_path(config.lookuppath, ourdb.incremental_file_name),
-				'0') or { panic('failed to write .inc file: ${err}') }
+			os.write_file(os.join_path(config.lookuppath, incremental_file_name), '0') or {
+				panic('failed to write .inc file: ${err}')
+			}
 		}
 
-		inc_str := os.read_file(os.join_path(config.lookuppath, ourdb.incremental_file_name)) or {
+		inc_str := os.read_file(os.join_path(config.lookuppath, incremental_file_name)) or {
 			panic('failed to read .inc file: ${err}')
 		}
 
@@ -237,16 +238,16 @@ fn (mut lut LookupTable) delete(x u32) ! {
 fn (lut LookupTable) export_data(path string) ! {
 	if lut.lookuppath.len > 0 {
 		// For disk-based lookup, copy both the main file and incremental value
-		os.cp(lut.get_data_file_path()!, os.join_path(path, ourdb.data_file_name))!
+		os.cp(lut.get_data_file_path()!, os.join_path(path, data_file_name))!
 		if _ := lut.incremental {
-			os.cp(lut.get_inc_file_path()!, os.join_path(path, ourdb.incremental_file_name))!
+			os.cp(lut.get_inc_file_path()!, os.join_path(path, incremental_file_name))!
 		}
 		return
 	}
 
-	os.write_file(os.join_path(path, ourdb.data_file_name), lut.data.bytestr())!
+	os.write_file(os.join_path(path, data_file_name), lut.data.bytestr())!
 	if incremental := lut.incremental {
-		os.write_file(os.join_path(path, ourdb.incremental_file_name), incremental.str())!
+		os.write_file(os.join_path(path, incremental_file_name), incremental.str())!
 	}
 }
 
@@ -306,10 +307,10 @@ fn (lut LookupTable) export_sparse(path string) ! {
 			}
 		}
 	}
-	os.write_file(os.join_path(path, ourdb.data_file_name), output.bytestr())!
+	os.write_file(os.join_path(path, data_file_name), output.bytestr())!
 	// Also export the incremental value
 	if incremental := lut.incremental {
-		os.write_file(os.join_path(path, ourdb.incremental_file_name), incremental.str())!
+		os.write_file(os.join_path(path, incremental_file_name), incremental.str())!
 	}
 }
 
@@ -317,30 +318,30 @@ fn (lut LookupTable) export_sparse(path string) ! {
 fn (mut lut LookupTable) import_data(path string) ! {
 	if lut.lookuppath.len > 0 {
 		// For disk-based lookup, copy both files
-		os.cp(os.join_path(path, ourdb.data_file_name), lut.get_data_file_path()!)!
+		os.cp(os.join_path(path, data_file_name), lut.get_data_file_path()!)!
 
 		if _ := lut.incremental {
-			os.cp(os.join_path(path, ourdb.incremental_file_name), os.join_path(lut.lookuppath,
-				ourdb.incremental_file_name))!
+			os.cp(os.join_path(path, incremental_file_name), os.join_path(lut.lookuppath,
+				incremental_file_name))!
 			// Update the incremental value in memory
-			inc_str := os.read_file(os.join_path(path, ourdb.incremental_file_name))!
+			inc_str := os.read_file(os.join_path(path, incremental_file_name))!
 			println('inc_str: ${inc_str}')
 			lut.incremental = inc_str.u32()
 		}
 		return
 	}
 
-	lut.data = os.read_bytes(os.join_path(path, ourdb.data_file_name))!
+	lut.data = os.read_bytes(os.join_path(path, data_file_name))!
 	if _ := lut.incremental {
 		// Import the incremental value
-		inc_str := os.read_file(os.join_path(path, ourdb.incremental_file_name))!
+		inc_str := os.read_file(os.join_path(path, incremental_file_name))!
 		lut.incremental = inc_str.u32()
 	}
 }
 
 // Method to import a sparse lookup table
 fn (mut lut LookupTable) import_sparse(path string) ! {
-	sparse_data := os.read_bytes(os.join_path(path, ourdb.data_file_name))!
+	sparse_data := os.read_bytes(os.join_path(path, data_file_name))!
 	entry_size := int(lut.keysize)
 	chunk_size := 4 + entry_size // 4 bytes for position + entry_size for value
 
@@ -362,7 +363,7 @@ fn (mut lut LookupTable) import_sparse(path string) ! {
 
 	if _ := lut.incremental {
 		// Import the incremental value
-		inc_str := os.read_file(os.join_path(path, ourdb.incremental_file_name))!
+		inc_str := os.read_file(os.join_path(path, incremental_file_name))!
 		lut.incremental = inc_str.u32()
 	}
 }
@@ -372,11 +373,11 @@ fn (lut LookupTable) get_data_file_path() !string {
 		return error('lookup table is memory based')
 	}
 
-	return os.join_path(lut.lookuppath, ourdb.data_file_name)
+	return os.join_path(lut.lookuppath, data_file_name)
 }
 
 fn (lut LookupTable) get_inc_file_path() !string {
 	_ := lut.incremental or { return error('incremental mode is disabled') }
 
-	return os.join_path(lut.lookuppath, ourdb.incremental_file_name)
+	return os.join_path(lut.lookuppath, incremental_file_name)
 }

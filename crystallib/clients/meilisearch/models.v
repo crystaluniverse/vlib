@@ -152,15 +152,15 @@ pub mut:
 
 struct SearchResponse[T] {
 pub mut:
-	hits                []T							@[json: 'hits']
-	offset              int               			@[json: 'offset']
-	limit               int               			@[json: 'limit']
-	estimated_total_hits int              			@[json: 'estimatedTotalHits']
-	total_hits          int               			@[json: 'totalHits']
-	total_pages         int               			@[json: 'totalPages']
-	hits_per_page       int               			@[json: 'hitsPerPage']
-	page                int               			@[json: 'page']
-	facet_stats         map[string]map[string]f64 	@[json: 'facetStats']
-	processing_time_ms  int               			@[json: 'processingTimeMs']
-	query               string            			@[json: 'query']
+	hits                 []T                       @[json: 'hits']
+	offset               int                       @[json: 'offset']
+	limit                int                       @[json: 'limit']
+	estimated_total_hits int                       @[json: 'estimatedTotalHits']
+	total_hits           int                       @[json: 'totalHits']
+	total_pages          int                       @[json: 'totalPages']
+	hits_per_page        int                       @[json: 'hitsPerPage']
+	page                 int                       @[json: 'page']
+	facet_stats          map[string]map[string]f64 @[json: 'facetStats']
+	processing_time_ms   int                       @[json: 'processingTimeMs']
+	query                string                    @[json: 'query']
 }

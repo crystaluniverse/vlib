@@ -7,9 +7,7 @@ import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 import rand
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_zdb(mut fp FlagParser, mut t TFGridClient) !ZDBDeployment {
 	fp.usage_example('deploy [options]')
@@ -23,12 +21,12 @@ fn deploy_zdb(mut fp FlagParser, mut t TFGridClient) !ZDBDeployment {
 	_ := fp.finalize()!
 
 	zdb := ZDBDeployment{
-		node_id: u32(node_id)
-		name: name
+		node_id:  u32(node_id)
+		name:     name
 		password: password
-		public: public
-		size: u32(size)
-		mode: mode
+		public:   public
+		size:     u32(size)
+		mode:     mode
 	}
 
 	return t.deploy_zdb(zdb)!
@@ -87,7 +85,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Load{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

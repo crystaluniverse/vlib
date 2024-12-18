@@ -28,13 +28,13 @@ pub mut:
 //```
 pub fn (db DB) new_base(args DBBaseNewArgs) !Base {
 	b := Base{
-		gid: smartid.gid(cid_str: db.cid.str())!
-		params: paramsparser.new(args.params)!
-		name: args.name
+		gid:         smartid.gid(cid_str: db.cid.str())!
+		params:      paramsparser.new(args.params)!
+		name:        args.name
 		description: args.description
-		mtime: ourtime.new(args.mtime)!
-		ctime: ourtime.new(args.ctime)!
-		remarks: args.remarks
+		mtime:       ourtime.new(args.mtime)!
+		ctime:       ourtime.new(args.ctime)!
+		remarks:     args.remarks
 	}
 	return b
 }
@@ -71,17 +71,17 @@ pub fn (db DB) set_data(args_ DBSetArgs) ! {
 	args.index_string['name'] = args.baseobj.name
 
 	create(
-		cid: db.cid
-		objtype: db.objtype
-		index_int: args.index_int.keys()
+		cid:          db.cid
+		objtype:      db.objtype
+		index_int:    args.index_int.keys()
 		index_string: args.index_string.keys()
 	)!
 	set(
-		gid: args.gid
-		objtype: db.objtype
-		index_int: args.index_int
+		gid:          args.gid
+		objtype:      db.objtype
+		index_int:    args.index_int
 		index_string: args.index_string
-		data: args.data
+		data:         args.data
 	)!
 }
 
@@ -181,11 +181,11 @@ pub fn (db DB) find_base(base_args BaseFindArgs, args_ DBFindArgs) ![][]u8 {
 		args.query_int.delete(t)
 	}
 	mut argsi := DBFindArgsI{
-		cid: db.cid
-		objtype: db.objtype
-		query_int: args.query_int
-		query_string: args.query_string
-		query_int_less: args.query_int_less
+		cid:               db.cid
+		objtype:           db.objtype
+		query_int:         args.query_int
+		query_string:      args.query_string
+		query_int_less:    args.query_int_less
 		query_int_greater: args.query_int_greater
 	}
 	argsi.complete(base_args)! // this fills in the base_args into the other args
@@ -239,7 +239,7 @@ pub fn (db DB) base_decoder_heroscript(txt string) ![]DecoderActionItem {
 				}
 			}
 			res << DecoderActionItem{
-				base: o
+				base:   o
 				params: p
 			}
 		}

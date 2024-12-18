@@ -16,9 +16,9 @@ pub fn (mut j Juggler) start() ! {
 	mut sm := startupmanager.get()!
 
 	sm.new(
-		name: 'juggler'
-		cmd: cmd
-		env: {
+		name:  'juggler'
+		cmd:   cmd
+		env:   {
 			'HOME': os.home_dir()
 		}
 		start: true

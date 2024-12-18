@@ -17,7 +17,7 @@ pub fn (mut h HTTP) add_route(route string, handles []Handle) ! {
 		handle: [
 			Handle{
 				handler: 'subroute'
-				routes: [
+				routes:  [
 					Route{
 						@match: [
 							Match{
@@ -27,7 +27,7 @@ pub fn (mut h HTTP) add_route(route string, handles []Handle) ! {
 						handle: [
 							Handle{
 								handler: 'subroute'
-								routes: [Route{
+								routes:  [Route{
 									handle: handles
 								}]
 							},
@@ -51,16 +51,16 @@ pub fn (mut h HTTP) add_file_server(args FileServer) ! {
 		handle: [
 			Handle{
 				handler: 'subroute'
-				routes: [
+				routes:  [
 					Route{
 						handle: [
 							Handle{
 								handler: 'vars'
-								root: args.root
+								root:    args.root
 							},
 							Handle{
 								handler: 'file_server'
-								hide: ['/etc/caddy/Caddyfile']
+								hide:    ['/etc/caddy/Caddyfile']
 							},
 						]
 					},
@@ -89,7 +89,7 @@ pub fn (mut h HTTP) add_reverse_proxy(args ReverseProxy) ! {
 		handle: [
 			Handle{
 				handler: 'subroute'
-				routes: [
+				routes:  [
 					Route{
 						handle: [
 							reverse_proxy_handle([args.from]),
@@ -147,7 +147,7 @@ pub fn (mut route Route) add_basic_auth(username string, password string) ! {
 	if !found {
 		route.handle << Handle{
 			handler: 'subroute'
-			routes: [
+			routes:  [
 				Route{
 					handle: [basic_auth_handle(username, password)!]
 				},

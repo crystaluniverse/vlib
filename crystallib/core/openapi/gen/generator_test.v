@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.codemodel { Struct, StructField, Type }
 
 fn test_generate_client() {
 	mut gen := ClientGenerator{
-		api_name: 'testapi'
+		api_name:      'testapi'
 		client_struct: Struct{
 			name: '${'testapi'.title()}Client'
 		}
@@ -20,18 +20,18 @@ fn test_generate_client() {
 
 fn test_generate_model() {
 	mut gen := ClientGenerator{
-		api_name: 'testapi'
+		api_name:      'testapi'
 		client_struct: Struct{
 			name: '${'testapi'.title()}Client'
 		}
 	}
 	model_file := gen.generate_model([
 		Struct{
-			name: 'SomeModel'
+			name:   'SomeModel'
 			fields: [
 				StructField{
 					name: 'text'
-					typ: Type{
+					typ:  Type{
 						symbol: 'string'
 					}
 				},

@@ -36,7 +36,7 @@ pub fn (mut client TwinClient) algorand_create(name string) !BlockChainCreateMod
 
 pub fn (mut client TwinClient) algorand_init(name string, secret string) !NameAddressMnemonicModel {
 	data := NameSecretModel{
-		name: name
+		name:   name
 		secret: secret
 	}
 	response := client.transport.send('algorand.init', json.encode(data).str())!
@@ -71,7 +71,7 @@ pub fn (mut client TwinClient) algorand_get(name string) !BlockChainCreateModel 
 
 pub fn (mut client TwinClient) algorand_sign(name string, content string) !BlockChainSignResponseModel {
 	data := BlockchainSignModel{
-		name: name
+		name:    name
 		content: content
 	}
 	response := client.transport.send('algorand.sign', json.encode(data).str())!
@@ -80,10 +80,10 @@ pub fn (mut client TwinClient) algorand_sign(name string, content string) !Block
 
 pub fn (mut client TwinClient) algorand_pay(name string, address_dest string, amount f64, description string) !AlgorandPayResponseModel {
 	data := AlgorandPayModel{
-		name: name
+		name:         name
 		address_dest: address_dest
-		amount: amount
-		description: description
+		amount:       amount
+		description:  description
 	}
 	response := client.transport.send('algorand.pay', json.encode(data).str())!
 	return json.decode(AlgorandPayResponseModel, response.data)

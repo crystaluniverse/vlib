@@ -47,9 +47,9 @@ pub mut:
 	is_pub      bool
 	is_mut      bool
 	is_ref      bool
-	anon_struct Struct      @[str: skip] // sometimes fields may hold anonymous structs
+	anon_struct Struct @[str: skip] // sometimes fields may hold anonymous structs
 	typ         Type
-	structure   Struct      @[str: skip]
+	structure   Struct @[str: skip]
 }
 
 pub struct Attribute {
@@ -108,11 +108,11 @@ pub fn parse_function(code_ string) !Function {
 
 	body := if code.contains('{') { code.all_after('{').all_before_last('}') } else { '' }
 	return Function{
-		name: name
+		name:     name
 		receiver: receiver
-		params: params
-		result: result
-		body: body
+		params:   params
+		result:   result
+		body:     body
 	}
 }
 
@@ -127,8 +127,8 @@ pub fn parse_param(code_ string) !Param {
 		return error('invalid param format: ${code_}')
 	}
 	return Param{
-		name: split[0]
-		typ: Type{
+		name:    split[0]
+		typ:     Type{
 			symbol: split[1]
 		}
 		mutable: is_mut
@@ -139,12 +139,12 @@ pub fn parse_result(code_ string) !Result {
 	code := code_.replace(' ', '').trim_space()
 
 	return Result{
-		result: code_.starts_with('!')
+		result:   code_.starts_with('!')
 		optional: code_.starts_with('?')
-		typ: Type{
-			symbol: code.trim('!?')
+		typ:      Type{
+			symbol:      code.trim('!?')
 			is_optional: code.starts_with('?')
-			is_result: code.starts_with('!')
+			is_result:   code.starts_with('!')
 		}
 	}
 }
@@ -174,13 +174,13 @@ pub mut:
 // todo: maybe make 'is_' fields methods?
 pub struct Type {
 pub mut:
-	is_reference bool   @[str: skip]
-	is_map       bool   @[str: skip]
+	is_reference bool @[str: skip]
+	is_map       bool @[str: skip]
 	is_array     bool
-	is_mutable   bool   @[str: skip]
-	is_shared    bool   @[str: skip]
-	is_optional  bool   @[str: skip]
-	is_result    bool   @[str: skip]
+	is_mutable   bool @[str: skip]
+	is_shared    bool @[str: skip]
+	is_optional  bool @[str: skip]
+	is_result    bool @[str: skip]
 	symbol       string
 	mod          string @[str: skip]
 }

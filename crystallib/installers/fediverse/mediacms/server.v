@@ -52,8 +52,8 @@ pub fn server_get(name_ string) !Server {
 		myconfig := json.decode(Config, data)!
 
 		mut server := Server{
-			name: name
-			config: myconfig
+			name:        name
+			config:      myconfig
 			path_config: pathlib.get_dir(path: '${myconfig.dest}/cfg', create: true)!
 		}
 

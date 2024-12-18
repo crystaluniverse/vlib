@@ -14,9 +14,9 @@ fn test_vm_deploy() ! {
 	chain_network := ChainNetwork.main // User your desired network
 	mut deployer := new_deployer(mnemonics, chain_network)!
 	deployer.vm_deploy(
-		name: 'test_vm'
+		name:            'test_vm'
 		deployment_name: 'test_deployment'
-		nodeid: 24
-		pub_sshkeys: [ssh_key]
+		nodeid:          24
+		pub_sshkeys:     [ssh_key]
 	)!
 }

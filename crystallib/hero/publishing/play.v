@@ -1,16 +1,16 @@
 module publishing
 
-import freeflowuniverse.crystallib.web.mdbook { MDBook }
+import freeflowuniverse.crystallib.web.mdbook
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.core.playbook {Action}
-import freeflowuniverse.crystallib.data.paramsparser {Params}
+import freeflowuniverse.crystallib.core.playbook { Action }
+import freeflowuniverse.crystallib.data.paramsparser { Params }
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
 pub fn play(mut plbook playbook.PlayBook) ! {
 	// first lets configure are publisher
-	if mut action := plbook.action_get(actor: 'publisher' name:'configure') {
+	if mut action := plbook.action_get(actor: 'publisher', name: 'configure') {
 		play_configure(mut action)!
 	}
 
@@ -71,29 +71,29 @@ fn play_new_collection(mut p Params) ! {
 
 	mut tree := publisher.tree
 	tree.scan_concurrent(
-		path: path
-		git_url: url
+		path:      path
+		git_url:   url
 		git_reset: reset
-		git_pull: pull
+		git_pull:  pull
 	)!
 	publisher.tree = tree
 }
 
 fn play_book_define(mut params Params) ! {
-	summary_url:= params.get_default('summary_url', '')!
+	summary_url := params.get_default('summary_url', '')!
 	summary_path := if summary_url == '' {
 		params.get('summary_path') or {
 			return error('both summary url and summary path cannot be empty')
-		} 
+		}
 	} else {
 		get_summary_path(summary_url)!
 	}
-	
+
 	name := params.get('name')!
 	publisher.new_book(
-		name: name
-		title: params.get_default('title', name)!
-		collections: params.get_list('collections')!
+		name:         name
+		title:        params.get_default('title', name)!
+		collections:  params.get_list('collections')!
 		summary_path: summary_path
 	)!
 }
@@ -107,7 +107,7 @@ fn play_book_publish(p Params) ! {
 
 fn get_summary_path(summary_url string) !string {
 	mut gs := gittools.get()!
-	repo := gs.get_repo(url:summary_url, reset: false, pull: false)!
+	repo := gs.get_repo(url: summary_url, reset: false, pull: false)!
 
 	// get the path corresponding to the summary_url dir/file
 	summary_path := repo.get_path_of_url(summary_url)!

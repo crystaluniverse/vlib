@@ -19,11 +19,11 @@ pub struct QuantumSafeFSConfig {
 
 pub struct Encryption {
 	algorithm string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
-	key       []u8   // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
+	key       []u8 // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
 }
 
 pub struct QuantumSafeMeta {
-	type_  string = 'ZDB'            @[json: 'type'] // configuration for the metadata store to use, currently only ZDB is supported.
+	type_  string = 'ZDB' @[json: 'type']         // configuration for the metadata store to use, currently only ZDB is supported.
 	config QuantumSafeConfig
 }
 

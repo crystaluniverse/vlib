@@ -14,7 +14,7 @@ fn macro_alias(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	mut defobj := Def{
 		pageid: state.page.id
-		name: state.page.name
+		name:   state.page.name
 		hidden: true
 	}
 

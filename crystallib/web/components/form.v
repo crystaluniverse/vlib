@@ -2,7 +2,7 @@ module components
 
 pub struct Form {
 pub:
-	id string
+	id      string
 	content IComponent
 }
 
@@ -13,9 +13,9 @@ pub fn (form Form) html() string {
 pub struct IncrementalInput {
 pub:
 	label string
-	typ string
+	typ   string
 }
 
 pub fn (input IncrementalInput) html() string {
-	return($tmpl('templates/incremental.html'))
+	return $tmpl('templates/incremental.html')
 }

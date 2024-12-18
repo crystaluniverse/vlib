@@ -2,17 +2,16 @@ module components
 
 pub struct Input {
 pub:
-	id string
-	name string
-	label string
+	id          string
+	name        string
+	label       string
 	placeholder string
-	required bool
-	typ string
-	value string
+	required    bool
+	typ         string
+	value       string
 }
 
 pub fn (input Input) html() string {
-
 	mut tags := []string{}
 	if input.typ != '' {
 		tags << 'type="${input.typ}"'
@@ -20,7 +19,7 @@ pub fn (input Input) html() string {
 	if input.required {
 		tags << 'required'
 	}
-	if input.id != ''{
+	if input.id != '' {
 		tags << 'id="${input.id}"'
 	}
 	if input.name != '' {
@@ -39,11 +38,11 @@ pub fn (input Input) html() string {
 	if input.label != '' {
 		str = '<label for="${input.name}">${input.label}\n${str}</label>'
 	}
-	
+
 	return str
 }
 
-pub struct Dropdown{
+pub struct Dropdown {
 pub:
 	label string
 	items []NavItem
@@ -61,7 +60,7 @@ pub fn (dropdown Dropdown) html() string {
 
 pub struct Select {
 pub:
-	name string
+	name    string
 	options []Opt
 }
 
@@ -73,11 +72,11 @@ pub fn (input Select) html() string {
 pub struct Opt {
 pub:
 	content string
-	value string
+	value   string
 }
 
 pub fn (option Opt) html() string {
-    return '<option value="${option.value}">${option.content}</option>'
+	return '<option value="${option.value}">${option.content}</option>'
 }
 
 pub struct SearchBar {

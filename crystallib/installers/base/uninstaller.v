@@ -16,10 +16,10 @@ pub fn osx_uninstall_containers() ! {
 
 	containers_uninstall_file := $embed_file('templates/containers_uninstall.sh')
 	osal.exec(
-		cmd: containers_uninstall_file.to_string()
-		stdout: false
+		cmd:          containers_uninstall_file.to_string()
+		stdout:       false
 		ignore_error: false
-		shell: true
+		shell:        true
 	) or { return error('cannot uninstall containers, something went wrong.\n${err}') }
 
 	// will never come here because of shell: true

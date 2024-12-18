@@ -118,30 +118,30 @@ pub fn (mut client MeilisearchClient) update_documents(uid string, documents str
 @[params]
 struct SearchArgs {
 pub mut:
-	q                          string 			@[json: 'q'; required]
-	offset                     int    			@[json: 'offset']
-	limit                      int = 20    		@[json: 'limit']
-	hits_per_page              int = 1    		@[json: 'hitsPerPage']
-	page                       int = 1    		@[json: 'page']
+	q                          string @[json: 'q'; required]
+	offset                     int    @[json: 'offset']
+	limit                      int = 20    @[json: 'limit']
+	hits_per_page              int = 1    @[json: 'hitsPerPage']
+	page                       int = 1    @[json: 'page']
 	filter                     ?string
 	facets                     ?[]string
-	attributes_to_retrieve     []string = ['*'] @[json: 'attributesToRetrieve']
-	attributes_to_crop         ?[]string 		@[json: 'attributesToCrop']
-	crop_length                int    = 10      @[json: 'cropLength']
-	crop_marker                string = '...'   @[json: 'cropMarker']
-	attributes_to_highlight    ?[]string 		@[json: 'attributesToHighlight']
-	highlight_pre_tag          string = '<em>'  @[json: 'highlightPreTag']
-	highlight_post_tag         string = '</em>' @[json: 'highlightPostTag']
-	show_matches_position      bool      		@[json: 'showMatchesPosition']
+	attributes_to_retrieve     []string = ['*']  @[json: 'attributesToRetrieve']
+	attributes_to_crop         ?[]string @[json: 'attributesToCrop']
+	crop_length                int    = 10       @[json: 'cropLength']
+	crop_marker                string = '...'    @[json: 'cropMarker']
+	attributes_to_highlight    ?[]string @[json: 'attributesToHighlight']
+	highlight_pre_tag          string = '<em>'    @[json: 'highlightPreTag']
+	highlight_post_tag         string = '</em>'    @[json: 'highlightPostTag']
+	show_matches_position      bool      @[json: 'showMatchesPosition']
 	sort                       ?[]string
-	matching_strategy          string = 'last'  @[json: 'matchingStrategy']
-	show_ranking_score         bool     		@[json: 'showRankingScore']
-	show_ranking_score_details bool     		@[json: 'showRankingScoreDetails']
-	ranking_score_threshold    ?f64     		@[json: 'rankingScoreThreshold']
+	matching_strategy          string = 'last'   @[json: 'matchingStrategy']
+	show_ranking_score         bool     @[json: 'showRankingScore']
+	show_ranking_score_details bool     @[json: 'showRankingScoreDetails']
+	ranking_score_threshold    ?f64     @[json: 'rankingScoreThreshold']
 	attributes_to_search_on    []string = ['*'] @[json: 'attributesToSearchOn']
 	hybrid                     ?map[string]string
 	vector                     ?[]f64
-	retrieve_vectors           bool 			@[json: 'retrieveVectors']
+	retrieve_vectors           bool @[json: 'retrieveVectors']
 	locales                    ?[]string
 }
 
@@ -159,24 +159,25 @@ pub fn (mut client MeilisearchClient) search[T](uid string, args SearchArgs) !Se
 
 @[params]
 struct FacetSearchArgs {
-   	facet_name            ?string	@[json: 'facetName'] // Facet name to search values on
-	facet_query           ?string 	@[json: 'facetQuery'] // Search query for a given facet value. Defaults to placeholder search if not specified.
-    q                     string 	// Query string
-    filter                ?string   // Filter queries by an attribute's value
-    matching_strategy     string = "last" @[json: 'matchingStrategy']  	// Strategy used to match query terms within documents
-    attributes_to_search_on ?[]string  @[json: 'attributesToSearchOn'] 	// Restrict search to the specified attributes
+	facet_name              ?string @[json: 'facetName']  // Facet name to search values on
+	facet_query             ?string @[json: 'facetQuery'] // Search query for a given facet value. Defaults to placeholder search if not specified.
+	q                       string  // Query string
+	filter                  ?string // Filter queries by an attribute's value
+	matching_strategy       string = 'last'    @[json: 'matchingStrategy']                        // Strategy used to match query terms within documents
+	attributes_to_search_on ?[]string @[json: 'attributesToSearchOn'] // Restrict search to the specified attributes
 }
+
 @[params]
 struct FacetSearchHitsResponse {
-	value  string   @[json: 'value'] // Facet value matching the facetQuery
-	count  int      @[json: 'count'] // Number of documents with a facet value matching value
+	value string @[json: 'value'] // Facet value matching the facetQuery
+	count int    @[json: 'count'] // Number of documents with a facet value matching value
 }
 
 @[params]
 struct FacetSearchResponse {
-	facet_hits       		[]FacetSearchHitsResponse   @[json: 'facetHits'] 	// Facet value matching the facetQuery
-    facet_query            string   @[json: 'facetQuery'] 		// The original facetQuery
-    processing_time_ms     int      @[json: 'processingTimeMs'] // Processing time of the query
+	facet_hits         []FacetSearchHitsResponse @[json: 'facetHits']        // Facet value matching the facetQuery
+	facet_query        string                    @[json: 'facetQuery']       // The original facetQuery
+	processing_time_ms int                       @[json: 'processingTimeMs'] // Processing time of the query
 }
 
 pub fn (mut client MeilisearchClient) facet_search(uid string, args FacetSearchArgs) !FacetSearchResponse {
@@ -191,35 +192,35 @@ pub fn (mut client MeilisearchClient) facet_search(uid string, args FacetSearchA
 }
 
 @[params]
-struct SimilarDocumentsArgs{
-	id                       SimilarDocumentsID			@[json: "id"]                     			// Identifier of the target document (mandatory)
-    embedder                 string       = "default"	@[json: "embedder"] 	// Embedder to use when computing recommendations
-    attributes_to_retrieve   []string     = ["*"] 		@[json: "attributesToRetrieve"] 			// Attributes to display in the returned documents
-    offset                   int          				@[json: "offset"]      						// Number of documents to skip
-    limit                    int          = 20 			@[json: "limit"]      						// Maximum number of documents returned
-    filter                   ?string      				@[json: "filter"]                  			// Filter queries by an attribute's value
-    show_ranking_score       bool         				@[json: "showRankingScore"]  				// Display the global ranking score of a document
-    show_ranking_score_details bool       				@[json: "showRankingScoreDetails"] 			// Display detailed ranking score information
-    ranking_score_threshold  ?f64         				@[json: "rankingScoreThreshold"]   			// Exclude results with low ranking scores
-    retrieve_vectors         bool         				@[json: "retrieveVectors"] 					// Return document vector data
+struct SimilarDocumentsArgs {
+	id                         SimilarDocumentsID @[json: 'id']                      // Identifier of the target document (mandatory)
+	embedder                   string   = 'default'             @[json: 'embedder']                        // Embedder to use when computing recommendations
+	attributes_to_retrieve     []string = ['*']           @[json: 'attributesToRetrieve']                            // Attributes to display in the returned documents
+	offset                     int                @[json: 'offset']                  // Number of documents to skip
+	limit                      int = 20                @[json: 'limit']                               // Maximum number of documents returned
+	filter                     ?string            @[json: 'filter']                  // Filter queries by an attribute's value
+	show_ranking_score         bool               @[json: 'showRankingScore']        // Display the global ranking score of a document
+	show_ranking_score_details bool               @[json: 'showRankingScoreDetails'] // Display detailed ranking score information
+	ranking_score_threshold    ?f64               @[json: 'rankingScoreThreshold']   // Exclude results with low ranking scores
+	retrieve_vectors           bool               @[json: 'retrieveVectors']         // Return document vector data
 }
 
 type SimilarDocumentsID = string | int
+
 @[params]
 struct SimilarDocumentsResponse {
-	hits                []SimilarDocumentsHit    	@[json: 'hits']                	// List of hit items
-    id                  string						@[json: 'id']                  	// Identifier of the response
-    processing_time_ms  int       					@[json: 'processingTimeMs']    	// Processing time in milliseconds
-    limit               int       = 20       		@[json: 'limit']    			// Maximum number of documents returned
-    offset              int              			@[json: 'offset']   			// Number of documents to skip
-    estimated_total_hits int      					@[json: 'estimatedTotalHits']  	// Estimated total number of hits
+	hits                 []SimilarDocumentsHit @[json: 'hits']               // List of hit items
+	id                   string                @[json: 'id']                 // Identifier of the response
+	processing_time_ms   int                   @[json: 'processingTimeMs']   // Processing time in milliseconds
+	limit                int = 20                   @[json: 'limit']                          // Maximum number of documents returned
+	offset               int                   @[json: 'offset']             // Number of documents to skip
+	estimated_total_hits int                   @[json: 'estimatedTotalHits'] // Estimated total number of hits
 }
 
 struct SimilarDocumentsHit {
-    id    SimilarDocumentsID 		@[json: 'id']    // Identifier of the hit item
-    title string 					@[json: 'title'] // Title of the hit item
+	id    SimilarDocumentsID @[json: 'id']    // Identifier of the hit item
+	title string             @[json: 'title'] // Title of the hit item
 }
-
 
 pub fn (mut client MeilisearchClient) similar_documents(uid string, args SimilarDocumentsArgs) !SimilarDocumentsResponse {
 	req := httpconnection.Request{

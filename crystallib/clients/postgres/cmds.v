@@ -100,8 +100,8 @@ pub fn (mut self PostgresClient[Config]) backup(args BackupParams) ! {
 		cmd := '
 			export PGPASSWORD=\'${config.password}\'
 			pg_dump -h ${config.host} -p ${config.port} -U ${config.user} --dbname=${args.dbname} --format=c > "${args.dest}/${args.dbname}.bak"
-			'
-		// console.print_debug(cmd)
+			' // console.print_debug(cmd)
+
 		osal.exec(cmd: cmd, stdout: true)!
 	}
 }

@@ -30,8 +30,12 @@ pub fn (mut j Juggler) triggers(mut ctx Context) veb.Result {
 // This is how endpoints are defined in veb. This is the index route
 pub fn (mut j Juggler) activity(mut ctx Context) veb.Result {
 	j.update_plays() or { return ctx.server_error('Failed to update play statuses') }
-	plays := j.osis.generic_list[Play]() or { return ctx.server_error('Unable to list plays ${err}') }.reverse()
-	events := j.osis.generic_list[Event]() or { return ctx.server_error('Unable to list plays ${err}') }
+	plays := j.osis.generic_list[Play]() or {
+		return ctx.server_error('Unable to list plays ${err}')
+	}.reverse()
+	events := j.osis.generic_list[Event]() or {
+		return ctx.server_error('Unable to list plays ${err}')
+	}
 	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/activity.html'))
 }
 
@@ -65,12 +69,12 @@ pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 	mut response := 'Successfully triggered the plays:'
 	for script_id in trigger.script_ids {
 		mut play := Play{
-			event_id: event_id
-			script_id: script_id
-			start: time.now()
+			event_id:   event_id
+			script_id:  script_id
+			start:      time.now()
 			trigger_id: triggers[0].id
-			output: 'job.output'
-			status: .starting
+			output:     'job.output'
+			status:     .starting
 		}
 		play.id = j.osis.generic_new[Play](play) or { panic('this shouldnt happen ${err}') }
 
@@ -125,24 +129,24 @@ pub fn (mut j Juggler) script(mut ctx Context, id string) veb.Result {
 @['/script/:id/play']
 pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 	trigger_id := j.osis.generic_new[Trigger](Trigger{
-		name: 'Custom push'
+		name:        'Custom push'
 		description: 'Trigger to customly play event'
-		script_ids: [id.u32()]
+		script_ids:  [id.u32()]
 	}) or { return ctx.server_error('Failed to create trigger') }
 
 	event_id := j.osis.generic_new[Event](Event{
-		subject: 'admin'
+		subject:   'admin'
 		object_id: id.u32()
-		action: .manual
-		time: time.now()
+		action:    .manual
+		time:      time.now()
 	}) or { return ctx.server_error('Failed to create event') }
 
 	mut play := Play{
-		event_id: event_id
-		script_id: id.u32()
-		start: time.now()
+		event_id:   event_id
+		script_id:  id.u32()
+		start:      time.now()
 		trigger_id: trigger_id
-		status: .starting
+		status:     .starting
 	}
 
 	play.id = j.osis.generic_new[Play](play) or { panic('this shouldnt happen ${err}') }
@@ -173,13 +177,13 @@ pub fn (mut j Juggler) run_play(play Play) ! {
 	}
 	mut sm := startupmanager.get() or { panic('failed to get sm ${err}') }
 	sm.new(
-		name: 'juggler_play${play.id}'
-		cmd: command
-		env: {
+		name:    'juggler_play${play.id}'
+		cmd:     command
+		env:     {
 			'HOME': os.home_dir()
 		}
 		restart: false
-		start: true
+		start:   true
 	) or { panic('failed to start sm ${err}') }
 }
 
@@ -256,9 +260,9 @@ pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
 
 	repository := j.osis.generic_get[Repository](event.object_id) or {
 		Repository{
-			name: ''
-			owner: 'null'
-			host: 'null'
+			name:   ''
+			owner:  'null'
+			host:   'null'
 			branch: 'null'
 		}
 		// return ctx.server_error('repo with id <${event.object_id}> not found')
@@ -290,7 +294,7 @@ pub fn (j &Juggler) login_post(mut ctx Context) veb.Result {
 		sub: 'admin'
 		iss: 'juggler'
 	)
-	signed_token := token.sign(juggler.jwt_secret)
+	signed_token := token.sign(jwt_secret)
 	ctx.set_cookie(name: 'access_token', value: signed_token, path: '')
 	return j.index(mut ctx)
 }

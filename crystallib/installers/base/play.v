@@ -19,7 +19,7 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 			develop := p.get_default_false('develop')
 
 			install(
-				reset: reset
+				reset:   reset
 				develop: develop
 			)!
 		}

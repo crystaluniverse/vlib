@@ -7,38 +7,36 @@ import encoding.xml
 import freeflowuniverse.crystallib.ui.console
 import net.urllib
 
-
 @['/:path...'; LOCK]
 fn (mut app App) lock_handler(path string) vweb.Result {
 	// Not yet working
 	// TODO: Test with multiple clients
-    resource := app.req.url
-    owner := app.get_header('Owner')
-    if owner.len == 0 {
-        app.set_status(400, 'Bad Request')
-        return app.text('Owner header is required.')
-    }
+	resource := app.req.url
+	owner := app.get_header('Owner')
+	if owner.len == 0 {
+		app.set_status(400, 'Bad Request')
+		return app.text('Owner header is required.')
+	}
 
-    depth := if app.get_header('Depth').len > 0 { app.get_header('Depth').int() } else { 0 }
-    timeout := if app.get_header('Timeout').len > 0 { app.get_header('Timeout').int() } else { 3600 }
+	depth := if app.get_header('Depth').len > 0 { app.get_header('Depth').int() } else { 0 }
+	timeout := if app.get_header('Timeout').len > 0 { app.get_header('Timeout').int() } else { 3600 }
 
-    token := app.lock_manager.lock(resource, owner, depth, timeout) or {
-        app.set_status(423, 'Locked')
-        return app.text('Resource is already locked.')
-    }
+	token := app.lock_manager.lock(resource, owner, depth, timeout) or {
+		app.set_status(423, 'Locked')
+		return app.text('Resource is already locked.')
+	}
 
-    app.set_status(200, 'OK')
-    app.add_header('Lock-Token', token)
-    return app.text('Lock granted with token: $token')
+	app.set_status(200, 'OK')
+	app.add_header('Lock-Token', token)
+	return app.text('Lock granted with token: ${token}')
 }
-
 
 @['/:path...'; UNLOCK]
 fn (mut app App) unlock_handler(path string) vweb.Result {
 	// Not yet working
 	// TODO: Test with multiple clients
-    resource := app.req.url
-    token := app.get_header('Lock-Token')
+	resource := app.req.url
+	token := app.get_header('Lock-Token')
 	if token.len == 0 {
 		console.print_stderr('Unlock failed: `Lock-Token` header required.')
 		app.set_status(400, 'Bad Request')
@@ -51,10 +49,9 @@ fn (mut app App) unlock_handler(path string) vweb.Result {
 	}
 
 	console.print_stderr('Resource is not locked or token mismatch.')
-    app.set_status(409, 'Conflict')
-    return app.text('Resource is not locked or token mismatch')
+	app.set_status(409, 'Conflict')
+	return app.text('Resource is not locked or token mismatch')
 }
-
 
 @['/:path...'; get]
 fn (mut app App) get_file(path string) vweb.Result {
@@ -250,8 +247,8 @@ fn (mut app App) propfind(path string) vweb.Result {
 
 	doc := xml.XMLDocument{
 		root: xml.XMLNode{
-			name: 'D:multistatus'
-			children: responses
+			name:       'D:multistatus'
+			children:   responses
 			attributes: {
 				'xmlns:D': 'DAV:'
 			}

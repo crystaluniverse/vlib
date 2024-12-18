@@ -3,7 +3,7 @@ module flist
 @[table: 'inode']
 pub struct Inode {
 pub mut:
-	ino    u64    @[primary; sql: serial]
+	ino    u64 @[primary; sql: serial]
 	parent u64
 	name   string
 	size   u64

@@ -16,7 +16,7 @@ pub fn new_handler() !RPCProcessorHandler {
 		return error('Failed to create Redis client: ${err}')
 	}
 	return RPCProcessorHandler{
-		name: 'rpcprocessor_handler'
+		name:    'rpcprocessor_handler'
 		methods: ['get_handler']
 		// redis_client: redis_client
 		queue: redis_client.queue_get('rpcprocessor_handler')

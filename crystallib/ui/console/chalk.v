@@ -82,7 +82,7 @@ pub const reset = '${prefix}0${suffix}'
 // }
 // ```
 pub fn color_fg(c ForegroundColor) string {
-	return '${console.prefix}${int(c)}${console.suffix}'
+	return '${prefix}${int(c)}${suffix}'
 }
 
 // will give ansi codes to change background color .
@@ -109,7 +109,7 @@ pub fn color_fg(c ForegroundColor) string {
 // }
 // ```
 pub fn color_bg(c BackgroundColor) string {
-	return '${console.prefix}${int(c)}${console.suffix}'
+	return '${prefix}${int(c)}${suffix}'
 }
 
 // will give ansi codes to change style .
@@ -126,11 +126,11 @@ pub fn color_bg(c BackgroundColor) string {
 // }
 // ```
 pub fn style(c Style) string {
-	return '${console.prefix}${int(c)}${console.suffix}'
+	return '${prefix}${int(c)}${suffix}'
 }
 
 pub fn reset() string {
-	return console.reset
+	return reset
 }
 
 pub struct PrintArgs {

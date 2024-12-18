@@ -14,9 +14,12 @@
 		},
 		{
 			"path": "../examples"
-		},		
+		},
 		{
 			"path": "../cli"
+		},
+		{
+			"path": "../../../../../private_new/tft-v-code"
 		}
 	],
 	"settings": {}

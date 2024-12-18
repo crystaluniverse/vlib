@@ -6,7 +6,7 @@ pub fn (mut a0 Amount) exchange(target_currency_ Currency) !Amount {
 	if a0.currency != target_currency {
 		mut a3 := Amount{
 			currency: &target_currency
-			val: a0.val * a0.currency.usdval / target_currency.usdval
+			val:      a0.val * a0.currency.usdval / target_currency.usdval
 		}
 		return a3
 	}

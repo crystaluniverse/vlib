@@ -50,7 +50,7 @@ pub fn (mut auth Authenticator) register(identifier string) !Registration {
 		subject: sesh.session_id
 	)
 	return Registration{
-		user: user
+		user:   user
 		tokens: tkns
 	}
 }
@@ -67,7 +67,7 @@ pub fn (mut auth Authenticator) login(identifier string) !Registration {
 		subject: sesh.session_id
 	)
 	return Registration{
-		user: user
+		user:   user
 		tokens: tkns
 	}
 }

@@ -58,13 +58,13 @@ pub mut:
 	stdout             bool = true
 	stdout_log         bool = true
 	raise_error        bool = true // if false, will not raise an error but still error report
-	ignore_error       bool // means if error will just exit and not raise, there will be no error reporting
-	work_folder        string // location where cmd will be executed
+	ignore_error       bool              // means if error will just exit and not raise, there will be no error reporting
+	work_folder        string            // location where cmd will be executed
 	environment        map[string]string // env variables
 	ignore_error_codes []int
 	scriptpath         string // is the path where the script will be put which is executed
 	scriptkeep         bool   // means we don't remove the script
-	debug              bool    // if debug will put +ex in the script which is being executed and will make sure script stays
+	debug              bool   // if debug will put +ex in the script which is being executed and will make sure script stays
 	shell              bool   // means we will execute it in a shell interactive
 	retry              int
 	interactive        bool = true
@@ -163,8 +163,8 @@ pub fn exec(cmd Command) !Job {
 		return job
 	}
 	if !cmd.async {
-		job.execute_retry() or { 
-			//println(err)
+		job.execute_retry() or {
+			// println(err)
 			return err
 		}
 	}
@@ -177,13 +177,13 @@ pub fn (mut job Job) execute_retry() ! {
 	for x in 0 .. job.cmd.retry + 1 {
 		job.execute() or {
 			if x == job.cmd.retry {
-				//println(job)		
+				// println(job)		
 				return err
 			}
 		}
-		//println(job)
+		// println(job)
 		if job.status == .done {
-			//means we could execute we can stop
+			// means we could execute we can stop
 			return
 		}
 	}
@@ -267,7 +267,7 @@ pub fn (mut job Job) process() ! {
 			job.status = .error_timeout
 			if job.cmd.raise_error {
 				return JobError{
-					job: job
+					job:        job
 					error_type: .timeout
 				}
 			}
@@ -304,7 +304,7 @@ fn (mut job Job) read() ! {
 	out_error := p.pipe_read(.stderr) or { '' }
 	// console.print_debug(" OK")
 	if out_error.len > 0 {
-		if job.cmd.stdout {
+		if job.cmd.stdout && job.cmd.ignore_error == false {
 			console.print_stderr(out_error)
 		}
 		job.error += out_error
@@ -339,7 +339,7 @@ pub fn (mut job Job) close() ! {
 			}
 
 			je := JobError{
-				job: job
+				job:        job
 				error_type: .exec
 			}
 			if job.cmd.stdout {
@@ -363,7 +363,7 @@ pub fn (mut job Job) close() ! {
 
 	if job.cmd.raise_error && job.exit_code > 0 {
 		return JobError{
-			job: job
+			job:        job
 			error_type: .exec
 		}
 	}

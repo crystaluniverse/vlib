@@ -49,27 +49,27 @@ const person_heroscript = "
 "
 
 const person = Person{
-	id: 1
-	name: 'Bob'
-	age: 21
+	id:       1
+	name:     'Bob'
+	age:      21
 	birthday: time.new_time(
-		day: 12
+		day:   12
 		month: 12
-		year: 2012
+		year:  2012
 	)
-	car: Car{
+	car:      Car{
 		name: "Bob's car"
 		year: 2014
 	}
 	profiles: [
 		Profile{
 			platform: 'Github'
-			url: 'github.com/example'
+			url:      'github.com/example'
 		},
 	]
 }
 
 fn test_encode() ! {
-	person_script := encode[Person](encoderhero.person)!
-	assert person_script.trim_space() == encoderhero.person_heroscript.trim_space()
+	person_script := encode[Person](person)!
+	assert person_script.trim_space() == person_heroscript.trim_space()
 }

@@ -17,7 +17,7 @@ pub mut:
 // to do something like: 'FROM alpine:latest'
 pub fn (mut b DockerBuilderRecipe) add_run(args RunArgs) ! {
 	mut item := RunItem{
-		cmd: args.cmd
+		cmd:    args.cmd
 		recipe: &b
 	}
 	if item.cmd == '' {

@@ -16,11 +16,11 @@ pub mut:
 pub fn (mut vstor VSTOR) zdb_new(args ZDB) !ZDB {
 	// maintain all properties as defined before only change the ZDB's
 	mut zdb := ZDB{
-		address: args.address
-		port: args.port
+		address:   args.address
+		port:      args.port
 		namespace: args.namespace
-		secret: args.secret
-		location: args.location
+		secret:    args.secret
+		location:  args.location
 	}
 	return zdb
 }

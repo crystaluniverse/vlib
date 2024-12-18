@@ -17,23 +17,23 @@ fn test_create_and_update_deployment() ! {
 	twin_id := deployer.client.get_user_twin()!
 	println('your wireguard privatekey is ${user_privkey[0]}')
 	mut network := models.Znet{
-		ip_range: '10.1.0.0/16'
-		subnet: '10.1.1.0/24'
+		ip_range:              '10.1.0.0/16'
+		subnet:                '10.1.1.0/24'
 		wireguard_private_key: node_privkey[0] // node private key
 		wireguard_listen_port: 3012
-		peers: [
+		peers:                 [
 			models.Peer{
-				subnet: '10.1.2.0/24'
+				subnet:               '10.1.2.0/24'
 				wireguard_public_key: user_privkey[1] // user public key
-				allowed_ips: ['10.1.2.0/24', '100.64.1.2/32']
+				allowed_ips:          ['10.1.2.0/24', '100.64.1.2/32']
 			},
 		]
 	}
 	mut znet_workload := models.Workload{
-		version: 0
-		name: 'networkaa'
-		type_: models.workload_types.network
-		data: json.encode_pretty(network)
+		version:     0
+		name:        'networkaa'
+		type_:       models.workload_types.network
+		data:        json.encode_pretty(network)
 		description: 'test network2'
 	}
 
@@ -44,7 +44,7 @@ fn test_create_and_update_deployment() ! {
 	zmount_workload := zmount.to_workload(name: disk_name)
 
 	mount := models.Mount{
-		name: disk_name
+		name:       disk_name
 		mountpoint: '/disk1'
 	}
 
@@ -55,39 +55,39 @@ fn test_create_and_update_deployment() ! {
 	ip_workload := ip.to_workload(name: public_ip_name)
 
 	zmachine := models.Zmachine{
-		flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-		entrypoint: '/sbin/zinit init'
-		network: models.ZmachineNetwork{
-			public_ip: public_ip_name
+		flist:            'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+		entrypoint:       '/sbin/zinit init'
+		network:          models.ZmachineNetwork{
+			public_ip:  public_ip_name
 			interfaces: [
 				models.ZNetworkInterface{
 					network: 'networkaa'
-					ip: '10.1.1.3'
+					ip:      '10.1.1.3'
 				},
 			]
-			planetary: true
+			planetary:  true
 		}
 		compute_capacity: models.ComputeCapacity{
-			cpu: 1
+			cpu:    1
 			memory: i64(1024) * 1024 * 1024 * 2
 		}
-		env: {
+		env:              {
 			'SSH_KEY': pubkey
 		}
-		mounts: [mount]
+		mounts:           [mount]
 	}
 
 	mut zmachine_workload := models.Workload{
-		version: 0
-		name: 'vm2'
-		type_: models.workload_types.zmachine
-		data: json.encode(zmachine)
+		version:     0
+		name:        'vm2'
+		type_:       models.workload_types.zmachine
+		data:        json.encode(zmachine)
 		description: 'zmachine test'
 	}
 
 	zlogs := models.ZLogs{
 		zmachine: 'vm2'
-		output: 'wss://example_ip.com:9000'
+		output:   'wss://example_ip.com:9000'
 	}
 	zlogs_workload := zlogs.to_workload(name: 'myzlogswl')
 
@@ -98,17 +98,17 @@ fn test_create_and_update_deployment() ! {
 	zdb_workload := zdb.to_workload(name: 'myzdb')
 
 	mut deployment := models.Deployment{
-		version: 0
-		twin_id: twin_id
-		description: 'zm kjasdf1nafvbeaf1234t21'
-		workloads: [znet_workload, zmount_workload, zmachine_workload, zlogs_workload, zdb_workload,
-			ip_workload]
+		version:               0
+		twin_id:               twin_id
+		description:           'zm kjasdf1nafvbeaf1234t21'
+		workloads:             [znet_workload, zmount_workload, zmachine_workload, zlogs_workload,
+			zdb_workload, ip_workload]
 		signature_requirement: models.SignatureRequirement{
 			weight_required: 1
-			requests: [
+			requests:        [
 				models.SignatureRequest{
 					twin_id: twin_id
-					weight: 1
+					weight:  1
 				},
 			]
 		}
@@ -133,7 +133,7 @@ fn test_create_and_update_deployment() ! {
 	}
 
 	gw_name := models.GatewayNameProxy{
-		name: 'mygwname1'
+		name:     'mygwname1'
 		backends: ['http://[${zmachine_planetary_ip}]:9000']
 	}
 	gw_name_wl := gw_name.to_workload(name: 'mygwname1')

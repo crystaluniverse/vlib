@@ -10,7 +10,7 @@ pub mut:
 	content string // optional
 	params  Params
 	files   []embed_file.EmbedFileData
-	recipe  &DockerComposeRecipe       @[str: skip]
+	recipe  &DockerComposeRecipe @[str: skip]
 	render  bool = true
 	env     map[string]string
 	ports   []PortMap
@@ -45,10 +45,10 @@ pub fn (mut recipe DockerComposeRecipe) service_new(args ComposeServiceArgs) !&C
 		return error('name cannot be empty.')
 	}
 	mut cs := ComposeService{
-		recipe: &recipe
-		name: args.name
+		recipe:  &recipe
+		name:    args.name
 		content: args.content
-		image: args.image
+		image:   args.image
 	}
 	if args.content.len > 0 {
 		cs.render = false
@@ -121,7 +121,7 @@ pub fn (mut cs ComposeService) port_expose(indocker int, host int) ! {
 	// TODO: should check if hostport is free
 	mp := PortMap{
 		indocker: indocker
-		host: host
+		host:     host
 	}
 	cs.ports << mp
 }
@@ -129,7 +129,7 @@ pub fn (mut cs ComposeService) port_expose(indocker int, host int) ! {
 // make sure the service always restarts
 pub fn (mut cs ComposeService) volume_add(hostpath string, containerpath string) ! {
 	mut vm := VolumeMap{
-		hostpath: hostpath
+		hostpath:      hostpath
 		containerpath: containerpath
 	}
 	vm.check()!

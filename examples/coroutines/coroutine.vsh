@@ -3,9 +3,6 @@
 import coroutines
 import time
 
-
-
-
 fn foo(mut t Test) {
 	for {
 		println('hello from foo() a=${t.a}')
@@ -38,7 +35,6 @@ pub mut:
 mut t := Test{
 	a: 100
 }
-
 
 go foo(mut &t)
 go foo2(mut &t)

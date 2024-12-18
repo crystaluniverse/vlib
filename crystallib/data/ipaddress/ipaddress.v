@@ -105,7 +105,7 @@ pub fn new(addr_string string) !IPAddress {
 	mut ip := IPAddress{
 		addr: addr.trim_space()
 		port: port.int()
-		cat: cat
+		cat:  cat
 		mask: mask
 	}
 

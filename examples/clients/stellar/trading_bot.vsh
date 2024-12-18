@@ -9,15 +9,15 @@ import freeflowuniverse.crystallib.blockchain.stellar
 tft_issuer := 'GCGE3IQWC4QIOJ7WVLIHZMXSE623CMXWQVMK4JWSRX2V3TXZEW3RHDR6'
 
 mut bot := tradingbot.new(
-	account_secret: 'SDKKNNX5NSYR62BUMIAZM6JDIGCUHYLWOHLM7NWICPVCOEIBF544TGM2'
-	buying_asset_type: 'native'
-	selling_asset_code: 'TFT'
+	account_secret:       'SDKKNNX5NSYR62BUMIAZM6JDIGCUHYLWOHLM7NWICPVCOEIBF544TGM2'
+	buying_asset_type:    'native'
+	selling_asset_code:   'TFT'
 	selling_asset_issuer: tft_issuer
 	selling_target_price: 1000
-	buying_target_price: 0.0001
-	selling_amount: 10
-	buying_amount: 10
-	network: .testnet
+	buying_target_price:  0.0001
+	selling_amount:       10
+	buying_amount:        10
+	network:              .testnet
 )!
 
 bot.run()!

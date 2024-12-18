@@ -14,7 +14,7 @@ mut:
 // new creates a new OurDBVFS instance
 pub fn new(data_dir string, metadata_dir string) !&OurDBVFS {
 	mut core := ourdb_fs.new(
-		data_dir: data_dir
+		data_dir:     data_dir
 		metadata_dir: metadata_dir
 	)!
 
@@ -78,11 +78,11 @@ pub fn (mut self OurDBVFS) dir_list(path string) ![]vfscore.FSEntry {
 	mut dir := self.get_directory(path)!
 	mut entries := dir.children(false)!
 	mut result := []vfscore.FSEntry{}
-	
+
 	for entry in entries {
 		result << convert_to_vfscore_entry(entry)
 	}
-	
+
 	return result
 }
 
@@ -120,22 +120,22 @@ pub fn (mut self OurDBVFS) link_create(target_path string, link_path string) !vf
 	link_name := os.base(link_path)
 
 	mut parent_dir := self.get_directory(parent_path)!
-	
+
 	mut symlink := ourdb_fs.Symlink{
-		metadata: ourdb_fs.Metadata{
-			id: u32(time.now().unix())
-			name: link_name
-			file_type: .symlink
-			created_at: time.now().unix()
+		metadata:  ourdb_fs.Metadata{
+			id:          u32(time.now().unix())
+			name:        link_name
+			file_type:   .symlink
+			created_at:  time.now().unix()
 			modified_at: time.now().unix()
 			accessed_at: time.now().unix()
-			mode: 0o777
-			owner: 'user'
-			group: 'user'
+			mode:        0o777
+			owner:       'user'
+			group:       'user'
 		}
-		target: target_path
+		target:    target_path
 		parent_id: parent_dir.metadata.id
-		myvfs: self.core
+		myvfs:     self.core
 	}
 
 	parent_dir.add_symlink(symlink)!
@@ -167,7 +167,7 @@ fn (mut self OurDBVFS) get_entry(path string) !ourdb_fs.FSEntry {
 	for i := 0; i < parts.len; i++ {
 		found := false
 		children := current.children(false)!
-		
+
 		for child in children {
 			if child.metadata.name == parts[i] {
 				match child {
@@ -186,12 +186,12 @@ fn (mut self OurDBVFS) get_entry(path string) !ourdb_fs.FSEntry {
 				}
 			}
 		}
-		
+
 		if !found {
 			return error('Path not found: ${path}')
 		}
 	}
-	
+
 	return current
 }
 
@@ -208,20 +208,20 @@ fn convert_to_vfscore_entry(entry ourdb_fs.FSEntry) vfscore.FSEntry {
 		ourdb_fs.Directory {
 			return &DirectoryEntry{
 				metadata: convert_metadata(entry.metadata)
-				path: entry.metadata.name
+				path:     entry.metadata.name
 			}
 		}
 		ourdb_fs.File {
 			return &FileEntry{
 				metadata: convert_metadata(entry.metadata)
-				path: entry.metadata.name
+				path:     entry.metadata.name
 			}
 		}
 		ourdb_fs.Symlink {
 			return &SymlinkEntry{
 				metadata: convert_metadata(entry.metadata)
-				path: entry.metadata.name
-				target: entry.target
+				path:     entry.metadata.name
+				target:   entry.target
 			}
 		}
 	}
@@ -229,14 +229,14 @@ fn convert_to_vfscore_entry(entry ourdb_fs.FSEntry) vfscore.FSEntry {
 
 fn convert_metadata(meta ourdb_fs.Metadata) vfscore.Metadata {
 	return vfscore.Metadata{
-		name: meta.name
-		file_type: match meta.file_type {
+		name:        meta.name
+		file_type:   match meta.file_type {
 			.file { vfscore.FileType.file }
 			.directory { vfscore.FileType.directory }
 			.symlink { vfscore.FileType.symlink }
 		}
-		size: meta.size
-		created_at: meta.created_at
+		size:        meta.size
+		created_at:  meta.created_at
 		modified_at: meta.modified_at
 		accessed_at: meta.accessed_at
 	}

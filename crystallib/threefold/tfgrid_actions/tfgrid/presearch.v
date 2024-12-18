@@ -17,13 +17,13 @@ fn (mut t TFGridHandler) presearch(action Action) ! {
 			private_restore_key := action.params.get_default('private_restore_key', '')!
 
 			deploy_res := t.tfgrid.deploy_presearch(
-				name: name
-				farm_id: u64(farm_id)
-				ssh_key: ssh_key
-				disk_size: u32(disk_size)
-				public_ipv4: public_ipv4
-				registration_code: registration_code
-				public_restore_key: public_restore_key
+				name:                name
+				farm_id:             u64(farm_id)
+				ssh_key:             ssh_key
+				disk_size:           u32(disk_size)
+				public_ipv4:         public_ipv4
+				registration_code:   registration_code
+				public_restore_key:  public_restore_key
 				private_restore_key: private_restore_key
 			)!
 

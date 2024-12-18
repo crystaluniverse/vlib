@@ -14,8 +14,8 @@ pub mut:
 pub fn (mut vstor VSTOR) location_new(args Location) !Location {
 	// maintain all properties as defined before only change the ZDB's
 	mut location := Location{
-		address: args.address
-		name: args.name
+		address:     args.address
+		name:        args.name
 		description: args.description
 	}
 	return location

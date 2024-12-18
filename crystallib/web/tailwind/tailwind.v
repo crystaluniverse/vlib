@@ -45,7 +45,7 @@ pub fn new(args TailWindArgs) !Tailwind {
 	mut p := pathlib.get_dir(path: args.path_build, create: true)!
 
 	_ = pathlib.get_dir(
-		path: args.path_build
+		path:   args.path_build
 		create: true
 	)!
 

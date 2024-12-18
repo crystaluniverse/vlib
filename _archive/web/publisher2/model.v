@@ -55,9 +55,9 @@ fn (mut p Publisher) group_add(name_ string) &Group {
 pub fn (mut p Publisher) site_add(name_ string, type_ SiteType) &Site {
 	mut name := texttools.name_fix(name_)
 	mut u := Site{
-		name: name
+		name:      name
 		publisher: &p
-		sitetype: type_
+		sitetype:  type_
 	}
 	p.sites[name] = u
 	return &u
@@ -78,7 +78,7 @@ pub fn (mut p Publisher) site_acl_add(site_ string, acl &ACL) {
 
 pub fn (mut p Publisher) auth_add(email_req bool, email_auth bool) &Authentication {
 	mut auth := Authentication{
-		email_required: email_req
+		email_required:      email_req
 		email_authenticated: email_auth
 	}
 	return &auth
@@ -147,7 +147,7 @@ pub fn (user User) get_access(site Site) Access {
 		}
 		if right != Right.read || right != Right.write {
 			return Access{
-				right: Right.block
+				right:  Right.block
 				status: .no_access
 			}
 		}
@@ -160,21 +160,21 @@ pub fn (user User) get_access(site Site) Access {
 	if auth.email_required {
 		if user.emails.len == 0 {
 			return Access{
-				right: right
+				right:  right
 				status: .email_required
 			}
 		}
 		if auth.email_authenticated {
 			if !user.emails.any(it.authenticated) {
 				return Access{
-					right: right
+					right:  right
 					status: .auth_required
 				}
 			}
 		}
 	}
 	return Access{
-		right: right
+		right:  right
 		status: AccessStatus.ok
 	}
 }
@@ -200,7 +200,7 @@ pub fn (p Publisher) get_access(user User, sitename string) Access {
 		}
 		if right != Right.read || right != Right.write {
 			return Access{
-				right: Right.block
+				right:  Right.block
 				status: .no_access
 			}
 		}
@@ -213,21 +213,21 @@ pub fn (p Publisher) get_access(user User, sitename string) Access {
 	if auth.email_required {
 		if user.emails.len == 0 {
 			return Access{
-				right: right
+				right:  right
 				status: .email_required
 			}
 		}
 		if auth.email_authenticated {
 			if !user.emails.any(it.authenticated) {
 				return Access{
-					right: right
+					right:  right
 					status: .auth_required
 				}
 			}
 		}
 	}
 	return Access{
-		right: right
+		right:  right
 		status: .ok
 	}
 }
@@ -253,7 +253,7 @@ pub fn (mut p Publisher) ace_add_user(mut ace ACE, user &User) &ACE {
 
 pub fn (site Site) auth_add(email_required bool, email_authenticated bool, acl &ACL) &Authentication {
 	mut auth := Authentication{
-		email_required: email_required
+		email_required:      email_required
 		email_authenticated: email_authenticated
 	}
 	auth.acl << acl

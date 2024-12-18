@@ -33,9 +33,9 @@ pub fn (mut z RMBClient) get_storage_pools(dst u32) ![]ZosPool {
 	_ := []ZosPool{}
 	for o in objs {
 		res = ZosPool{
-			name: o.name
-			size: o.size
-			used: o.used
+			name:      o.name
+			size:      o.size
+			used:      o.used
 			pool_type: .dontknow // TODO
 		}
 	}

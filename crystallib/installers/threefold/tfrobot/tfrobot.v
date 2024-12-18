@@ -49,9 +49,9 @@ pub fn build() ! {
 
 	mut gs := gittools.get()!
 	mut repo := gs.get_repo(
-		url: 'https://github.com/threefoldtech/tfgrid-sdk-go'
+		url:   'https://github.com/threefoldtech/tfgrid-sdk-go'
 		reset: true
-		pull: true
+		pull:  true
 	)!
 
 	mut path := repo.get_path()!

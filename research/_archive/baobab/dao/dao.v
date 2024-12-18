@@ -9,7 +9,7 @@ pub struct DAO {
 pub mut:
 	accounts     map[string]&Account
 	pools        map[string]&Pool // a dao pool in line to currency
-	path         string // location where pool info is being stored
+	path         string           // location where pool info is being stored
 	time_current time.Time
 }
 

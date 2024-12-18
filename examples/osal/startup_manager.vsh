@@ -3,21 +3,21 @@
 import freeflowuniverse.crystallib.installers.infra.zinit as zinitinstaller
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 
-mut z:=zinitinstaller.get()!
+mut z := zinitinstaller.get()!
 z.destroy()!
 z.install()!
 
-println("zinit installed")
+println('zinit installed')
 
-cmd:= '/usr/local/bin/zinit init'
-name:= 'zinit'
+cmd := '/usr/local/bin/zinit init'
+name := 'zinit'
 
 mut sm := startupmanager.get()!
 println(sm.list()!)
 sm.new(
-	name: name
-	cmd: cmd
-	start:false
+	name:  name
+	cmd:   cmd
+	start: false
 )!
 
 println(sm.list()!)

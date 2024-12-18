@@ -37,15 +37,15 @@ pub fn install(args_ S3Config) ! {
 		}
 
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 15 * 1024
-			dest: '/tmp/garage'
-			reset: true
+			dest:       '/tmp/garage'
+			reset:      true
 		)!
 		console.print_debug('download garage done')
 		osal.cmd_add(
 			cmdname: 'garage'
-			source: '${dest.path}'
+			source:  '${dest.path}'
 		)!
 	}
 

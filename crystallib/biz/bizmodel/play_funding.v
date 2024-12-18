@@ -23,24 +23,19 @@ fn (mut m BizModel) funding_define_action(action Action) ! {
 	fundingtype := action.params.get_default('type', 'capital')!
 
 	m.sheet.row_new(
-		name: 'funding_${name}'
-		growth: investment
-		tags: 'funding type:${fundingtype}'
-		descr: descr
+		name:        'funding_${name}'
+		growth:      investment
+		tags:        'funding type:${fundingtype}'
+		descr:       descr
 		extrapolate: false
 	)!
-
 }
 
-
 fn (mut sim BizModel) funding_total() ! {
-
-
 	sim.sheet.group2row(
-		name: 'funding_total'
+		name:    'funding_total'
 		include: ['funding']
-		tags: 'pl'
-		descr: 'total funding'
+		tags:    'pl'
+		descr:   'total funding'
 	)!
-
 }

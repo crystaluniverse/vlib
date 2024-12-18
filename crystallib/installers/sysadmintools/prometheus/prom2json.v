@@ -30,7 +30,7 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 		}
 
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 3000
 			expand_dir: '/tmp/prometheus'
 		)!

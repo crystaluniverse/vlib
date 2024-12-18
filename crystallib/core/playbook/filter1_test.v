@@ -61,7 +61,7 @@ const text3 = "
 // test filter with only two names in filter
 fn test_filter1() ! {
 	mut plbook := new(
-		text: playbook.text3
+		text: text3
 	)!
 
 	assert plbook.actions.len == 10

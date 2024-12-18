@@ -114,7 +114,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 			}
 			v2 = v2.trim(',')
 			params.params << Param{
-				key: field.name
+				key:   field.name
 				value: v2
 			}
 		} $else $if field.typ is []int {
@@ -124,7 +124,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 			}
 			v2 = v2.trim(',')
 			params.params << Param{
-				key: field.name
+				key:   field.name
 				value: v2
 			}
 		} $else $if field.typ is []u32 {
@@ -134,7 +134,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 			}
 			v2 = v2.trim(',')
 			params.params << Param{
-				key: field.name
+				key:   field.name
 				value: v2
 			}
 		} $else $if field.typ is $struct {
@@ -149,7 +149,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 				if args.recursive {
 					child_params := encode(val)!
 					params.params << Param{
-						key: field.name
+						key:   field.name
 						value: child_params.export()
 					}
 				}

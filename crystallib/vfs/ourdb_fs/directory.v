@@ -8,10 +8,10 @@ pub type FSEntry = Directory | File | Symlink
 // Directory represents a directory in the virtual filesystem
 pub struct Directory {
 pub mut:
-	metadata Metadata  // Metadata from models_common.v
-	children []u32    // List of child entry IDs (instead of actual entries)
-	parent_id u32     // ID of parent directory (0 for root)
-	myvfs &OurDBFS @[skip]
+	metadata  Metadata // Metadata from models_common.v
+	children  []u32    // List of child entry IDs (instead of actual entries)
+	parent_id u32      // ID of parent directory (0 for root)
+	myvfs     &OurDBFS @[skip]
 }
 
 pub fn (mut self Directory) save() ! {
@@ -20,7 +20,9 @@ pub fn (mut self Directory) save() ! {
 
 // write creates a new file or writes to an existing file
 pub fn (mut dir Directory) write(name string, content string) !&File {
-	mut file := &File{myvfs:dir.myvfs}
+	mut file := &File{
+		myvfs: dir.myvfs
+	}
 	mut is_new := true
 
 	// Check if file exists
@@ -36,28 +38,27 @@ pub fn (mut dir Directory) write(name string, content string) !&File {
 				return error('${name} exists but is not a file')
 			}
 		}
-
 	}
 
 	if is_new {
 		// Create new file
 		current_time := time.now().unix()
 		file = &File{
-			metadata: Metadata{
-				id: u32(time.now().unix())
-				name: name
-				file_type: .file
-				size: u64(content.len)
-				created_at: current_time
+			metadata:  Metadata{
+				id:          u32(time.now().unix())
+				name:        name
+				file_type:   .file
+				size:        u64(content.len)
+				created_at:  current_time
 				modified_at: current_time
 				accessed_at: current_time
-				mode: 0o644
-				owner: 'user'
-				group: 'user'
+				mode:        0o644
+				owner:       'user'
+				group:       'user'
 			}
-			data: content
+			data:      content
 			parent_id: dir.metadata.id
-			myvfs: dir.myvfs
+			myvfs:     dir.myvfs
 		}
 
 		// Save new file to DB
@@ -94,7 +95,7 @@ pub fn (mut dir Directory) read(name string) !string {
 // str returns a formatted string of directory contents (non-recursive)
 pub fn (mut dir Directory) str() string {
 	mut result := '${dir.metadata.name}/\n'
-	
+
 	for child_id in dir.children {
 		if entry := dir.myvfs.load_entry(child_id) {
 			if entry is Directory {
@@ -112,7 +113,7 @@ pub fn (mut dir Directory) str() string {
 // printall prints the directory structure recursively
 pub fn (mut dir Directory) printall(indent string) !string {
 	mut result := '${indent}📁 ${dir.metadata.name}/\n'
-	
+
 	for child_id in dir.children {
 		mut entry := dir.myvfs.load_entry(child_id)!
 		if mut entry is Directory {
@@ -139,20 +140,20 @@ pub fn (mut dir Directory) mkdir(name string) !&Directory {
 
 	current_time := time.now().unix()
 	mut new_dir := Directory{
-		metadata: Metadata{
-			id: u32(time.now().unix())  // Use timestamp as ID
-			name: name
-			file_type: .directory
-			created_at: current_time
+		metadata:  Metadata{
+			id:          u32(time.now().unix()) // Use timestamp as ID
+			name:        name
+			file_type:   .directory
+			created_at:  current_time
 			modified_at: current_time
 			accessed_at: current_time
-			mode: 0o755  // default directory permissions
-			owner: 'user'  // TODO: get from system
-			group: 'user'  // TODO: get from system
+			mode:        0o755  // default directory permissions
+			owner:       'user' // TODO: get from system
+			group:       'user' // TODO: get from system
 		}
-		children: []u32{}
+		children:  []u32{}
 		parent_id: dir.metadata.id
-		myvfs: dir.myvfs
+		myvfs:     dir.myvfs
 	}
 
 	// Save new directory to DB
@@ -178,24 +179,24 @@ pub fn (mut dir Directory) touch(name string) !&File {
 
 	current_time := time.now().unix()
 	mut new_file := File{
-		metadata: Metadata{
-			name: name
-			file_type: .file
-			size: 0
-			created_at: current_time
+		metadata:  Metadata{
+			name:        name
+			file_type:   .file
+			size:        0
+			created_at:  current_time
 			modified_at: current_time
 			accessed_at: current_time
-			mode: 0o644  // default file permissions
-			owner: 'user'  // TODO: get from system
-			group: 'user'  // TODO: get from system
+			mode:        0o644  // default file permissions
+			owner:       'user' // TODO: get from system
+			group:       'user' // TODO: get from system
 		}
-		data: ''  // Initialize with empty content
+		data:      '' // Initialize with empty content
 		parent_id: dir.metadata.id
-		myvfs: dir.myvfs
+		myvfs:     dir.myvfs
 	}
 
 	// Save new file to DB
-	new_file.metadata.id=dir.myvfs.save_entry(new_file)!
+	new_file.metadata.id = dir.myvfs.save_entry(new_file)!
 
 	// Update children list
 	dir.children << new_file.metadata.id
@@ -241,32 +242,32 @@ pub fn (mut dir Directory) rm(name string) ! {
 // get_children returns all immediate children as FSEntry objects
 pub fn (mut dir Directory) children(recursive bool) ![]FSEntry {
 	mut entries := []FSEntry{}
-	
+
 	for child_id in dir.children {
 		entry := dir.myvfs.load_entry(child_id)!
 		entries << entry
 		if recursive {
 			if entry is Directory {
-				mut d:=entry
+				mut d := entry
 				entries << d.children(true)!
 			}
 		}
 	}
-	
+
 	return entries
 }
 
 pub fn (mut dir Directory) delete() {
 	// Delete all children first
 	for child_id in dir.children {
-		dir.myvfs.delete_entry(child_id) or { }
+		dir.myvfs.delete_entry(child_id) or {}
 	}
-	
+
 	// Clear children list
 	dir.children.clear()
-	
+
 	// Save the updated directory
-	dir.myvfs.save_entry(dir) or { }
+	dir.myvfs.save_entry(dir) or {}
 }
 
 // add_symlink adds an existing symlink to this directory

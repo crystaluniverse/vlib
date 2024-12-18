@@ -52,25 +52,25 @@ pub mut:
 
 pub struct Config {
 pub mut:
-	vm_type              string            @[json: vmType]
+	vm_type              string @[json: vmType]
 	os                   string
 	arch                 string
 	images               []Image
-	cpu_type             CPUType           @[json: cpuType]
+	cpu_type             CPUType @[json: cpuType]
 	cpus                 int
 	memory               string
 	disk                 string
 	mounts               []Mount
-	mount_type           string            @[json: mountType]
+	mount_type           string @[json: mountType]
 	ssh                  SSH
 	firmware             Firmware
 	audio                map[string]string
 	video                Video
 	containerd           Containerd
-	guest_install_prefix string            @[json: guestInstallPrefix]
-	host_resolver        HostResolver      @[json: hostResolver]
-	propagate_proxy_env  bool              @[json: propagateProxyEnv]
-	ca_certs             CaCerts           @[json: caCerts]
+	guest_install_prefix string       @[json: guestInstallPrefix]
+	host_resolver        HostResolver @[json: hostResolver]
+	propagate_proxy_env  bool         @[json: propagateProxyEnv]
+	ca_certs             CaCerts      @[json: caCerts]
 	rosetta              Rosetta
 	plain                bool
 }
@@ -134,7 +134,7 @@ pub mut:
 
 pub struct Firmware {
 pub mut:
-	legacy_bios bool            @[json: legacyBIOS]
+	legacy_bios bool @[json: legacyBIOS]
 	images      []FirmwareImage
 }
 

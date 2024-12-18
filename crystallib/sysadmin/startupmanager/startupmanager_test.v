@@ -8,15 +8,15 @@ const process_name = 'testprocess'
 
 pub fn testsuite_begin() ! {
 	mut sm := get()!
-	if sm.exists(startupmanager.process_name)! {
-		sm.stop(startupmanager.process_name)!
+	if sm.exists(process_name)! {
+		sm.stop(process_name)!
 	}
 }
 
 pub fn testsuite_end() ! {
 	mut sm := get()!
-	if sm.exists(startupmanager.process_name)! {
-		sm.stop(startupmanager.process_name)!
+	if sm.exists(process_name)! {
+		sm.stop(process_name)!
 	}
 }
 
@@ -25,10 +25,10 @@ pub fn test_status() ! {
 	mut sm := get()!
 
 	sm.start(
-		name: startupmanager.process_name
-		cmd: 'redis-server'
+		name: process_name
+		cmd:  'redis-server'
 	)!
 
-	status := sm.status(startupmanager.process_name)!
+	status := sm.status(process_name)!
 	assert status == .active
 }

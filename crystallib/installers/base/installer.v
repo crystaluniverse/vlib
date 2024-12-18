@@ -32,7 +32,7 @@ pub fn install(args_ InstallArgs) ! {
 		if !osal.cmd_exists('brew') {
 			console.print_header(' -Install Brew')
 			osal.exec(
-				cmd: '
+				cmd:    '
 					/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 					(echo; echo \'eval "$(/opt/homebrew/bin/brew shellenv)"\') >> ${os.home_dir()}/.zprofile
 					reset
@@ -44,7 +44,7 @@ pub fn install(args_ InstallArgs) ! {
 					echo
 					'
 				stdout: true
-				shell: true
+				shell:  true
 			) or { return error('cannot install brew, something went wrong.\n${err}') }
 		}
 		osal.package_install('mc,tmux,git,rsync,curl,screen,wget,git-lfs')!

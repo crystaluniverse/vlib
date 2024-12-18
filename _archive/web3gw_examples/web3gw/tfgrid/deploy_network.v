@@ -6,9 +6,7 @@ import flag
 import log
 import os
 
-const (
-	default_server_address = 'http://127.0.0.1:8080'
-)
+const default_server_address = 'http://127.0.0.1:8080'
 
 @[params]
 pub struct Arguments {
@@ -23,39 +21,39 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, args Arguments) !
 	tfgrid_client.load(network: args.network, mnemonic: args.tfchain_mnemonic)!
 
 	deployment := tfgrid_client.deploy_network(
-		name: 'mynetwork'
+		name:    'mynetwork'
 		network: tfgrid.NetworkConfiguration{
-			name: 'mynetwork'
+			name:                 'mynetwork'
 			add_wireguard_access: true
 		}
-		vms: [
+		vms:     [
 			tfgrid.VMConfiguration{
-				name: 'vm1'
-				farm_id: 1
-				cpu: 2
-				memory: 2048
+				name:        'vm1'
+				farm_id:     1
+				cpu:         2
+				memory:      2048
 				rootfs_size: 1024
-				public_ip6: true
-				env_vars: {
+				public_ip6:  true
+				env_vars:    {
 					'SSH_KEY': args.ssh_key
 				}
-				disks: [tfgrid.Disk{
-					size: 10
+				disks:       [tfgrid.Disk{
+					size:       10
 					mountpoint: '/mnt/disk1'
 				}]
 			},
 			tfgrid.VMConfiguration{
-				name: 'vm2'
-				farm_id: 1
-				cpu: 2
-				memory: 2048
+				name:        'vm2'
+				farm_id:     1
+				cpu:         2
+				memory:      2048
 				rootfs_size: 1024
-				public_ip6: true
-				env_vars: {
+				public_ip6:  true
+				env_vars:    {
 					'SSH_KEY': args.ssh_key
 				}
-				disks: [tfgrid.Disk{
-					size: 10
+				disks:       [tfgrid.Disk{
+					size:       10
 					mountpoint: '/mnt/disk1'
 				}]
 			},
@@ -97,8 +95,8 @@ fn main() {
 
 	arguments := Arguments{
 		tfchain_mnemonic: tfchain_mnemonic
-		ssh_key: ssh_key
-		network: network
+		ssh_key:          ssh_key
+		network:          network
 	}
 
 	execute_rpcs(mut myclient, mut logger, arguments) or {

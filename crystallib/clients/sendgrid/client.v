@@ -31,7 +31,7 @@ fn (c Client) get_headers() !http.Header {
 }
 
 pub fn (c Client) send(email Email) ! {
-	mut request := http.new_request(http.Method.post, sendgrid.send_api_endpoint, json.encode(email))
+	mut request := http.new_request(http.Method.post, send_api_endpoint, json.encode(email))
 	request.header = c.get_headers()!
 
 	res := request.do()!

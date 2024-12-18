@@ -47,9 +47,9 @@ pub fn new(args_ ContextNewArgs) !&Context {
 	if args.id !in contexts {
 		mut params_ := args.params or { paramsparser.Params{} }
 		mut c := Context{
-			id: args.id
-			alias: args.alias
-			start: ourtime.new(args.start)!
+			id:     args.id
+			alias:  args.alias
+			start:  ourtime.new(args.start)!
 			params: params_
 		}
 		lock contexts {

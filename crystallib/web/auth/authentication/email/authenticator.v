@@ -14,7 +14,7 @@ import log
 pub struct Authenticator {
 	secret string
 mut:
-	config  SmtpConfig  @[required]
+	config  SmtpConfig @[required]
 	backend IBackend // Backend for authenticator
 }
 
@@ -56,7 +56,7 @@ pub fn new(config AuthenticatorConfig) !Authenticator {
 		// 	password: config.smtp.password
 		// )!
 		backend: config.backend
-		secret: config.secret
+		secret:  config.secret
 	}
 }
 
@@ -92,24 +92,24 @@ pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! 
 	// create auth session
 	auth_code := rand.bytes(64) or { panic(err) }
 	auth.backend.create_auth_session(
-		email: config.email
+		email:     config.email
 		auth_code: auth_code.hex()
-		timeout: time.now().add_seconds(180)
+		timeout:   time.now().add_seconds(180)
 	)!
 
 	link := '<a href="${config.link}/${config.email}/${auth_code.hex()}">Click to authenticate</a>'
 	mail := smtp.Mail{
-		to: config.email
-		from: config.mail.from
-		subject: config.mail.subject
+		to:        config.email
+		from:      config.mail.from
+		subject:   config.mail.subject
 		body_type: .html
-		body: '${config.mail.body}\n${link}'
+		body:      '${config.mail.body}\n${link}'
 	}
 
 	mut client := smtp.new_client(
-		server: auth.config.server
-		from: auth.config.from
-		port: auth.config.port
+		server:   auth.config.server
+		from:     auth.config.from
+		port:     auth.config.port
 		username: auth.config.username
 		password: auth.config.password
 	)!
@@ -128,17 +128,17 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 	encoded_signature := base64.url_encode(signature.bytestr().bytes())
 	link := '<a href="${config.link}/${config.email}/${expiration.unix()}/${encoded_signature}">Click to login</a>'
 	mail := smtp.Mail{
-		to: config.email
-		from: config.mail.from
-		subject: config.mail.subject
+		to:        config.email
+		from:      config.mail.from
+		subject:   config.mail.subject
 		body_type: .html
-		body: '${config.mail.body}\n${link}'
+		body:      '${config.mail.body}\n${link}'
 	}
 
 	mut client := smtp.new_client(
-		server: auth.config.server
-		from: auth.config.from
-		port: auth.config.port
+		server:   auth.config.server
+		from:     auth.config.from
+		port:     auth.config.port
 		username: auth.config.username
 		password: auth.config.password
 	)!
@@ -222,7 +222,7 @@ pub fn (mut auth Authenticator) authenticate(email string, cypher string) ! {
 }
 
 pub struct AwaitAuthParams {
-	email   string        @[required]
+	email   string @[required]
 	timeout time.Duration = 3 * time.minute
 }
 

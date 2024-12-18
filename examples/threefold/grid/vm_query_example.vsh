@@ -28,8 +28,7 @@ struct NodeInfo{
 	capacity_free_vcpu  int  //vcpu core's
 	uptime_min int = 70 //0..99
 	bw_min_mb_sec int = 0 //bandwith in mbit per second, min
-	guid str
-	...
+	guid string
 }
 
 

@@ -38,7 +38,7 @@ const text2 = "
 "
 
 fn test_parse_1() {
-	mut a := new(text: playbook.text1) or { panic(err) }
+	mut a := new(text: text1) or { panic(err) }
 
 	console.print_debug('${a}')
 
@@ -56,7 +56,7 @@ fn test_parse_1() {
 }
 
 fn test_hashkey() {
-	mut a := new(text: playbook.text1) or { panic(err) }
+	mut a := new(text: text1) or { panic(err) }
 	t := a.hashkey()
 
 	console.print_debug(t)
@@ -65,7 +65,7 @@ fn test_hashkey() {
 }
 
 fn test_filter() {
-	mut a := new(text: playbook.text2) or { panic(err) }
+	mut a := new(text: text2) or { panic(err) }
 
 	mut b := a.find(filter: 'payment.*')!
 	assert b.len == 2

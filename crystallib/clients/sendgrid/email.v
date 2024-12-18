@@ -6,7 +6,7 @@ pub struct Content {
 }
 
 struct Recipient {
-	email string  @[required]
+	email string @[required]
 	name  ?string
 }
 
@@ -19,7 +19,7 @@ struct Attachment {
 }
 
 struct UnsubscribeGroups {
-	group_id         i64   @[required]
+	group_id         i64 @[required]
 	group_to_display []i64
 }
 
@@ -141,11 +141,11 @@ pub fn new_email(to []string, from string, subject string, content string) Email
 
 	return Email{
 		personalizations: [personalization]
-		from: Recipient{
+		from:             Recipient{
 			email: from
 		}
-		subject: subject
-		content: [Content{
+		subject:          subject
+		content:          [Content{
 			value: content
 		}]
 	}

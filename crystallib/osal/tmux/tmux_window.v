@@ -10,7 +10,7 @@ import freeflowuniverse.crystallib.ui.console
 @[heap]
 struct Window {
 pub mut:
-	session &Session          @[skip]
+	session &Session @[skip]
 	name    string
 	id      int
 	active  bool
@@ -80,9 +80,9 @@ pub fn (mut s Session) window_new(args WindowArgs) !Window {
 	}
 	mut w := Window{
 		session: &s
-		name: namel
-		cmd: args.cmd
-		env: args.env
+		name:    namel
+		cmd:     args.cmd
+		env:     args.env
 	}
 	s.windows << &w
 	w.create()!
@@ -144,7 +144,7 @@ pub fn (mut w Window) create() ! {
 		// scriptkeep         bool   // means we don't remove the script
 		os.mkdir_all('/tmp/tmux/${w.session.name}')!
 		cmd_new := osal.exec_string(
-			cmd: w.cmd
+			cmd:        w.cmd
 			scriptpath: '/tmp/tmux/${w.session.name}/${w.name}.sh'
 			scriptkeep: true
 		)!
@@ -187,10 +187,10 @@ pub fn (mut w Window) restart() ! {
 // stop the window
 pub fn (mut w Window) stop() ! {
 	osal.exec(
-		cmd: 'tmux kill-window -t @${w.id}'
+		cmd:    'tmux kill-window -t @${w.id}'
 		stdout: false
-		name: 'tmux_kill-window'
-		die: false
+		name:   'tmux_kill-window'
+		die:    false
 	) or { return error("Can't kill window with id:${w.id}") }
 	w.pid = 0
 	w.active = false

@@ -31,7 +31,7 @@ pub fn (mut server Server[Config]) start() ! {
 	mut sm := startupmanager.get()!
 	sm.start(
 		name: server.process_name()
-		cmd: 'cd ${server.path_config.path} \n conduit'
+		cmd:  'cd ${server.path_config.path} \n conduit'
 	)!
 
 	server.check()!

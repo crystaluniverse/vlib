@@ -7,11 +7,11 @@ fn test_parse_security() {
 			SiteBlock{
 				directives: [
 					Directive{
-						name: 'security'
+						name:          'security'
 						subdirectives: [
 							Directive{
-								name: 'oauth identity provider'
-								args: ['generic']
+								name:          'oauth identity provider'
+								args:          ['generic']
 								subdirectives: [Directive{
 									name: 'realm'
 									args: ['generic']
@@ -41,8 +41,8 @@ fn test_parse_security() {
 								}]
 							},
 							Directive{
-								name: 'authentication portal'
-								args: ['myportal']
+								name:          'authentication portal'
+								args:          ['myportal']
 								subdirectives: [Directive{
 									name: 'crypto default token lifetime'
 									args: [
@@ -64,10 +64,10 @@ fn test_parse_security() {
 										'ourworld.tf',
 									]
 								}, Directive{
-									name: 'ui'
+									name:          'ui'
 									subdirectives: [
 										Directive{
-											name: 'links'
+											name:          'links'
 											subdirectives: [
 												Directive{
 													name: 'My Identity'
@@ -77,7 +77,7 @@ fn test_parse_security() {
 										},
 									]
 								}, Directive{
-									name: 'transform user'
+									name:          'transform user'
 									subdirectives: [
 										Directive{
 											name: 'realm'
@@ -101,8 +101,8 @@ fn test_parse_security() {
 								}]
 							},
 							Directive{
-								name: 'authorization policy'
-								args: ['mypolicy']
+								name:          'authorization policy'
+								args:          ['mypolicy']
 								subdirectives: [Directive{
 									name: 'set auth url'
 									args: [
@@ -143,55 +143,55 @@ fn test_parse_security() {
 
 	// Print the export result for validation
 	assert security == Security{
-		https_port: 0
-		orders: []
+		https_port:     0
+		orders:         []
 		oauth_provider: OAuthProvider{
-			realm: 'generic'
-			driver: 'generic'
-			domain_name: 'git.ourworld.tf'
-			client_id: 'some_client_id'
-			client_secret: 'some_client_secret'
-			scopes: ['openid', 'email', 'profile']
-			base_auth_url: 'https://git.ourworld.tf/login/oauth/authorize'
-			metadata_url: 'https://git.ourworld.tf/.well-known/openid-configuration'
+			realm:              'generic'
+			driver:             'generic'
+			domain_name:        'git.ourworld.tf'
+			client_id:          'some_client_id'
+			client_secret:      'some_client_secret'
+			scopes:             ['openid', 'email', 'profile']
+			base_auth_url:      'https://git.ourworld.tf/login/oauth/authorize'
+			metadata_url:       'https://git.ourworld.tf/.well-known/openid-configuration'
 			user_group_filters: []
 		}
 		authentication: AuthenticationPortal{
-			name: ''
-			crypto: Crypto{
+			name:                      ''
+			crypto:                    Crypto{
 				default_token_lifetime: 3600
-				sign_verify_key: 'some_crypto_key'
+				sign_verify_key:        'some_crypto_key'
 			}
 			enable_identity_providers: ['generic']
-			cookie_domain: 'ourworld.tf'
-			ui_links: [
+			cookie_domain:             'ourworld.tf'
+			ui_links:                  [
 				UILink{
 					label: 'My Identity'
-					url: '/whoami'
-					icon: 'las la-user'
+					url:   '/whoami'
+					icon:  'las la-user'
 				},
 			]
-			transforms: [
+			transforms:                [
 				UserTransform{
 					match_realm: ''
 					match_email: ''
-					action: ''
-					role: ''
-					ui_link: UILink{
+					action:      ''
+					role:        ''
+					ui_link:     UILink{
 						label: ''
-						url: ''
-						icon: ''
+						url:   ''
+						icon:  ''
 					}
 				},
 			]
 		}
-		authorization: AuthorizationPolicy{
-			name: ''
-			auth_url: 'https://auth.projectinca.xyz/oauth2/generic'
+		authorization:  AuthorizationPolicy{
+			name:              ''
+			auth_url:          'https://auth.projectinca.xyz/oauth2/generic'
 			crypto_key_verify: 'some_jwt_key'
-			allowed_roles: ['authp/admin', 'authp/user']
-			validate_bearer: true
-			inject_headers: true
+			allowed_roles:     ['authp/admin', 'authp/user']
+			validate_bearer:   true
+			inject_headers:    true
 		}
 	}
 }

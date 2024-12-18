@@ -37,7 +37,7 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 			return error('error: cannot write script to execute: ${err}')
 		}
 	}
-	console.print_debug(" - python script exec: ${scriptpath}")
+	console.print_debug(' - python script exec: ${scriptpath}')
 	os.chmod(scriptpath, 0o777)!
 
 	cmd2 := '

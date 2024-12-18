@@ -7,56 +7,56 @@ import os
 
 pub fn cmd_zola(mut cmdroot Command) {
 	mut zola_cmd := Command{
-		name: 'zola'
-		description: 'a fantastic web builder'
+		name:          'zola'
+		description:   'a fantastic web builder'
 		required_args: 0
-		execute: cmd_zola_execute
+		execute:       cmd_zola_execute
 	}
 
 	mut zola_run_cmd := Command{
-		sort_flags: true
-		name: 'run'
-		execute: cmd_zola_execute
+		sort_flags:  true
+		name:        'run'
+		execute:     cmd_zola_execute
 		description: ''
 	}
 
 	zola_run_cmd.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'reset'
-		abbrev: 'r'
+		flag:        .bool
+		required:    false
+		name:        'reset'
+		abbrev:      'r'
 		description: 'will reset.'
 	})
 
 	zola_run_cmd.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'serve'
-		abbrev: 's'
+		flag:        .bool
+		required:    false
+		name:        'serve'
+		abbrev:      's'
 		description: 'serve the content over webserver.'
 	})
 
 	zola_run_cmd.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'path'
-		abbrev: 'p'
+		flag:        .string
+		required:    false
+		name:        'path'
+		abbrev:      'p'
 		description: 'If not specified will try currentdir/content, is where the source info is.'
 	})
 
 	zola_run_cmd.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'dest'
-		abbrev: 'd'
+		flag:        .string
+		required:    false
+		name:        'dest'
+		abbrev:      'd'
 		description: 'If not specified will be currentdir/public.'
 	})
 
 	zola_run_cmd.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		required:    false
+		name:        'name'
+		abbrev:      'n'
 		description: 'Name of the website.'
 	})
 
@@ -89,10 +89,10 @@ fn cmd_zola_execute(cmd Command) ! {
 		mut serve := cmd.flags.get_bool('serve') or { false }
 
 		mut site := zola.new_site(
-			name: name
-			url: 'http://localhost:8089'
+			name:         name
+			url:          'http://localhost:8089'
 			path_content: '${path}/content'
-			path_build: '/tmp/zola_build_${name}'
+			path_build:   '/tmp/zola_build_${name}'
 			path_publish: dest
 		)!
 

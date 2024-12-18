@@ -17,7 +17,7 @@ pub fn verifykey_new(name string, remote string) !VerifyKey {
 	unsafe { C.memcpy(&v[0], parsed.data, libsodium.public_key_size) }
 
 	return VerifyKey{
-		name: name
+		name:   name
 		remote: libsodium.VerifyKey{
 			public_key: v
 		}

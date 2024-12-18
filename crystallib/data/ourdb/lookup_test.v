@@ -6,21 +6,21 @@ import rand
 const test_dir = '/tmp/lookuptest'
 
 fn testsuite_begin() {
-	if os.exists(ourdb.test_dir) {
-		os.rmdir_all(ourdb.test_dir)!
+	if os.exists(test_dir) {
+		os.rmdir_all(test_dir)!
 	}
-	os.mkdir_all(ourdb.test_dir)!
+	os.mkdir_all(test_dir)!
 }
 
 fn testsuite_end() {
-	if os.exists(ourdb.test_dir) {
-		os.rmdir_all(ourdb.test_dir)!
+	if os.exists(test_dir) {
+		os.rmdir_all(test_dir)!
 	}
 }
 
 fn test_incremental() {
 	config := LookupConfig{
-		size: 100
+		size:    100
 		keysize: 2
 	}
 	mut lut := new_lookup(config)!
@@ -37,7 +37,7 @@ fn test_incremental() {
 fn test_new_lookup() {
 	// Test memory-based lookup
 	config := LookupConfig{
-		size: 100
+		size:    100
 		keysize: 2
 	}
 	lut := new_lookup(config)!
@@ -47,18 +47,18 @@ fn test_new_lookup() {
 
 	// Test disk-based lookup
 	disk_config := LookupConfig{
-		size: 100
-		keysize: 2
-		lookuppath: os.join_path(ourdb.test_dir, 'test.lut')
+		size:       100
+		keysize:    2
+		lookuppath: os.join_path(test_dir, 'test.lut')
 	}
 	disk_lut := new_lookup(disk_config)!
 	assert disk_lut.keysize == 2
-	assert disk_lut.lookuppath == os.join_path(ourdb.test_dir, 'test.lut')
-	assert os.exists(os.join_path(ourdb.test_dir, 'test.lut'))
+	assert disk_lut.lookuppath == os.join_path(test_dir, 'test.lut')
+	assert os.exists(os.join_path(test_dir, 'test.lut'))
 
 	// Test invalid keysize
 	invalid_config := LookupConfig{
-		size: 100
+		size:    100
 		keysize: 7
 	}
 	if _ := new_lookup(invalid_config) {
@@ -68,8 +68,8 @@ fn test_new_lookup() {
 
 fn test_set_get() {
 	config := LookupConfig{
-		size: 100
-		keysize: 2
+		size:             100
+		keysize:          2
 		incremental_mode: true
 	}
 
@@ -78,7 +78,7 @@ fn test_set_get() {
 	// Test setting and getting values
 	loc1 := Location{
 		position: 1234
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id := lut.get_next_id()!
@@ -91,7 +91,7 @@ fn test_set_get() {
 	// Test setting with specific ID
 	loc2 := Location{
 		position: 5678
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id2 := lut.get_next_id()!
@@ -112,16 +112,16 @@ fn test_set_get() {
 
 fn test_disk_set_get() {
 	config := LookupConfig{
-		size: 100
-		keysize: 2
-		lookuppath: os.join_path(ourdb.test_dir, rand.string(4))
+		size:       100
+		keysize:    2
+		lookuppath: os.join_path(test_dir, rand.string(4))
 	}
 	mut lut := new_lookup(config)!
 
 	// Test setting and getting values on disk
 	loc1 := Location{
 		position: 1234
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id := lut.get_next_id()!
@@ -140,7 +140,7 @@ fn test_disk_set_get() {
 	// Test next auto-increment continues from previous value
 	loc2 := Location{
 		position: 5678
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id2 := lut2.get_next_id()!
@@ -150,7 +150,7 @@ fn test_disk_set_get() {
 
 fn test_delete() {
 	config := LookupConfig{
-		size: 100
+		size:    100
 		keysize: 2
 	}
 	mut lut := new_lookup(config)!
@@ -158,7 +158,7 @@ fn test_delete() {
 	// Set and then delete a value
 	loc1 := Location{
 		position: 1234
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id := lut.get_next_id()!
@@ -178,7 +178,7 @@ fn test_delete() {
 
 fn test_export_import() {
 	config := LookupConfig{
-		size: 100
+		size:    100
 		keysize: 2
 	}
 	mut lut := new_lookup(config)!
@@ -186,7 +186,7 @@ fn test_export_import() {
 	// Set some values
 	loc1 := Location{
 		position: 1234
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id1 := lut.get_next_id()!
@@ -195,14 +195,14 @@ fn test_export_import() {
 
 	loc2 := Location{
 		position: 5678
-		file_nr: 0
+		file_nr:  0
 	}
 	id2 := lut.get_next_id()!
 	lut.set(id2, loc2)!
 	assert id2 == 1
 
 	// Export and then import to new table
-	export_path := os.join_path(ourdb.test_dir, 'export.lut')
+	export_path := os.join_path(test_dir, 'export.lut')
 	os.mkdir(export_path)!
 
 	lut.export_data(export_path)!
@@ -223,8 +223,8 @@ fn test_export_import() {
 
 fn test_export_import_sparse() {
 	config := LookupConfig{
-		size: 100
-		keysize: 2
+		size:             100
+		keysize:          2
 		incremental_mode: false
 	}
 
@@ -233,7 +233,7 @@ fn test_export_import_sparse() {
 	// Set some values with gaps
 	loc1 := Location{
 		position: 1234
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id1 := u32(0)
@@ -241,13 +241,13 @@ fn test_export_import_sparse() {
 
 	loc2 := Location{
 		position: 5678
-		file_nr: 0
+		file_nr:  0
 	}
 	id2 := u32(50)
 	lut.set(id2, loc2)! // Create a gap
 
 	// Export and import sparse
-	sparse_path := os.join_path(ourdb.test_dir, 'sparse.lut')
+	sparse_path := os.join_path(test_dir, 'sparse.lut')
 	os.mkdir(sparse_path)!
 
 	lut.export_sparse(sparse_path)!
@@ -265,7 +265,7 @@ fn test_export_import_sparse() {
 
 fn test_incremental_memory() {
 	config := LookupConfig{
-		size: 100
+		size:    100
 		keysize: 2
 	}
 	mut lut := new_lookup(config)!
@@ -280,7 +280,7 @@ fn test_incremental_memory() {
 	// Set at x=0 should increment and return new ID
 	loc1 := Location{
 		position: 1234
-		file_nr: 0
+		file_nr:  0
 	}
 	id1 := lut.get_next_id()!
 	lut.set(id1, loc1)!
@@ -290,7 +290,7 @@ fn test_incremental_memory() {
 	// Set at x=1 should not increment and return specified ID
 	loc2 := Location{
 		position: 5678
-		file_nr: 0
+		file_nr:  0
 	}
 	id2 := lut.get_next_id()!
 	lut.set(id2, loc2)!
@@ -300,7 +300,7 @@ fn test_incremental_memory() {
 	// Another set at x=0 should increment and return new ID
 	loc3 := Location{
 		position: 9012
-		file_nr: 0
+		file_nr:  0
 	}
 
 	id3 := lut.get_next_id()!
@@ -309,7 +309,7 @@ fn test_incremental_memory() {
 	assert lut.incremental! == 3
 
 	// Test persistence through export/import
-	export_path := os.join_path(ourdb.test_dir, 'inc_export.lut')
+	export_path := os.join_path(test_dir, 'inc_export.lut')
 	os.mkdir(export_path)!
 
 	lut.export_data(export_path)!
@@ -321,7 +321,7 @@ fn test_incremental_memory() {
 	// Further operations should continue from last value
 	loc4 := Location{
 		position: 3456
-		file_nr: 0
+		file_nr:  0
 	}
 	id4 := lut2.get_next_id()!
 	lut2.set(id4, loc4)!
@@ -331,9 +331,9 @@ fn test_incremental_memory() {
 
 fn test_incremental_disk() {
 	config := LookupConfig{
-		size: 100
-		keysize: 2
-		lookuppath: os.join_path(ourdb.test_dir, 'inc_test.lut')
+		size:       100
+		keysize:    2
+		lookuppath: os.join_path(test_dir, 'inc_test.lut')
 	}
 	mut lut := new_lookup(config)!
 
@@ -346,7 +346,7 @@ fn test_incremental_disk() {
 	// Set at x=0 should increment
 	loc1 := Location{
 		position: 1234
-		file_nr: 0
+		file_nr:  0
 	}
 	id1 := lut.get_next_id()!
 	lut.set(id1, loc1)!
@@ -358,7 +358,7 @@ fn test_incremental_disk() {
 	// Set at x=1 should not increment
 	loc2 := Location{
 		position: 5678
-		file_nr: 0
+		file_nr:  0
 	}
 	id2 := lut.get_next_id()!
 	lut.set(id2, loc2)!
@@ -374,7 +374,7 @@ fn test_incremental_disk() {
 	// Further operations at x=0 should continue from last value
 	loc3 := Location{
 		position: 9012
-		file_nr: 0
+		file_nr:  0
 	}
 	id3 := lut2.get_next_id()!
 	lut2.set(id3, loc3)!
@@ -386,7 +386,7 @@ fn test_incremental_disk() {
 
 fn test_multiple_sets() {
 	config := LookupConfig{
-		size: 100
+		size:    100
 		keysize: 2
 	}
 	mut lut := new_lookup(config)!
@@ -396,7 +396,7 @@ fn test_multiple_sets() {
 	for i in 0 .. 5 {
 		loc := Location{
 			position: 1000 * (i + 1)
-			file_nr: 0
+			file_nr:  0
 		}
 		id := lut.get_next_id()!
 		lut.set(id, loc)!

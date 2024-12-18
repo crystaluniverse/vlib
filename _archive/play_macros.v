@@ -13,15 +13,15 @@ pub fn hero_play(mut plbook playbook.PlayBook) ! {
 }
 
 pub fn hero_play_macro(mut tree Tree, action playbook.Action) !string {
-	if action.actiontype != .macro{
-		panic("should always be a macro")
+	if action.actiontype != .macro {
+		panic('should always be a macro')
 	}
-	console.print_green("macro: ${action.actor}:${action.name}")
-	console.print_debug("${action}")
+	console.print_green('macro: ${action.actor}:${action.name}')
+	console.print_debug('${action}')
 	if action.actor == 'sheet' {
-		return spreadsheet.playmacro( action)!
-	}else if action.actor == 'tfgridsimulation_farming' {
-		return farmingsimulator.playmacro( action)!
+		return spreadsheet.playmacro(action)!
+	} else if action.actor == 'tfgridsimulation_farming' {
+		return farmingsimulator.playmacro(action)!
 	}
 	return ''
 }

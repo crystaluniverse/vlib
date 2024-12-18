@@ -35,15 +35,15 @@ pub:
 	collection_path pathlib.Path
 	pathrel         string
 	path            pathlib.Path
-	collection_name string       @[required]
+	collection_name string @[required]
 }
 
 pub fn new_file(args NewFileArgs) !File {
 	mut f := File{
-		name: args.name
-		path: args.path
+		name:            args.name
+		path:            args.path
 		collection_path: args.collection_path
-		pathrel: args.pathrel
+		pathrel:         args.pathrel
 		collection_name: args.collection_name
 	}
 

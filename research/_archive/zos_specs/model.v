@@ -39,7 +39,7 @@ struct Mount {
 }
 
 struct QuantumSafeMeta {
-	typ_   string            @[json: 'type']
+	typ_   string @[json: 'type']
 	config QuantumSafeConfig
 }
 

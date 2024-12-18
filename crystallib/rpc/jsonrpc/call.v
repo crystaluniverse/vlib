@@ -13,8 +13,8 @@ pub fn call[T, D](msg string, method fn (T) !D) !string {
 	}
 	response := JsonRpcResponse[D]{
 		jsonrpc: '2.0.0'
-		id: id
-		result: result
+		id:      id
+		result:  result
 	}
 	return json.encode(response)
 }
@@ -27,8 +27,8 @@ pub fn call_void[T](msg string, method fn (T) !) !string {
 	method(req.params) or { return new_error(id, code: err.code(), message: err.msg()).to_json() }
 	response := JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: id
-		result: 'ok'
+		id:      id
+		result:  'ok'
 	}
 	return json.encode(response)
 }
@@ -39,8 +39,8 @@ pub fn invoke[D](msg string, method fn () !D) !string {
 	result := method() or { return new_error(id, code: err.code(), message: err.msg()).to_json() }
 	response := JsonRpcResponse[D]{
 		jsonrpc: '2.0.0'
-		id: id
-		result: result
+		id:      id
+		result:  result
 	}
 	return json.encode(response)
 

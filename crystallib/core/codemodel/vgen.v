@@ -123,14 +123,14 @@ pub fn (function Function) vgen(options WriteOptions) string {
 
 	optionals := params_.filter(it.is_optional)
 	options_struct := Struct{
-		name: '${texttools.name_fix_snake_to_pascal(function.name)}Options'
-		attrs: [Attribute{
+		name:   '${texttools.name_fix_snake_to_pascal(function.name)}Options'
+		attrs:  [Attribute{
 			name: 'params'
 		}]
 		fields: optionals.map(StructField{
-			name: it.name
+			name:        it.name
 			description: it.description
-			typ: Type{
+			typ:         Type{
 				symbol: it.typ.symbol
 			}
 		})
@@ -138,7 +138,7 @@ pub fn (function Function) vgen(options WriteOptions) string {
 	if optionals.len > 0 {
 		params_ << Param{
 			name: 'options'
-			typ: Type{
+			typ:  Type{
 				symbol: options_struct.name
 			}
 		}
@@ -149,7 +149,7 @@ pub fn (function Function) vgen(options WriteOptions) string {
 	receiver := function.receiver.vgen()
 
 	mut function_str := $tmpl('templates/function/function.v.template')
-	
+
 	// if options.format {
 	// 	result := os.execute_opt('echo "${function_str.replace('$', '\\$')}" | v fmt') or {
 	// 		panic('${function_str}\n${err}')

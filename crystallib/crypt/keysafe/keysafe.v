@@ -30,9 +30,9 @@ import freeflowuniverse.crystallib.ui.console
 
 pub struct KeysSafe {
 pub mut:
-	path   pathlib.Path // file path of keys
-	loaded bool   // flag to know if keysafe is loaded or loading
-	secret string // secret to encrypt local file
+	path   pathlib.Path       // file path of keys
+	loaded bool               // flag to know if keysafe is loaded or loading
+	secret string             // secret to encrypt local file
 	keys   map[string]PrivKey // list of keys
 }
 
@@ -47,7 +47,7 @@ pub mut:
 pub fn keysafe_get(path0 string, secret string) !KeysSafe {
 	mut path := pathlib.get_file(path: path0 + '/.keys', create: true)!
 	mut safe := KeysSafe{
-		path: path
+		path:   path
 		secret: secret
 	}
 
@@ -104,10 +104,10 @@ pub fn (mut ks KeysSafe) key_import_add(name string, seed []u8) !PrivKey {
 	// console.print_debug(mnemonic)
 
 	pk := PrivKey{
-		name: name
+		name:     name
 		mnemonic: mnemonic
-		privkey: privkey
-		signkey: signkey
+		privkey:  privkey
+		signkey:  signkey
 	}
 
 	ks.key_add(pk)!

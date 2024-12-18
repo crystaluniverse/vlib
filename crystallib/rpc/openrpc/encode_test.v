@@ -14,32 +14,32 @@ const blank_openrpc = '{
 // test if encode can correctly encode a blank OpenRPC
 fn test_encode_blank() ! {
 	doc := OpenRPC{
-		info: Info{
-			title: ''
+		info:    Info{
+			title:   ''
 			version: '1.0.0'
 		}
 		methods: []Method{}
 	}
 	encoded := doc.encode()!
-	assert encoded.trim_space().split_into_lines().map(it.trim_space()) == openrpc.blank_openrpc.split_into_lines().map(it.trim_space())
+	assert encoded.trim_space().split_into_lines().map(it.trim_space()) == blank_openrpc.split_into_lines().map(it.trim_space())
 }
 
 // test if can correctly encode an OpenRPC doc with a method
 fn test_encode_with_method() ! {
 	doc := OpenRPC{
-		info: Info{
-			title: ''
+		info:    Info{
+			title:   ''
 			version: '1.0.0'
 		}
 		methods: [
 			Method{
-				name: 'method_name'
-				summary: 'summary'
+				name:        'method_name'
+				summary:     'summary'
 				description: 'description for this method'
-				deprecated: true
-				params: [
+				deprecated:  true
+				params:      [
 					ContentDescriptor{
-						name: 'sample descriptor'
+						name:   'sample descriptor'
 						schema: SchemaRef(Schema{
 							typ: 'string'
 						})
@@ -75,19 +75,19 @@ fn test_encode_with_method() ! {
 // test if can correctly encode a complete OpenRPC doc
 fn test_encode() ! {
 	doc := OpenRPC{
-		info: Info{
-			title: ''
+		info:    Info{
+			title:   ''
 			version: '1.0.0'
 		}
 		methods: [
 			Method{
-				name: 'method_name'
-				summary: 'summary'
+				name:        'method_name'
+				summary:     'summary'
 				description: 'description for this method'
-				deprecated: true
-				params: [
+				deprecated:  true
+				params:      [
 					ContentDescriptor{
-						name: 'sample descriptor'
+						name:   'sample descriptor'
 						schema: SchemaRef(Schema{
 							typ: 'string'
 						})

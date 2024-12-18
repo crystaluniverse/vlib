@@ -13,7 +13,7 @@ pub mut:
 	path_root   pathlib.Path
 	path_io     pathlib.Path
 	startcmd    []string
-	factory     &Factory     @[skip; str: skip]
+	factory     &Factory @[skip; str: skip]
 }
 
 @[params]
@@ -41,12 +41,12 @@ pub fn (mut f Factory) container_new(args_ ContainerArgs) !Container {
 	os.mkdir_all(args.path_root)!
 
 	mut c := Container{
-		name: args.name
+		name:        args.name
 		path_config: pathlib.get_dir(path: args.path_config, create: true)!
-		path_root: pathlib.get_dir(path: args.path_root, create: true)!
-		path_io: pathlib.get_dir(path: args.path_io, create: true)!
-		startcmd: args.startcmd
-		factory: &f
+		path_root:   pathlib.get_dir(path: args.path_root, create: true)!
+		path_io:     pathlib.get_dir(path: args.path_io, create: true)!
+		startcmd:    args.startcmd
+		factory:     &f
 	}
 
 	return c
@@ -71,8 +71,8 @@ pub fn (mut c Container) start() ! {
 	configpath.write(t)!
 
 	osal.exec(
-		cmd: 'runc run ${c.name}'
+		cmd:         'runc run ${c.name}'
 		work_folder: c.path_config.path
-		debug: true
+		debug:       true
 	)!
 }

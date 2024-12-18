@@ -60,7 +60,7 @@ pub struct ProjectInfoField {
 
 pub struct ProjectInfoNode {
 	id           string
-	field_values ProjectInfoField   @[json: 'fieldValues']
+	field_values ProjectInfoField @[json: 'fieldValues']
 	content      ProjectInfoContent
 }
 

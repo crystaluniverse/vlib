@@ -11,17 +11,17 @@ struct TestPerson {
 }'
 
 	schema := Schema{
-		schema: 'test'
-		title: 'TestPerson'
+		schema:      'test'
+		title:       'TestPerson'
 		description: 'person struct used for test schema encoding'
-		typ: 'object'
-		properties: {
+		typ:         'object'
+		properties:  {
 			'name': Schema{
-				typ: 'string'
+				typ:         'string'
 				description: 'name of the test person'
 			}
 			'age':  Schema{
-				typ: 'integer'
+				typ:         'integer'
 				description: 'age of the test person'
 			}
 		}
@@ -41,17 +41,17 @@ struct TestPerson {
 }'
 
 	schema := Schema{
-		schema: 'test'
-		title: 'TestPerson'
+		schema:      'test'
+		title:       'TestPerson'
 		description: 'person struct used for test schema encoding'
-		typ: 'object'
-		properties: {
+		typ:         'object'
+		properties:  {
 			'name':   Schema{
-				typ: 'string'
+				typ:         'string'
 				description: 'name of the test person'
 			}
 			'age':    Schema{
-				typ: 'integer'
+				typ:         'integer'
 				description: 'age of the test person'
 			}
 			'friend': Reference{
@@ -66,30 +66,30 @@ struct TestPerson {
 
 fn test_encode_recursive() ! {
 	schema := Schema{
-		schema: 'test'
-		title: 'TestPerson'
+		schema:      'test'
+		title:       'TestPerson'
 		description: 'person struct used for test schema encoding'
-		typ: 'object'
-		properties: {
+		typ:         'object'
+		properties:  {
 			'name':   Schema{
-				typ: 'string'
+				typ:         'string'
 				description: 'name of the test person'
 			}
 			'age':    Schema{
-				typ: 'integer'
+				typ:         'integer'
 				description: 'age of the test person'
 			}
 			'friend': Schema{
-				title: 'TestFriend'
-				typ: 'object'
+				title:       'TestFriend'
+				typ:         'object'
 				description: 'friend of the test person'
-				properties: {
+				properties:  {
 					'name': Schema{
-						typ: 'string'
+						typ:         'string'
 						description: 'name of the test friend person'
 					}
 					'age':  Schema{
-						typ: 'integer'
+						typ:         'integer'
 						description: 'age of the test friend person'
 					}
 				}

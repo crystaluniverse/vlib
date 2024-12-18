@@ -131,17 +131,17 @@ fn parse_user_transform(directives []Directive) UserTransform {
 	return UserTransform{
 		match_realm: match_realm
 		match_email: match_email
-		action: action
-		role: role
-		ui_link: ui_link
+		action:      action
+		role:        role
+		ui_link:     ui_link
 	}
 }
 
 fn parse_ui_link(directive Directive) UILink {
 	return UILink{
 		label: directive.name
-		url: if directive.args.len > 0 { directive.args[0] } else { '' }
-		icon: if directive.args.len > 2 { directive.args[2] } else { '' }
+		url:   if directive.args.len > 0 { directive.args[0] } else { '' }
+		icon:  if directive.args.len > 2 { directive.args[2] } else { '' }
 	}
 }
 

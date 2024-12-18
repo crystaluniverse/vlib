@@ -15,8 +15,8 @@ fn testfunction0_handler(data string) !string {
 	result := testfunction0(request.params)
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: result
+		id:      request.id
+		result:  result
 	}
 	return response.to_json()
 }
@@ -26,8 +26,8 @@ fn testfunction1_handler(data string) !string {
 	result := testfunction1(request.params)
 	response := jsonrpc.JsonRpcResponse[[]string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: result
+		id:      request.id
+		result:  result
 	}
 	return response.to_json()
 }

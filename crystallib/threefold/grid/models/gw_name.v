@@ -30,12 +30,12 @@ pub mut:
 
 pub fn (g GatewayNameProxy) to_workload(args WorkloadArgs) Workload {
 	return Workload{
-		version: args.version or { 0 }
-		name: args.name
-		type_: workload_types.gateway_name
-		data: json.encode(g)
-		metadata: args.metadata or { '' }
+		version:     args.version or { 0 }
+		name:        args.name
+		type_:       workload_types.gateway_name
+		data:        json.encode(g)
+		metadata:    args.metadata or { '' }
 		description: args.description or { '' }
-		result: args.result or { WorkloadResult{} }
+		result:      args.result or { WorkloadResult{} }
 	}
 }

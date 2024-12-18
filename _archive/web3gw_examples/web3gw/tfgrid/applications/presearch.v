@@ -7,9 +7,7 @@ import flag { FlagParser }
 import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_presearch(mut fp FlagParser, mut t TFGridClient) !PresearchResult {
 	fp.usage_example('deploy [options]')
@@ -26,13 +24,13 @@ fn deploy_presearch(mut fp FlagParser, mut t TFGridClient) !PresearchResult {
 
 	mut presearch_client := t.applications().presearch()
 	return presearch_client.deploy(
-		name: name
-		farm_id: u64(farm_id)
-		ssh_key: ssh_key
-		disk_size: u32(disk_size)
-		public_ipv4: public_ipv4
-		registration_code: registration_code
-		public_restore_key: public_restore_key
+		name:                name
+		farm_id:             u64(farm_id)
+		ssh_key:             ssh_key
+		disk_size:           u32(disk_size)
+		public_ipv4:         public_ipv4
+		registration_code:   registration_code
+		public_restore_key:  public_restore_key
 		private_restore_key: private_restore_key
 	)!
 }
@@ -92,7 +90,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Credentials{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

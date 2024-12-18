@@ -5,17 +5,15 @@ import flag
 import os
 import log
 
-const (
-	default_server_address = 'http://localhost:8080/api/v2'
-)
+const default_server_address = 'http://localhost:8080/api/v2'
 
 fn roles_crud(mut cl sftpgo.SFTPGoClient, mut logger log.Logger) {
 	// create role struct
 	mut role := sftpgo.Role{
-		name: 'role1'
+		name:        'role1'
 		description: 'role 1 description'
-		users: []
-		admins: []
+		users:       []
+		admins:      []
 	}
 
 	// list existing roles
@@ -78,7 +76,7 @@ fn main() {
 
 	args := sftpgo.SFTPGOClientArgs{
 		address: address
-		key: key
+		key:     key
 	}
 	mut cl := sftpgo.new(args) or {
 		println(err)

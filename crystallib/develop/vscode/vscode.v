@@ -4,17 +4,18 @@ import freeflowuniverse.crystallib.osal
 import os
 
 pub struct VSCodeHelper {
-	pub mut:
-		install_if_not_exists bool
-		path string
+pub mut:
+	install_if_not_exists bool
+	path                  string
 }
 
 pub fn new(path string) VSCodeHelper {
-	
 	return VSCodeHelper{
 		path: if path == '' {
 			os.getwd()
-		} else {path}
+		} else {
+			path
+		}
 	}
 }
 

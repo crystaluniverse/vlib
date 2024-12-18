@@ -11,7 +11,7 @@ fn (mut n NostrHandler) direct(action Action) ! {
 
 			n.client.publish_direct_message(
 				receiver: receiver
-				content: content
+				content:  content
 			)!
 		}
 		'read' {

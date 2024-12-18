@@ -45,7 +45,7 @@ pub fn example_configure(args_ InstallArgs) ! {
 	exampledbfile := $tmpl('templates/db.example.org')
 
 	mut path_testzone := pathlib.get_file(
-		path: '${args_.dnszones_path}/db.example.org'
+		path:   '${args_.dnszones_path}/db.example.org'
 		create: true
 	)!
 	path_testzone.template_write(exampledbfile, true)!

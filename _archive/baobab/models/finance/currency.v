@@ -91,7 +91,7 @@ pub fn amount_get(amount_ string) &Amount {
 	currencies := get_currencies() // TODO with api
 
 	amount2 := Amount{
-		val: f64(num.int())
+		val:      f64(num.int())
 		currency: currencies.currencies[code_nice] //?How to handle an error here
 	}
 
@@ -110,7 +110,7 @@ pub fn add_amounts(amounts []&Amount) !Amount {
 	}
 	return Amount{
 		currency: target_currency
-		val: total_val
+		val:      total_val
 	}
 }
 
@@ -158,37 +158,37 @@ pub fn get_rates(fiat_array []string, crypto_array []string) !(map[string]f32, m
 // ARGS:s
 pub fn get_currencies() Currencies {
 	mut usd := Currency{
-		name: 'USD'
+		name:   'USD'
 		usdval: 1
 	}
 
 	mut eur := Currency{
-		name: 'EUR'
+		name:   'EUR'
 		usdval: 0.984
 	}
 
 	mut gbp := Currency{
-		name: 'GBP'
+		name:   'GBP'
 		usdval: 1.1199
 	}
 
 	mut tft := Currency{
-		name: 'TFT'
+		name:   'TFT'
 		usdval: 0.0292
 	}
 
 	mut egp := Currency{
-		name: 'EGP'
+		name:   'EGP'
 		usdval: 0.0509
 	}
 
 	mut aed := Currency{
-		name: 'AED'
+		name:   'AED'
 		usdval: 0.2723
 	}
 
 	mut usdc := Currency{
-		name: 'USDC'
+		name:   'USDC'
 		usdval: 1.0000
 	}
 

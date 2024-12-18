@@ -27,7 +27,7 @@ pub mut:
 pub fn db_new(args DBArgs) !MyDB {
 	mut mydb := MyDB{
 		circlename: args.circlename
-		objtype: 'mystruct'
+		objtype:    'mystruct'
 	}
 	mydb.init()!
 	return mydb
@@ -52,30 +52,30 @@ pub fn (mydb MyDB) new(args MyStructArgs) !MyStruct {
 		remarks: [
 			db.Remark{
 				content: 'my remark content'
-				time: ourtime.now()
-				rtype: .comment
+				time:    ourtime.now()
+				rtype:   .comment
 			},
 			db.Remark{
 				content: 'my second remark content'
-				time: ourtime.now()
-				rtype: .log
+				time:    ourtime.now()
+				rtype:   .log
 			},
 		]
 	}
 
 	base := mydb.new_base(
-		params: args.params
-		name: args.name
+		params:      args.params
+		name:        args.name
 		description: args.description
-		mtime: args.mtime
-		ctime: args.ctime
-		remarks: remarks
+		mtime:       args.mtime
+		ctime:       args.ctime
+		remarks:     remarks
 	)!
 	mut o := MyStruct{
-		Base: base
-		nr: args.nr
-		color: args.color
-		nr2: args.nr2
+		Base:    base
+		nr:      args.nr
+		color:   args.color
+		nr2:     args.nr2
 		listu32: args.listu32
 	}
 	return o
@@ -84,8 +84,8 @@ pub fn (mydb MyDB) new(args MyStructArgs) !MyStruct {
 pub fn (mydb MyDB) set(o MyStruct) ! {
 	data := mydb.serialize(o)!
 	mydb.set_data(
-		gid: o.gid
-		index_int: {
+		gid:          o.gid
+		index_int:    {
 			'nr':  o.nr
 			'nr2': o.nr2
 		}
@@ -94,8 +94,8 @@ pub fn (mydb MyDB) set(o MyStruct) ! {
 			'color':   o.color
 			'listu32': o.listu32.map(it.str()).join(',')
 		}
-		data: data
-		baseobj: o.Base
+		data:         data
+		baseobj:      o.Base
 	)!
 }
 
@@ -164,10 +164,10 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 	}
 
 	dbfindoargs := db.DBFindArgs{
-		query_int: query_int
-		query_string: query_string
+		query_int:         query_int
+		query_string:      query_string
 		query_int_greater: query_int_greater
-		query_int_less: query_int_less
+		query_int_less:    query_int_less
 	}
 	data := mydb.find_base(args.BaseFindArgs, dbfindoargs)!
 	mut read_o := []MyStruct{}
@@ -222,8 +222,8 @@ pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 pub fn (mydb MyDB) serialize_heroscript(o MyStruct) !string {
 	p := paramsparser.new_from_dict(mydb.serialize_kwargs(o)!)!
 	ex := p.export(
-		pre: '!!${mydb.objtype}.define '
-		presort: ['gid', 'name', 'listu32']
+		pre:      '!!${mydb.objtype}.define '
+		presort:  ['gid', 'name', 'listu32']
 		postsort: ['mtime', 'ctime']
 	)
 	p2 := o.Base.remarks.serialize_heroscript(o.Base.gid.str())!

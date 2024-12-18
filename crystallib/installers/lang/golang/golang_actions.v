@@ -5,10 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.ulist
-
-
 import os
-
 
 // checks if a certain version or above is installed
 fn installed() !bool {
@@ -22,21 +19,20 @@ fn installed() !bool {
 		}
 
 		mut vstring := r[0] or { panic('bug') }
-        
-        
+
 		vstring = vstring.all_after_first('version').all_after_first('go').all_before(' ').trim_space()
 		v := texttools.version(vstring)
 		if v == texttools.version(version) {
 			return true
 		}
-	} 
-    return false
+	}
+	return false
 }
 
 fn install() ! {
-    console.print_header('install golang')
+	console.print_header('install golang')
 	base.install()!
-    destroy()!
+	destroy()!
 
 	mut url := ''
 	if osal.is_linux_arm() {
@@ -55,7 +51,7 @@ fn install() ! {
 
 	// the downloader is cool, it will check the download succeeds and also check the minimum size
 	_ = osal.download(
-		url: url
+		url:        url
 		minsize_kb: 40000
 		expand_dir: expand_dir
 	)!
@@ -66,53 +62,45 @@ fn install() ! {
 
 	osal.profile_path_add_remove(paths2add: '${go_dest}/bin')!
 	paths := osal.profile_paths_preferred()!
-	for p in paths{
+	for p in paths {
 		res := os.execute('source ${p}')
-		if res.exit_code != 0{
+		if res.exit_code != 0 {
 			return error(res.output)
 		}
 	}
 }
 
 fn build() ! {
-
 }
 
-//get the Upload List of the files
+// get the Upload List of the files
 fn ulist_get() !ulist.UList {
-    //mut installer := get()!
-    //optionally build a UList which is all paths which are result of building, is then used e.g. in upload
-    return ulist.UList{}
+	// mut installer := get()!
+	// optionally build a UList which is all paths which are result of building, is then used e.g. in upload
+	return ulist.UList{}
 }
-
-
 
 fn destroy() ! {
+	console.print_debug('golang destroy')
 
-    console.print_debug('golang destroy')
+	osal.package_remove('golang')!
 
-    osal.package_remove('golang')!
+	// will remove all paths where go/bin is found
+	osal.profile_path_add_remove(paths2delete: 'go/bin')!
 
-    //will remove all paths where go/bin is found
-    osal.profile_path_add_remove(paths2delete:"go/bin")!
-
-    osal.rm("
+	osal.rm('
         #next will find go as a binary and remove, is like cmd delete
         go
         /usr/local/go
         /root/hero/bin/go
         ~/.go
         ~/go
-    ")!
-
-
+    ')!
 }
 
-pub fn install_reset()!{
+pub fn install_reset() ! {
+	mut installer := get()!
 
-    mut installer:= get()!
-
-    //will automatically do a destroy if the version changes, to make sure there are no left overs
-    installer.install()!
-
+	// will automatically do a destroy if the version changes, to make sure there are no left overs
+	installer.install()!
 }

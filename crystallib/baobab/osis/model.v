@@ -9,16 +9,16 @@ import freeflowuniverse.crystallib.data.encoderhero
 pub struct OSIS {
 pub mut:
 	indexer Indexer // storing indeces
-	storer Storer
+	storer  Storer
 }
 
 @[params]
 pub struct OSISConfig {
 pub:
 	directory string
-	name   string
-	secret string
-	reset bool
+	name      string
+	secret    string
+	reset     bool
 }
 
 pub fn (mut backend OSIS) reset_all() ! {

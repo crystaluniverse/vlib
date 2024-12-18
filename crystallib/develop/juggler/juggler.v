@@ -100,7 +100,9 @@ pub enum ScriptCategory {
 fn (mut j Juggler) get_script(event Event) ?Script {
 	// if event !is GitEvent { panic('implement') }
 
-	repo := j.osis.generic_get[Repository](event.object_id) or { panic('this hopefully doesnt happen') }
+	repo := j.osis.generic_get[Repository](event.object_id) or {
+		panic('this hopefully doesnt happen')
+	}
 
 	if repo.host == '' {
 		panic('this should never happen')

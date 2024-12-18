@@ -31,7 +31,7 @@ pub fn (mut auth IdentityManager) register_user(identifier string) User {
 
 pub fn (mut auth IdentityManager) get_user(user User) ?User {
 	return auth.backend.read_user(
-		id: user.id
+		id:    user.id
 		email: user.email
 	) or { return none }
 }

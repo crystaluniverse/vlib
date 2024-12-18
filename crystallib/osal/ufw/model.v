@@ -37,23 +37,23 @@ pub mut:
 // Allow incoming traffic to a specific port or service
 pub fn (mut rs RuleSet) allow(args RuleArgs) {
 	rs.rules << Rule{
-		port: args.port
-		tcp: args.tcp
-		udp: args.udp
+		port:  args.port
+		tcp:   args.tcp
+		udp:   args.udp
 		allow: true
-		from: args.from
-		ipv6: args.ipv6
+		from:  args.from
+		ipv6:  args.ipv6
 	}
 }
 
 // Deny incoming traffic to a specific port or service
 pub fn (mut rs RuleSet) deny(args RuleArgs) {
 	rs.rules << Rule{
-		port: args.port
-		tcp: args.tcp
-		from: args.from
-		udp: args.udp
+		port:  args.port
+		tcp:   args.tcp
+		from:  args.from
+		udp:   args.udp
 		allow: false
-		ipv6: args.ipv6
+		ipv6:  args.ipv6
 	}
 }

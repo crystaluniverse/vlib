@@ -13,9 +13,9 @@ pub fn sumtype_to_schema(sumtype codemodel.Sumtype) SchemaRef {
 	title := sumtype.name
 
 	return SchemaRef(Schema{
-		title: title
+		title:       title
 		description: sumtype.description
-		one_of: one_of
+		one_of:      one_of
 	})
 }
 
@@ -46,9 +46,9 @@ pub fn struct_to_schema(struct_ Struct) SchemaRef {
 	}
 
 	return SchemaRef(Schema{
-		title: title
+		title:       title
 		description: struct_.description
-		properties: properties
+		properties:  properties
 	})
 }
 
@@ -77,20 +77,20 @@ pub fn typesymbol_to_schema(symbol_ string) SchemaRef {
 	} else if symbol.starts_with('[]') {
 		mut array_type := symbol.trim_string_left('[]')
 		return SchemaRef(Schema{
-			typ: 'array'
+			typ:   'array'
 			items: typesymbol_to_schema(array_type)
 		})
 	} else if symbol.starts_with('map[string]') {
 		mut map_type := symbol.trim_string_left('map[string]')
 		return SchemaRef(Schema{
-			typ: 'object'
+			typ:                   'object'
 			additional_properties: typesymbol_to_schema(map_type)
 		})
 	} else if symbol[0].is_capital() {
 		// todo: better imported type handling
 		if symbol == 'Uint128' {
 			return SchemaRef(Schema{
-				typ: 'integer'
+				typ:     'integer'
 				minimum: Number(0)
 				// todo: implement uint128 number
 				// maximum: Number('340282366920938463463374607431768211455')
@@ -179,20 +179,20 @@ pub fn type_to_schema(typ Type) SchemaRef {
 	} else if symbol.starts_with('[]') || typ.is_array {
 		mut array_type := symbol.trim_string_left('[]')
 		return SchemaRef(Schema{
-			typ: 'array'
+			typ:   'array'
 			items: typesymbol_to_schema(array_type)
 		})
 	} else if symbol.starts_with('map[string]') {
 		mut map_type := symbol.trim_string_left('map[string]')
 		return SchemaRef(Schema{
-			typ: 'object'
+			typ:                   'object'
 			additional_properties: typesymbol_to_schema(map_type)
 		})
 	} else if symbol[0].is_capital() {
 		// todo: better imported type handling
 		if symbol == 'Uint128' {
 			return SchemaRef(Schema{
-				typ: 'integer'
+				typ:     'integer'
 				minimum: Number(0)
 				// todo: implement uint128 number
 				// maximum: Number('340282366920938463463374607431768211455')

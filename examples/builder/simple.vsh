@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-
 fn do1() ! {
 	mut b := builder.new()!
 	mut n := b.node_new(ipaddr: 'root@195.192.213.2')!

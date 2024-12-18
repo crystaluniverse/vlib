@@ -13,7 +13,7 @@ pub mut:
 	template        TemplateName
 	platform        PlatformType
 	cpus            int = 8
-	memory          i64 = 2000 // in MB
+	memory          i64 = 2000  // in MB
 	disk            i64 = 50000 // in MB
 	reset           bool
 	start           bool = true

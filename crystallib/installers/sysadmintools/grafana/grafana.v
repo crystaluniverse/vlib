@@ -57,7 +57,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 15000
 			expand_dir: '/tmp/grafana'
 		)!

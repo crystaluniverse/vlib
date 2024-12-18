@@ -1,9 +1,8 @@
 module components
 
-
 pub struct Struct {
 pub:
-	typ   string
+	typ    string
 	fields []Field
 }
 
@@ -26,12 +25,11 @@ pub fn to_struct[T](t T) Struct {
 		fields << Field{
 			name:  field.name
 			ftype: typeof(field.typ).name // Get the type of the field as a string
-			value: '${val}'  // Get the value of the field as a string
+			value: '${val}'                 // Get the value of the field as a string
 		}
 	}
-
 	return Struct{
-		typ:   typeof(t).name // Get the name of the struct type
+		typ:    typeof(t).name // Get the name of the struct type
 		fields: fields
 	}
 }

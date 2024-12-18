@@ -4,30 +4,30 @@ import os
 import time
 import freeflowuniverse.crystallib.osal
 
-fn new_process(i int)  {
-    mut job2 := osal.exec(cmd: '/tmp/removeme.sh') or { panic(err) }
+fn new_process(i int) {
+	mut job2 := osal.exec(cmd: '/tmp/removeme.sh') or { panic(err) }
 	println(job2)
-    println('Process ${i} finished ')
+	println('Process ${i} finished ')
 }
 
 fn do() ! {
-    start := time.now()
+	start := time.now()
 
-    mut threads := []thread{}
-    
-    // Start 10 threads
-    for i in 0..10 {
-        mut mythread := spawn new_process(i)
-        threads << mythread
-    }
+	mut threads := []thread{}
 
-    println('All threads started')
+	// Start 10 threads
+	for i in 0 .. 10 {
+		mut mythread := spawn new_process(i)
+		threads << mythread
+	}
 
-    // Wait for all threads to complete
-    threads.wait()
-    
-    duration := time.since(start)
-    println('Completed all processes in ${duration}')
+	println('All threads started')
+
+	// Wait for all threads to complete
+	threads.wait()
+
+	duration := time.since(start)
+	println('Completed all processes in ${duration}')
 }
 
 myscript := '#!/bin/bash

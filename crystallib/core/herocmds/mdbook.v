@@ -13,8 +13,8 @@ import freeflowuniverse.crystallib.ui.console
 // coderoot string //the location of coderoot if its another one
 pub fn cmd_mdbook(mut cmdroot Command) {
 	mut cmd_mdbook := Command{
-		name: 'mdbook'
-		usage: '
+		name:          'mdbook'
+		usage:         '
 ## Manage your MDBooks
 
 example:
@@ -25,17 +25,17 @@ If you do -gp it will pull newest book content from git and give error if there 
 If you do -gr it will pull newest book content from git and overwrite local changes (careful).
 
 		'
-		description: 'create, edit, show mdbooks'
+		description:   'create, edit, show mdbooks'
 		required_args: 0
-		execute: cmd_mdbook_execute
+		execute:       cmd_mdbook_execute
 	}
 
 	cmd_run_add_flags(mut cmd_mdbook)
 
 	cmd_mdbook.add_flag(Flag{
-		flag: .string
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		name:        'name'
+		abbrev:      'n'
 		description: 'name of the mdbook.'
 	})
 
@@ -47,18 +47,17 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 	// })
 
 	cmd_mdbook.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'open'
-		abbrev: 'o'
+		flag:        .bool
+		required:    false
+		name:        'open'
+		abbrev:      'o'
 		description: 'will open the generated book.'
 	})
 
-
 	mut cmd_list := Command{
-		sort_flags: true
-		name: 'list'
-		execute: cmd_mdbook_list
+		sort_flags:  true
+		name:        'list'
+		execute:     cmd_mdbook_list
 		description: 'will list existing mdbooks'
 	}
 

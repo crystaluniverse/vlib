@@ -17,7 +17,7 @@ pub mut:
 // check validity, keysize needs to define max position
 fn (lookuptable LookupTable) location_new(b_ []u8) !Location {
 	mut new_location := Location{
-		file_nr: 0
+		file_nr:  0
 		position: 0
 	}
 

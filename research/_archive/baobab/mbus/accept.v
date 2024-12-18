@@ -27,12 +27,12 @@ pub fn send(args_ SendRPCArgs) ! {
 	mut args := args_
 	mut msg := RPCMessage{
 		twinid_source: args.twinid_source
-		twinid_exec: args.twinid_exec
-		circle: args.circle
-		action: args.action
-		msg: args.msg
-		time: now
-		timeout: args.timeout
+		twinid_exec:   args.twinid_exec
+		circle:        args.circle
+		action:        args.action
+		msg:           args.msg
+		time:          now
+		timeout:       args.timeout
 	}
 
 	data := msg.encode() // TODO: need to see how to store bin data in redis, does it work as is?

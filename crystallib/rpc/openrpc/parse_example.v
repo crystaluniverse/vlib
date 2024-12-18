@@ -40,7 +40,7 @@ pub fn parse_struct_example(structure Struct) Example {
 		val_map[field.name] = example_val
 	}
 	return Example{
-		name: '${structure.name}Example'
+		name:  '${structure.name}Example'
 		value: json2.encode(val_map)
 	}
 }
@@ -57,12 +57,12 @@ pub fn parse_pairing_params(text_ string) []ExampleRef {
 		examples << Reference{text}
 	} else if text.contains(':') {
 		examples << Example{
-			name: ''
+			name:  ''
 			value: json.encode(text)
 		}
 	} else {
 		examples1 := text.split(',').map(it.trim_space()).map(ExampleRef(Example{
-			name: ''
+			name:  ''
 			value: it
 		}))
 
@@ -78,7 +78,7 @@ pub fn parse_pairing_result(text_ string) ExampleRef {
 		return Reference{text}
 	} else if text.contains(':') {
 		return Example{
-			name: ''
+			name:  ''
 			value: json.encode(text)
 		}
 	}

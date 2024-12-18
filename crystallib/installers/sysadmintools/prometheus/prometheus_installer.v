@@ -39,7 +39,7 @@ pub fn install_prometheus(args_ InstallArgs) ! {
 		}
 
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 100000
 			expand_dir: '/tmp/prometheus'
 		)!

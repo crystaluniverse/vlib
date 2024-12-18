@@ -14,8 +14,8 @@ fn procedure_handler(data string) !string {
 	result := procedure(request.params)!
 	response := JsonRpcResponse[string]{
 		jsonrpc: jsonrpc_version
-		id: request.id
-		result: result
+		id:      request.id
+		result:  result
 	}
 	return response.to_json()
 }
@@ -67,8 +67,8 @@ pub fn (mut handler CounterJsonRpcHandler) increment_handler(data string) !strin
 	result := counter.increment(request.params)!
 	response := JsonRpcResponse[int]{
 		jsonrpc: jsonrpc_version
-		id: request.id
-		result: result
+		id:      request.id
+		result:  result
 	}
 	return response.to_json()
 }

@@ -3,26 +3,24 @@ module components
 import freeflowuniverse.crystallib.data.markdownparser.elements
 
 pub interface IView {
-    html() string
+	html() string
 }
 
 pub struct View {
 pub mut:
-    head Head
-    layout ILayout
+	head   Head
+	layout ILayout
 }
-
 
 pub interface ILayout {
-    html() string
+	html() string
 mut:
-    main IComponent
+	main IComponent
 }
 
-
 pub fn (view View) html() string {
-    // println(view.layout)
-    return $tmpl('./templates/view.html')
+	// println(view.layout)
+	return $tmpl('./templates/view.html')
 }
 
 // fn model_web_example() View {

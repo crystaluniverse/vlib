@@ -5,7 +5,7 @@ import time
 import v.reflection
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.texttools
-//import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 // Encoder encodes the an `Any` type into HEROSCRIPT representation.
 // It provides parameters in order to change the end result.
@@ -16,7 +16,7 @@ pub mut:
 	action_names   []string
 	params         paramsparser.Params
 	children       []Encoder
-	parent         ?&Encoder           @[skip; str: skip]
+	parent         ?&Encoder @[skip; str: skip]
 }
 
 // encode is a generic function that encodes a type into a HEROSCRIPT string.
@@ -38,10 +38,10 @@ pub fn encode[T](val T) !string {
 // export exports an encoder into encoded heroscript
 pub fn (e Encoder) export() !string {
 	mut script := e.params.export(
-			pre: '!!define.${e.action_names.join('.')}'
-			indent: '	'
-			skip_empty: true
-			)
+		pre:        '!!define.${e.action_names.join('.')}'
+		indent:     '	'
+		skip_empty: true
+	)
 
 	script += e.children.map(it.export()!).join('\n')
 	return script
@@ -58,8 +58,8 @@ pub fn (mut e Encoder) add_child[T](val T, parent string) ! {
 		return
 	}
 	mut e2 := Encoder{
-		params: paramsparser.Params{}
-		parent: &e
+		params:       paramsparser.Params{}
+		parent:       &e
 		action_names: e.action_names.clone() // careful, if not cloned gets mutated later
 	}
 	$if T is $struct {
@@ -91,8 +91,8 @@ pub fn (mut e Encoder) add[T](val T) ! {
 	// 	}		
 	// }
 	mut e2 := Encoder{
-		params: paramsparser.Params{}
-		parent: &e
+		params:       paramsparser.Params{}
+		parent:       &e
 		action_names: e.action_names.clone() // careful, if not cloned gets mutated later
 	}
 	$if T is $struct && T !is time.Time {

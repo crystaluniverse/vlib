@@ -3,13 +3,13 @@ module log
 import time
 
 pub struct Log {
-	id          int         @[primary; sql: serial]
+	id int @[primary; sql: serial]
 pub:
 	timestamp time.Time
 pub mut:
 	event   string
 	subject string
-	object  string 
+	object  string
 	message string // a custom message that can be attached to a log
 }
 

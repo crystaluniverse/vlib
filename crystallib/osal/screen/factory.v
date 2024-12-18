@@ -96,7 +96,7 @@ pub fn (mut self ScreensFactory) add(args_ ScreenAddArgs) !Screen {
 	}
 	self.screens << Screen{
 		name: args.name
-		cmd: args.cmd
+		cmd:  args.cmd
 	}
 	if args.start {
 		self.start(args.name)!

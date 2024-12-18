@@ -30,7 +30,7 @@ fn (shared actor CircleActor) add_milestone(params paramsparser.Params) ! {
 	lock actor {
 		mut circle := actor.circles[cid]
 		circle.add_milestone(
-			title: title
+			title:       title
 			description: description
 		)
 	}
@@ -56,7 +56,7 @@ fn (shared actor CircleActor) add_story(params paramsparser.Params) ! {
 	lock actor {
 		mut circle := actor.circles[cid]
 		circle.add_story(
-			title: title
+			title:       title
 			description: description
 		)
 	}
@@ -72,7 +72,7 @@ fn (shared actor CircleActor) set_status(params paramsparser.Params) ! {
 	lock actor {
 		mut circle := actor.circles[cid]
 		circle.story.set_status(
-			title: title
+			title:       title
 			description: description
 		)
 	}

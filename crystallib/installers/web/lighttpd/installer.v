@@ -137,7 +137,7 @@ pub fn start(args StartArgs) ! {
 		mut z := zinitmgmt.new()!
 		p := z.process_new(
 			name: 'lighttpd'
-			cmd: '
+			cmd:  '
 				lighttpd -D -f /etc/lighttpd/lighttpd.conf
 				echo LIGHTTPD STOPPED
 				/bin/bash'

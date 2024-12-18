@@ -5,9 +5,7 @@ import flag
 import os
 import log
 
-const (
-	default_server_address = 'http://localhost:8080/api/v2'
-)
+const default_server_address = 'http://localhost:8080/api/v2'
 
 fn get_events(mut cl sftpgo.SFTPGoClient, mut logger log.Logger) {
 	fs_events := cl.get_fs_events(0, 0, 100, 'DESC') or {
@@ -41,7 +39,7 @@ fn main() {
 
 	args := sftpgo.SFTPGOClientArgs{
 		address: address
-		key: key
+		key:     key
 	}
 	mut cl := sftpgo.new(args) or {
 		println(err)

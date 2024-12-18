@@ -18,7 +18,7 @@ fn do() ! {
 
 	mut authenticator := auth.new()!
 	mut server := asset_server.new(
-		auth: authenticator
+		auth:   authenticator
 		assets: [
 			create_asset('alice'),
 			create_asset('bob'),
@@ -46,10 +46,10 @@ fn create_asset(name string) Asset {
 	return Asset{
 		name: name
 		path: '${assets_dir}/${name}'
-		acl: auth.AccessControlList{
+		acl:  auth.AccessControlList{
 			entries: [
 				auth.AccessControlEntry{
-					accessor: '${name}@${email}'
+					accessor:    '${name}@${email}'
 					permissions: [.read]
 				},
 			]

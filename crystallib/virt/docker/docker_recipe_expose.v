@@ -15,7 +15,7 @@ pub mut:
 // to do something like: 'Expose 8080/udp'
 pub fn (mut b DockerBuilderRecipe) add_expose(args ExposeARgs) ! {
 	mut item := ExposeItem{
-		ports: args.ports
+		ports:  args.ports
 		recipe: &b
 	}
 	b.items << item

@@ -16,15 +16,15 @@ pub mut:
 
 // install zinit will return true if it was already installed
 pub fn install(args_ InstallArgs) ! {
-	mut args:=args_
+	mut args := args_
 
-	if ! osal.is_linux() {
+	if !osal.is_linux() {
 		return error('only support linux for now')
 	}
 
 	version := '0.2.14'
 	// cmd:='${osal.profile_path_source_and()} zinit --version'
-	cmd:='zinit --version'
+	cmd := 'zinit --version'
 	// println(cmd)
 	res := os.execute(cmd)
 	if res.exit_code == 0 {
@@ -33,15 +33,14 @@ pub fn install(args_ InstallArgs) ! {
 			return error("couldn't parse zinit version.\n${res.output}")
 		}
 		if texttools.version(version) > texttools.version(r[0].all_after_first('zinit v')) {
-			println("reset because of -v")
+			println('reset because of -v')
 			args.reset = true
 		}
 	} else {
 		println(res)
-		println("reset of error in zinit execute")
+		println('reset of error in zinit execute')
 		args.reset = true
 	}
-
 
 	if args.reset == false && osal.done_exists('install_zinit') {
 		return
@@ -50,18 +49,17 @@ pub fn install(args_ InstallArgs) ! {
 	console.print_header('install zinit')
 	// make sure we install base on the node
 	base.install()!
-	url:="https://github.com/threefoldtech/zinit/releases/download/v0.2.14/zinit"
-
+	url := 'https://github.com/threefoldtech/zinit/releases/download/v0.2.14/zinit'
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 2000
-		reset: true
+		reset:      true
 	)!
 
 	osal.cmd_add(
-			cmdname: 'zinit'
-			source: dest.path
+		cmdname: 'zinit'
+		source:  dest.path
 	)!
 
 	console.print_header('install zinit done')
@@ -74,7 +72,7 @@ pub fn install(args_ InstallArgs) ! {
 
 // start zinit
 pub fn start() ! {
-	zinit.start()!
+	start()!
 }
 
 // pub fn stop() ! {

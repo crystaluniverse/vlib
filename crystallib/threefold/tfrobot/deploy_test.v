@@ -25,30 +25,30 @@ fn testsuite_begin() ! {
 fn test_deploy() ! {
 	mut robot := new()!
 	result := robot.deploy(
-		name: 'test'
-		mnemonic: mnemonics
-		network: .main
+		name:        'test'
+		mnemonic:    mnemonics
+		network:     .main
 		node_groups: [
 			NodeGroup{
-				name: 'test_group'
+				name:        'test_group'
 				nodes_count: 1
-				free_cpu: 1
-				free_mru: 256
+				free_cpu:    1
+				free_mru:    256
 			},
 		]
-		vms: [
+		vms:         [
 			VMConfig{
-				name: 'test'
-				vms_count: 1
-				cpu: 1
-				mem: 256
-				node_group: 'test_group'
-				ssh_key: 'test_key'
+				name:        'test'
+				vms_count:   1
+				cpu:         1
+				mem:         256
+				node_group:  'test_group'
+				ssh_key:     'test_key'
 				entry_point: '/usr/local/bin/entrypoint.sh'
-				flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
+				flist:       'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
 			},
 		]
-		ssh_keys: {
+		ssh_keys:    {
 			'test_key': ssh_key
 		}
 	)!

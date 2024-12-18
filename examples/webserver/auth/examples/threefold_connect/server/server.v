@@ -30,7 +30,7 @@ fn (mut server ServerApp) verify() !vweb.Result {
 	request_data := json2.raw_decode(server.Context.req.data)!
 	data := SignedAttempt{
 		signed_attempt: request_data.as_map()['signed_attempt']!.str()
-		double_name: request_data.as_map()['double_name']!.str()
+		double_name:    request_data.as_map()['double_name']!.str()
 	}
 
 	if data.double_name == '' {
@@ -95,9 +95,9 @@ fn (mut server ServerApp) verify() !vweb.Result {
 	}
 
 	mut box := libsodium.Box{
-		nonce: nonce_bff
+		nonce:      nonce_bff
 		public_key: user_curve_pk
-		key: new_private_key
+		key:        new_private_key
 	}
 
 	decrypted_bytes := box.decrypt(ciphertext)

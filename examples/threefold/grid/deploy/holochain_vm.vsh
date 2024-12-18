@@ -29,7 +29,7 @@ fn main() {
 
 	chain_net_enum := get_chain_network(chain_network)!
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_net_enum, mut logger)!
-	
+
 	mut workloads := []models.Workload{}
 	node_id := get_node_id(chain_net_enum, memory, disk, cpu, public_ip)!
 	// node_id := u32(150)
@@ -38,20 +38,19 @@ fn main() {
 	network_name := 'net_${rand.string(5).to_lower()}' // autocreate a network
 	wg_port := deployer.assign_wg_port(node_id)!
 	mut network := models.Znet{
-		ip_range: '10.1.0.0/16' // auto-assign
-		subnet: '10.1.1.0/24' // auto-assign
+		ip_range:              '10.1.0.0/16' // auto-assign
+		subnet:                '10.1.1.0/24' // auto-assign
 		wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE=' // autocreate
 		wireguard_listen_port: wg_port
-		mycelium: models.Mycelium{
+		mycelium:              models.Mycelium{
 			hex_key: rand.string(32).bytes().hex()
 		}
-
 	}
-	
+
 	workloads << network.to_workload(name: network_name, description: 'test_network1')
 
 	mut public_ip_name := ''
-	if public_ip{
+	if public_ip {
 		public_ip_name = rand.string(5).to_lower()
 		workloads << models.PublicIP{
 			v4: true
@@ -59,52 +58,52 @@ fn main() {
 	}
 
 	zmachine := models.Zmachine{
-		flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
-		network: models.ZmachineNetwork{
+		flist:            'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
+		network:          models.ZmachineNetwork{
 			interfaces: [
 				models.ZNetworkInterface{
 					network: network_name
-					ip: '10.1.1.3'
+					ip:      '10.1.1.3'
 				},
 			]
-			public_ip: public_ip_name
-			planetary: true
-			mycelium: models.MyceliumIP{
-				network: network_name
+			public_ip:  public_ip_name
+			planetary:  true
+			mycelium:   models.MyceliumIP{
+				network:  network_name
 				hex_seed: rand.string(6).bytes().hex()
 			}
 		}
-		entrypoint: '/sbin/zinit init' // from user or default
+		entrypoint:       '/sbin/zinit init' // from user or default
 		compute_capacity: models.ComputeCapacity{
-			cpu: u8(cpu)
+			cpu:    u8(cpu)
 			memory: i64(memory) * 1024 * 1024 * 1024
 		}
-		size: u64(disk) * 1024 * 1024 * 1024
-		env: {
+		size:             u64(disk) * 1024 * 1024 * 1024
+		env:              {
 			'SSH_KEY':              ssh_key
 			'CODE_SERVER_PASSWORD': code_server_pass
 		}
 	}
 
 	workloads << zmachine.to_workload(
-		name: 'vm_${rand.string(5).to_lower()}'
+		name:        'vm_${rand.string(5).to_lower()}'
 		description: 'zmachine_test'
 	)
 
 	signature_requirement := models.SignatureRequirement{
 		weight_required: 1
-		requests: [
+		requests:        [
 			models.SignatureRequest{
 				twin_id: deployer.twin_id
-				weight: 1
+				weight:  1
 			},
 		]
 	}
 
 	mut deployment := models.new_deployment(
-		twin_id: deployer.twin_id
-		description: 'holochain deployment'
-		workloads: workloads
+		twin_id:               deployer.twin_id
+		description:           'holochain deployment'
+		workloads:             workloads
 		signature_requirement: signature_requirement
 	)
 	deployment.add_metadata('vm', 'SimpleVM')
@@ -147,7 +146,7 @@ fn get_chain_network(network string) !tfgrid.ChainNetwork {
 	return chain_net_enum
 }
 
-fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, public_ip bool) !u32{
+fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, public_ip bool) !u32 {
 	gp_net := match network {
 		.dev { gridproxy.TFGridNet.dev }
 		.qa { gridproxy.TFGridNet.qa }
@@ -157,15 +156,15 @@ fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, publi
 
 	mut gridproxy_client := gridproxy.get(gp_net, false)!
 	mut free_ips := u64(0)
-	if public_ip{
+	if public_ip {
 		free_ips = 1
 	}
 
 	mut node_it := gridproxy_client.get_nodes_has_resources(
 		free_mru_gb: u64(memory)
 		free_sru_gb: u64(disk)
-		free_cpu: u64(cpu)
-		free_ips: free_ips
+		free_cpu:    u64(cpu)
+		free_ips:    free_ips
 	)
 	nodes := node_it.next()
 	mut node_id := u32(0) // get from user or use gridproxy to get nodeid

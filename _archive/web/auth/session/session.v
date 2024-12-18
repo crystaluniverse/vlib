@@ -14,7 +14,7 @@ pub fn (mut s SessionAuth) create_session(user_id string) Session {
 	sesh_id := rand.uuid_v4()
 	sesh := Session{
 		session_id: sesh_id
-		user_id: user_id
+		user_id:    user_id
 	}
 	s.backend.add_session(sesh)
 	return sesh
@@ -86,7 +86,7 @@ fn (mut backend DatabaseBackend) add_session(session Session) {
 	console.print_debug('adding sesh: ${session}')
 	session_ := Session{
 		session_id: 'sessionid'
-		user_id: 'userid'
+		user_id:    'userid'
 	}
 	sql backend.db {
 		insert session into Session

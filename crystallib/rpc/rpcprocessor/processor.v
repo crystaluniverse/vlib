@@ -19,13 +19,13 @@ pub:
 }
 
 pub fn get_subscriber() eventbus.Subscriber[string] {
-	return *rpcprocessor.eb.subscriber
+	return *eb.subscriber
 }
 
 @[heap]
 struct RPCProcessor {
 mut:
-	logger &log.Logger = &log.Logger(&log.Log{
+	logger        &log.Logger = &log.Logger(&log.Log{
 	level: .debug
 })
 	redis_client  redisclient.Redis
@@ -38,7 +38,7 @@ pub mut:
 
 // Handler is the structure responsible of handling a list of supported RPCs over a redis queue
 pub interface IHandler {
-	name          string // name of handler
+	name          string   // name of handler
 	methods       []string // list of supported methods
 	description   string
 	threads       int
@@ -137,7 +137,7 @@ fn (mut p RPCProcessor) handler(client &websocket.Client, message string) string
 	duration := Duration{10}
 
 	event_metadata := &EventMetadata{'Processing RPC ${id}'}
-	rpcprocessor.eb.publish('event_foo', duration, event_metadata)
+	eb.publish('event_foo', duration, event_metadata)
 
 	p.redis_client.hset('rpcs.db', id, message) or { panic(err) }
 

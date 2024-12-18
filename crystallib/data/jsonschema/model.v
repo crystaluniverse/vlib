@@ -14,18 +14,18 @@ type Number = int
 // https://json-schema.org/draft-07/json-schema-release-notes.html
 pub struct Schema {
 pub mut:
-	schema                string               @[json: 'schema']
-	id                    string               @[json: 'id']
+	schema                string @[json: 'schema']
+	id                    string @[json: 'id']
 	title                 string
 	description           string
-	typ                   string               @[json: 'type']
+	typ                   string @[json: 'type']
 	properties            map[string]SchemaRef
-	additional_properties SchemaRef            @[json: 'additionalProperties']
+	additional_properties SchemaRef @[json: 'additionalProperties']
 	required              []string
 	ref                   string
 	items                 Items
 	defs                  map[string]SchemaRef
-	one_of                []SchemaRef          @[json: 'oneOf']
+	one_of                []SchemaRef @[json: 'oneOf']
 	// todo: make fields optional upon the fixing of https://github.com/vlang/v/issues/18775
 	// from https://git.sr.ht/~emersion/go-jsonschema/tree/master/item/schema.go
 	// Validation for numbers

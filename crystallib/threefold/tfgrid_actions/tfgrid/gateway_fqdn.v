@@ -14,11 +14,11 @@ fn (mut t TFGridHandler) gateway_fqdn(action Action) ! {
 			fqdn := action.params.get('fqdn')!
 
 			gw_deploy := t.tfgrid.deploy_gateway_fqdn(GatewayFQDN{
-				name: name
-				node_id: u32(node_id)
+				name:            name
+				node_id:         u32(node_id)
 				tls_passthrough: tls_passthrough
-				backends: [backend]
-				fqdn: fqdn
+				backends:        [backend]
+				fqdn:            fqdn
 			})!
 
 			t.logger.info('${gw_deploy}')

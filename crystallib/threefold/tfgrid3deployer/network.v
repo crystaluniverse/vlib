@@ -50,19 +50,19 @@ fn (mut self NetworkHandler) create_network(vmachines []VMachine) ! {
 
 fn (mut self NetworkHandler) generate_workload(node_id u32, peers []grid_models.Peer, mycleium_hex_key string) !grid_models.Workload {
 	mut network_workload := grid_models.Znet{
-		ip_range: self.ip_range
-		subnet: self.wg_subnet[node_id]
+		ip_range:              self.ip_range
+		subnet:                self.wg_subnet[node_id]
 		wireguard_private_key: self.wg_keys[node_id][0]
 		wireguard_listen_port: self.wg_ports[node_id]
-		peers: peers
-		mycelium: grid_models.Mycelium{
+		peers:                 peers
+		mycelium:              grid_models.Mycelium{
 			hex_key: mycleium_hex_key
-			peers: []
+			peers:   []
 		}
 	}
 
 	return network_workload.to_workload(
-		name: self.network_name
+		name:        self.network_name
 		description: 'VGridClient network workload'
 	)
 }
@@ -71,10 +71,10 @@ fn (mut self NetworkHandler) prepare_hidden_node_peers(node_id u32) ![]grid_mode
 	mut peers := []grid_models.Peer{}
 	if self.public_node != 0 {
 		peers << grid_models.Peer{
-			subnet: self.wg_subnet[self.public_node]
+			subnet:               self.wg_subnet[self.public_node]
 			wireguard_public_key: self.wg_keys[self.public_node][1]
-			allowed_ips: [self.ip_range, '100.64.0.0/16']
-			endpoint: '${self.endpoints[self.public_node]}:${self.wg_ports[self.public_node]}'
+			allowed_ips:          [self.ip_range, '100.64.0.0/16']
+			endpoint:             '${self.endpoints[self.public_node]}:${self.wg_ports[self.public_node]}'
 		}
 	}
 	return peers
@@ -209,10 +209,10 @@ fn (mut self NetworkHandler) prepare_public_node_peers(node_id u32) ![]grid_mode
 		}
 
 		peers << grid_models.Peer{
-			subnet: subnet
+			subnet:               subnet
 			wireguard_public_key: self.wg_keys[peer_id][1]
-			allowed_ips: allowed_ips
-			endpoint: '${self.endpoints[peer_id]}:${self.wg_ports[peer_id]}'
+			allowed_ips:          allowed_ips
+			endpoint:             '${self.endpoints[peer_id]}:${self.wg_ports[peer_id]}'
 		}
 	}
 
@@ -222,10 +222,10 @@ fn (mut self NetworkHandler) prepare_public_node_peers(node_id u32) ![]grid_mode
 			routing_ip := wireguard_routing_ip(subnet)
 
 			peers << grid_models.Peer{
-				subnet: subnet
+				subnet:               subnet
 				wireguard_public_key: self.wg_keys[hidden_node_id][1]
-				allowed_ips: [subnet, routing_ip]
-				endpoint: ''
+				allowed_ips:          [subnet, routing_ip]
+				endpoint:             ''
 			}
 		}
 	}

@@ -6,10 +6,8 @@ import flag
 import log
 import os
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-	goerli_node_url        = 'ws://45.156.243.137:8546'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
+const goerli_node_url = 'ws://45.156.243.137:8546'
 
 fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, secret string, eth_url string) ! {
 	mut eth_client := eth.new(mut client)

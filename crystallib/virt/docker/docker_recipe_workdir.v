@@ -15,7 +15,7 @@ pub mut:
 // to do something like: 'FROM alpine:latest'
 pub fn (mut b DockerBuilderRecipe) add_workdir(args WorkDirArgs) ! {
 	mut item := WorkDirItem{
-		recipe: &b
+		recipe:  &b
 		workdir: args.workdir
 	}
 	b.items << item

@@ -20,9 +20,7 @@ mycelium_installer.install()!
 // mut screens:=screen.new()!
 // println(screens)
 
-
 // dagu_installer.check(secret:"1234")!
-
 
 vlang.v_analyzer_install()!
 

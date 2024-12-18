@@ -25,14 +25,14 @@ fn parser_char_new_path(path string) !ParserChar {
 	}
 	mut content := os.read_file(path) or { return error('Failed to load file ${path}') }
 	return ParserChar{
-		chars: content
+		chars:  content
 		charnr: 0
 	}
 }
 
 pub fn parser_char_new_text(text string) ParserChar {
 	return ParserChar{
-		chars: text
+		chars:  text
 		charnr: 0
 	}
 }
@@ -40,7 +40,7 @@ pub fn parser_char_new_text(text string) ParserChar {
 // return a specific char
 fn (mut parser ParserChar) error_add(msg string) {
 	parser.errors << ParserCharError{
-		error: msg
+		error:  msg
 		charnr: parser.charnr
 	}
 }

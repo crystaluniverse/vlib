@@ -16,10 +16,10 @@ pub fn new(args DockerEngineArgs) !DockerEngine {
 		args2.name = 'local'
 	}
 	mut de := DockerEngine{
-		name: args2.name
+		name:            args2.name
 		sshkeys_allowed: args2.sshkeys_allowed
-		prefix: args.prefix
-		localonly: args.localonly
+		prefix:          args.prefix
+		localonly:       args.localonly
 	}
 	de.init()!
 	return de

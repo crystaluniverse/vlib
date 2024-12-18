@@ -7,9 +7,7 @@ import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 import rand
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_vm(mut fp FlagParser, mut t TFGridClient) !VMDeployment {
 	fp.usage_example('deploy [options]')
@@ -22,10 +20,10 @@ fn deploy_vm(mut fp FlagParser, mut t TFGridClient) !VMDeployment {
 	_ := fp.finalize()!
 
 	vm := DeployVM{
-		name: name
-		farm_id: u32(farm_id)
-		rootfs_size: u64(disk_size)
-		gateway: gateway
+		name:                 name
+		farm_id:              u32(farm_id)
+		rootfs_size:          u64(disk_size)
+		gateway:              gateway
 		add_wireguard_access: wg
 	}
 
@@ -61,7 +59,7 @@ fn remove_vm(mut fp FlagParser, mut t TFGridClient) !NetworkDeployment {
 
 	return t.remove_vm_from_network_deployment(
 		network: network
-		vm: vm_name
+		vm:      vm_name
 	)!
 }
 
@@ -100,7 +98,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Load{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

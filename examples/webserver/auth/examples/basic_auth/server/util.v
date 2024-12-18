@@ -13,14 +13,12 @@ fn (c CustomResponse) to_json() string {
 	return json.encode(c)
 }
 
-const (
-	invalid_json     = 'Invalid JSON Payload.'
-	user_not_found   = 'User not found.'
-	user_unique      = 'User with this username already exists.'
-	invalid_user     = 'Please make sure that you entered a valid username and password.'
-	wrong_credential = 'Invalid credentials'
-	no_signature     = 'Make sure that you have an "Authorization" in your header.'
-)
+const invalid_json = 'Invalid JSON Payload.'
+const user_not_found = 'User not found.'
+const user_unique = 'User with this username already exists.'
+const invalid_user = 'Please make sure that you entered a valid username and password.'
+const wrong_credential = 'Invalid credentials'
+const no_signature = 'Make sure that you have an "Authorization" in your header.'
 
 fn encode(username string, password string) string {
 	return base64.encode('${username}:${password}'.bytes())

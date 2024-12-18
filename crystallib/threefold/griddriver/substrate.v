@@ -79,26 +79,26 @@ struct Hamada {
 
 pub fn (mut c Client) batch_create_contracts(contracts_data_ []BatchCreateContractData) ![]u64 {
 	mut contracts_data := contracts_data_.clone()
-	mut body := ""
+	mut body := ''
 
-	for mut contract in contracts_data{
+	for mut contract in contracts_data {
 		if contract.body.len > 0 {
 			body = contract.body
 		}
 
-		contract.body = ""
+		contract.body = ''
 	}
 
 	data := json.encode(contracts_data)
-	res := os.execute(
-		"griddriver batch-create-contract --substrate \"${c.substrate}\" --mnemonics \"${c.mnemonic}\" --contracts-data '${data}' --contracts-body \"${body}\""
-	)
+	res := os.execute("griddriver batch-create-contract --substrate \"${c.substrate}\" --mnemonics \"${c.mnemonic}\" --contracts-data '${data}' --contracts-body \"${body}\"")
 
 	if res.exit_code != 0 {
 		return error(res.output)
 	}
 
-	contract_ids := json.decode([]u64, res.output) or { return error("Cannot decode the result due to ${err}") }
+	contract_ids := json.decode([]u64, res.output) or {
+		return error('Cannot decode the result due to ${err}')
+	}
 	return contract_ids
 }
 

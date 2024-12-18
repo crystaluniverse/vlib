@@ -4,7 +4,7 @@ import x.json2 as json
 
 pub fn (mut client TwinClient) tfchain_init(name string, secret string) !NameAddressMnemonicModel {
 	data := NameSecretModel{
-		name: name
+		name:   name
 		secret: secret
 	}
 	response := client.transport.send('tfchain.init', json.encode(data).str())!
@@ -23,7 +23,7 @@ pub fn (mut client TwinClient) tfchain_get(name string) !BlockChainModel {
 
 pub fn (mut client TwinClient) tfchain_update(name string, secret string) !NameSecretModel {
 	data := NameSecretModel{
-		name: name
+		name:   name
 		secret: secret
 	}
 	client.transport.send('tfchain.update', json.encode(data).str())!
@@ -62,7 +62,7 @@ pub fn (mut client TwinClient) tfchain_assets(address string) !BlockChainAssetsM
 pub fn (mut client TwinClient) tfchain_create(name string, ip string) !BlockChainCreateResponseModel {
 	data := NameIPModel{
 		name: name
-		ip: ip
+		ip:   ip
 	}
 	response := client.transport.send('tfchain.create', json.encode(data).str())!
 	return json.decode[BlockChainCreateResponseModel](response.data)!
@@ -70,16 +70,16 @@ pub fn (mut client TwinClient) tfchain_create(name string, ip string) !BlockChai
 
 pub fn (mut client TwinClient) tfchain_pay(name string, target_address string, amount f64) ! {
 	data := TFChainPayModel{
-		name: name
+		name:           name
 		target_address: target_address
-		amount: amount
+		amount:         amount
 	}
 	client.transport.send('tfchain.pay', json.encode(data).str())!
 }
 
 pub fn (mut client TwinClient) tfchain_sign(name string, content string) ! {
 	data := BlockChainSignModel{
-		name: name
+		name:    name
 		content: content
 	}
 	client.transport.send('tfchain.sign', json.encode(data).str())!

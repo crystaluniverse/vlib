@@ -6,9 +6,7 @@ import flag
 import log
 import os
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn send_message(mut client RpcWsClient, mut logger log.Logger, receiver string, secret string) ! {
 	mut nostr_client := nostr.new(mut client)
@@ -35,8 +33,8 @@ fn send_message(mut client RpcWsClient, mut logger log.Logger, receiver string, 
 	// Send a message to a receiver
 	nostr_client.publish_direct_message(
 		receiver: receiver
-		tags: ['']
-		content: 'hi, from ${nostr_id}'
+		tags:     ['']
+		content:  'hi, from ${nostr_id}'
 	)!
 }
 

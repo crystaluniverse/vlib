@@ -40,7 +40,7 @@ fn install() ! {
 	}
 
 	mut dest := osal.download(
-		url: url
+		url:        url
 		minsize_kb: 9000
 		expand_dir: '/tmp/rclone'
 	)!
@@ -48,7 +48,7 @@ fn install() ! {
 	mut binpath := dest.file_get('rclone')!
 	osal.cmd_add(
 		cmdname: 'rclone'
-		source: binpath.path
+		source:  binpath.path
 	)!
 }
 
@@ -63,7 +63,6 @@ fn configure() ! {
 	// console.print_debug(mycode)
 	// implement if steps need to be done for configuration
 }
-
 
 fn destroy() ! {
 }

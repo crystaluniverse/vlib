@@ -6,9 +6,9 @@ const test_dir = '/tmp/ourdb'
 
 fn test_basic_operations() {
 	mut db := new(
-		record_nr_max: 16777216 - 1 // max size of records
+		record_nr_max:   16777216 - 1 // max size of records
 		record_size_max: 1024
-		path: ourdb.test_dir
+		path:            test_dir
 	)!
 
 	defer {
@@ -31,9 +31,9 @@ fn test_basic_operations() {
 
 fn test_auto_increment() {
 	mut db := new(
-		record_nr_max: 10 // max size of records
+		record_nr_max:   10 // max size of records
 		record_size_max: 2
-		path: ourdb.test_dir
+		path:            test_dir
 	)!
 
 	defer {
@@ -60,9 +60,9 @@ fn test_auto_increment() {
 
 fn test_history_tracking() {
 	mut db := new(
-		record_nr_max: 16777216 - 1 // max size of records
-		record_size_max: 1024
-		path: ourdb.test_dir
+		record_nr_max:    16777216 - 1 // max size of records
+		record_size_max:  1024
+		path:             test_dir
 		incremental_mode: false
 	)!
 
@@ -90,9 +90,9 @@ fn test_history_tracking() {
 
 fn test_delete_operation() {
 	mut db := new(
-		record_nr_max: 16777216 - 1 // max size of records
-		record_size_max: 1024
-		path: ourdb.test_dir
+		record_nr_max:    16777216 - 1 // max size of records
+		record_size_max:  1024
+		path:             test_dir
 		incremental_mode: false
 	)!
 
@@ -122,9 +122,9 @@ fn test_delete_operation() {
 
 fn test_error_handling() {
 	mut db := new(
-		record_nr_max: 16777216 - 1 // max size of records
+		record_nr_max:   16777216 - 1 // max size of records
 		record_size_max: 1024
-		path: ourdb.test_dir
+		path:            test_dir
 	)!
 
 	defer {
@@ -147,10 +147,10 @@ fn test_error_handling() {
 
 fn test_file_switching() {
 	mut db := new(
-		record_nr_max: 16777216 - 1 // max size of records
-		record_size_max: 1024
-		path: ourdb.test_dir
-		file_size: 10
+		record_nr_max:    16777216 - 1 // max size of records
+		record_size_max:  1024
+		path:             test_dir
+		file_size:        10
 		incremental_mode: false
 	)!
 

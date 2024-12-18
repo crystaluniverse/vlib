@@ -4,38 +4,38 @@ import time
 import freeflowuniverse.crystallib.data.ipaddress
 
 struct VmCreateParams {
-	deployment_name string   // deployment name
-	name            string   // vm name
-	version         u32      // deployment version
-	description     string   // vm description
-	flist           string   // vm flist
-	network         string   // vm network
-	size            Unit     // disk size in GB
-	capacity        Capacity // cpu and memory
-	mounts          []Mount  // [{"name":"mount name","point":"mount point"}]
-	entrypoint      string   // vm entry point
+	deployment_name string            // deployment name
+	name            string            // vm name
+	version         u32               // deployment version
+	description     string            // vm description
+	flist           string            // vm flist
+	network         string            // vm network
+	size            Unit              // disk size in GB
+	capacity        Capacity          // cpu and memory
+	mounts          []Mount           // [{"name":"mount name","point":"mount point"}]
+	entrypoint      string            // vm entry point
 	env             map[string]string // {"key":"value"}
-	corex           bool  // vm corex
-	gpus            []GPU // ["vm list of gpus"]
+	corex           bool              // vm corex
+	gpus            []GPU             // ["vm list of gpus"]
 }
 
 pub fn (client ZOSClient) zos_deployment_vm_create(params VmCreateParams) {
 }
 
 struct VmUpdateParams {
-	deployment_name string   // deployment name
-	name            string   // vm name
-	version         u32      // deployment version
-	description     string   // vm description
-	flist           string   // vm flist
-	network         string   // vm network
-	size            Unit     // disk size in GB
-	capacity        Capacity // cpu and memory
-	mounts          []Mount  // [{"name":"mount name","point":"mount point"}]
-	entrypoint      string   // vm entry point
+	deployment_name string            // deployment name
+	name            string            // vm name
+	version         u32               // deployment version
+	description     string            // vm description
+	flist           string            // vm flist
+	network         string            // vm network
+	size            Unit              // disk size in GB
+	capacity        Capacity          // cpu and memory
+	mounts          []Mount           // [{"name":"mount name","point":"mount point"}]
+	entrypoint      string            // vm entry point
 	env             map[string]string // {"key":"value"}
-	corex           bool  // vm corex
-	gpus            []GPU // ["vm list of gpus"]
+	corex           bool              // vm corex
+	gpus            []GPU             // ["vm list of gpus"]
 }
 
 pub fn (client ZOSClient) zos_deployment_vm_update(params VmUpdateParams) {

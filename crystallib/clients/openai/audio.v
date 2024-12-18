@@ -74,24 +74,24 @@ fn (mut f OpenAIClient[Config]) create_audio_request(args AudioArgs, endpoint st
 	file_content := os.read_file(args.filepath)!
 	ext := os.file_ext(args.filepath)
 	mut file_mime_type := ''
-	if ext in openai.audio_mime_types {
-		file_mime_type = openai.audio_mime_types[ext]
+	if ext in audio_mime_types {
+		file_mime_type = audio_mime_types[ext]
 	} else {
 		return error('file extenion not supported')
 	}
 
 	file_data := http.FileData{
-		filename: os.base(args.filepath)
+		filename:     os.base(args.filepath)
 		content_type: file_mime_type
-		data: file_content
+		data:         file_content
 	}
 
 	form := http.PostMultipartFormConfig{
 		files: {
 			'file': [file_data]
 		}
-		form: {
-			'model':           openai.audio_model
+		form:  {
+			'model':           audio_model
 			'prompt':          args.prompt
 			'response_format': audio_resp_type_str(args.response_format)
 			'temperature':     args.temperature.str()

@@ -20,7 +20,7 @@ pub fn new(args_ Config) !Peertube {
 	configure_init(args.reset, mut args)!
 
 	mut o := Peertube{
-		name: args.name
+		name:   args.name
 		config: args
 	}
 

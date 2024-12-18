@@ -33,7 +33,7 @@ pub fn (mut auth Tokens) new_auth_tokens(params RefreshTokenParams) AuthTokens {
 	refresh_token := auth.new_refresh_token(params)
 	access_token := auth.new_access_token(refresh_token: refresh_token) or { panic(err) }
 	return AuthTokens{
-		access_token: access_token
+		access_token:  access_token
 		refresh_token: refresh_token
 	}
 }

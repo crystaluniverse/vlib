@@ -48,8 +48,8 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	mut dest := osal.download(
-		url: url
-		minsize_kb: 7000
+		url:         url
+		minsize_kb:  7000
 		expand_file: '/tmp/restic'
 	)!
 
@@ -57,7 +57,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	osal.cmd_add(
 		cmdname: 'restic'
-		source: dest.path
+		source:  dest.path
 	)!
 
 	return

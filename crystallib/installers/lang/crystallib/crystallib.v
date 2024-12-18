@@ -33,15 +33,15 @@ pub fn install(args InstallArgs) ! {
 	gs.config.light = true // means we clone depth 1
 
 	mut repo := gs.get_repo(
-		pull: args.git_pull
+		pull:  args.git_pull
 		reset: args.git_reset
-		url: 'https://github.com/freeflowuniverse/crystallib/tree/development/crystallib'
+		url:   'https://github.com/freeflowuniverse/crystallib/tree/development/crystallib'
 	)!
 
 	mut repo2 := gs.get_repo(
-		pull: args.git_pull
+		pull:  args.git_pull
 		reset: args.git_reset
-		url: 'https://github.com/freeflowuniverse/webcomponents/tree/main/webcomponents'
+		url:   'https://github.com/freeflowuniverse/webcomponents/tree/main/webcomponents'
 	)!
 
 	mut path1 := repo.get_path()!

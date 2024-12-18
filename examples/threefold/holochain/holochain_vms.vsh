@@ -5,9 +5,9 @@ import freeflowuniverse.crystallib.ui.console
 
 console.print_header("Get VM's.")
 
-for vm in tfrobot.vms_get('holotest2')!{
+for vm in tfrobot.vms_get('holotest2')! {
 	console.print_debug(vm.str())
-	mut node:=vm.node()!
-	r:=node.exec(cmd:"ls /")!
+	mut node := vm.node()!
+	r := node.exec(cmd: 'ls /')!
 	println(r)
 }

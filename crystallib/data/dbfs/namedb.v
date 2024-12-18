@@ -36,7 +36,7 @@ pub fn namedb_new(path string) !NameDB {
 		cfg = json.decode(NameDBConfig, data)!
 	}
 	return NameDB{
-		path: p
+		path:   p
 		config: cfg
 	}
 }
@@ -183,7 +183,7 @@ fn (mut db NameDB) dbpath(myid u32) !pathlib.Path {
 	dir_name := a.hex()
 	file_name := b.hex()
 	mut mydatafile := pathlib.get_file(
-		path: '${db.path.path}/${dir_name}/${file_name}.txt'
+		path:   '${db.path.path}/${dir_name}/${file_name}.txt'
 		create: true
 	)!
 	return mydatafile

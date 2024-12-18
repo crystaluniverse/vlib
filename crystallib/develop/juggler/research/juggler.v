@@ -40,9 +40,9 @@ fn (mut j Juggler[Config]) get_dag(e GitEvent) ?DAG {
 	path := if repo_url.len > 0 {
 		mut gs := gittools.get() or { panic(err) }
 		mut repo := gs.get_repo(
-			pull: true
-			reset: false
-			url: repo_url
+			pull:   true
+			reset:  false
+			url:    repo_url
 			reload: true
 		)!
 

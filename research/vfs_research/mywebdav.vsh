@@ -10,23 +10,28 @@ import os
 file_name := 'newfile.txt'
 root_dir := '/tmp/webdav'
 
-username := "admin"
-password := "1234"
+username := 'admin'
+password := '1234'
 base64_encoded_creds := base64.encode_str('${username}:${password}')
 
-mut server := webdav.new_app(root_dir: root_dir, user_db: {username: password}) or {
-  eprintln('failed to create new server: ${err}')
-  exit(1)
+mut server := webdav.new_app(
+	root_dir: root_dir
+	user_db:  {
+		username: password
+	}
+) or {
+	eprintln('failed to create new server: ${err}')
+	exit(1)
 }
 
 app.run(background: true)
 time.sleep(500 * time.millisecond)
 
-
 // get file
 mut p := pathlib.get_file(path: '${root_dir}/${file_name}', create: true)!
 p.write('my new file')!
-mut req := http.new_request(.get, 'http://localhost:${server.server_port}/${file_name}','')
+mut req := http.new_request(.get, 'http://localhost:${server.server_port}/${file_name}',
+	'')
 req.add_custom_header('Authorization', 'Basic ${base64_encoded_creds}')!
 mut response := req.do()!
 assert response.body == 'my new file'
@@ -49,7 +54,8 @@ assert p2.read()! == data2
 
 // move file
 file_name3 := 'newfile3.txt'
-req = http.new_request(.move, 'http://localhost:${server.server_port}/${file_name2}', '')
+req = http.new_request(.move, 'http://localhost:${server.server_port}/${file_name2}',
+	'')
 req.add_custom_header('Authorization', 'Basic ${base64_encoded_creds}')!
 req.add_custom_header('Destination', 'http://localhost:${server.server_port}/${file_name3}')!
 response = req.do()!
@@ -57,11 +63,11 @@ p2 = pathlib.get_file(path: '${root_dir}/${file_name3}')!
 assert p2.read()! == data2
 
 // delete file
-req = http.new_request(.delete, 'http://localhost:${server.server_port}/${file_name3}', '')
+req = http.new_request(.delete, 'http://localhost:${server.server_port}/${file_name3}',
+	'')
 req.add_custom_header('Authorization', 'Basic ${base64_encoded_creds}')!
 response = req.do()!
 assert !p2.exists()
-
 
 // create directory
 dir_name := 'newdir'

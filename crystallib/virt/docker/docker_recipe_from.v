@@ -19,9 +19,9 @@ pub mut:
 // to do something like: 'FROM alpine:latest'
 pub fn (mut b DockerBuilderRecipe) add_from(args FromArgs) ! {
 	mut item := FromItem{
-		image: args.image
-		tag: args.tag
-		alias: args.alias
+		image:  args.image
+		tag:    args.tag
+		alias:  args.alias
 		recipe: &b
 	}
 	if item.tag == '' {

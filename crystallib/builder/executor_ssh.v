@@ -125,13 +125,13 @@ pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
 		addr = '\'${executor.user}@[${executor.ipaddr.addr}]\':${executor.ipaddr.port}'
 	}
 	mut rsargs := rsync.RsyncArgs{
-		source: args.source
-		dest: args.dest
-		delete: args.delete
-		ipaddr_src: addr
-		ignore: args.ignore
+		source:         args.source
+		dest:           args.dest
+		delete:         args.delete
+		ipaddr_src:     addr
+		ignore:         args.ignore
 		ignore_default: args.ignore_default
-		stdout: args.stdout
+		stdout:         args.stdout
 	}
 	rsync.rsync(rsargs)!
 }
@@ -173,14 +173,14 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 	}
 
 	mut rsargs := rsync.RsyncArgs{
-		source: args.source
-		dest: args.dest
-		delete: args.delete
-		ipaddr_dst: addr
-		ignore: args.ignore
+		source:         args.source
+		dest:           args.dest
+		delete:         args.delete
+		ipaddr_dst:     addr
+		ignore:         args.ignore
 		ignore_default: args.ignore_default
-		stdout: args.stdout
-		fast_rsync: args.fast_rsync
+		stdout:         args.stdout
+		fast_rsync:     args.fast_rsync
 	}
 	rsync.rsync(rsargs)!
 }

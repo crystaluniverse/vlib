@@ -84,7 +84,7 @@ fn test_scan() ! {
 	// mocking a failed command to see if scan identifies
 	tmux.sessions['init'].windows['test'] = &Window{
 		session: tmux.sessions['init']
-		name: 'test'
+		name:    'test'
 	}
 	new_windows = tmux.windows_get()
 	panic('new windows ${new_windows.keys()}')
@@ -106,13 +106,13 @@ fn test_scan() ! {
 
 // remaining tests are run synchronously to avoid conflicts
 fn test_tmux_window() {
-	res := os.execute('${os.quoted_path(@VEXE)} test ${tmux.testpath}/tmux_window_test.v')
+	res := os.execute('${os.quoted_path(@VEXE)} test ${testpath}/tmux_window_test.v')
 	// assert res.exit_code == 1
 	// assert res.output.contains('other_test.v does not exist')
 }
 
 fn test_tmux_scan() {
-	res := os.execute('${os.quoted_path(@VEXE)} test ${tmux.testpath}/tmux_window_test.v')
+	res := os.execute('${os.quoted_path(@VEXE)} test ${testpath}/tmux_window_test.v')
 	// assert res.exit_code == 1
 	// assert res.output.contains('other_test.v does not exist')
 }

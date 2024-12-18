@@ -28,7 +28,7 @@ pub mut:
 }
 
 struct ConfigSettings {
-	persist bool       @[omitempty]
+	persist bool @[omitempty]
 	load    LoadConfig
 }
 
@@ -77,9 +77,9 @@ struct CustomLog {
 	writer   WriterConfig  @[omitempty]
 	encoder  EncoderConfig @[omitempty]
 	level    string
-	sampling LogSampling   @[omitempty]
-	include  []string      @[omitempty]
-	exclude  []string      @[omitempty]
+	sampling LogSampling @[omitempty]
+	include  []string    @[omitempty]
+	exclude  []string    @[omitempty]
 }
 
 struct EncoderConfig {

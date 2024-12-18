@@ -34,7 +34,7 @@ fn test_file_operations() {
 	e.ipaddr = IPAddress{
 		addr: '127.0.0.1'
 		port: 22
-		cat: .ipv4
+		cat:  .ipv4
 	}
 	mut filepath := '/tmp/${rand.uuid_v4()}'
 	e.file_write(filepath, 'ssh')!
@@ -54,7 +54,7 @@ fn test_environ_get() {
 	e.ipaddr = IPAddress{
 		addr: '127.0.0.1'
 		port: 22
-		cat: .ipv4
+		cat:  .ipv4
 	}
 	mut env := e.environ_get()!
 	console.print_debug(env)

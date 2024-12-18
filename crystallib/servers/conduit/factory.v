@@ -64,12 +64,12 @@ pub fn configure(instance string, config_ Config) !Server[Config] {
 	}
 
 	conduit_installer.install(
-		reset: config.reset
+		reset:   config.reset
 		version: config.version
 	)!
 
 	mut server := Server[Config]{
-		name: config.name
+		name:        config.name
 		path_config: pathlib.get_dir(path: '${config.path}/cfg', create: true)!
 	}
 

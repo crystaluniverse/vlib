@@ -29,18 +29,18 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 	// TODO: support modules outside of crystal
 
 	mut file := CodeFile{
-		name: '${object_name}_test'
-		mod: texttools.name_fix(actor_name)
+		name:    '${object_name}_test'
+		mod:     texttools.name_fix(actor_name)
 		imports: [
 			Import{
 				mod: 'os'
 			},
 			Import{
-				mod: '${object.structure.mod}'
+				mod:   '${object.structure.mod}'
 				types: [object_type]
 			},
 		]
-		items: [
+		items:   [
 			consts,
 			testsuite_begin,
 			testsuite_end,
@@ -76,12 +76,12 @@ fn generate_new_method_test(actor Struct, object BaseObject) !Function {
 	${object_name}_id = actor.new_${object_name}(${object_type}{${fields.join(',')}})!
 	assert ${object_name}_id == 2'
 	return Function{
-		name: 'test_new_${object_name}'
+		name:        'test_new_${object_name}'
 		description: 'news the ${object_type} with the given object id'
-		result: codemodel.Result{
+		result:      codemodel.Result{
 			result: true
 		}
-		body: body
+		body:        body
 	}
 }
 
@@ -102,12 +102,12 @@ fn generate_get_method_test(actor Struct, object BaseObject) !Function {
 	${object_name}.id = actor.new_${object_name}(${object_name})!
 	assert ${object_name} == actor.get_${object_name}(${object_name}.id)!'
 	return Function{
-		name: 'test_get_${object_name}'
+		name:        'test_get_${object_name}'
 		description: 'news the ${object_type} with the given object id'
-		result: codemodel.Result{
+		result:      codemodel.Result{
 			result: true
 		}
-		body: body
+		body:        body
 	}
 }
 
@@ -140,12 +140,12 @@ fn generate_filter_test(actor Struct, object BaseObject) !Function {
 	\n${index_tests.join('\n\n')}'
 
 	return Function{
-		name: 'test_filter_${object_name}'
+		name:        'test_filter_${object_name}'
 		description: 'news the ${object_type} with the given object id'
-		result: codemodel.Result{
+		result:      codemodel.Result{
 			result: true
 		}
-		body: body
+		body:        body
 	}
 }
 

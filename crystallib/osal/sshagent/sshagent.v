@@ -30,7 +30,7 @@ pub fn (mut agent SSHAgent) init() ! {
 				pubkey := splitted[1]
 				mut sshkey := SSHKey{
 					pubkey: pubkey
-					agent: &agent
+					agent:  &agent
 					loaded: true
 				}
 				if splitted[0].contains('ed25519') {
@@ -69,9 +69,9 @@ pub fn (mut agent SSHAgent) init() ! {
 		// the pop makes sure the key is removed from keys in agent, this means we can add later
 		mut sshkey2 := agent.get(pubkey: pubkey2) or {
 			SSHKey{
-				name: name
+				name:   name
 				pubkey: pubkey2
-				agent: &agent
+				agent:  &agent
 			}
 		}
 		agent.pop(sshkey2.pubkey)

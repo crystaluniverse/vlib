@@ -18,11 +18,11 @@ pub fn (generator ActorGenerator) generate(code []codemodel.CodeItem) ![]codemod
 	for root_struct in root_structs {
 		field := get_child_field(
 			parent: actor_struct
-			child: root_struct
+			child:  root_struct
 		)
 		crud_methods << generator.generate_object_methods(
 			actor_field: field
-			actor_name: actor_struct.name
+			actor_name:  actor_struct.name
 			root_struct: root_struct
 		)
 	}

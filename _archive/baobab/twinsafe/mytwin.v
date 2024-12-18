@@ -8,8 +8,8 @@ import encoding.hex
 // this is me, my representation
 pub struct MyTwin {
 pub mut:
-	id          u32                 @[primary; sql: serial]
-	name        string              @[nonull; unique]
+	id          u32    @[primary; sql: serial]
+	name        string @[nonull; unique]
 	description string
 	privkey     secp256k1.Secp256k1 @[skip] // to be used for signing, verifying, only to be filled in when private key	
 	keysafe     &KeysSafe           @[skip] // allows us to remove ourselves from mem, or go to db
@@ -43,11 +43,11 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	exists := ks.mytwin_db_exists(name: args.name)!
 	if exists {
 		return GetError{
-			args: GetArgs{
-				id: 0
+			args:       GetArgs{
+				id:   0
 				name: args.name
 			}
-			msg: 'mytwin with name: ${args.name} aleady exist'
+			msg:        'mytwin with name: ${args.name} aleady exist'
 			error_type: GetErrorType.alreadyexists
 		}
 	}
@@ -61,11 +61,11 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	}
 	privkey_str := encrypt_privkey(privkey_hex, ks.secret)!
 	twin := MyTwin{
-		name: args.name
+		name:        args.name
 		description: args.description
 		privkey_str: privkey_str
-		privkey: privkey
-		keysafe: ks
+		privkey:     privkey
+		keysafe:     ks
 	}
 	sql ks.db {
 		insert twin into MyTwin
@@ -106,8 +106,8 @@ pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 		return mytwin
 	}
 	return GetError{
-		args: args
-		msg: "couldn't get mytwin with name ${args.name}"
+		args:       args
+		msg:        "couldn't get mytwin with name ${args.name}"
 		error_type: GetErrorType.notfound
 	}
 }

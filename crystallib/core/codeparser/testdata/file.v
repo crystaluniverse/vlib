@@ -26,6 +26,6 @@ pub struct FileStruct1 {}
 pub fn file_func3(param1 string, param2 int) FileStruct1 {
 	return FileStruc1{
 		firstname: firstname
-		lastname: lastname
+		lastname:  lastname
 	}
 }

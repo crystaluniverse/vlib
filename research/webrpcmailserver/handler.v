@@ -18,8 +18,8 @@ fn (mut handler MailOpenRpcHandler) close_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -32,8 +32,8 @@ fn (mut handler MailOpenRpcHandler) select__handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -46,8 +46,8 @@ fn (mut handler MailOpenRpcHandler) create_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -60,8 +60,8 @@ fn (mut handler MailOpenRpcHandler) delete_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -74,8 +74,8 @@ fn (mut handler MailOpenRpcHandler) rename_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -88,8 +88,8 @@ fn (mut handler MailOpenRpcHandler) subscribe_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -102,8 +102,8 @@ fn (mut handler MailOpenRpcHandler) unsubscribe_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -116,8 +116,8 @@ fn (mut handler MailOpenRpcHandler) list_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -130,8 +130,8 @@ fn (mut handler MailOpenRpcHandler) status_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -144,8 +144,8 @@ fn (mut handler MailOpenRpcHandler) append_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -158,8 +158,8 @@ fn (mut handler MailOpenRpcHandler) poll_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }
@@ -172,8 +172,8 @@ fn (mut handler MailOpenRpcHandler) idle_handle(data string) !string {
 
 	response := jsonrpc.JsonRpcResponse[string]{
 		jsonrpc: '2.0.0'
-		id: request.id
-		result: ''
+		id:      request.id
+		result:  ''
 	}
 	return response.to_json()
 }

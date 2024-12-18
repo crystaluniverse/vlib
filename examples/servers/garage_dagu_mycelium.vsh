@@ -7,14 +7,14 @@ import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.installers.db.zdb
 import freeflowuniverse.crystallib.installers.db.redis
 
-redis.install(start:true)!
+redis.install(start: true)!
 
-zdb.install(start:true)!
+zdb.install(start: true)!
 
 mycelium.install()!
 
 rfs.install()!
 
-dagu.install(start:true)!
+dagu.install(start: true)!
 
-garage_s3.install(start:true)!
+garage_s3.install(start: true)!

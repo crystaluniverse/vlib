@@ -35,10 +35,10 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 		config_actions[0].done = true
 	}
 	mut websites := zola.new(
-		path_build: buildroot
+		path_build:   buildroot
 		path_publish: publishroot
-		install: install
-		reset: reset
+		install:      install
+		reset:        reset
 	)!
 
 	mut ws := WebsiteItem{}
@@ -118,11 +118,11 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 			}
 
 			site_.person_add(
-				name: name
+				name:       name
 				collection: collection
-				file: file
-				page: page
-				pointer: pointer
+				file:       file
+				page:       page
+				pointer:    pointer
 			)!
 		} else if action.name == 'people_add' {
 			console.print_debug('website.people_add')
@@ -136,9 +136,9 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 
 			sort_by := zola.SortBy.from(sort_by_)!
 			site_.people_add(
-				name: name
-				title: p.get_default('title', '')!
-				sort_by: sort_by
+				name:        name
+				title:       p.get_default('title', '')!
+				sort_by:     sort_by
 				description: description
 			)!
 		} else if action.name == 'blog_add' {
@@ -153,9 +153,9 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 
 			sort_by := zola.SortBy.from(sort_by_)!
 			site_.blog_add(
-				name: name
-				title: p.get_default('title', '')!
-				sort_by: sort_by
+				name:        name
+				title:       p.get_default('title', '')!
+				sort_by:     sort_by
 				description: description
 			)!
 		} else if action.name == 'news_add' {

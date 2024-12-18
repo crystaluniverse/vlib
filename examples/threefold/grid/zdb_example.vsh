@@ -19,8 +19,9 @@ pub fn (vm ZDBDeployed) ping() bool {
 
 }
 
-pub fn (vm ZDBDeployed) redisclient() redisclient... {
-
+pub fn (vm ZDBDeployed) redisclient() !RedisClient {
+	// TODO: implement redis client connection
+	return error('not implemented')
 }
 
 //only connect to yggdrasil and mycelium

@@ -120,7 +120,7 @@ fn (mut p Processor) send_rmb_error_message(code RMBErrorCode, msg &RMBMessage) 
 		now: u64(time.now().unix_time())
 		shm: 'application/json'
 		err: struct {
-			code: int(code)
+			code:    int(code)
 			message: error_code_to_message(code)
 		}
 	}

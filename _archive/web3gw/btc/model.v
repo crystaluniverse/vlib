@@ -19,7 +19,7 @@ pub struct Transfer {
 
 @[params]
 pub struct EstimateSmartFee {
-	conf_target i64    = 1 // confirmation target in blocks
+	conf_target i64    = 1              // confirmation target in blocks
 	mode        string = 'CONSERVATIVE' // defines the different fee estimation modes, should be one of UNSET, ECONOMICAL or CONSERVATIVE
 }
 
@@ -75,7 +75,7 @@ pub struct GetBlockVerboseTxResult {
 	weight            int
 	height            i64
 	version           int
-	version_hex       string        @[json: 'versionHex']
+	version_hex       string @[json: 'versionHex']
 	merkleroot        string
 	tx                []TxRawResult
 	rawtx             []TxRawResult
@@ -126,10 +126,10 @@ pub struct VOut {
 }
 
 pub struct ScriptPubKeyResult {
-	asm_      string   @[json: 'asm']
+	asm_      string @[json: 'asm']
 	hex       string
-	req_sigs  int      @[json: 'reqSigs']
-	type_     string   @[json: 'type']
+	req_sigs  int    @[json: 'reqSigs']
+	type_     string @[json: 'type']
 	addresses []string
 }
 

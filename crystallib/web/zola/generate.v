@@ -30,7 +30,7 @@ pub fn (mut site ZolaSite) process() ! {
 
 	list := content_dir.list(
 		recursive: true
-		regex: [r'.*\.md$']
+		regex:     [r'.*\.md$']
 	)!
 
 	for file in list.paths {
@@ -58,7 +58,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	}
 
 	content_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content'
+		path:   '${site.path_build.path}/content'
 		create: true
 	)!
 
@@ -76,7 +76,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	}
 
 	static_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/static'
+		path:   '${site.path_build.path}/static'
 		create: true
 	)!
 
@@ -98,7 +98,7 @@ pub fn (mut site ZolaSite) generate() ! {
 
 	if img_dir.exists() {
 		img_dir.move(
-			dest: '${static_dir.path}/img'
+			dest:   '${static_dir.path}/img'
 			delete: true
 		)!
 	}
@@ -108,7 +108,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	)!
 
 	errors_file.move(
-		dest: '${site.path_build.path}/errors.md'
+		dest:   '${site.path_build.path}/errors.md'
 		delete: true
 	)!
 
@@ -117,7 +117,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	)!
 
 	src_dir.move(
-		dest: content_dir.path
+		dest:   content_dir.path
 		delete: true
 	)!
 
@@ -136,7 +136,7 @@ pub fn (mut site ZolaSite) generate() ! {
 
 	for key, mut section in site.sections {
 		section_dir := pathlib.get_dir(
-			path: '${content_dir.path}/${section.name}'
+			path:   '${content_dir.path}/${section.name}'
 			create: true
 		)!
 		section.export(section_dir.path)!
@@ -145,8 +145,8 @@ pub fn (mut site ZolaSite) generate() ! {
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')
 
 	mut tw := tailwind.new(
-		name: site.name
-		path_build: site.path_build.path
+		name:          site.name
+		path_build:    site.path_build.path
 		content_paths: [
 			'${site.path_build.path}/templates/**/*.html',
 			'${site.path_build.path}/content/**/*.md',

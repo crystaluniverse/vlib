@@ -39,7 +39,7 @@ pub:
 // DOESN'T handle data encryption, sensitive data should be encrypted
 pub fn create_token(payload_ JwtPayload) JsonWebToken {
 	return JsonWebToken{
-		JwtHeader: JwtHeader{'HS256', 'JWT'}
+		JwtHeader:  JwtHeader{'HS256', 'JWT'}
 		JwtPayload: JwtPayload{
 			...payload_
 			iat: time.now()
@@ -92,7 +92,7 @@ pub fn (token SignedJWT) decode() !JsonWebToken {
 	payload_json := base64.url_decode(payload_urlencoded).bytestr()
 	payload := json.decode(JwtPayload, payload_json) or { panic('Decoding payload: ${err}') }
 	return JsonWebToken{
-		JwtHeader: header
+		JwtHeader:  header
 		JwtPayload: payload
 	}
 }

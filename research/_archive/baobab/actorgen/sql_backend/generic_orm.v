@@ -10,7 +10,7 @@ pub struct SQLiteBackend {
 
 @[table: 'root_objects']
 pub struct RootObject {
-	id    int    @[primary; sql: serial] // unique serial root object id
+	id    int @[primary; sql: serial] // unique serial root object id
 	table string // name of table root object is in
 }
 
@@ -123,7 +123,7 @@ pub fn do() ! {
 	}!
 
 	mut example_obj := ExampleStruct{
-		name: 'example'
+		name:        'example'
 		description: 'an example root object'
 	}
 

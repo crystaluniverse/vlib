@@ -46,12 +46,12 @@ fn vscode_install() ? {
 		console.print_debug(cmd)
 
 		n.exec(
-			cmd: cmd
-			period: 0
-			reset: false
+			cmd:         cmd
+			period:      0
+			reset:       false
 			description: 'install vscode'
-			stdout: true
-			checkkey: 'vscodeinstall'
+			stdout:      true
+			checkkey:    'vscodeinstall'
 		) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n${cmd}') }
 	}
 
@@ -59,12 +59,12 @@ fn vscode_install() ? {
 	console.print_debug(cmd)
 
 	n.exec(
-		cmd: cmd
-		period: 0
-		reset: false
+		cmd:         cmd
+		period:      0
+		reset:       false
 		description: 'install vscode'
-		stdout: true
-		checkkey: 'vscodeinstall'
+		stdout:      true
+		checkkey:    'vscodeinstall'
 	) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n${cmd}') }
 
 	// #have to do this workaround on osx, can't do infile -i
@@ -96,7 +96,7 @@ fn vscode_uninstall() {
 
 // install fftools (based on ms visual studio code)
 pub fn install() ? {
-	f := fftools.factory
+	f := factory
 	if f.state == .init {
 		vscode_install()?
 		// make sure we have ssh key initialized

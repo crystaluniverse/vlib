@@ -16,10 +16,10 @@ fn (mut t TFGridHandler) peertube(action Action) ! {
 			db_password := action.params.get_default('db_password', rand.string(8).to_lower())!
 
 			deploy_res := t.tfgrid.deploy_peertube(
-				name: name
-				farm_id: u64(farm_id)
-				capacity: capacity
-				ssh_key: ssh_key
+				name:        name
+				farm_id:     u64(farm_id)
+				capacity:    capacity
+				ssh_key:     ssh_key
 				admin_email: admin_email
 				db_username: db_username
 				db_password: db_password

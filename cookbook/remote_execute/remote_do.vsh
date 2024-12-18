@@ -6,13 +6,15 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
-//the next statement makes the current script to be executed remotely
-nodes:='65.21.132.119'
-if builder.this_remote_exec(nodes:nodes,script:@FILE,sync_from_local:true)! {exit(0)}
+// the next statement makes the current script to be executed remotely
+nodes := '65.21.132.119'
+if builder.this_remote_exec(nodes: nodes, script: @FILE, sync_from_local: true)! {
+	exit(0)
+}
 
 /////////////// Will be execute on remote
 
-console.print_header("My remote test.")
+console.print_header('My remote test.')
 
 println(osal.platform())
 

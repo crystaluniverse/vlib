@@ -71,7 +71,7 @@ pub fn cmd_to_script_path(cmd Command) !string {
 		text: cmdcontent
 		path: scriptpath
 		name: cmd.name
-		ext: extension
+		ext:  extension
 	) or { return error('error: cannot write script to execute: ${err}') }
 	// console.print_debug(" - scriptpath: ${cmd.scriptpath}")
 	return scriptpath

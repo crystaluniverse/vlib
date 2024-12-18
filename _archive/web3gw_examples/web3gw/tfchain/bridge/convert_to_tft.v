@@ -6,9 +6,7 @@ import flag
 import log
 import os
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, network string, secret string, amount string, twin_id u32) ! {
 	mut stellar_client := stellar.new(mut client)

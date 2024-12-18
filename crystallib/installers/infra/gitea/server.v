@@ -95,8 +95,8 @@ pub fn get(name_ string) !Server {
 		args := json.decode(Config, data)!
 
 		mut server := Server{
-			name: name
-			config: args
+			name:        name
+			config:      args
 			path_config: pathlib.get_dir(path: '${args.path}/cfg', create: true)!
 		}
 
@@ -162,7 +162,7 @@ pub fn (mut server Server) start() ! {
 	processname := 'gitea_${server.name}'
 	mut p := z.process_new(
 		name: processname
-		cmd: '
+		cmd:  '
 		cd /tmp
 		sudo -u git bash -c \'gitea web --config ${config_path.path} --verbose\'
 		'

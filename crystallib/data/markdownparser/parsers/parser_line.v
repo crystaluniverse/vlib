@@ -42,9 +42,7 @@ fn parser_line_new(mut doc elements.Doc) !Parser {
 
 		// Create and process the Frontmatter element
 		mut frontmatter := doc.frontmatter_new(mut &doc, frontmatter_content)
-		frontmatter.process() or {
-			return error('Failed to parse frontmatter: ${err.msg()}')
-		}
+		frontmatter.process() or { return error('Failed to parse frontmatter: ${err.msg()}') }
 	}
 
 	doc.paragraph_new(mut parser.doc, '')
@@ -56,6 +54,7 @@ fn parser_line_new(mut doc elements.Doc) !Parser {
 	parser.linenr = 0
 	return parser
 }
+
 fn (mut parser Parser) lastitem() !elements.Element {
 	return parser.doc.last()!
 }
@@ -63,9 +62,9 @@ fn (mut parser Parser) lastitem() !elements.Element {
 // return a specific line
 fn (mut parser Parser) error_add(msg string) {
 	parser.errors << ParserError{
-		error: msg
+		error:  msg
 		linenr: parser.linenr
-		line: parser.line_current()
+		line:   parser.line_current()
 	}
 }
 

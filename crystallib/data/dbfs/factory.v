@@ -26,8 +26,8 @@ pub fn get(args_ CollectionGetArgs) !DBCollection {
 	// r.selectdb(args_.contextid)!
 
 	mut dbcollection := DBCollection{
-		path: p
-		secret: secret
+		path:      p
+		secret:    secret
 		contextid: args.contextid
 		// redis:r
 	}

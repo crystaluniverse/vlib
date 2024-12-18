@@ -43,10 +43,10 @@ pub fn (mut h TFGridHandler) farms(action Action) ! {
 			randomize := action.params.get_default_false('randomize')
 
 			req := FindFarms{
-				filters: filter
+				filters:    filter
 				pagination: Limit{
-					page: page
-					size: size
+					page:      page
+					size:      size
 					randomize: randomize
 				}
 			}

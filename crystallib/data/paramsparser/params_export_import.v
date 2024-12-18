@@ -100,9 +100,9 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 	if args.comments_remove == false {
 		for comment in p.comments {
 			result_params << ParamExportItem{
-				key: ''
-				isarg: false
-				comment: comment
+				key:       ''
+				isarg:     false
+				comment:   comment
 				firstline: args.oneline
 			}
 		}
@@ -119,9 +119,9 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 			}
 			args_done << arg
 			result_params << ParamExportItem{
-				key: arg
-				isarg: true
-				comment: ''
+				key:       arg
+				isarg:     true
+				comment:   ''
 				firstline: true
 			}
 			firstlinesize += arg.len + 1
@@ -140,9 +140,9 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 			keys_to_be_sorted << key
 		}
 		dict_param[key] = ParamExportItem{
-			key: key
-			value: param.value
-			comment: param.comment
+			key:       key
+			value:     param.value
+			comment:   param.comment
 			firstline: false
 		}
 	}

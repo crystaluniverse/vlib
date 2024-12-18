@@ -24,30 +24,30 @@ fn play_investmentshares(mut investortool InvestorTool, mut plbook playbook.Play
 	for mut action in plbook.find(filter: 'investortool.investment_shares_define')! {
 		mut p := action.params
 		mut investment_shares := InvestmentShares{
-			oid: p.get_default('oid', '')!
-			company_ref: p.get_default('company_ref', '')!.trim(' ')
-			investor_ref: p.get_default('investor_ref', '')!
-			nr_shares: p.get_float_default('nr_shares', 0)!
-			share_class: p.get_default('share_class', '')!
+			oid:              p.get_default('oid', '')!
+			company_ref:      p.get_default('company_ref', '')!.trim(' ')
+			investor_ref:     p.get_default('investor_ref', '')!
+			nr_shares:        p.get_float_default('nr_shares', 0)!
+			share_class:      p.get_default('share_class', '')!
 			investment_value: if p.exists('investment_value')
 				&& p.get('investment_value')!.trim(' ').len > 0 {
 				p.get_currencyamount('investment_value')!
 			} else {
 				none
 			}
-			interest: if p.exists('interest') && p.get('interest')!.trim(' ').len > 0 {
+			interest:         if p.exists('interest') && p.get('interest')!.trim(' ').len > 0 {
 				p.get_currencyamount('interest')!
 			} else {
 				none
 			}
-			description: p.get_default('description', '')!
-			investment_date: if p.exists('investment_date') {
+			description:      p.get_default('description', '')!
+			investment_date:  if p.exists('investment_date') {
 				p.get_time('investment_date')!
 			} else {
 				none
 			}
-			type_: p.get_default('type', '')!
-			comments: p.get_list_default('comments', [])!
+			type_:            p.get_default('type', '')!
+			comments:         p.get_list_default('comments', [])!
 		}
 		println(investment_shares)
 		investortool.investment_shares_add(investment_shares)!

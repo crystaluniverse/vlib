@@ -16,7 +16,7 @@ fn register() ? {
 	})
 	config := http.FetchConfig{
 		header: header
-		data: json.encode({
+		data:   json.encode({
 			'username': 'Emad'
 			'password': '0000'
 		})

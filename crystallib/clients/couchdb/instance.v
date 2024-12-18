@@ -132,7 +132,7 @@ pub fn (mut cl CouchDBInstance) create_or_update_document[T](doc_id ID, rev ?Rev
 	res := cl.connection.send(
 		method: .put
 		prefix: '${cl.name}/${doc_id}?${query}'
-		data: json.encode(doc)
+		data:   json.encode(doc)
 	)!
 	if !res.is_ok() {
 		return error('failed to create/update document: (${res.code}) ${res.data}')

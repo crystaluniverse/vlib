@@ -16,9 +16,9 @@ pub mut:
 pub fn (o OpenRPC) generate_code(receiver Struct, methods_map map[string]Function, objects_map map[string]Struct) !OpenRPCCode {
 	openrpc_json := o.encode()!
 	openrpc_file := File{
-		name: 'openrpc'
+		name:      'openrpc'
 		extension: 'json'
-		content: openrpc_json
+		content:   openrpc_json
 	}
 
 	client_file := o.generate_client_file(objects_map)!
@@ -31,12 +31,12 @@ pub fn (o OpenRPC) generate_code(receiver Struct, methods_map map[string]Functio
 	server_test_file := o.generate_server_test_file()!
 
 	return OpenRPCCode{
-		client: client_file
-		client_test: client_test_file
-		handler: handler_file
+		client:       client_file
+		client_test:  client_test_file
+		handler:      handler_file
 		handler_test: handler_test_file
-		server: server_file
-		server_test: server_test_file
+		server:       server_file
+		server_test:  server_test_file
 		openrpc_json: openrpc_file
 	}
 }

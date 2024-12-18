@@ -3,21 +3,23 @@ module osis
 import db.pg
 
 struct BaseObject {
-    id int @[primary; sql: serial]
-	object string 
+	id     int @[primary; sql: serial]
+	object string
 }
 
 pub fn (mut i Indexer) init() ! {
 	sql i.db {
-	    create table BaseObject
+		create table BaseObject
 	}!
 }
 
 pub fn (mut i Indexer) new_id(object string) !u32 {
-	obj := BaseObject{object:object}
+	obj := BaseObject{
+		object: object
+	}
 	id := sql i.db {
 		insert obj into BaseObject
-	} or {return err}
+	} or { return err }
 	return u32(id)
 }
 

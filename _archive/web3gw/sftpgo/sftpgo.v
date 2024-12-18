@@ -39,7 +39,7 @@ pub fn new(args SFTPGOClientArgs) !SFTPGoClient {
 	})!
 	return SFTPGoClient{
 		address: args.address
-		header: header
+		header:  header
 	}
 }
 
@@ -59,7 +59,7 @@ pub fn generate_jwt_token(args JWTArgs) !string {
 	req := http.Request{
 		method: http.Method.get
 		header: header
-		url: '${args.address}/token'
+		url:    '${args.address}/token'
 	}
 	resp := req.do()!
 	return resp.body
@@ -77,11 +77,11 @@ pub mut:
 
 pub fn generate_api_key(args APIKeyParams) !string {
 	key_data := APIKeyData{
-		name: args.name
-		scope: args.scope
+		name:        args.name
+		scope:       args.scope
 		description: args.description
-		user: args.user
-		admin: args.admin
+		user:        args.user
+		admin:       args.admin
 	}
 	header := http.new_custom_header_from_map({
 		'Authorization': 'Bearer ${args.jwt}'
@@ -89,8 +89,8 @@ pub fn generate_api_key(args APIKeyParams) !string {
 	req := http.Request{
 		method: http.Method.post
 		header: header
-		url: '${args.address}/apikeys'
-		data: json.encode(key_data)
+		url:    '${args.address}/apikeys'
+		data:   json.encode(key_data)
 	}
 	resp := req.do()!
 	return resp.body

@@ -13,8 +13,8 @@ pub mut:
 	description string
 	deadline    ourtime.OurTime
 	state       State
-	milestones  []smartid.GID   @[root_object: Milestone]
-	stories     []smartid.GID   @[root_object: Story]
+	milestones  []smartid.GID @[root_object: Milestone]
+	stories     []smartid.GID @[root_object: Story]
 }
 
 // pub enum ProjectStatus {

@@ -29,11 +29,11 @@ pub fn (mut htp HttpTwinClient) init(url string) !HttpTwinClient {
 pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 	function := functionPath.replace('.', '/')
 	request := http.Request{
-		url: '${htp.url}/${function}'
-		method: htp.method
-		header: htp.header
-		data: args
-		read_timeout: 120 * time.second
+		url:           '${htp.url}/${function}'
+		method:        htp.method
+		header:        htp.header
+		data:          args
+		read_timeout:  120 * time.second
 		write_timeout: 120 * time.second
 	}
 	response := request.do()!
@@ -61,10 +61,10 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 pub const factory = Factory{}
 
 pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client) !WSTwinClient {
-	mut f := twinclient.factory
+	mut f := factory
 
 	if tcl.ws.id in f.clients {
-		return twinclient.factory.clients[tcl.ws.id]
+		return factory.clients[tcl.ws.id]
 	}
 	tcl.ws = ws_client
 	tcl.channels = map[string]chan Message{}
@@ -105,9 +105,9 @@ pub fn (mut tcl WSTwinClient) send(functionPath string, args string) !Message {
 	req.args = args
 
 	payload := json.encode(Message{
-		id: id
+		id:    id
 		event: 'invoke'
-		data: json.encode(req)
+		data:  json.encode(req)
 	}).bytes()
 
 	tcl.ws.write(payload, .text_frame)!
@@ -137,15 +137,15 @@ fn (mut tcl WSTwinClient) wait(id string, timeout u32) !Message {
 // RMB Client
 pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int) !RmbTwinClient {
 	msg := Message{
-		id: rand.uuid_v4()
-		version: 1
-		command: 'twinserver'
+		id:         rand.uuid_v4()
+		version:    1
+		command:    'twinserver'
 		expiration: exp
-		retry: num_retry
-		twin_src: 0
-		twin_dst: dst
-		retqueue: rand.uuid_v4()
-		epoch: time.now().unix_time()
+		retry:      num_retry
+		twin_src:   0
+		twin_dst:   dst
+		retqueue:   rand.uuid_v4()
+		epoch:      time.now().unix_time()
 	}
 	rmb.client = redisclient.get('localhost:6379')!
 	rmb.message = msg

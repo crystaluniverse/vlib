@@ -23,4 +23,4 @@ import veb
 
 // pub fn (mut app App) index(mut ctx Context) veb.Result {
 // 	return ctx.html('hello')
-// } 
+// }

@@ -48,7 +48,7 @@ fn (mut deployer Deployer) vm_deploy(args_ VMSpecs) !VMDeployed {
 	// deploymentstate_db.set(args.deployment_name,"vm_${args.name}",json.encode(VMDeployed))!
 
 	vm := models.VM{
-		name: 'vm1'
+		name:     'vm1'
 		env_vars: {
 			'SSH_KEY': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTwULSsUubOq3VPWL6cdrDvexDmjfznGydFPyaNcn7gAL9lRxwFbCDPMj7MbhNSpxxHV2+/iJPQOTVJu4oc1N7bPP3gBCnF51rPrhTpGCt5pBbTzeyNweanhedkKDsCO2mIEh/92Od5Hg512dX4j7Zw6ipRWYSaepapfyoRnNSriW/s3DH/uewezVtL5EuypMdfNngV/u2KZYWoeiwhrY/yEUykQVUwDysW/xUJNP5o+KSTAvNSJatr3FbuCFuCjBSvageOLHePTeUwu6qjqe+Xs4piF1ByO/6cOJ8bt5Vcx0bAtI8/MPApplUU/JWevsPNApvnA/ntffI+u8DCwgP'
 		}
@@ -63,16 +63,16 @@ fn (mut deployer Deployer) vm_deploy(args_ VMSpecs) !VMDeployed {
 	}
 
 	machine := models.Zmachine{
-		flist: args.flist
-		size: args.size
+		flist:            args.flist
+		size:             args.size
 		compute_capacity: args.compute_capacity
-		env: env_vars
+		env:              env_vars
 	}
 
 	mut deployment := models.new_deployment(
 		// twin_id:
 		workloads: [machine.to_workload()]
-		metadata: models.DeploymentData{
+		metadata:  models.DeploymentData{
 			name: args.deployment_name
 		}
 	)
@@ -86,9 +86,9 @@ fn (mut deployer Deployer) vm_deploy(args_ VMSpecs) !VMDeployed {
 	zmachine := json.decode(models.Zmachine, vm_workload.data)!
 	mycelium_ip := zmachine.network.mycelium or { panic('deployed vm must have mycelium ip') }
 	vm_deployed := VMDeployed{
-		name: vm_workload.name
+		name:   vm_workload.name
 		nodeid: args.nodeid
-		guid: vm_workload.name
+		guid:   vm_workload.name
 		// yggdrasil_ip: zmachine.network.
 		mycelium_ip: '${mycelium_ip.network}${mycelium_ip.hex_seed}'
 	}

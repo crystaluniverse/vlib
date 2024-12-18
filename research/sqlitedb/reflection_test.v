@@ -26,27 +26,27 @@ struct TestStruct {
 fn testsuite_begin() {
 	test_begin = ourtime.now()
 	test_db = DB{
-		circlename: db.circlename
-		objtype: db.objtype
+		circlename: circlename
+		objtype:    objtype
 	}
 	test_db.init()!
 }
 
 fn testsuite_end() {
 	delete(
-		cid: test_db.cid
-		objtype: db.objtype
+		cid:     test_db.cid
+		objtype: objtype
 	)!
 }
 
 fn test_new() {
 	object := test_db.new[TestStruct](
-		name: 'Tester'
+		name:        'Tester'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'Test text'
+		object:      TestStruct{
+			text:   'Test text'
 			number: 42
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 
@@ -60,12 +60,12 @@ fn test_new() {
 
 fn test_set() {
 	object := test_db.new[TestStruct](
-		name: 'Tester'
+		name:        'Tester'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'Test text'
+		object:      TestStruct{
+			text:   'Test text'
 			number: 42
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 	test_db.set[TestStruct](object)!
@@ -77,12 +77,12 @@ fn test_set() {
 
 fn test_get() {
 	object := test_db.new[TestStruct](
-		name: 'Tester'
+		name:        'Tester'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'Test text'
+		object:      TestStruct{
+			text:   'Test text'
 			number: 42
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 	test_db.set[TestStruct](object)!
@@ -91,17 +91,17 @@ fn test_get() {
 
 fn test_find_by_name() {
 	object := test_db.new[TestStruct](
-		name: 'FindByName'
+		name:        'FindByName'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'Test text'
+		object:      TestStruct{
+			text:   'Test text'
 			number: 42
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 	test_db.set[TestStruct](object)!
 	found_objs := test_db.find[TestStruct](
-		name: object.name
+		name:   object.name
 		object: TestStruct{}
 	)!
 	assert found_objs.len == 1
@@ -110,19 +110,19 @@ fn test_find_by_name() {
 
 fn test_find_by_mtime() {
 	object := test_db.new[TestStruct](
-		name: 'FindByMTime'
+		name:        'FindByMTime'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'Test text'
+		object:      TestStruct{
+			text:   'Test text'
 			number: 42
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 	test_db.set[TestStruct](object)!
 	found_objs := test_db.find[TestStruct](
 		mtime_from: test_begin
-		mtime_to: ourtime.now()
-		object: TestStruct{}
+		mtime_to:   ourtime.now()
+		object:     TestStruct{}
 	)!
 	assert found_objs.len == 4
 	assert found_objs[3] == object
@@ -130,19 +130,19 @@ fn test_find_by_mtime() {
 
 fn test_find_by_ctime() {
 	object := test_db.new[TestStruct](
-		name: 'FindByCTime'
+		name:        'FindByCTime'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'Test text'
+		object:      TestStruct{
+			text:   'Test text'
 			number: 42
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 	test_db.set[TestStruct](object)!
 	found_objs := test_db.find[TestStruct](
 		ctime_from: test_begin
-		ctime_to: ourtime.now()
-		object: TestStruct{}
+		ctime_to:   ourtime.now()
+		object:     TestStruct{}
 	)!
 	assert found_objs.len == 5
 	assert found_objs[4] == object
@@ -150,12 +150,12 @@ fn test_find_by_ctime() {
 
 fn test_find_by_index() {
 	object := test_db.new[TestStruct](
-		name: 'FindTester'
+		name:        'FindTester'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'indextext'
+		object:      TestStruct{
+			text:   'indextext'
 			number: 77
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 	test_db.set[TestStruct](object)!
@@ -205,12 +205,12 @@ fn test_find_by_index() {
 
 fn test_find() {
 	object := test_db.new[TestStruct](
-		name: 'FindTester'
+		name:        'FindTester'
 		description: 'A test object created for the sake of testing.'
-		object: TestStruct{
-			text: 'test_find'
+		object:      TestStruct{
+			text:   'test_find'
 			number: 42
-			u32s: [u32(11), u32(101)]
+			u32s:   [u32(11), u32(101)]
 		}
 	)!
 	test_db.set[TestStruct](object)!
@@ -224,8 +224,8 @@ fn test_find() {
 	// find with both ctime and index
 	found_objs = test_db.find[TestStruct](
 		ctime_from: test_begin
-		ctime_to: ourtime.now()
-		object: TestStruct{
+		ctime_to:   ourtime.now()
+		object:     TestStruct{
 			text: 'test_find'
 		}
 	)!

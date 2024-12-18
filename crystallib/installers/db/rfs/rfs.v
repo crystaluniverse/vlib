@@ -14,7 +14,7 @@ pub fn install() ! {
 		osal.package_install('musl-dev,musl-tools')!
 
 		mut gs := gittools.new()!
-		mut repo := gs.get_repo(url: 'https://github.com/threefoldtech/rfs', reset: true)! 
+		mut repo := gs.get_repo(url: 'https://github.com/threefoldtech/rfs', reset: true)!
 		path := repo.get_path()!
 		cmd := '
 		cd ${path}

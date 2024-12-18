@@ -99,11 +99,11 @@ pub fn (mut f OpenAIClient[Config]) create_image(args ImageCreateArgs) !Images {
 	image_size := image_size_str(args.size)
 	response_format := image_resp_type_str(args.format)
 	request := ImageRequest{
-		prompt: args.prompt
-		n: args.num_images
-		size: image_size
+		prompt:          args.prompt
+		n:               args.num_images
+		size:            image_size
 		response_format: response_format
-		user: args.user
+		user:            args.user
 	}
 	data := json.encode(request)
 	r := f.connection.post_json_str(prefix: 'images/generations', data: data)!
@@ -117,17 +117,17 @@ pub fn (mut f OpenAIClient[Config]) create_image(args ImageCreateArgs) !Images {
 pub fn (mut f OpenAIClient[Config]) create_edit_image(args ImageEditArgs) !Images {
 	image_content := os.read_file(args.image_path)!
 	image_file := http.FileData{
-		filename: os.base(args.image_path)
-		content_type: openai.image_mine_type
-		data: image_content
+		filename:     os.base(args.image_path)
+		content_type: image_mine_type
+		data:         image_content
 	}
 	mut mask_file := []http.FileData{}
 	if args.mask_path != '' {
 		mask_content := os.read_file(args.mask_path)!
 		mask_file << http.FileData{
-			filename: os.base(args.mask_path)
-			content_type: openai.image_mine_type
-			data: mask_content
+			filename:     os.base(args.mask_path)
+			content_type: image_mine_type
+			data:         mask_content
 		}
 	}
 
@@ -136,7 +136,7 @@ pub fn (mut f OpenAIClient[Config]) create_edit_image(args ImageEditArgs) !Image
 			'image': [image_file]
 			'mask':  mask_file
 		}
-		form: {
+		form:  {
 			'prompt':          args.prompt
 			'n':               args.num_images.str()
 			'response_format': image_resp_type_str(args.format)
@@ -161,16 +161,16 @@ pub fn (mut f OpenAIClient[Config]) create_edit_image(args ImageEditArgs) !Image
 pub fn (mut f OpenAIClient[Config]) create_variation_image(args ImageVariationArgs) !Images {
 	image_content := os.read_file(args.image_path)!
 	image_file := http.FileData{
-		filename: os.base(args.image_path)
-		content_type: openai.image_mine_type
-		data: image_content
+		filename:     os.base(args.image_path)
+		content_type: image_mine_type
+		data:         image_content
 	}
 
 	form := http.PostMultipartFormConfig{
 		files: {
 			'image': [image_file]
 		}
-		form: {
+		form:  {
 			'n':               args.num_images.str()
 			'response_format': image_resp_type_str(args.format)
 			'size':            image_size_str(args.size)

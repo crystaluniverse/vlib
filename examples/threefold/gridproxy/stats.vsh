@@ -9,10 +9,10 @@ fn get_online_grid_stats_example() ! {
 
 	myfilter.status = NodeStatus.online
 
-	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mut gp_client := gridproxy.new(net: .dev, cache: true)!
 	mystats := gp_client.get_stats(myfilter)!
 
-	console.print_debug("${mystats}")
+	console.print_debug('${mystats}')
 }
 
 fn get_all_grid_stats_example() ! {
@@ -20,10 +20,10 @@ fn get_all_grid_stats_example() ! {
 
 	myfilter.status = NodeStatus.all
 
-	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mut gp_client := gridproxy.new(net: .dev, cache: true)!
 	mystats := gp_client.get_stats(myfilter)!
 
-	console.print_debug("${mystats}")
+	console.print_debug('${mystats}')
 }
 
 get_online_grid_stats_example()!

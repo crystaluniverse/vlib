@@ -11,7 +11,7 @@ pub mut:
 	name    string
 	start   ourtime.OurTime
 	end     ourtime.OurTime
-	context Context         @[skip; str: skip]
+	context Context @[skip; str: skip]
 }
 
 @[params]
@@ -36,9 +36,9 @@ pub fn (context Context) get(args_ SessionNewArgs) !Session {
 	args.name = texttools.name_fix(args.name)
 	t := ourtime.new(args.start)!
 	mut s := Session{
-		sid: args.sid
-		name: args.name
-		start: t
+		sid:     args.sid
+		name:    args.name
+		start:   t
 		context: &context
 	}
 	if args.load {

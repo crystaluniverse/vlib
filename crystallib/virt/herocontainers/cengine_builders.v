@@ -17,7 +17,7 @@ fn (mut e CEngine) builders_load() ! {
 @[params]
 pub struct BuilderNewArgs {
 pub mut:
-	name string = "default"
+	name string = 'default'
 	from string = 'docker.io/archlinux:latest'
 	// arch_scratch bool // means start from scratch with arch linux
 	delete bool = true

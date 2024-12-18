@@ -1,7 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.data.paramsparser
-//import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Row {
@@ -10,7 +10,7 @@ pub mut:
 	alias         string
 	description   string
 	cells         []Cell
-	sheet         &Sheet           @[skip; str: skip]
+	sheet         &Sheet @[skip; str: skip]
 	aggregatetype RowAggregateType
 	reprtype      ReprType // how to represent it
 	tags          string
@@ -52,7 +52,7 @@ pub mut:
 //  tags []string e.g. ["hr","hrdev"] attach a tag to a row, can be used later to group
 // smart exptrapolation is 3:2,10:5 means end month 3 we start with 2, it grows to 5 on end month 10
 pub fn (mut s Sheet) row_new(args_ RowNewParams) !&Row {
-	mut args := args_	
+	mut args := args_
 	if args.aggregatetype == .unknown {
 		args.aggregatetype = .sum
 	}
@@ -61,12 +61,12 @@ pub fn (mut s Sheet) row_new(args_ RowNewParams) !&Row {
 		return error('name cannot be empty')
 	}
 	mut r := Row{
-		sheet: &s
-		name: name
+		sheet:         &s
+		name:          name
 		aggregatetype: args.aggregatetype
-		tags: args.tags
-		description: args.descr
-		subgroup: args.subgroup
+		tags:          args.tags
+		description:   args.descr
+		subgroup:      args.subgroup
 	}
 	s.rows[name] = &r
 	for _ in 0 .. s.nrcol {
@@ -144,20 +144,19 @@ pub fn (r Row) max() f64 {
 	return v
 }
 
-
 // apply the namefilter, include & exclude filter, if match return true
 pub fn (row Row) filter(args_ RowGetArgs) !bool {
 	mut ok := false
 	mut args := args_
 
 	if args.rowname != '' {
-		if ! (args.rowname in args.namefilter){
+		if args.rowname !in args.namefilter {
 			args.namefilter << args.rowname
 		}
 	}
 
 	if args.namefilter.len == 0 && args.includefilter.len == 0 && args.excludefilter.len == 0 {
-		//this means we match all
+		// this means we match all
 		return true
 	}
 
@@ -176,10 +175,9 @@ pub fn (row Row) filter(args_ RowGetArgs) !bool {
 	if ok == false {
 		return false
 	}
-	
+
 	return ok
 }
-
 
 pub fn (mut row Row) delete() {
 	row.sheet.delete(row.name)

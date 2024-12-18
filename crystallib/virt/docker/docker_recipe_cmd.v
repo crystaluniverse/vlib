@@ -15,7 +15,7 @@ pub mut:
 // add run command to docker, is the cmd which is run when docker get's built
 pub fn (mut b DockerBuilderRecipe) add_cmd(args CmdArgs) ! {
 	mut item := CmdItem{
-		cmd: args.cmd
+		cmd:    args.cmd
 		recipe: &b
 	}
 	if item.cmd == '' {

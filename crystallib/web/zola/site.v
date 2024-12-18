@@ -16,13 +16,13 @@ pub struct Template {
 pub struct ZolaSite {
 pub mut:
 	name         string
-	url          string       @[required] // base url of site
+	url          string @[required] // base url of site
 	title        string
 	description  string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	// zola         &Zola              @[skip; str: skip]
-	tree      doctree.Tree       @[skip; str: skip]
+	tree      doctree.Tree @[skip; str: skip]
 	pages     []ZolaPage
 	header    ?Header
 	footer    ?Footer
@@ -55,7 +55,7 @@ pub mut:
 //```
 pub fn (mut site ZolaSite) template_add(args gittools.ReposGetArgs) ! {
 	mut gs := gittools.get()!
-	
+
 	mypath := gs.get_repo(args)!
 	for i in ['css', 'static', 'templates'] {
 		os.cp_all('${mypath}/${i}', '${site.path_build.path}/${i}', true)!
@@ -102,8 +102,8 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.ReposGetArgs) ! {
 	doctree_dest := '${site.path_build.path}/doctree'
 	mut doctree_dir := pathlib.get_dir(path: doctree_dest)!
 	_ = doctree_dir.list(
-		recursive: true
-		regex: [r'.*\.md$']
+		recursive:     true
+		regex:         [r'.*\.md$']
 		include_links: true
 	)!
 	site.tree.process_includes()!

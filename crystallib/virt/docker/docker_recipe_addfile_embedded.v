@@ -22,10 +22,10 @@ pub mut:
 // to do something like: 'Add alpine:latest'
 pub fn (mut b DockerBuilderRecipe) add_file_embedded(args AddFileEmbeddedArgs) ! {
 	mut item := AddFileEmbeddedItem{
-		source: args.source
-		dest: args.dest
+		source:          args.source
+		dest:            args.dest
 		make_executable: args.make_executable
-		recipe: &b
+		recipe:          &b
 	}
 	if item.source == '' {
 		return error('source cant be empty, \n${b}')

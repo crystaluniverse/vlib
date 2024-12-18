@@ -102,7 +102,7 @@ fn test_location_new_keysize_6() {
 fn test_to_bytes() ! {
 	// Test small numbers
 	loc1 := Location{
-		file_nr: 1
+		file_nr:  1
 		position: 5
 	}
 	bytes1 := loc1.to_bytes()!
@@ -110,7 +110,7 @@ fn test_to_bytes() ! {
 
 	// Test medium numbers
 	loc2 := Location{
-		file_nr: 100
+		file_nr:  100
 		position: 500
 	}
 	bytes2 := loc2.to_bytes()!
@@ -118,7 +118,7 @@ fn test_to_bytes() ! {
 
 	// Test max values
 	loc3 := Location{
-		file_nr: 0xFFFF
+		file_nr:  0xFFFF
 		position: 0xFFFFFFFF
 	}
 	bytes3 := loc3.to_bytes()!
@@ -128,7 +128,7 @@ fn test_to_bytes() ! {
 fn test_u64() ! {
 	// Test small numbers
 	loc1 := Location{
-		file_nr: 1
+		file_nr:  1
 		position: 5
 	}
 	val1 := loc1.u64()!
@@ -136,7 +136,7 @@ fn test_u64() ! {
 
 	// Test medium numbers
 	loc2 := Location{
-		file_nr: 100
+		file_nr:  100
 		position: 500
 	}
 	val2 := loc2.u64()!
@@ -144,7 +144,7 @@ fn test_u64() ! {
 
 	// Test max values
 	loc3 := Location{
-		file_nr: 0xFFFF
+		file_nr:  0xFFFF
 		position: 0xFFFFFFFF
 	}
 	val3 := loc3.u64()!

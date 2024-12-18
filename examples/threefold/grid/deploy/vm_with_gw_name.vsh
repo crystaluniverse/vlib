@@ -3,7 +3,7 @@
 import freeflowuniverse.crystallib.threefold.grid.models
 import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.threefold.gridproxy.model {NodeFilter}
+import freeflowuniverse.crystallib.threefold.gridproxy.model { NodeFilter }
 import rand
 import log
 import os
@@ -44,7 +44,7 @@ fn get_chain_network(network string) !tfgrid.ChainNetwork {
 	return chain_net_enum
 }
 
-fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, public_ip bool, has_domain bool, available_for u64) !u32{
+fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, public_ip bool, has_domain bool, available_for u64) !u32 {
 	gp_net := match network {
 		.dev { gridproxy.TFGridNet.dev }
 		.qa { gridproxy.TFGridNet.qa }
@@ -54,24 +54,24 @@ fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, publi
 
 	mut gridproxy_client := gridproxy.get(gp_net, false)!
 	mut free_ips := u64(0)
-	if public_ip{
+	if public_ip {
 		free_ips = 1
 	}
 
 	mut filter_ := NodeFilter{
-		free_ips: free_ips
-		free_mru: u64(memory) * (1204 * 1204 * 1204)
-		free_sru: u64(disk) * (1204 * 1204 * 1204)
-		total_cru: u64(cpu)
-		domain: has_domain
+		free_ips:      free_ips
+		free_mru:      u64(memory) * (1204 * 1204 * 1204)
+		free_sru:      u64(disk) * (1204 * 1204 * 1204)
+		total_cru:     u64(cpu)
+		domain:        has_domain
 		available_for: available_for
-		status: 'up'
-		randomize: true
-		size: u64(1)
+		status:        'up'
+		randomize:     true
+		size:          u64(1)
 	}
 
 	nodes := gridproxy_client.get_nodes(filter_)!
-	if nodes.len != 1{
+	if nodes.len != 1 {
 		return error('cannot find a suitable node matching your specs')
 	}
 
@@ -105,8 +105,8 @@ logger.info('deploying on node: ${node_id}')
 network_name := 'net_${rand.string(5).to_lower()}' // autocreate a network
 wg_port := deployer.assign_wg_port(node_id)!
 mut network := models.Znet{
-	ip_range: '10.1.0.0/16' // auto-assign
-	subnet: '10.1.1.0/24' // auto-assign
+	ip_range:              '10.1.0.0/16' // auto-assign
+	subnet:                '10.1.1.0/24' // auto-assign
 	wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE=' // autocreate
 	wireguard_listen_port: wg_port
 	// mycelium: models.Mycelium{
@@ -117,7 +117,7 @@ mut network := models.Znet{
 workloads << network.to_workload(name: network_name, description: 'test_network1')
 
 mut public_ip_name := ''
-if public_ip{
+if public_ip {
 	public_ip_name = rand.string(5).to_lower()
 	workloads << models.PublicIP{
 		v4: true
@@ -125,51 +125,51 @@ if public_ip{
 }
 
 zmachine := models.Zmachine{
-	flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-	network: models.ZmachineNetwork{
+	flist:            'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+	network:          models.ZmachineNetwork{
 		interfaces: [
 			models.ZNetworkInterface{
 				network: network_name
-				ip: '10.1.1.3'
+				ip:      '10.1.1.3'
 			},
 		]
-		public_ip: public_ip_name
-		planetary: true
+		public_ip:  public_ip_name
+		planetary:  true
 		// mycelium: models.MyceliumIP{
 		// 	network: network_name
 		// 	hex_seed: rand.string(6).bytes().hex()
 		// }
 	}
-	entrypoint: '/sbin/zinit init' // from user or default
+	entrypoint:       '/sbin/zinit init' // from user or default
 	compute_capacity: models.ComputeCapacity{
-		cpu: u8(cpu)
+		cpu:    u8(cpu)
 		memory: i64(memory) * 1024 * 1024 * 1024
 	}
-	size: u64(disk) * 1024 * 1024 * 1024
-	env: {
-		'SSH_KEY':              ssh_key
+	size:             u64(disk) * 1024 * 1024 * 1024
+	env:              {
+		'SSH_KEY': ssh_key
 	}
 }
 
 workloads << zmachine.to_workload(
-	name: 'vm_${rand.string(5).to_lower()}'
+	name:        'vm_${rand.string(5).to_lower()}'
 	description: 'zmachine_test'
 )
 
 signature_requirement := models.SignatureRequirement{
 	weight_required: 1
-	requests: [
+	requests:        [
 		models.SignatureRequest{
 			twin_id: deployer.twin_id
-			weight: 1
+			weight:  1
 		},
 	]
 }
 
 mut deployment := models.new_deployment(
-	twin_id: deployer.twin_id
-	description: 'vm with gateway'
-	workloads: workloads
+	twin_id:               deployer.twin_id
+	description:           'vm with gateway'
+	workloads:             workloads
 	signature_requirement: signature_requirement
 )
 deployment.add_metadata('vm', 'SimpleVM')
@@ -187,11 +187,11 @@ dl := deployer.get_deployment(contract_id, node_id) or {
 machine_res := get_machine_result(dl)!
 logger.info('zmachine result: ${machine_res}')
 
-gw_name := rand.string(5).to_lower() 
+gw_name := rand.string(5).to_lower()
 gw := models.GatewayNameProxy{
 	tls_passthrough: false
-	backends: ['http://[${machine_res.planetary_ip}]:9000']
-	name: gw_name
+	backends:        ['http://[${machine_res.planetary_ip}]:9000']
+	name:            gw_name
 }
 
 gw_workload := gw.to_workload(name: gw_name)
@@ -200,8 +200,8 @@ name_contract_id := deployer.client.create_name_contract(gw_name)!
 logger.info('name contract ${gw_workload.name} created with id ${name_contract_id}')
 
 mut gw_deployment := models.new_deployment(
-	twin_id: deployer.twin_id
-	workloads: [gw_workload]
+	twin_id:               deployer.twin_id
+	workloads:             [gw_workload]
 	signature_requirement: signature_requirement
 )
 

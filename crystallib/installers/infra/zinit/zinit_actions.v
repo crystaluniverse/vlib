@@ -8,10 +8,7 @@ import freeflowuniverse.crystallib.installers.ulist
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.osal.systemd
-
-
 import os
-
 
 // checks if a certain version or above is installed
 fn installed() !bool {
@@ -26,13 +23,13 @@ fn installed() !bool {
 		if texttools.version(version) == texttools.version(r[0].all_after_first('zinit v')) {
 			return true
 		}
-    }
-    console.print_debug(res.str())
+	}
+	console.print_debug(res.str())
 	return false
 }
 
 fn install() ! {
-    console.print_header('install zinit')
+	console.print_header('install zinit')
 	if !osal.is_linux() {
 		return error('only support linux for now')
 	}
@@ -40,21 +37,20 @@ fn install() ! {
 	release_url := 'https://github.com/threefoldtech/zinit/releases/download/v0.2.14/zinit'
 
 	mut dest := osal.download(
-		url: release_url
+		url:        release_url
 		minsize_kb: 2000
-		reset: true
+		reset:      true
 	)!
 
 	osal.cmd_add(
 		cmdname: 'zinit'
-		source: dest.path
+		source:  dest.path
 	)!
 
 	osal.dir_ensure('/etc/zinit')!
 
 	console.print_header('install zinit done')
 }
-
 
 fn build() ! {
 	if !osal.is_linux() {
@@ -68,9 +64,9 @@ fn build() ! {
 
 	mut gs := gittools.get(coderoot: '/tmp/builder')!
 	mut repo := gs.get_repo(
-		url: 'https://github.com/threefoldtech/zinit',
-		reset: true,
-		pull: true
+		url:   'https://github.com/threefoldtech/zinit'
+		reset: true
+		pull:  true
 	)!
 	gitpath := repo.get_path()!
 
@@ -85,64 +81,52 @@ fn build() ! {
 
 	osal.cmd_add(
 		cmdname: 'zinit'
-		source: '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
+		source:  '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
 	)!
-
 }
 
-//get the Upload List of the files
+// get the Upload List of the files
 fn ulist_get() !ulist.UList {
-    return ulist.UList{}
+	return ulist.UList{}
 }
 
-//uploads to S3 server if configured
+// uploads to S3 server if configured
 fn upload() ! {
-
 }
 
-
-fn startupcmd () ![]zinit.ZProcessNewArgs{
-    mut res := []zinit.ZProcessNewArgs{}
-    res << zinit.ZProcessNewArgs{
-        name: 'zinit'
-        cmd: '/usr/local/bin/zinit init'
-        startuptype:.systemd
-		start: true
-        restart:true
-    }
-    return res
-
+fn startupcmd() ![]zinit.ZProcessNewArgs {
+	mut res := []zinit.ZProcessNewArgs{}
+	res << zinit.ZProcessNewArgs{
+		name:        'zinit'
+		cmd:         '/usr/local/bin/zinit init'
+		startuptype: .systemd
+		start:       true
+		restart:     true
+	}
+	return res
 }
 
 fn running() !bool {
-	cmd:='zinit list'
+	cmd := 'zinit list'
 	return osal.execute_ok(cmd)
-
 }
 
-fn start_pre()!{
-
+fn start_pre() ! {
 }
 
-fn start_post()!{
-
+fn start_post() ! {
 }
 
-fn stop_pre()!{
-
+fn stop_pre() ! {
 }
 
-fn stop_post()!{
-
+fn stop_post() ! {
 }
-
 
 fn destroy() ! {
-
 	mut systemdfactory := systemd.new()!
-	systemdfactory.destroy("zinit")!
+	systemdfactory.destroy('zinit')!
 
-	osal.process_kill_recursive(name:'zinit')!
+	osal.process_kill_recursive(name: 'zinit')!
 	osal.cmd_delete('zinit')!
-
 }

@@ -9,7 +9,7 @@ fn encode_metadata(mut e encoder.Encoder, m Metadata) {
 	e.add_u8(u8(m.file_type)) // FileType enum as u8
 	e.add_u64(m.size)
 	e.add_i64(m.created_at)
-	e.add_i64(m.modified_at) 
+	e.add_i64(m.modified_at)
 	e.add_i64(m.accessed_at)
 	e.add_u32(m.mode)
 	e.add_string(m.owner)
@@ -30,16 +30,16 @@ fn decode_metadata(mut d encoder.Decoder) Metadata {
 	group := d.get_string()
 
 	return Metadata{
-		id: id
-		name: name
-		file_type: unsafe { FileType(file_type_byte) }
-		size: size
-		created_at: created_at
+		id:          id
+		name:        name
+		file_type:   unsafe { FileType(file_type_byte) }
+		size:        size
+		created_at:  created_at
 		modified_at: modified_at
 		accessed_at: accessed_at
-		mode: mode
-		owner: owner
-		group: group
+		mode:        mode
+		owner:       owner
+		group:       group
 	}
 }
 
@@ -53,7 +53,7 @@ pub fn (dir Directory) encode() []u8 {
 
 	// Encode metadata
 	encode_metadata(mut e, dir.metadata)
-	
+
 	// Encode parent_id
 	e.add_u32(dir.parent_id)
 
@@ -81,23 +81,23 @@ pub fn decode_directory(data []u8) !Directory {
 
 	// Decode metadata
 	metadata := decode_metadata(mut d)
-	
+
 	// Decode parent_id
 	parent_id := d.get_u32()
 
 	// Decode children IDs
 	children_count := int(d.get_u16())
 	mut children := []u32{cap: children_count}
-	
-	for _ in 0..children_count {
+
+	for _ in 0 .. children_count {
 		children << d.get_u32()
 	}
 
 	return Directory{
-		metadata: metadata
+		metadata:  metadata
 		parent_id: parent_id
-		children: children
-		myvfs: unsafe { nil }       // Will be set by caller
+		children:  children
+		myvfs:     unsafe { nil } // Will be set by caller
 	}
 }
 
@@ -111,7 +111,7 @@ pub fn (f File) encode() []u8 {
 
 	// Encode metadata
 	encode_metadata(mut e, f.metadata)
-	
+
 	// Encode parent_id
 	e.add_u32(f.parent_id)
 
@@ -136,7 +136,7 @@ pub fn decode_file(data []u8) !File {
 
 	// Decode metadata
 	metadata := decode_metadata(mut d)
-	
+
 	// Decode parent_id
 	parent_id := d.get_u32()
 
@@ -144,10 +144,10 @@ pub fn decode_file(data []u8) !File {
 	data_content := d.get_string()
 
 	return File{
-		metadata: metadata
+		metadata:  metadata
 		parent_id: parent_id
-		data: data_content
-		myvfs: unsafe { nil }       // Will be set by caller
+		data:      data_content
+		myvfs:     unsafe { nil } // Will be set by caller
 	}
 }
 
@@ -161,7 +161,7 @@ pub fn (sl Symlink) encode() []u8 {
 
 	// Encode metadata
 	encode_metadata(mut e, sl.metadata)
-	
+
 	// Encode parent_id
 	e.add_u32(sl.parent_id)
 
@@ -186,7 +186,7 @@ pub fn decode_symlink(data []u8) !Symlink {
 
 	// Decode metadata
 	metadata := decode_metadata(mut d)
-	
+
 	// Decode parent_id
 	parent_id := d.get_u32()
 
@@ -194,9 +194,9 @@ pub fn decode_symlink(data []u8) !Symlink {
 	target := d.get_string()
 
 	return Symlink{
-		metadata: metadata
+		metadata:  metadata
 		parent_id: parent_id
-		target: target
-		myvfs: unsafe { nil }       // Will be set by caller
+		target:    target
+		myvfs:     unsafe { nil } // Will be set by caller
 	}
 }

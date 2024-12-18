@@ -30,29 +30,29 @@ fn (mut t TFGridHandler) network(action Action) ! {
 			mut vm_configs := []VMConfiguration{}
 			for i := 0; i < times; i++ {
 				vm_config := VMConfiguration{
-					name: name
-					farm_id: u32(farm_id)
-					flist: flist
-					entrypoint: entrypoint
-					public_ip: public_ip
-					public_ip6: public_ip6
-					planetary: planetary
-					cpu: cpu
-					memory: memory
+					name:        name
+					farm_id:     u32(farm_id)
+					flist:       flist
+					entrypoint:  entrypoint
+					public_ip:   public_ip
+					public_ip6:  public_ip6
+					planetary:   planetary
+					cpu:         cpu
+					memory:      memory
 					rootfs_size: u32(disk_size)
-					env_vars: env_vars
+					env_vars:    env_vars
 				}
 				vm_configs << vm_config
 			}
 			mut net_config := NetworkConfiguration{
-				name: name
+				name:                 name
 				add_wireguard_access: wg
 			}
 			deploy_res := t.tfgrid.deploy_network(
-				name: name
+				name:        name
 				description: description
-				network: net_config
-				vms: vm_configs
+				network:     net_config
+				vms:         vm_configs
 			)!
 
 			t.logger.info('${deploy_res}')
@@ -70,7 +70,7 @@ fn (mut t TFGridHandler) network(action Action) ! {
 
 			remove_res := t.tfgrid.remove_vm_from_network_deployment(
 				network: network
-				vm: machine
+				vm:      machine
 			)!
 			t.logger.info('${remove_res}')
 		}

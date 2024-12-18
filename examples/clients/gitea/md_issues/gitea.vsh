@@ -1,57 +1,58 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+
 import freeflowuniverse.crystallib.clients.gitea
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import cli {Command, Flag}
+import cli { Command, Flag }
 import os
 
 // configures cli command and flags
 fn main() {
 	mut cmd := Command{
-		name: 'mdgen'
+		name:        'mdgen'
 		description: 'Markdown generator from gitea issues'
-		execute: mdgen
+		execute:     mdgen
 	}
 	cmd.add_flag(Flag{
-		flag: .string
-		name: 'output_path'
-		abbrev: 'o'
+		flag:          .string
+		name:          'output_path'
+		abbrev:        'o'
 		default_value: ['.']
-		description: 'Path the OpenRPC client will be created at.'
+		description:   'Path the OpenRPC client will be created at.'
 	})
 	cmd.add_flag(Flag{
-		flag: .string_array
-		name: 'users'
-		abbrev: 'u'
+		flag:        .string_array
+		name:        'users'
+		abbrev:      'u'
 		description: 'Filter user repositories for issues.'
 	})
 	cmd.add_flag(Flag{
-		flag: .string_array
-		name: 'organizations'
-		abbrev: 'x'
+		flag:        .string_array
+		name:        'organizations'
+		abbrev:      'x'
 		description: 'Filter organization repositories for issues.'
 	})
 	cmd.add_flag(Flag{
-		flag: .string_array
-		name: 'repositories'
-		abbrev: 'r'
+		flag:        .string_array
+		name:        'repositories'
+		abbrev:      'r'
 		description: 'Issues of repositories to be generated from.'
 	})
 	cmd.setup()
 	cmd.parse(os.args)
 }
 
-// mdgen is the main command of the cli. Fetches filtered issues and 
+// mdgen is the main command of the cli. Fetches filtered issues and
 // generates md files for users, issues and repos
-fn mdgen(cmd Command)! {
+fn mdgen(cmd Command) ! {
 	filter_users := cmd.flags.get_strings('users')!
 	filter_repos := cmd.flags.get_strings('repositories')!
 	filter_orgs := cmd.flags.get_strings('organizations')!
 	target := cmd.flags.get_string('output_path')!
 
 	issues := get_issues(
-		users: filter_users
-		repositories: filter_repos
+		users:         filter_users
+		repositories:  filter_repos
 		organizations: filter_orgs
 	)!
 	write_issues(issues, target)!
@@ -65,8 +66,8 @@ fn mdgen(cmd Command)! {
 
 // filter for fetching issues, passed with to cli
 pub struct Filter {
-	users []string
-	repositories []string
+	users         []string
+	repositories  []string
 	organizations []string
 }
 
@@ -81,11 +82,11 @@ mut:
 fn get_issues(filter Filter) ![]Issue {
 	username := os.getenv('GITEA_USERNAME')
 	password := os.getenv('GITEA_PASSWORD')
-	mut client := gitea.get(instance:"example")!
+	mut client := gitea.get(instance: 'example')!
 	mut cfg := client.config()!
-	cfg.url='git.ourworld.tf'
-	cfg.username=username
-	cfg.password=password
+	cfg.url = 'git.ourworld.tf'
+	cfg.username = username
+	cfg.password = password
 	client.config_save()!
 
 	if username != '' && password != '' {
@@ -95,7 +96,9 @@ fn get_issues(filter Filter) ![]Issue {
 	repos := if filter.repositories.len == 0 {
 		repo_objs := client.search_repos()!
 		repo_objs.map(it.full_name)
-	} else {filter.repositories}
+	} else {
+		filter.repositories
+	}
 
 	mut issues := []gitea.Issue{}
 	for repo in repos {
@@ -114,15 +117,15 @@ fn get_issues(filter Filter) ![]Issue {
 	}
 
 	return issues.map(Issue{
-		Issue: it, 
-		name: '${it.id}_${texttools.name_fix(it.title)}'
+		Issue: it
+		name:  '${it.id}_${texttools.name_fix(it.title)}'
 	})
 }
 
 // writes issues in target/issues dir
 fn write_issues(issues []Issue, target string) ! {
 	issue_dir := pathlib.get_dir(
-		path: '${target}/issues'
+		path:   '${target}/issues'
 		create: true
 	)!
 	for issue in issues {
@@ -133,7 +136,7 @@ fn write_issues(issues []Issue, target string) ! {
 fn (issue Issue) write(dir string) ! {
 	assignees_str := create_assignees_str(issue)
 	mut file := pathlib.get_file(
-		path: '${dir}/${issue.name}.md'
+		path:   '${dir}/${issue.name}.md'
 		create: true
 	)!
 	file.write($tmpl('./templates/issue.md'))!
@@ -145,7 +148,9 @@ fn create_assignees_str(issue Issue) string {
 	} else {
 		if assignees := issue.assignees {
 			assignees.map('[${it.username}](${it.avatar_url})').join(', ')
-		} else {'none'}
+		} else {
+			'none'
+		}
 	}
 }
 
@@ -153,28 +158,32 @@ struct User {
 	gitea.User
 mut:
 	assigned []Issue
-	created []Issue
+	created  []Issue
 }
 
 // get_users gets users that have created or been assigned
 // to an issue in a given list of issues
 fn get_users(issues []Issue) ![]User {
-	mut user_map := map[string]User
+	mut user_map := map[string]User{}
 	for issue in issues {
 		// add to user's created issues
 		if issue.user.username !in user_map {
-			user_map[issue.user.username] = User{User: issue.user}
+			user_map[issue.user.username] = User{
+				User: issue.user
+			}
 		}
 		user_map[issue.user.username].created << issue
 
 		// add to user's assigned issue for all assignees
-		mut assignees := issue.assignees or {[]gitea.User{}}
+		mut assignees := issue.assignees or { []gitea.User{} }
 		if assignee := issue.assignee {
 			assignees << assignee
 		}
 		for assignee in assignees {
 			if assignee.username !in user_map {
-				user_map[issue.user.username] = User{User: issue.user}
+				user_map[issue.user.username] = User{
+					User: issue.user
+				}
 			}
 			user_map[issue.user.username].assigned << issue
 		}
@@ -185,7 +194,7 @@ fn get_users(issues []Issue) ![]User {
 // writes users in target/users dir
 fn write_users(users []User, target string) ! {
 	user_dir := pathlib.get_dir(
-		path: '${target}/users'
+		path:   '${target}/users'
 		create: true
 	)!
 	for user in users {
@@ -195,7 +204,7 @@ fn write_users(users []User, target string) ! {
 
 fn (user User) write(dir string) ! {
 	mut file := pathlib.get_file(
-		path: '${dir}/${texttools.name_fix(user.username)}.md'
+		path:   '${dir}/${texttools.name_fix(user.username)}.md'
 		create: true
 	)!
 	file.write($tmpl('./templates/user.md'))!
@@ -209,10 +218,12 @@ mut:
 
 // get_repos returns the repositories that are the parents of a list of issues
 fn get_repos(issues []Issue) []Repository {
-	mut repo_map := map[string]Repository
+	mut repo_map := map[string]Repository{}
 	for issue in issues {
 		if issue.repository.full_name !in repo_map {
-			repo_map[issue.repository.full_name] = Repository{Repository: issue.repository}
+			repo_map[issue.repository.full_name] = Repository{
+				Repository: issue.repository
+			}
 		}
 		repo_map[issue.repository.full_name].issues << issue
 	}
@@ -222,7 +233,7 @@ fn get_repos(issues []Issue) []Repository {
 // writes repositories in target/repositories dir
 fn write_repos(repos []Repository, target string) ! {
 	repo_dir := pathlib.get_dir(
-		path: '${target}/repositories'
+		path:   '${target}/repositories'
 		create: true
 	)!
 	for repo in repos {
@@ -232,10 +243,8 @@ fn write_repos(repos []Repository, target string) ! {
 
 fn (repo Repository) write(dir string) ! {
 	mut file := pathlib.get_file(
-		path: '${dir}/${texttools.name_fix(repo.owner)}/${texttools.name_fix(repo.name)}.md'
+		path:   '${dir}/${texttools.name_fix(repo.owner)}/${texttools.name_fix(repo.name)}.md'
 		create: true
 	)!
 	file.write($tmpl('./templates/repository.md'))!
 }
-
-

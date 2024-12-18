@@ -18,11 +18,11 @@ pub fn play(mut plbook PlayBook) ! {
 			name = action.params.get_default('name', 'default')! // when name not specified is 'default'
 
 			mut sim := new(
-				name: name
-				path: action.params.get_default('path', '')!
-				git_url: action.params.get_default('git_url', '')!
+				name:      name
+				path:      action.params.get_default('path', '')!
+				git_url:   action.params.get_default('git_url', '')!
 				git_reset: action.params.get_default_false('git_reset')
-				git_pull: action.params.get_default_false('git_pull')
+				git_pull:  action.params.get_default_false('git_pull')
 			)!
 
 			sim.play(mut plbook)!
@@ -43,10 +43,10 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 	for mut action in actions4 {
 		if action.name == 'incaprice_define' {
 			mut incaprice := self.sheet.row_new(
-				name: 'incaprice'
-				growth: action.params.get_default('incaprice_usd', '0.1')!
-				descr: '"INCA Price in USD'
-				extrapolate: true
+				name:          'incaprice'
+				growth:        action.params.get_default('incaprice_usd', '0.1')!
+				descr:         '"INCA Price in USD'
+				extrapolate:   true
 				aggregatetype: .avg
 			)!
 			for mycel in incaprice.cells {
@@ -71,11 +71,11 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 			}
 
 			mut new_nodes_per_month := self.sheet.row_new(
-				name: '${node_name}_new_per_month'
-				growth: action.params.get('new_month')!
-				tags: 'nrnodes_new nodetype:${node_name}'
-				descr: '"new nodes we add per month for node type ${node_name}'
-				extrapolate: true
+				name:          '${node_name}_new_per_month'
+				growth:        action.params.get('new_month')!
+				tags:          'nrnodes_new nodetype:${node_name}'
+				descr:         '"new nodes we add per month for node type ${node_name}'
+				extrapolate:   true
 				aggregatetype: .max
 			)!
 
@@ -83,8 +83,8 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 			println(new_nodes_per_month.cells)
 
 			mut investment_nodes := new_nodes_per_month.copy(
-				name: '${node_name}_investment_usd'
-				tags: 'node_investment nodetype:${node_name}'
+				name:  '${node_name}_investment_usd'
+				tags:  'node_investment nodetype:${node_name}'
 				descr: "investment needed for node type ${node_name}'"
 			)!
 			for mut cell in investment_nodes.cells {
@@ -92,57 +92,57 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 			}
 
 			mut churn := self.sheet.row_new(
-				name: '${node_name}_churn'
-				growth: action.params.get('churn')!
-				tags: 'churn nodetype:${node_name}'
-				descr: '"nr of nodes in percentage we loose per year for node type: ${node_name}'
-				extrapolate: true
+				name:          '${node_name}_churn'
+				growth:        action.params.get('churn')!
+				tags:          'churn nodetype:${node_name}'
+				descr:         '"nr of nodes in percentage we loose per year for node type: ${node_name}'
+				extrapolate:   true
 				aggregatetype: .avg
 			)!
 
 			mut utilization := self.sheet.row_new(
-				name: '${node_name}_utilization'
-				growth: action.params.get('utilization')!
-				tags: 'utilization nodetype:${node_name}'
-				descr: '"utilization in 0..100 percent for node type: ${node_name}'
-				extrapolate: true
+				name:          '${node_name}_utilization'
+				growth:        action.params.get('utilization')!
+				tags:          'utilization nodetype:${node_name}'
+				descr:         '"utilization in 0..100 percent for node type: ${node_name}'
+				extrapolate:   true
 				aggregatetype: .avg
 			)!
 
 			mut discount := self.sheet.row_new(
-				name: '${node_name}_discount'
-				growth: action.params.get('discount')!
-				tags: 'discount nodetype:${node_name}'
-				descr: '"discount in 0..100 percent for node type: ${node_name}'
-				extrapolate: true
+				name:          '${node_name}_discount'
+				growth:        action.params.get('discount')!
+				tags:          'discount nodetype:${node_name}'
+				descr:         '"discount in 0..100 percent for node type: ${node_name}'
+				extrapolate:   true
 				aggregatetype: .avg
 			)!
 
 			mut row_nr_nodes_total := new_nodes_per_month.recurring(
-				name: '${node_name}_nr_active'
-				delaymonths: 2
-				tags: 'nrnodes_active nodetype:${node_name}'
-				descr: '"nr nodes active for for node type: ${node_name}'
+				name:          '${node_name}_nr_active'
+				delaymonths:   2
+				tags:          'nrnodes_active nodetype:${node_name}'
+				descr:         '"nr nodes active for for node type: ${node_name}'
 				aggregatetype: .max
 			)!
 
 			node_total := node.node_total()
 
 			mut node_rev := self.sheet.row_new(
-				name: '${node_name}_rev_month'
-				growth: '${node_total.price_simulation}'
-				tags: 'nodetype:${node_name}'
-				descr: '"Sales price in USD per node of type:${node_name} per month (usd)'
-				extrapolate: true
+				name:          '${node_name}_rev_month'
+				growth:        '${node_total.price_simulation}'
+				tags:          'nodetype:${node_name}'
+				descr:         '"Sales price in USD per node of type:${node_name} per month (usd)'
+				extrapolate:   true
 				aggregatetype: .sum
 			)!
 
 			mut node_rev_total := self.sheet.row_new(
-				name: '${node_name}_rev_total'
-				tags: 'noderev nodetype:${node_name}'
-				descr: '"Sales price in USD total for node type: ${node_name} per month'
+				name:          '${node_name}_rev_total'
+				tags:          'noderev nodetype:${node_name}'
+				descr:         '"Sales price in USD total for node type: ${node_name} per month'
 				aggregatetype: .sum
-				growth: '1:0'
+				growth:        '1:0'
 			)!
 
 			// apply the sales price discount & calculate the sales price in total
@@ -159,25 +159,25 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 			// grant_max_nrnodes:1000 //max nr of nodes which will get this grant
 
 			mut grant_node_month_usd := self.sheet.row_new(
-				name: '${node_name}_grant_node_month_usd'
-				descr: '"Grant in USD for node type: ${node_name}'
+				name:          '${node_name}_grant_node_month_usd'
+				descr:         '"Grant in USD for node type: ${node_name}'
 				aggregatetype: .sum
-				growth: node.grant.grant_month_usd
+				growth:        node.grant.grant_month_usd
 			)!
 
 			mut grant_node_month_inca := self.sheet.row_new(
-				name: '${node_name}_grant_node_month_inca'
-				descr: '"Grant in INCA for node type: ${node_name}'
+				name:          '${node_name}_grant_node_month_inca'
+				descr:         '"Grant in INCA for node type: ${node_name}'
 				aggregatetype: .sum
-				growth: node.grant.grant_month_inca
+				growth:        node.grant.grant_month_inca
 			)!
 
 			mut inca_grant_node_month_inca := self.sheet.row_new(
-				name: '${node_name}_grant_node_total'
-				tags: 'incagrant'
-				descr: '"INCA grant for node type: ${node_name}'
+				name:          '${node_name}_grant_node_total'
+				tags:          'incagrant'
+				descr:         '"INCA grant for node type: ${node_name}'
 				aggregatetype: .sum
-				growth: '0:0'
+				growth:        '0:0'
 			)!
 			mut counter2 := 0
 			row_incaprice := self.sheet.rows['incaprice'] or {
@@ -207,17 +207,17 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 	incaprice := self.sheet.rows['incaprice'] or { return error("can't find row incaprice") }
 
 	mut rev_usd := self.sheet.group2row(
-		name: 'noderev'
-		tags: 'nodestats_total'
+		name:    'noderev'
+		tags:    'nodestats_total'
 		include: ['noderev']
-		descr: 'revenue in USD from all nodes per month'
+		descr:   'revenue in USD from all nodes per month'
 	)!
 
 	mut investment_usd := self.sheet.group2row(
-		name: 'investment'
-		tags: 'nodestats_total'
+		name:    'investment'
+		tags:    'nodestats_total'
 		include: ['node_investment']
-		descr: 'investment in USD from all nodes per month'
+		descr:   'investment in USD from all nodes per month'
 	)!
 
 	// mut investment_usd := self.sheet.group2row(

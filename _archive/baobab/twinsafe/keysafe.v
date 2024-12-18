@@ -7,7 +7,7 @@ import db.sqlite
 pub struct KeysSafe {
 pub mut:
 	mytwins    map[string]MyTwin // is like a cache for what is in the sqlitedb
-	secret     string // secret to encrypt local file
+	secret     string            // secret to encrypt local file
 	db         sqlite.DB
 	othertwins map[string]OtherTwin // is like a cache for what is in the sqlitedb
 	myconfigs  map[string]MyConfig
@@ -28,7 +28,7 @@ pub fn new(args_ KeysSafeNewArgs) !KeysSafe {
 	pathlib.get_dir(path: args.path, create: true)!
 	mut db := sqlite.connect('${args.path}/keysafe.db')!
 	mut safe := KeysSafe{
-		db: db
+		db:     db
 		secret: args.secret
 	}
 
@@ -56,7 +56,7 @@ pub fn (mut safe KeysSafe) loadall() ! {
 	mytwins := safe.load_mytwins()!
 	for twin in mytwins {
 		args := GetArgs{
-			id: twin.id
+			id:   twin.id
 			name: twin.name
 		}
 		safe.mytwins[twin.name] = safe.mytwin_get(args)!
@@ -64,7 +64,7 @@ pub fn (mut safe KeysSafe) loadall() ! {
 	other_twins := safe.load_other_twins()!
 	for otwin in other_twins {
 		args := GetArgs{
-			id: otwin.id
+			id:   otwin.id
 			name: otwin.name
 		}
 		safe.othertwins[otwin.name] = safe.othertwin_get(args)!
@@ -72,7 +72,7 @@ pub fn (mut safe KeysSafe) loadall() ! {
 	configs := safe.load_myconfig()!
 	for config in configs {
 		args := GetArgs{
-			id: config.id
+			id:   config.id
 			name: config.name
 		}
 		safe.myconfigs[config.name] = safe.myconfig_get(args)!

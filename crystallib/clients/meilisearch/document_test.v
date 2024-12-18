@@ -229,10 +229,9 @@ fn test_facet_search() {
 
 	assert ['title'] == settings.filterable_attributes
 
-	mut doc_ := client.facet_search(
-		index_name,
-		facet_name: 'title',
-		filter: 'title = life'
+	mut doc_ := client.facet_search(index_name,
+		facet_name: 'title'
+		filter:     'title = life'
 	)!
 	assert doc_.facet_hits[0].count == 2
 }
@@ -265,9 +264,8 @@ fn test_similar_documents() {
 
 	time.sleep(500 * time.millisecond)
 
-	mut doc_ := client.similar_documents(
-		index_name,
-		id: 1,
+	mut doc_ := client.similar_documents(index_name,
+		id: 1
 	)!
 	// TODO: Check the meilisearch.SimilarDocumentsResponse error
 	println('doc_: ${doc_}')

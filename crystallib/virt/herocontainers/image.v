@@ -16,7 +16,7 @@ pub mut:
 	digest  string
 	size    int // size in MB
 	created time.Time
-	engine  &CEngine  @[skip; str: skip]
+	engine  &CEngine @[skip; str: skip]
 }
 
 // delete podman image

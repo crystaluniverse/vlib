@@ -18,7 +18,7 @@ pub mut:
 	build               bool
 	cat                 Cat
 	path                string
-	force 				bool
+	force               bool
 	hasconfig           bool = true
 }
 
@@ -27,9 +27,7 @@ pub enum Cat {
 	client
 }
 
-
 fn args_get(path string) !GeneratorArgs {
-
 	console.print_debug('play installer code for path: ${path}')
 
 	mut config_path := pathlib.get_file(path: '${path}/.heroscript', create: false)!
@@ -54,7 +52,7 @@ fn args_get(path string) !GeneratorArgs {
 				templates:           p.get_default_false('templates')
 				reset:               p.get_default_false('reset')
 				startupmanager:      p.get_default_true('startupmanager')
-				hasconfig:      	 p.get_default_true('hasconfig')
+				hasconfig:           p.get_default_true('hasconfig')
 				build:               p.get_default_false('build')
 				force:               p.get_default_false('force')
 				cat:                 .installer
@@ -82,6 +80,5 @@ fn args_get(path string) !GeneratorArgs {
 		}
 	}
 	return error("can't find hero_code.generate_client or hero_code.generate_installer in ${path}")
-	//return GeneratorArgs{}
+	// return GeneratorArgs{}
 }
-

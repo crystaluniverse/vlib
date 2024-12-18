@@ -34,7 +34,7 @@ pub fn (session Session) logger_new() !Logger {
 pub struct LogArgs {
 pub mut:
 	cat     string
-	log     string  @[required]
+	log     string @[required]
 	logtype LogType
 }
 
@@ -45,8 +45,8 @@ pub fn (mut session Session) log(args_ LogArgs) !LogItem {
 	args.cat = texttools.name_fix(args.cat)
 
 	mut l := LogItem{
-		cat: args.cat
-		log: args.log
+		cat:  args.cat
+		log:  args.log
 		time: ourtime.now()
 		// session: session.guid()
 	}

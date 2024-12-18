@@ -28,16 +28,16 @@ pub fn build(args BuildArgs) ! {
 
 	mut gs := gittools.new(coderoot: '/tmp/builder')!
 	mut repo := gs.get_repo(
-		url: conduit.url
+		url:   url
 		reset: true
-		pull: true
+		pull:  true
 	)!
 	gitpath := repo.get_path()!
 
 	cmd := '
 	source ${osal.profile_path()} //source the go path
 	cd ${gitpath}
-	go build -o bin/ ./cmd/...
+	cargo build --all-features
 	'
 	osal.execute_stdout(cmd)!
 }

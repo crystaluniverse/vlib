@@ -17,7 +17,7 @@ client_code := object.generate_client()
 
 // write code
 gen_dir := pathlib.get_dir(
-	path: gen_path
+	path:  gen_path
 	reset: true
 )!
 

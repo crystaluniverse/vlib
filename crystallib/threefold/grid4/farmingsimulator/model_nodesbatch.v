@@ -5,7 +5,7 @@ module farmingsimulator
 // X nr of nodes who are added in 1 month
 struct NodesBatch {
 pub mut:
-	node_template     &NodeTemplate     @[str: skip]
+	node_template     &NodeTemplate @[str: skip]
 	nrnodes           int
 	start_month       int
 	nrmonths          int
@@ -49,14 +49,14 @@ fn (mut nb NodesBatch) calc(month int) !NBCalc {
 	support_cost_node := support_cost_node_row.cells[month].val
 
 	nbc := NBCalc{
-		power_kwh: int(power_kwh)
-		power_cost: power_kwh * cost_power_unit
-		rackspace: rackspace
+		power_kwh:      int(power_kwh)
+		power_cost:     power_kwh * cost_power_unit
+		rackspace:      rackspace
 		rackspace_cost: rackspace * rackspace_cost_unit
-		hw_cost: nb.hw_cost / 6 / 12 * nb.nrnodes // over 6 years
-		support_cost: support_cost_node + nb.node_template.capacity.cost * 0.02 / 12 * nb.nrnodes // 2% of HW has to be replaced
-		tokens_farmed: tokens_farmed * nb.nrnodes
-		nrnodes: nb.nrnodes
+		hw_cost:        nb.hw_cost / 6 / 12 * nb.nrnodes // over 6 years
+		support_cost:   support_cost_node + nb.node_template.capacity.cost * 0.02 / 12 * nb.nrnodes // 2% of HW has to be replaced
+		tokens_farmed:  tokens_farmed * nb.nrnodes
+		nrnodes:        nb.nrnodes
 	}
 
 	return nbc

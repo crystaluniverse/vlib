@@ -11,7 +11,7 @@ const test_model = '${os.dir(@FILE)}/testdata/test_model/organization_model.v' /
 fn test_generate_definers() {
 	generate_definers(
 		circle_model: circle_model
-		model_path: test_model
+		model_path:   test_model
 	)!
 	panic('s')
 	// panic(definers.map(it.vgen()))

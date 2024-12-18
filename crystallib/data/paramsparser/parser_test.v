@@ -14,14 +14,14 @@ fn test_parse_list() ! {
 	for i, param in fruit_list {
 		params = parse(param)!
 		assert params == Params{
-			params: [
+			params:   [
 				Param{
-					key: 'list${i}'
-					value: 'Apple'
+					key:     'list${i}'
+					value:   'Apple'
 					comment: ''
 				},
 			]
-			args: []
+			args:     []
 			comments: []
 		}
 	}
@@ -40,14 +40,14 @@ fn test_parse_list() ! {
 	for i, param in fruit_list {
 		params = parse(param)!
 		assert params == Params{
-			params: [
+			params:   [
 				Param{
-					key: 'list${i}'
-					value: 'Apple,Banana'
+					key:     'list${i}'
+					value:   'Apple,Banana'
 					comment: ''
 				},
 			]
-			args: []
+			args:     []
 			comments: []
 		}
 	}
@@ -63,14 +63,14 @@ fn test_parse_list() ! {
 	for i, param in fruit_list {
 		params = parse(param)!
 		assert params == Params{
-			params: [
+			params:   [
 				Param{
-					key: 'list${i}'
-					value: 'Apple,"Dragon Fruit","Passion Fruit"'
+					key:     'list${i}'
+					value:   'Apple,"Dragon Fruit","Passion Fruit"'
 					comment: ''
 				},
 			]
-			args: []
+			args:     []
 			comments: []
 		}
 	}

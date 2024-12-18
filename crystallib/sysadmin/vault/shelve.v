@@ -52,9 +52,9 @@ pub fn (mut shelve Shelve) load() ! {
 			// "${i.sha256()}|${i.time.unix()}|${i.nr}|${i.name}"
 			mut item := Item{
 				sha256: splitted[0].trim_space()
-				time: time.unix(splitted[1].i64())
-				nr: splitted[2].u16()
-				name: splitted[3].trim_space()
+				time:   time.unix(splitted[1].i64())
+				nr:     splitted[2].u16()
+				name:   splitted[3].trim_space()
 				shelve: &shelve
 			}
 			shelve.items << item
@@ -138,9 +138,9 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) !Item {
 
 	// means there is a filechange
 	mut item_new := Item{
-		nr: item.nr + 1
-		name: name
-		time: time.now()
+		nr:     item.nr + 1
+		name:   name
+		time:   time.now()
 		sha256: sha
 		shelve: &shelve
 	}

@@ -6,27 +6,25 @@ import flag
 import log
 import os
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn run_machines_ops(mut client tfgrid.TFGridClient, mut logger log.Logger) ! {
 	model_name := 'testMachinesOps'
 
 	res := client.deploy_vm(tfgrid.DeployVM{
-		name: model_name
+		name:                 model_name
 		add_wireguard_access: false
-		cpu: 2
-		memory: 2048
-		rootfs_size: 1024
-		env_vars: {
+		cpu:                  2
+		memory:               2048
+		rootfs_size:          1024
+		env_vars:             {
 			'SSH_KEY': 'ssh-rsa ...'
 		}
-		disks: [tfgrid.Disk{
-			size: 10
+		disks:                [tfgrid.Disk{
+			size:       10
 			mountpoint: '/mnt/disk1'
 		}]
-		description: 'description'
+		description:          'description'
 	})!
 	logger.info('${res}')
 
@@ -116,7 +114,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Load{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	run_machines_ops(mut tfgrid_client, mut logger) or {

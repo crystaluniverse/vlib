@@ -4,11 +4,11 @@ import json
 
 pub struct Slideshow {
 pub:
-	url string
-	name string
+	url          string
+	name         string
 	log_endpoint string
-	format SlideFormat
-	data SlidesViewData
+	format       SlideFormat
+	data         SlidesViewData
 }
 
 pub enum SlideFormat {

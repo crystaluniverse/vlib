@@ -21,6 +21,7 @@ pub fn get(args PlayArgs) GiteaClient[Config] {
 	client.init(args)!
 	return client
 }
+
 //
 pub fn heroplay(args PlayBookAddArgs) ! {
 	// make session for configuring from heroscript
@@ -35,6 +36,7 @@ pub fn heroplay(args PlayBookAddArgs) ! {
 		cl.config_save()!
 	}
 }
+
 //
 pub fn (self GiteaClient[T]) config_interactive() ! {
 	mut myui := ui.new()!
@@ -49,24 +51,24 @@ pub fn (self GiteaClient[T]) config_interactive() ! {
 
 	self.instance = myui.ask_question(
 		question: 'name for B2 (backblaze) client'
-		default: self.instance
+		default:  self.instance
 	)!
 
 	cfg.description = myui.ask_question(
 		question: 'description'
-		minlen: 0
-		default: cfg.description
+		minlen:   0
+		default:  cfg.description
 	)!
 	cfg.keyid = myui.ask_question(
 		question: 'keyid e.g. 003e2a7be6357fb0000000001'
-		minlen: 5
-		default: cfg.keyid
+		minlen:   5
+		default:  cfg.keyid
 	)!
 
 	cfg.appkey = myui.ask_question(
 		question: 'appkey e.g. K008UsdrYOAou2ulBHA8p4KBe/dL2n4'
-		minlen: 5
-		default: cfg.appkey
+		minlen:   5
+		default:  cfg.appkey
 	)!
 
 	buckets := self.list_buckets()!
@@ -74,7 +76,7 @@ pub fn (self GiteaClient[T]) config_interactive() ! {
 
 	cfg.bucketname = myui.ask_dropdown(
 		question: 'choose default bucket name'
-		items: bucket_names
+		items:    bucket_names
 	)!
 
 	self.config_save()!

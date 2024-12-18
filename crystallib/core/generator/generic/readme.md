@@ -57,9 +57,18 @@ this is to make distinction between processing at compile time (pre-compile) or 
 to call in code
 
 ```v
-import freeflowuniverse.crystallib.core.generator.installer
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-installer.scan("~/code/github/freeflowuniverse/crystallib/crystallib")!
+import freeflowuniverse.crystallib.core.generator.generic
+
+generic.scan(path:"~/code/github/freeflowuniverse/crystallib/crystallib/installers",force:true)!
 
 
 ```
+
+to run from bash
+
+```bash
+~/code/github/freeflowuniverse/crystallib/scripts/fix_installers.vsh
+```
+

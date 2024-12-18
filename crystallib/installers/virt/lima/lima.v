@@ -72,10 +72,10 @@ pub fn install(args_ InstallArgs) ! {
 
 		console.print_header('download ${url}')
 		osal.download(
-			url: url
-			minsize_kb: 45000
-			reset: args.reset
-			dest: '/tmp/lima.tar.gz'
+			url:         url
+			minsize_kb:  45000
+			reset:       args.reset
+			dest:        '/tmp/lima.tar.gz'
 			expand_file: '/tmp/download/lima'
 		)!
 

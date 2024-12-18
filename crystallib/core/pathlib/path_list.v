@@ -54,16 +54,16 @@ pub fn (mut path Path) list(args_ ListArgs) !PathList {
 		r << re
 	}
 	mut args := ListArgsInternal{
-		regex: r
-		recursive: args_.recursive
+		regex:         r
+		recursive:     args_.recursive
 		ignoredefault: args_.ignoredefault
-		dirs_only: args_.dirs_only
-		files_only: args_.files_only
+		dirs_only:     args_.dirs_only
+		files_only:    args_.files_only
 		include_links: args_.include_links
 	}
 	paths := path.list_internal(args)!
 	mut pl := PathList{
-		root: path.path
+		root:  path.path
 		paths: paths
 	}
 	return pl

@@ -20,7 +20,7 @@ pub mut:
 }
 
 pub fn get(instance string) !TFRobot[Config] {
-	tfrobot_installer.install(reset:true)!
+	tfrobot_installer.install(reset: true)!
 	mut robot := TFRobot[Config]{}
 	robot.init('tfrobot', instance, .get)!
 	return robot

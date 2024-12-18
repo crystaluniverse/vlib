@@ -111,8 +111,8 @@ pub fn processinfo_children(pid int) !ProcessMap {
 	pm.children_(mut res, pid)!
 	return ProcessMap{
 		processes: res
-		lastscan: pm.lastscan
-		state: pm.state
+		lastscan:  pm.lastscan
+		state:     pm.state
 	}
 }
 

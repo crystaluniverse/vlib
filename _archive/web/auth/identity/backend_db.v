@@ -37,7 +37,7 @@ pub fn new_backend(config DBBackendConfig) !DBBackend {
 
 fn (mut backend DBBackend) create_user(email string) User {
 	user := User{
-		id: rand.uuid_v4()
+		id:    rand.uuid_v4()
 		email: email
 	}
 

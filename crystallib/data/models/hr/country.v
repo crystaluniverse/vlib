@@ -50,6 +50,6 @@ fn (mut self HRData) extract_country_information(mut action playbook.Action) !Co
 
 	return Country{
 		name: name
-		id: id
+		id:   id
 	}
 }

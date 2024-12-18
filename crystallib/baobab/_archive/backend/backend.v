@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.data.encoderhero
 pub struct Backend {
 pub mut:
 	indexer Indexer // storing indeces
-	storer Storer
+	storer  Storer
 }
 
 @[params]
@@ -17,7 +17,7 @@ pub struct BackendConfig {
 pub:
 	name   string
 	secret string
-	reset bool
+	reset  bool
 }
 
 pub fn new(config BackendConfig) !Backend {
@@ -30,9 +30,9 @@ pub fn new(config BackendConfig) !Backend {
 		// 	reset: config.reset
 		// )!,
 		identifier: config.identifier
-		dbs: dbfs.get(
+		dbs:        dbfs.get(
 			contextid: 1
-			secret: config.secret
+			secret:    config.secret
 		)!
 	}
 	if config.reset {

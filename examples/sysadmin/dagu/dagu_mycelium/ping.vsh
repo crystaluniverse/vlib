@@ -1,7 +1,7 @@
 #!/usr/bin/env v
 
 import encoding.base64
-import freeflowuniverse.crystallib.clients.mycelium { get_msg_status, receive_msg, reply_msg, send_msg }
+import freeflowuniverse.crystallib.clients.mycelium { send_msg }
 
 payload := 'im alive'
 pk := '738570e732660503756f0ef70670a7940fefef6bcfeafb4be25e6adada155173'

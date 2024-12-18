@@ -44,8 +44,8 @@ pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) !bool {
 	}
 	return c.ask_yesno(
 		description: args.description
-		question: args.question
-		warning: "Please choose 'y' or 'n', then enter."
-		reset: true
+		question:    args.question
+		warning:     "Please choose 'y' or 'n', then enter."
+		reset:       true
 	)
 }

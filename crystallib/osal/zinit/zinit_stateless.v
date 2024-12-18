@@ -9,24 +9,24 @@ import json
 
 @[params]
 pub struct ZinitConfig {
-	path string = '/etc/zinit'
+	path     string = '/etc/zinit'
 	pathcmds string = '/etc/zinit/cmds'
 }
 
 pub struct ZinitStateless {
 pub mut:
-	client    Client
-	path      pathlib.Path
-	pathcmds  pathlib.Path
+	client   Client
+	path     pathlib.Path
+	pathcmds pathlib.Path
 }
 
 pub fn new_stateless(z ZinitConfig) !ZinitStateless {
 	return ZinitStateless{
-		client: new_rpc_client()
-		path: pathlib.get_dir(path: '/etc/zinit', create: true)!
+		client:   new_rpc_client()
+		path:     pathlib.get_dir(path: '/etc/zinit', create: true)!
 		pathcmds: pathlib.get_dir(path: '/etc/zinit/cmds', create: true)!
 	}
-}	
+}
 
 // will delete the process if it exists while starting
 pub fn (mut zinit ZinitStateless) new(args_ ZProcessNewArgs) !ZProcess {
@@ -45,33 +45,33 @@ pub fn (mut zinit ZinitStateless) new(args_ ZProcessNewArgs) !ZProcess {
 	}
 
 	mut zp := ZProcess{
-		name: args.name
-		cmd: args.cmd
+		name:     args.name
+		cmd:      args.cmd
 		cmd_test: args.cmd_test
 		cmd_stop: args.cmd_stop
-		env: args.env.move()
-		after:args.after
-		start:args.start
-		restart:args.restart
-		oneshot:args.oneshot
-		workdir: args.workdir
+		env:      args.env.move()
+		after:    args.after
+		start:    args.start
+		restart:  args.restart
+		oneshot:  args.oneshot
+		workdir:  args.workdir
 	}
 
-	zinit.cmd_write(args.name,args.cmd,"_start",{},args.workdir)!
-	zinit.cmd_write(args.name,args.cmd_test,"_test",{},args.workdir)!
-	zinit.cmd_write(args.name,args.cmd_stop,"_stop",{},args.workdir)!
+	zinit.cmd_write(args.name, args.cmd, '_start', {}, args.workdir)!
+	zinit.cmd_write(args.name, args.cmd_test, '_test', {}, args.workdir)!
+	zinit.cmd_write(args.name, args.cmd_stop, '_stop', {}, args.workdir)!
 
-    mut json_path := zinit.pathcmds.file_get_new('${args.name}.json')!
-    json_content := json.encode(args)
-    json_path.write(json_content)!	
+	mut json_path := zinit.pathcmds.file_get_new('${args.name}.json')!
+	json_content := json.encode(args)
+	json_path.write(json_content)!
 
 	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
 	// console.print_debug('debug zprocess path yaml: ${pathyaml}')
 	pathyaml.write(zp.config_content()!)!
-	
+
 	zinit.client.monitor(args.name)!
 	assert zinit.exists(args.name)!
-	
+
 	if args.start {
 		zinit.client.start(args.name)!
 	}
@@ -79,26 +79,26 @@ pub fn (mut zinit ZinitStateless) new(args_ ZProcessNewArgs) !ZProcess {
 	return zp
 }
 
-fn (mut zinit ZinitStateless) cmd_write(name string,cmd string, cat string, env map[string]string,workdir string) !string {
-	if cmd.trim_space()==""{
-		return""
+fn (mut zinit ZinitStateless) cmd_write(name string, cmd string, cat string, env map[string]string, workdir string) !string {
+	if cmd.trim_space() == '' {
+		return ''
 	}
 	mut zinitobj := new()!
-	mut pathcmd := zinitobj.pathcmds.file_get_new("${name}${cat}.sh")!
-	mut cmd_out:="#!/bin/bash\nset -e\n\n"
-	
-	if cat=="_start"{
+	mut pathcmd := zinitobj.pathcmds.file_get_new('${name}${cat}.sh')!
+	mut cmd_out := '#!/bin/bash\nset -e\n\n'
+
+	if cat == '_start' {
 		cmd_out += 'echo === START ======== ${ourtime.now().str()} === \n'
 	}
-	for key,val in env{
-		cmd_out+="${key}=${val}\n"
+	for key, val in env {
+		cmd_out += '${key}=${val}\n'
 	}
 
-	if workdir.trim_space()!=""{
-		cmd_out+="cd ${ workdir.trim_space()}\n"
+	if workdir.trim_space() != '' {
+		cmd_out += 'cd ${workdir.trim_space()}\n'
 	}
-	
-	cmd_out+=texttools.dedent(cmd) + '\n'
+
+	cmd_out += texttools.dedent(cmd) + '\n'
 	pathcmd.write(cmd_out)!
 	pathcmd.chmod(0x770)!
 	return '/bin/bash -c ${pathcmd.path}'
@@ -117,7 +117,9 @@ pub fn (mut zinit ZinitStateless) start(name string) ! {
 }
 
 pub fn (mut zinit ZinitStateless) running(name string) !bool {
-	if !zinit.exists(name)! { return false }
+	if !zinit.exists(name)! {
+		return false
+	}
 	return zinit.client.status(name)!.state == 'Running'
 }
 

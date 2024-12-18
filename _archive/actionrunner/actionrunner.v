@@ -5,9 +5,7 @@ import freeflowuniverse.crystallib.baobab.client { Client }
 import freeflowuniverse.crystallib.baobab.jobs { ActionJob }
 import rand
 
-const (
-	default_waiting_actors = 1.0
-)
+const default_waiting_actors = 1.0
 
 // A struct representing an ActionRunner. It contains
 // a list of actors that it manages and a client that it
@@ -18,7 +16,7 @@ pub struct ActionRunner {
 pub mut:
 	client                 &Client
 	running                bool
-	timeout_waiting_actors f64 = actionrunner.default_waiting_actors
+	timeout_waiting_actors f64 = default_waiting_actors
 }
 
 // This is the factory function for actionrunner

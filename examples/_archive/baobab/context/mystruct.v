@@ -31,8 +31,8 @@ pub mut:
 pub fn db_new(args DBArgs) !MyDB {
 	mut mydb := MyDB{
 		circlename: args.circlename
-		version: args.version
-		objtype: mystruct.objtype
+		version:    args.version
+		objtype:    objtype
 	}
 	mydb.init()!
 	return mydb
@@ -41,9 +41,9 @@ pub fn db_new(args DBArgs) !MyDB {
 pub fn (mydb MyDB) set(o MyStruct) ! {
 	// the next will create the table if it doesn't exist yet, only checks once per mem session
 	db.create(
-		cid: o.gid.cid
-		objtype: mystruct.objtype
-		index_int: ['nr', 'nr2']
+		cid:          o.gid.cid
+		objtype:      objtype
+		index_int:    ['nr', 'nr2']
 		index_string: [
 			'name',
 			'color',
@@ -52,9 +52,9 @@ pub fn (mydb MyDB) set(o MyStruct) ! {
 	// get the serialization (v1 is a quite efficient small serialization protocol)
 	data := mydb.serialize(o)!
 	db.set(
-		gid: o.gid
-		objtype: mystruct.objtype
-		index_int: {
+		gid:          o.gid
+		objtype:      objtype
+		index_int:    {
 			'nr':  o.nr
 			'nr2': o.nr2
 		}
@@ -62,21 +62,21 @@ pub fn (mydb MyDB) set(o MyStruct) ! {
 			'name':  o.name
 			'color': o.color
 		}
-		data: data
+		data:         data
 	)!
 }
 
 pub fn (mydb MyDB) get(gid smartid.GID) !MyStruct {
-	data := db.get(gid: gid, objtype: mystruct.objtype)!
+	data := db.get(gid: gid, objtype: objtype)!
 	return mydb.unserialize(data)
 }
 
 pub fn (mydb MyDB) delete(gid smartid.GID) ! {
-	db.delete(cid: mydb.cid, gid: gid, objtype: mystruct.objtype)!
+	db.delete(cid: mydb.cid, gid: gid, objtype: objtype)!
 }
 
 pub fn (mydb MyDB) delete_all() ! {
-	db.delete(cid: mydb.cid, objtype: mystruct.objtype)!
+	db.delete(cid: mydb.cid, objtype: objtype)!
 }
 
 @[params]
@@ -104,9 +104,9 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 		query_str['color'] = args.color
 	}
 	mut query_args := db.DBFindArgs{
-		cid: mydb.cid
-		objtype: mystruct.objtype
-		query_int: query_int
+		cid:          mydb.cid
+		objtype:      objtype
+		query_int:    query_int
 		query_string: query_str
 	}
 	// println(query_args)

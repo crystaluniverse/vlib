@@ -1,7 +1,7 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.data.paramsparser { Params, parse }
-import time { Duration, sleep }
+import time
 
 totalnr := 1000000
 

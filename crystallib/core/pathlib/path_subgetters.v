@@ -69,7 +69,7 @@ pub fn (mut path Path) sub_get(args_ SubGetParams) !Path {
 	if path.cat != Category.dir {
 		return SubGetError{
 			error_type: .nodir
-			path: path.path
+			path:       path.path
 		}
 	}
 	if args.name == '' {
@@ -94,7 +94,7 @@ pub fn (mut path Path) sub_get(args_ SubGetParams) !Path {
 				if !p.is_dir() {
 					return SubGetError{
 						error_type: .wrongtype
-						path: path.path
+						path:       path.path
 					}
 				}
 			}
@@ -102,14 +102,14 @@ pub fn (mut path Path) sub_get(args_ SubGetParams) !Path {
 				if !p.is_file() {
 					return SubGetError{
 						error_type: .wrongtype
-						path: path.path
+						path:       path.path
 					}
 				}
 			}
 			if args.name_fix {
 				p.path_normalize() or {
 					return SubGetError{
-						msg: 'could not normalize path: ${err}'
+						msg:  'could not normalize path: ${err}'
 						path: path.path
 					}
 				}
@@ -119,7 +119,7 @@ pub fn (mut path Path) sub_get(args_ SubGetParams) !Path {
 	}
 	return SubGetError{
 		error_type: .notfound
-		path: path.path
+		path:       path.path
 	}
 }
 
@@ -186,8 +186,8 @@ pub fn (mut path Path) file_get(tofind string) !Path {
 	if path.file_exists(tofind) {
 		file_path := os.join_path(path.path, tofind)
 		return Path{
-			path: file_path
-			cat: Category.file
+			path:  file_path
+			cat:   Category.file
 			exist: .yes
 		}
 	}
@@ -204,8 +204,8 @@ pub fn (mut path Path) file_get_ignorecase(tofind string) !Path {
 	}
 	file_path := os.join_path(path.path, filename)
 	return Path{
-		path: file_path
-		cat: Category.file
+		path:  file_path
+		cat:   Category.file
 		exist: .yes
 	}
 }
@@ -263,8 +263,8 @@ pub fn (mut path Path) link_get(tofind string) !Path {
 	if path.link_exists(tofind) {
 		file_path := os.join_path(path.path, tofind)
 		return Path{
-			path: file_path
-			cat: Category.linkfile
+			path:  file_path
+			cat:   Category.linkfile
 			exist: .yes
 		}
 	}
@@ -294,8 +294,8 @@ pub fn (mut path Path) dir_get(tofind string) !Path {
 	if path.dir_exists(tofind) {
 		dir_path := os.join_path(path.path, tofind)
 		return Path{
-			path: dir_path
-			cat: Category.dir
+			path:  dir_path
+			cat:   Category.dir
 			exist: .yes
 		}
 	}

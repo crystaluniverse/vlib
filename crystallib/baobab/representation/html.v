@@ -60,7 +60,7 @@ pub fn list_object_page[U](u []U, routes ObjectRoutes) Page {
 	object_name := typeof[U]().all_after_last('.')
 	return Page{
 		heading: PageHeading{
-			title: object_name.title()
+			title:   object_name.title()
 			buttons: [
 				Button{
 					label: 'Manual'
@@ -69,19 +69,19 @@ pub fn list_object_page[U](u []U, routes ObjectRoutes) Page {
 		}
 		content: Section{
 			heading: SectionHeading{
-				title: '${object_name.title()} List'
+				title:       '${object_name.title()} List'
 				description: ''
-				buttons: [
+				buttons:     [
 					Button{
-						label: 'Filter'
-						get: '${routes.object_route}/filter'
+						label:    'Filter'
+						get:      '${routes.object_route}/filter'
 						push_url: 'true'
 					},
 					Button{
-						label: 'New ${object_name}'
-						get: '${routes.object_route}/new'
+						label:    'New ${object_name}'
+						get:      '${routes.object_route}/new'
 						push_url: 'true'
-						color: .violet
+						color:    .violet
 					},
 				]
 			}
@@ -99,9 +99,9 @@ pub fn list_objectsection[U](u []U) Section {
 	object_name := typeof[U]().all_after_last('.')
 	return Section{
 		heading: SectionHeading{
-			title: '${object_name.title()} List'
+			title:       '${object_name.title()} List'
 			description: ''
-			buttons: [
+			buttons:     [
 				Button{
 					label: 'Filter'
 				},
@@ -126,7 +126,7 @@ pub mut:
 pub fn new_object_page[T]() Page {
 	return Page{
 		heading: PageHeading{
-			title: typeof[T]().title()
+			title:       typeof[T]().title()
 			description: ''
 		}
 		content: new_object_form[T]()
@@ -368,10 +368,10 @@ pub fn table[U](u []U) Table {
 	rows := u.map(row(it))
 
 	return Table{
-		title: typeof[T]().title()
+		title:       typeof[T]().title()
 		description: ''
-		headers: headers
-		rows: rows
+		headers:     headers
+		rows:        rows
 	}
 }
 
@@ -407,8 +407,8 @@ pub fn row[T](t T) Row {
 		}
 	}
 	return Row{
-		route: '${t.id}'
-		items: items
+		route:   '${t.id}'
+		items:   items
 		buttons: [
 			Button{
 				label: 'Edit'

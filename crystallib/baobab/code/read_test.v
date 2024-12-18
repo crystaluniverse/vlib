@@ -1,6 +1,6 @@
 module code
 
-import freeflowuniverse.crystallib.core.pathlib {Path}
+import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.codeparser
 import os
 
@@ -17,7 +17,7 @@ pub fn test_parse_actor_methods() ! {
 		'set_base_object',
 		'delete_base_object',
 		'list_base_object',
-		'filter_base_object'
+		'filter_base_object',
 	]
 }
 

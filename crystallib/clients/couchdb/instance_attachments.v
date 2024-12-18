@@ -33,7 +33,7 @@ pub fn (mut cl CouchDBInstance) attachment_add(doc_id ID, rev Rev, attachment_na
 	res := cl.connection.send(
 		method: .put
 		prefix: '${cl.name}/${doc_id}/${attachment_name}?rev=${rev}'
-		data: data
+		data:   data
 	)!
 	if !res.is_ok() {
 		return error('failed to add attachment: (${res.code}) ${res.data}')

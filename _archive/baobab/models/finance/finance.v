@@ -35,11 +35,11 @@ pub fn (mut person PersonFinance) digital_payment_add(new_method finance.Payment
 	}
 
 	mut new_method_ := finance.PaymentMethodDigital{
-		name: new_method.name
-		blockchain: blockchain_
-		account: new_method.account
+		name:        new_method.name
+		blockchain:  blockchain_
+		account:     new_method.account
 		description: new_method.description
-		preferred: preferred
+		preferred:   preferred
 	}
 
 	person.paymentmethods << new_method_
@@ -65,12 +65,12 @@ pub fn (mut person Person) iban_payment_add(new_method finance.PaymentIbanNewArg
 	}
 
 	mut new_method_ := finance.PaymentMethodIban{
-		name: new_method.name
+		name:        new_method.name
 		account_num: new_method.account_num
-		iban: new_method.iban
-		swift_code: new_method.swift_code
+		iban:        new_method.iban
+		swift_code:  new_method.swift_code
 		description: new_method.description
-		preferred: preferred
+		preferred:   preferred
 	}
 
 	person.paymentmethods << new_method_

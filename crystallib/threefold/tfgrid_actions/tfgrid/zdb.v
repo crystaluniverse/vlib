@@ -15,12 +15,12 @@ fn (mut t TFGridHandler) zdb(action Action) ! {
 			mode := action.params.get_default('mode', 'user')!
 
 			zdb_deploy := t.tfgrid.deploy_zdb(ZDBDeployment{
-				node_id: u32(node_id)
-				name: name
+				node_id:  u32(node_id)
+				name:     name
 				password: password
-				public: public
-				size: u32(size)
-				mode: mode
+				public:   public
+				size:     u32(size)
+				mode:     mode
 			})!
 
 			t.logger.info('${zdb_deploy}')

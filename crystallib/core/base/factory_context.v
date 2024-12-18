@@ -31,13 +31,13 @@ pub mut:
 // ```
 pub fn context_new(args_ ContextConfigArgs) !&Context {
 	mut args := ContextConfig{
-		id: args_.id
-		name: args_.name
-		params: args_.params
-		coderoot: args_.coderoot
+		id:          args_.id
+		name:        args_.name
+		params:      args_.params
+		coderoot:    args_.coderoot
 		interactive: args_.interactive
-		secret: args_.secret
-		encrypt: args_.encrypt
+		secret:      args_.secret
+		encrypt:     args_.encrypt
 	}
 
 	if args.encrypt && args.secret == '' && args.interactive {

@@ -5,9 +5,8 @@ import freeflowuniverse.crystallib.threefold.tfgrid3deployer
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.installers.threefold.griddriver
 
-
-fn main(){
-	mut installer:= griddriver.get()!
+fn main() {
+	mut installer := griddriver.get()!
 	installer.install()!
 
 	// v := tfgrid3deployer.get()!
@@ -52,7 +51,7 @@ fn main(){
 	// vm1 := deployment.vm_get("my_vm1")!
 	// reachable := vm1.healthcheck()!
 	// println("vm reachable: ${reachable}")
-	
+
 	// if !reachable {
 	// 	deployment.vm_delete()!
 	// 	deployment.vm_deploy()!
@@ -62,7 +61,6 @@ fn main(){
 	// 	vm1.delete()!
 	// 	vm1.deploy()!
 	// }
-
 
 	/*
 		TODO: Agreed on

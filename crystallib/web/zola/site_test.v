@@ -29,7 +29,7 @@ fn test_blog_add() ! {
 
 	// test adding post without adding doctree, should produce error
 	site.post_add(
-		name: 'test_post'
+		name:    'test_post'
 		pointer: 'blog:a_better_understanding_of_wealth'
 	) or { assert err.msg() == 'Collection blog not found.' }
 
@@ -38,7 +38,7 @@ fn test_blog_add() ! {
 		url: 'https://github.com/threefoldfoundation/threefold_data/tree/development_zola/content'
 	)!
 	site.post_add(
-		name: 'test_post'
+		name:    'test_post'
 		pointer: 'blog:a_better_understanding_of_wealth.md'
 	)!
 	assert 'test_post' in site.blog.posts

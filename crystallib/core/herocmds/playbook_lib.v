@@ -12,10 +12,10 @@ import os
 
 pub fn cmd_run_add_flags(mut cmd_run Command) {
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'path'
-		abbrev: 'p'
+		flag:        .string
+		required:    false
+		name:        'path'
+		abbrev:      'p'
 		description: 'path where heroscripts can be found.'
 	})
 
@@ -34,72 +34,72 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 	// 	description: 'name for the context (optional).'
 	// })
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'url'
-		abbrev: 'u'
+		flag:        .string
+		required:    false
+		name:        'url'
+		abbrev:      'u'
 		description: 'url where heroscript can be found.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'gitpull'
-		abbrev: 'gp'
+		flag:        .bool
+		required:    false
+		name:        'gitpull'
+		abbrev:      'gp'
 		description: 'will try to pull.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'gitreset'
-		abbrev: 'gr'
+		flag:        .bool
+		required:    false
+		name:        'gitreset'
+		abbrev:      'gr'
 		description: 'will reset the git repo if there are changes inside, will also pull, CAREFUL.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'coderoot'
-		abbrev: 'cr'
+		flag:        .string
+		required:    false
+		name:        'coderoot'
+		abbrev:      'cr'
 		description: 'Set code root for gittools.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		name: 'script'
-		abbrev: 's'
+		flag:        .bool
+		name:        'script'
+		abbrev:      's'
 		description: 'runs non interactive!'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		name: 'reset'
-		abbrev: 'r'
+		flag:        .bool
+		name:        'reset'
+		abbrev:      'r'
 		description: 'reset, means lose changes of your repos, BE CAREFUL.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'edit'
-		abbrev: 'e'
+		flag:        .bool
+		required:    false
+		name:        'edit'
+		abbrev:      'e'
 		description: 'Open visual studio code for where we found the content.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'sourcetree'
-		abbrev: 'st'
+		flag:        .bool
+		required:    false
+		name:        'sourcetree'
+		abbrev:      'st'
 		description: 'Open sourcetree (git mgmt) for the repo where we found the content.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'dagu'
-		abbrev: 'da'
+		flag:        .bool
+		required:    false
+		name:        'dagu'
+		abbrev:      'da'
 		description: 'Schedule the heroscripts through DAGU.'
 	})
 }
@@ -128,9 +128,9 @@ pub fn plbook_code_get(cmd Command) !string {
 	mut gs := gittools.get(coderoot: coderoot)!
 	if url.len > 0 {
 		mut repo := gs.get_repo(
-			pull: pull
+			pull:  pull
 			reset: reset
-			url: url
+			url:   url
 			// QUESTION: why should reload be default true?
 			// reload: true
 		)!

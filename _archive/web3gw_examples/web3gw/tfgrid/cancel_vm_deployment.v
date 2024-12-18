@@ -6,9 +6,7 @@ import flag
 import log
 import os
 
-const (
-	default_server_address = 'http://127.0.0.1:8080'
-)
+const default_server_address = 'http://127.0.0.1:8080'
 
 @[params]
 pub struct Arguments {
@@ -58,9 +56,9 @@ fn main() {
 	_ := spawn myclient.run()
 
 	arguments := Arguments{
-		network: network
+		network:          network
 		tfchain_mnemonic: tfchain_mnemonic
-		deployment_name: vm_deployment_name
+		deployment_name:  vm_deployment_name
 	}
 
 	execute_rpcs(mut myclient, mut logger, arguments) or {

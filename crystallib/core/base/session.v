@@ -17,7 +17,7 @@ pub mut:
 	params      paramsparser.Params
 	start       ourtime.OurTime
 	end         ourtime.OurTime
-	context     &Context            @[skip; str: skip]
+	context     &Context @[skip; str: skip]
 	config      SessionConfig
 	env         map[string]string
 }

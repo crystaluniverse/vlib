@@ -19,8 +19,8 @@ pub struct Context {
 mut:
 	// priv_key_     ?&secp256k1.Secp256k1 @[skip; str: skip]
 	params_       ?&paramsparser.Params
-	dbcollection_ ?&dbfs.DBCollection   @[skip; str: skip]
-	redis_        ?&redisclient.Redis   @[skip; str: skip]
+	dbcollection_ ?&dbfs.DBCollection @[skip; str: skip]
+	redis_        ?&redisclient.Redis @[skip; str: skip]
 pub mut:
 	// snippets     map[string]string
 	config ContextConfig
@@ -29,7 +29,7 @@ pub mut:
 @[params]
 pub struct ContextConfig {
 pub mut:
-	id          u32    @[required]
+	id          u32 @[required]
 	name        string = 'default'
 	params      string
 	coderoot    string
@@ -109,8 +109,8 @@ pub fn (mut self Context) dbcollection() !&dbfs.DBCollection {
 		}
 		mut dbc := dbfs.get(
 			contextid: self.config.id
-			dbpath: self.config.db_path
-			secret: self.config.secret
+			dbpath:    self.config.db_path
+			secret:    self.config.secret
 		)!
 		self.dbcollection_ = &dbc
 		&dbc

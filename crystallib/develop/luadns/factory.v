@@ -12,14 +12,14 @@ pub mut:
 pub fn load(url string) !LuaDNS {
 	mut gs := gittools.new()!
 	mut repo := gs.get_repo(
-		url: url
+		url:  url
 		pull: true
 	)!
 
-	repo_path := repo.get_path()! 
+	repo_path := repo.get_path()!
 
 	return LuaDNS{
-		url: url
+		url:     url
 		configs: parse_dns_configs(repo_path)!
 	}
 }

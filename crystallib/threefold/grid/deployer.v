@@ -63,21 +63,21 @@ pub fn new_deployer(mnemonics string, chain_network ChainNetwork) !Deployer {
 	logger.set_level(.debug)
 
 	mut client := griddriver.Client{
-		mnemonic: mnemonics
-		substrate: grid.substrate_url[chain_network]
-		relay: grid.relay_url[chain_network]
+		mnemonic:  mnemonics
+		substrate: substrate_url[chain_network]
+		relay:     relay_url[chain_network]
 	}
 	twin_id := client.get_user_twin() or { return error('failed to get twin ${err}') }
 
 	return Deployer{
-		mnemonics: mnemonics
-		substrate_url: grid.substrate_url[chain_network]
-		twin_id: twin_id
+		mnemonics:     mnemonics
+		substrate_url: substrate_url[chain_network]
+		twin_id:       twin_id
 		chain_network: chain_network
-		relay_url: grid.relay_url[chain_network]
-		env: grid.envs[chain_network]
-		logger: logger
-		client: client
+		relay_url:     relay_url[chain_network]
+		env:           envs[chain_network]
+		logger:        logger
+		client:        client
 	}
 }
 
@@ -282,10 +282,10 @@ pub fn (mut d Deployer) batch_deploy(name_contracts []string, mut dls map[u32]&m
 		hash_hex := dl.challenge_hash().hex()
 		hash_map[node] = hash_hex
 		batch_create_contract_data << griddriver.BatchCreateContractData{
-			node: node
-			body: dl.metadata
-			hash: hash_hex
-			public_ips: public_ips
+			node:                 node
+			body:                 dl.metadata
+			hash:                 hash_hex
+			public_ips:           public_ips
 			solution_provider_id: solution_provider
 		}
 	}

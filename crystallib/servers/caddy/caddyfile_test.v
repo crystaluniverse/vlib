@@ -10,7 +10,7 @@ fn test_add_reverse_proxy() {
 
 	file.add_reverse_proxy(
 		from: '/api'
-		to: 'http://localhost:8080'
+		to:   'http://localhost:8080'
 	) or {
 		assert false, 'Failed to add reverse proxy: ${err}'
 		return
@@ -22,7 +22,7 @@ fn test_add_file_server() {
 
 	file.add_file_server(
 		domain: 'example.com'
-		root: '${caddy.testdata_path}/example'
+		root:   '${testdata_path}/example'
 	) or {
 		assert false, 'Failed to add file server: ${err}'
 		return

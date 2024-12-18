@@ -32,17 +32,17 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 			example := p.get_default_false('example')
 
 			install(
-				reset: reset
-				start: start
-				stop: stop
-				restart: restart
-				homedir: homedir
-				config_path: config_path
-				config_url: config_url
+				reset:         reset
+				start:         start
+				stop:          stop
+				restart:       restart
+				homedir:       homedir
+				config_path:   config_path
+				config_url:    config_url
 				dnszones_path: dnszones_path
-				dnszones_url: dnszones_url
-				plugins: plugins
-				example: example
+				dnszones_url:  dnszones_url
+				plugins:       plugins
+				example:       example
 			)!
 		}
 	}

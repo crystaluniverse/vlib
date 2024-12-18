@@ -16,7 +16,7 @@ pub struct EchoHandler {
 
 fn (h EchoHandler) handle(req http.Request) http.Response {
 	mut resp := http.Response{
-		body: req.data
+		body:   req.data
 		header: req.header
 	}
 	resp.set_status(.ok)
@@ -26,11 +26,11 @@ fn (h EchoHandler) handle(req http.Request) http.Response {
 
 fn testsuite_begin() {
 	client = Client{
-		url: auth.server_url
+		url: server_url
 	}
 	mut server := &http.Server{
-		accept_timeout: auth.atimeout
-		handler: EchoHandler{}
+		accept_timeout:       atimeout
+		handler:              EchoHandler{}
 		show_startup_message: false
 	}
 	t := spawn server.listen_and_serve()
@@ -38,8 +38,8 @@ fn testsuite_begin() {
 
 pub fn test_authorize() ! {
 	authorized := client.authorize(
-		asset_id: 'test_asset'
-		access_type: .read
+		asset_id:     'test_asset'
+		access_type:  .read
 		access_token: ''
 	)!
 }

@@ -57,7 +57,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 13000
 			expand_dir: '/tmp/coredns'
 		)!
@@ -65,7 +65,7 @@ pub fn install(args_ InstallArgs) ! {
 		mut binpath := dest.file_get('coredns')!
 		osal.cmd_add(
 			cmdname: 'coredns'
-			source: binpath.path
+			source:  binpath.path
 		)!
 	}
 

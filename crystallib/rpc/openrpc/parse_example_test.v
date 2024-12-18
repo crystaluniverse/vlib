@@ -28,7 +28,7 @@ assert some_function('input_string') == 'output_string'
 //         }
 
 fn test_parse_example_pairing() ! {
-	example := parse_example_pairing(openrpc.example_txt)!
+	example := parse_example_pairing(example_txt)!
 	params := example.params
 	assert params.len == 1
 	param0 := (params[0] as Example)
@@ -36,23 +36,23 @@ fn test_parse_example_pairing() ! {
 }
 
 const test_struct = Struct{
-	name: 'TestStruct'
+	name:   'TestStruct'
 	fields: [
 		StructField{
-			name: 'TestField'
-			typ: Type{
+			name:  'TestField'
+			typ:   Type{
 				symbol: 'int'
 			}
 			attrs: [Attribute{
 				name: 'example'
-				arg: '21'
+				arg:  '21'
 			}]
 		},
 	]
 }
 
 fn test_parse_struct_example() ! {
-	example := parse_struct_example(openrpc.test_struct)
+	example := parse_struct_example(test_struct)
 	// assert example.name == 'TestStructExample'
 	// panic(example)
 }

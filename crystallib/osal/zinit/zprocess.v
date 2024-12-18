@@ -11,9 +11,9 @@ pub:
 	name string = 'default'
 pub mut:
 	cmd         string // command to start
-	cmd_stop         string // command to stop (optional)
-	cmd_test        string // command line to test service is running
-	workdir		string // where to execute the commands
+	cmd_stop    string // command to stop (optional)
+	cmd_test    string // command line to test service is running
+	workdir     string // where to execute the commands
 	status      ZProcessStatus
 	pid         int
 	after       []string // list of service we depend on
@@ -22,7 +22,6 @@ pub mut:
 	start       bool = true
 	restart     bool = true // whether the process should be restarted on failure
 	description string // not used in zinit
-
 }
 
 pub enum ZProcessStatus {
@@ -42,15 +41,14 @@ pub enum StartupManagerType {
 	screen
 }
 
-
 @[params]
 pub struct ZProcessNewArgs {
 pub mut:
-	name        string            @[required]
-	cmd         string            @[required]
-	cmd_stop         string // command to stop (optional)
-	cmd_test        string // command line to test service is running
-	workdir		string // where to execute the commands
+	name        string @[required]
+	cmd         string @[required]
+	cmd_stop    string   // command to stop (optional)
+	cmd_test    string   // command line to test service is running
+	workdir     string   // where to execute the commands
 	after       []string // list of service we depend on
 	env         map[string]string
 	oneshot     bool
@@ -58,14 +56,13 @@ pub mut:
 	restart     bool = true // whether the process should be restarted on failure
 	description string // not used in zinit
 	startuptype StartupManagerType
-
 }
 
 pub fn (zp ZProcess) cmd() !string {
 	mut zinitobj := new()!
-	mut path := zinitobj.pathcmds.file_get_new("${zp.name}_start.sh")!
+	mut path := zinitobj.pathcmds.file_get_new('${zp.name}_start.sh')!
 	if path.exists() {
-		return "bash -c \'${path.path}\'"
+		return 'bash -c \'${path.path}\''
 	} else {
 		if zp.cmd.contains('\n') {
 			return error('cmd cannot have \\n and not have cmd file on disk on ${path.path}')
@@ -79,7 +76,7 @@ pub fn (zp ZProcess) cmd() !string {
 
 pub fn (zp ZProcess) cmdtest() !string {
 	mut zinitobj := new()!
-	mut path := zinitobj.pathcmds.file_get_new("${zp.name}_test.sh")!
+	mut path := zinitobj.pathcmds.file_get_new('${zp.name}_test.sh')!
 	if path.exists() {
 		return "bash -c \"${path.path}\""
 	} else {
@@ -95,7 +92,7 @@ pub fn (zp ZProcess) cmdtest() !string {
 
 pub fn (zp ZProcess) cmdstop() !string {
 	mut zinitobj := new()!
-	mut path := zinitobj.pathcmds.file_get_new("${zp.name}_stop.sh")!
+	mut path := zinitobj.pathcmds.file_get_new('${zp.name}_stop.sh')!
 	if path.exists() {
 		return "bash -c \"${path.path}\""
 	} else {
@@ -167,9 +164,9 @@ pub fn (mut zp ZProcess) destroy() ! {
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}
 	mut zinit_obj := new()!
-	mut path1 := zinit_obj.pathcmds.file_get_new("${zp.name}_start.sh")!
-	mut path2 := zinit_obj.pathcmds.file_get_new("${zp.name}_stop.sh")!
-	mut path3 := zinit_obj.pathcmds.file_get_new("${zp.name}_test.sh")!
+	mut path1 := zinit_obj.pathcmds.file_get_new('${zp.name}_start.sh')!
+	mut path2 := zinit_obj.pathcmds.file_get_new('${zp.name}_stop.sh')!
+	mut path3 := zinit_obj.pathcmds.file_get_new('${zp.name}_test.sh')!
 	mut pathyaml := zinit_obj.path.file_get_new(zp.name + '.yaml')!
 	path1.delete()!
 	path2.delete()!

@@ -20,10 +20,10 @@ fn (mut t TFGridHandler) k8s(action Action) ! {
 			cpu, memory, disk_size := get_k8s_capacity(capacity)!
 
 			mut node := K8sNode{
-				name: 'master'
-				farm_id: u32(farm_id)
-				cpu: cpu
-				memory: memory
+				name:      'master'
+				farm_id:   u32(farm_id)
+				cpu:       cpu
+				memory:    memory
 				disk_size: disk_size
 				public_ip: master_public_ip
 			}
@@ -31,10 +31,10 @@ fn (mut t TFGridHandler) k8s(action Action) ! {
 			mut workers := []K8sNode{}
 			for _ in 0 .. number_of_workers {
 				mut worker := K8sNode{
-					name: 'wr' + rand.string(6)
-					farm_id: u32(farm_id)
-					cpu: cpu
-					memory: memory
+					name:      'wr' + rand.string(6)
+					farm_id:   u32(farm_id)
+					cpu:       cpu
+					memory:    memory
 					disk_size: disk_size
 					public_ip: worerks_public_ip
 				}
@@ -43,11 +43,11 @@ fn (mut t TFGridHandler) k8s(action Action) ! {
 			}
 
 			cluster := K8sCluster{
-				name: name
-				token: rand.string(6)
-				ssh_key: ssh_key
-				master: node
-				workers: workers
+				name:          name
+				token:         rand.string(6)
+				ssh_key:       ssh_key
+				master:        node
+				workers:       workers
 				add_wg_access: add_wg_access
 			}
 
@@ -71,17 +71,17 @@ fn (mut t TFGridHandler) k8s(action Action) ! {
 			cpu, memory, disk_size := get_k8s_capacity(capacity)!
 
 			mut worker := K8sNode{
-				name: 'wr' + rand.string(6)
-				farm_id: u32(farm_id)
-				cpu: cpu
-				memory: memory
+				name:      'wr' + rand.string(6)
+				farm_id:   u32(farm_id)
+				cpu:       cpu
+				memory:    memory
 				disk_size: disk_size
 				public_ip: add_public_ip
 			}
 
 			add_res := t.tfgrid.add_worker_to_k8s_cluster(AddWorkerToK8sCluster{
 				cluster_name: name
-				worker: worker
+				worker:       worker
 			})!
 
 			t.logger.info('${add_res}')
@@ -92,7 +92,7 @@ fn (mut t TFGridHandler) k8s(action Action) ! {
 
 			remove_res := t.tfgrid.remove_worker_from_k8s_cluster(RemoveWorkerFromK8sCluster{
 				cluster_name: name
-				worker_name: worker_name
+				worker_name:  worker_name
 			})!
 			t.logger.info('${remove_res}')
 		}

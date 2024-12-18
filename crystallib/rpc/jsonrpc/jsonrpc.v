@@ -49,34 +49,34 @@ pub fn (j &JsonRpcError) to_json() string {
 
 pub fn new_jsonrpcrequest[T](method string, params T) JsonRpcRequest[T] {
 	return JsonRpcRequest[T]{
-		jsonrpc: jsonrpc.jsonrpc_version
-		method: method
-		params: params
-		id: rand.uuid_v4()
+		jsonrpc: jsonrpc_version
+		method:  method
+		params:  params
+		id:      rand.uuid_v4()
 	}
 }
 
 pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 	return JsonRpcResponse[T]{
-		jsonrpc: jsonrpc.jsonrpc_version
-		result: result
-		id: id
+		jsonrpc: jsonrpc_version
+		result:  result
+		id:      id
 	}
 }
 
 pub fn new_response[T](id string, result T) JsonRpcResponse[T] {
 	return JsonRpcResponse[T]{
-		jsonrpc: jsonrpc.jsonrpc_version
-		result: result
-		id: id
+		jsonrpc: jsonrpc_version
+		result:  result
+		id:      id
 	}
 }
 
 pub fn new_jsonrpcerror(id string, error InnerJsonRpcError) JsonRpcError {
 	return JsonRpcError{
-		jsonrpc: jsonrpc.jsonrpc_version
-		error: error
-		id: id
+		jsonrpc: jsonrpc_version
+		error:   error
+		id:      id
 	}
 }
 

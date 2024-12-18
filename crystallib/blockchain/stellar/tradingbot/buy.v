@@ -5,7 +5,7 @@ import math
 
 @[params]
 struct BuyLowArgs {
-	order_book   stellar.OrderBook   @[required]
+	order_book   stellar.OrderBook @[required]
 	active_offer ?stellar.OfferModel
 }
 
@@ -14,8 +14,8 @@ fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
 	log('Creating/Updating a new buy offer', false)
 
 	mut asset_info := stellar.GetOfferAssetInfo{
-		asset_type: bot.buying_asset_type
-		asset_code: bot.buying_asset_code
+		asset_type:   bot.buying_asset_type
+		asset_code:   bot.buying_asset_code
 		asset_issuer: bot.buying_asset_issuer
 	}
 
@@ -43,11 +43,11 @@ fn (mut bot StellarTradingBot) buy_low(args BuyLowArgs) ! {
 	offer_args := stellar.OfferArgs{
 		selling: stellar.get_offer_asset_type(bot.buying_asset_type, bot.buying_asset_code,
 			bot.buying_asset_issuer)
-		buying: stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
+		buying:  stellar.get_offer_asset_type(bot.selling_asset_type, bot.selling_asset_code,
 			bot.selling_asset_issuer)
-		amount: amount
-		buy: true
-		price: f32(buying_price)
+		amount:  amount
+		buy:     true
+		price:   f32(buying_price)
 	}
 
 	if active_offer := args.active_offer {

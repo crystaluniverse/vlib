@@ -5,7 +5,7 @@ import os
 const testpath = os.dir(@FILE) + '/examples/test_path'
 
 fn testsuite_begin() {
-	console.print_debug("create files for link test")
+	console.print_debug('create files for link test')
 	os.rmdir_all(os.dir(@FILE) + '/examples') or {}
 	assert !os.is_dir(testpath)
 	os.mkdir_all(testpath) or { panic(err) }

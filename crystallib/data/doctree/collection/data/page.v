@@ -13,7 +13,7 @@ pub enum PageStatus {
 @[heap]
 pub struct Page {
 mut:
-	doc           &Doc            @[str: skip]
+	doc           &Doc @[str: skip]
 	element_cache map[int]Element
 	changed       bool
 pub mut:
@@ -48,11 +48,11 @@ pub fn new_page(args NewPageArgs) !Page {
 		element_cache[child.id] = child
 	}
 	mut new_page := Page{
-		element_cache: element_cache
-		name: args.name
-		path: args.path
+		element_cache:   element_cache
+		name:            args.name
+		path:            args.path
 		collection_name: args.collection_name
-		doc: &doc
+		doc:             &doc
 	}
 	return new_page
 }
@@ -73,7 +73,7 @@ fn (page Page) doc_immute() !&Doc {
 		content := page.doc.markdown()!
 		doc := markdownparser.new(content: content, collection_name: page.collection_name)!
 		return &doc
-	} 
+	}
 	return page.doc
 }
 

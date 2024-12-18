@@ -6,9 +6,7 @@ import flag
 import os
 import time
 
-const (
-	log_prefix = '[MAIN ]'
-)
+const log_prefix = '[MAIN ]'
 
 fn process_messages(ch_receive_message chan natsclient.NATSMessage, mut client natsclient.NATSClient, mut logger log.Logger) {
 	for !ch_receive_message.closed {
@@ -40,8 +38,8 @@ ch_receive_keyvalues := chan natsclient.NATSKeyValue{}
 mut logger := log.Logger(&log.Log{
 	level: if debug_log { .debug } else { .info }
 })
-mut client := natsclient.new_natsclient('ws://127.0.0.1:8880', ch_receive_message,
-	ch_receive_keyvalues, &logger) or {
+mut client := natsclient.new_natsclient('ws://127.0.0.1:8880', ch_receive_message, ch_receive_keyvalues,
+	&logger) or {
 	logger.error(err.msg())
 	return
 }

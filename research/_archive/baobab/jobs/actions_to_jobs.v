@@ -20,16 +20,16 @@ pub fn (mut client Client) schedule_actions(args ScheduleActionsArgs) !ActionJob
 	mut jobsfactory := ActionJobs{}
 	for a in args.actions {
 		mut job := ActionJob{
-			guid: rand.uuid_v4()
+			guid:   rand.uuid_v4()
 			twinid: args.twinid
 			action: a.name
-			args: a.params
+			args:   a.params
 			// result
 			start: time.now()
 			// end
 			// grace_period
 			// error
-			timeout: args.timeout
+			timeout:    args.timeout
 			src_twinid: args.src_twinid
 			src_action: args.src_action
 			// dependencies

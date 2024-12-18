@@ -40,10 +40,10 @@ fn deploy_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs Ma
 	mut zdbs := []tfgrid.ZDBDeployment{}
 	for i in 0 .. machine_with_qsfs.expected_shards {
 		zdb_seq := client.deploy_zdb(tfgrid.ZDBDeployment{
-			name: generate_zdb_name(machine_with_qsfs.name, 'seq', i)
+			name:     generate_zdb_name(machine_with_qsfs.name, 'seq', i)
 			password: machine_with_qsfs.zdb_password
-			size: machine_with_qsfs.zdb_size
-			mode: 'seq'
+			size:     machine_with_qsfs.zdb_size
+			mode:     'seq'
 		}) or {
 			delete_qsfs_zdbs(mut client, machine_with_qsfs.name, machine_with_qsfs.expected_shards)!
 			return error('failed to deploy qsfs zdbs. ${err}')
@@ -51,10 +51,10 @@ fn deploy_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs Ma
 		zdbs << zdb_seq
 
 		zdb_user := client.deploy_zdb(tfgrid.ZDBDeployment{
-			name: generate_zdb_name(machine_with_qsfs.name, 'user', i)
+			name:     generate_zdb_name(machine_with_qsfs.name, 'user', i)
 			password: machine_with_qsfs.zdb_password
-			size: machine_with_qsfs.zdb_size
-			mode: 'user'
+			size:     machine_with_qsfs.zdb_size
+			mode:     'user'
 		}) or {
 			delete_qsfs_zdbs(mut client, machine_with_qsfs.name, machine_with_qsfs.expected_shards)!
 			return error('failed to deploy qsfs zdbs. ${err}')
@@ -67,55 +67,55 @@ fn deploy_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs Ma
 	for zdb in zdbs {
 		if zdb.mode == 'seq' {
 			groups_backends << tfgrid.Backend{
-				address: '[${zdb.ips[1]}]:${zdb.port}'
+				address:   '[${zdb.ips[1]}]:${zdb.port}'
 				namespace: zdb.namespace
-				password: zdb.password
+				password:  zdb.password
 			}
 			continue
 		}
 
 		if zdb.mode == 'user' {
 			metadata_backends << tfgrid.Backend{
-				address: '[${zdb.ips[1]}]:${zdb.port}'
+				address:   '[${zdb.ips[1]}]:${zdb.port}'
 				namespace: zdb.namespace
-				password: zdb.password
+				password:  zdb.password
 			}
 		}
 	}
 
 	machines_model := client.deploy_vm(tfgrid.DeployVM{
-		name: machine_with_qsfs.name
+		name:                 machine_with_qsfs.name
 		add_wireguard_access: false
-		farm_id: machine_with_qsfs.farm_id
-		cpu: machine_with_qsfs.cpu
-		memory: machine_with_qsfs.memory
-		rootfs_size: machine_with_qsfs.rootfs_size
-		env_vars: {
+		farm_id:              machine_with_qsfs.farm_id
+		cpu:                  machine_with_qsfs.cpu
+		memory:               machine_with_qsfs.memory
+		rootfs_size:          machine_with_qsfs.rootfs_size
+		env_vars:             {
 			'SSH_KEY': machine_with_qsfs.ssh_key
 		}
-		public_ip: machine_with_qsfs.public_ipv4
-		planetary: true
-		qsfss: [
+		public_ip:            machine_with_qsfs.public_ipv4
+		planetary:            true
+		qsfss:                [
 			tfgrid.QSFS{
-				mountpoint: '/qsfs'
-				encryption_key: machine_with_qsfs.encryption_key
-				cache: machine_with_qsfs.cache
-				minimal_shards: machine_with_qsfs.minimal_shards
-				expected_shards: machine_with_qsfs.expected_shards
-				redundant_groups: machine_with_qsfs.redundant_groups
-				redundant_nodes: machine_with_qsfs.redundant_nodes
-				encryption_algorithm: machine_with_qsfs.encryption_algorithm
+				mountpoint:            '/qsfs'
+				encryption_key:        machine_with_qsfs.encryption_key
+				cache:                 machine_with_qsfs.cache
+				minimal_shards:        machine_with_qsfs.minimal_shards
+				expected_shards:       machine_with_qsfs.expected_shards
+				redundant_groups:      machine_with_qsfs.redundant_groups
+				redundant_nodes:       machine_with_qsfs.redundant_nodes
+				encryption_algorithm:  machine_with_qsfs.encryption_algorithm
 				compression_algorithm: machine_with_qsfs.compression_algorithm
-				metadata: tfgrid.Metadata{
-					type_: machine_with_qsfs.metadata_type
-					prefix: machine_with_qsfs.metadata_prefix
+				metadata:              tfgrid.Metadata{
+					type_:                machine_with_qsfs.metadata_type
+					prefix:               machine_with_qsfs.metadata_prefix
 					encryption_algorithm: machine_with_qsfs.metadata_encryption_algorithm
-					encryption_key: machine_with_qsfs.encryption_key
-					backends: metadata_backends
+					encryption_key:       machine_with_qsfs.encryption_key
+					backends:             metadata_backends
 				}
-				description: machine_with_qsfs.description
+				description:           machine_with_qsfs.description
 				max_zdb_data_dir_size: machine_with_qsfs.max_zdb_data_dir_size
-				groups: [tfgrid.Group{
+				groups:                [tfgrid.Group{
 					backends: groups_backends
 				}]
 			},
@@ -132,9 +132,9 @@ fn deploy_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs Ma
 
 	machine := machines_model
 	return MachineWithQSFSResult{
-		name: machine_with_qsfs.name
-		planetary_ip: machine.planetary_ip
-		ipv4: machine.computed_ip4
+		name:                  machine_with_qsfs.name
+		planetary_ip:          machine.planetary_ip
+		ipv4:                  machine.computed_ip4
 		qsfs_metrics_endpoint: machine.qsfss[0].metrics_endpoint
 	}
 }
@@ -170,9 +170,9 @@ fn get_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs_name 
 
 	machine := machines_model
 	return MachineWithQSFSResult{
-		name: machine_with_qsfs_name
-		planetary_ip: machine.planetary_ip
-		ipv4: machine.computed_ip4
+		name:                  machine_with_qsfs_name
+		planetary_ip:          machine.planetary_ip
+		ipv4:                  machine.computed_ip4
 		qsfs_metrics_endpoint: machine.qsfss[0].metrics_endpoint
 	}
 }

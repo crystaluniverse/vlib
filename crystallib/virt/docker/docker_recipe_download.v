@@ -35,15 +35,15 @@ pub fn (mut r DockerBuilderRecipe) add_download(args_ DownloadArgs) ! {
 	download_dir := '${r.path()}/downloads'
 
 	mut p := download(
-		url: args.url
-		name: args.name
-		reset: args.reset
-		dest: '${download_dir}/${args.name}'
+		url:        args.url
+		name:       args.name
+		reset:      args.reset
+		dest:       '${download_dir}/${args.name}'
 		minsize_kb: args.minsize_kb
 		maxsize_kb: args.maxsize_kb
-		timeout: args.timeout
-		retry: args.retry
-		hash: args.hash
+		timeout:    args.timeout
+		retry:      args.retry
+		hash:       args.hash
 	)!
 
 	commonpath := pathlib.path_relative(r.path(), p.path)!

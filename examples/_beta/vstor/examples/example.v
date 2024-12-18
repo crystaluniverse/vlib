@@ -10,11 +10,11 @@ fn do() ! {
 	for i <= 20 {
 		location := vs.location_new(farmid: 'farm_${i}')!
 		vs.zdb_new(
-			address: '212.3.247.${i}'
-			port: 8888
+			address:   '212.3.247.${i}'
+			port:      8888
 			namespace: 'something'
-			secret: '1234'
-			location: location
+			secret:    '1234'
+			location:  location
 		)!
 	}
 	println(vs)

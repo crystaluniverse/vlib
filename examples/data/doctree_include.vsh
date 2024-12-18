@@ -25,14 +25,14 @@ mut mdb := mdbook.get(instance: 'mdbooktest')!
 // cfg.path_build = buildroot
 // cfg.path_publish = publishroot
 
-mut b:=mdb.generate(
+mut b := mdb.generate(
 	doctree_path: '${dest}/tree'
-	name: 'includetest'
-	title: 'Incude Test'
+	name:         'includetest'
+	title:        'Incude Test'
 	summary_path: '${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/data/doctree/testdata/includetest/summary.md'
-	summary_url: '' // because path given
+	summary_url:  '' // because path given
 	publish_path: '${dest}/publish'
-	build_path: '${dest}/build'
+	build_path:   '${dest}/build'
 )!
 
 b.open()!

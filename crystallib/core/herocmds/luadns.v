@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.develop.luadns
 // Main function to set up CLI commands
 pub fn cmd_luadns(mut cmdroot Command) {
 	mut cmd_luadns := Command{
-		name: 'luadns'
-		usage: '
+		name:          'luadns'
+		usage:         '
 ## Manage your LuaDNS
 
 example:
@@ -17,9 +17,9 @@ hero luadns load -u https://github.com/example/dns-repo
 hero luadns set-domain -d example.com -i 51.129.54.234
 
         '
-		description: 'Manage LuaDNS configurations'
+		description:   'Manage LuaDNS configurations'
 		required_args: 0
-		execute: cmd_luadns_execute
+		execute:       cmd_luadns_execute
 	}
 
 	cmd_luadns.add_command(cmd_luadns_set_domain())
@@ -28,25 +28,25 @@ hero luadns set-domain -d example.com -i 51.129.54.234
 
 fn cmd_luadns_set_domain() Command {
 	mut cmd := Command{
-		name: 'set-domain'
-		usage: 'Set a domain in the DNS configurations'
+		name:          'set-domain'
+		usage:         'Set a domain in the DNS configurations'
 		required_args: 0
-		execute: cmd_luadns_set_domain_execute
+		execute:       cmd_luadns_set_domain_execute
 	}
 
 	cmd.add_flag(Flag{
-		flag: .string
-		required: true
-		name: 'domain'
-		abbrev: 'd'
+		flag:        .string
+		required:    true
+		name:        'domain'
+		abbrev:      'd'
 		description: 'Domain to set in the DNS configurations'
 	})
 
 	cmd.add_flag(Flag{
-		flag: .string
-		required: true
-		name: 'ip'
-		abbrev: 'i'
+		flag:        .string
+		required:    true
+		name:        'ip'
+		abbrev:      'i'
 		description: 'IP address for the domain'
 	})
 

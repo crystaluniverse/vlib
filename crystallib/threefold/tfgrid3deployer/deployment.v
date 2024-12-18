@@ -54,8 +54,8 @@ pub fn new_deployment(name string) !TFDeployment {
 
 	deployer := get_deployer()!
 	return TFDeployment{
-		name: name
-		kvstore: KVStoreFS{}
+		name:     name
+		kvstore:  KVStoreFS{}
 		deployer: &deployer
 	}
 }
@@ -63,8 +63,8 @@ pub fn new_deployment(name string) !TFDeployment {
 pub fn get_deployment(name string) !TFDeployment {
 	mut deployer := get_deployer()!
 	mut dl := TFDeployment{
-		name: name
-		kvstore: KVStoreFS{}
+		name:     name
+		kvstore:  KVStoreFS{}
 		deployer: &deployer
 	}
 
@@ -97,13 +97,13 @@ fn (mut self TFDeployment) set_nodes() ! {
 		}
 
 		nodes := filter_nodes(
-			node_ids: node_ids
-			healthy: true
-			free_mru: u64(vm.requirements.memory) * 1024 * 1024 * 1024
+			node_ids:  node_ids
+			healthy:   true
+			free_mru:  u64(vm.requirements.memory) * 1024 * 1024 * 1024
 			total_cru: u64(vm.requirements.cpu)
-			free_ips: if vm.requirements.public_ip4 { u64(1) } else { none }
-			has_ipv6: if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
-			status: 'up'
+			free_ips:  if vm.requirements.public_ip4 { u64(1) } else { none }
+			has_ipv6:  if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
+			status:    'up'
 		)!
 
 		if nodes.len == 0 {
@@ -120,9 +120,9 @@ fn (mut self TFDeployment) set_nodes() ! {
 		size := u64(zdb.requirements.size) * 1024 * 1024 * 1024
 		nodes := filter_nodes(
 			free_sru: size
-			status: 'up'
-			healthy: true
-			node_id: zdb.requirements.node_id
+			status:   'up'
+			healthy:  true
+			node_id:  zdb.requirements.node_id
 		)!
 
 		if nodes.len == 0 {
@@ -134,8 +134,8 @@ fn (mut self TFDeployment) set_nodes() ! {
 
 	for mut webname in self.webnames {
 		nodes := filter_nodes(
-			domain: true
-			status: 'up'
+			domain:  true
+			status:  'up'
 			healthy: true
 			node_id: webname.requirements.node_id
 		)!
@@ -157,15 +157,15 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 	for node_id, workloads in setup.workloads {
 		console.print_header('Creating deployment on node ${node_id}.')
 		mut deployment := grid_models.new_deployment(
-			twin_id: setup.deployer.twin_id
-			description: 'VGridClient Deployment'
-			workloads: workloads
+			twin_id:               setup.deployer.twin_id
+			description:           'VGridClient Deployment'
+			workloads:             workloads
 			signature_requirement: grid_models.SignatureRequirement{
 				weight_required: 1
-				requests: [
+				requests:        [
 					grid_models.SignatureRequest{
 						twin_id: u32(setup.deployer.twin_id)
-						weight: 1
+						weight:  1
 					},
 				]
 			}

@@ -12,7 +12,7 @@ pub mut:
 	name            string = 'default'
 	template        TemplateName
 	cpus            int = 8
-	memory          i64 = 2000 // in MB
+	memory          i64 = 2000  // in MB
 	disk            i64 = 20000 // in MB
 	reset           bool
 	start           bool = true

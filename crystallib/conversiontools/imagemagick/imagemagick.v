@@ -61,7 +61,7 @@ const installed1 = installed0()
 
 pub fn installed() bool {
 	// console.print_debug("imagemagick installed: $imagemagick.installed1")
-	return imagemagick.installed1
+	return installed1
 }
 
 fn filter_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !bool {

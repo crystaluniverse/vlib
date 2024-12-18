@@ -95,12 +95,12 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 			curl -L \'${args.url}\' -o ${dest0.path}
 			'
 		exec(
-			cmd: cmd
-			timeout: args.timeout
-			retry: args.retry
-			debug: false
+			cmd:         cmd
+			timeout:     args.timeout
+			retry:       args.retry
+			debug:       false
 			description: 'download ${args.url} to ${dest0.path}'
-			stdout: true
+			stdout:      true
 		)!
 
 		if dest0.exists() {

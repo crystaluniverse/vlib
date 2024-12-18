@@ -39,13 +39,15 @@ pub mut:
 }
 
 pub fn get(args StartupManagerArgs) !StartupManager {
-	mut sm := StartupManager{cat:args.cat}
+	mut sm := StartupManager{
+		cat: args.cat
+	}
 	if args.cat == .unknown {
 		if zinit.check() {
 			sm.cat = .zinit
 		} else if systemd.check()! {
 			sm.cat = .systemd
-		}		
+		}
 	}
 	return sm
 }
@@ -67,7 +69,7 @@ pub fn get(args StartupManagerArgs) !StartupManager {
 //```
 pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 	console.print_debug("startupmanager start:${args.name} cmd:'${args.cmd}' restart:${args.restart}")
-	mut mycat:=sm.cat
+	mut mycat := sm.cat
 	if args.startuptype == .systemd {
 		mycat = .systemd
 	}
@@ -81,12 +83,12 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 			console.print_debug('systemd start  ${args.name}')
 			mut systemdfactory := systemd.new()!
 			systemdfactory.new(
-				cmd: args.cmd
-				name: args.name
+				cmd:         args.cmd
+				name:        args.name
 				description: args.description
-				start: args.start
-				restart: args.restart
-				env: args.env
+				start:       args.start
+				restart:     args.restart
+				env:         args.env
 			)!
 		}
 		.zinit {
@@ -126,10 +128,10 @@ pub fn (mut sm StartupManager) start(name string) ! {
 			console.print_debug('systemd process start ${name}')
 			mut systemdfactory := systemd.new()!
 			if systemdfactory.exists(name) {
-				//console.print_header("*************")
+				// console.print_header("*************")
 				mut systemdprocess := systemdfactory.get(name)!
 				systemdprocess.start()!
-			}else{
+			} else {
 				return error('process in systemd with name ${name} not found')
 			}
 		}
@@ -164,7 +166,7 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 			console.print_debug('zinit stop ${name}')
 			mut zinitfactory := zinit.new()!
 			zinitfactory.load()!
-        	if zinitfactory.exists(name) {
+			if zinitfactory.exists(name) {
 				zinitfactory.stop(name)!
 			}
 		}
@@ -215,7 +217,7 @@ pub fn (mut sm StartupManager) delete(name string) ! {
 		.zinit {
 			mut zinitfactory := zinit.new()!
 			zinitfactory.load()!
-        	if zinitfactory.exists(name) {
+			if zinitfactory.exists(name) {
 				zinitfactory.delete(name)!
 			}
 		}
@@ -283,7 +285,7 @@ pub fn (mut sm StartupManager) status(name string) !ProcessStatus {
 	}
 }
 
-pub fn (mut sm StartupManager) running(name string) !bool {	
+pub fn (mut sm StartupManager) running(name string) !bool {
 	if !sm.exists(name)! {
 		return false
 	}
@@ -313,16 +315,16 @@ pub fn (mut sm StartupManager) exists(name string) !bool {
 			return scr.exists(name)
 		}
 		.systemd {
-			//console.print_debug("exists sm systemd ${name}")
+			// console.print_debug("exists sm systemd ${name}")
 			mut systemdfactory := systemd.new()!
 			return systemdfactory.exists(name)
 		}
 		.zinit {
-			//console.print_debug("exists sm zinit check ${name}")
+			// console.print_debug("exists sm zinit check ${name}")
 			mut zinitfactory := zinit.new()!
 			zinitfactory.load()!
 			return zinitfactory.exists(name)
-		}		
+		}
 		else {
 			panic('to implement. startup manager only support screen & systemd for now')
 		}
@@ -333,7 +335,7 @@ pub fn (mut sm StartupManager) exists(name string) !bool {
 pub fn (mut sm StartupManager) list() ![]string {
 	match sm.cat {
 		.screen {
-			//mut scr := screen.new(reset: false) or { panic("can't get screen") }
+			// mut scr := screen.new(reset: false) or { panic("can't get screen") }
 			panic('implement')
 		}
 		.systemd {
@@ -343,7 +345,7 @@ pub fn (mut sm StartupManager) list() ![]string {
 		.zinit {
 			mut zinitfactory := zinit.new()!
 			return zinitfactory.names()
-		}		
+		}
 		else {
 			panic('to implement. startup manager only support screen & systemd for now')
 		}

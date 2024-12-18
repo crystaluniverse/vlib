@@ -26,8 +26,8 @@ pub fn build(args BuildArgs) ! {
 
 	mut gs := gittools.get()!
 	mut repo := gs.get_repo(
-		url: 'https://github.com/Chocobozzz/PeerTube.git'
-		pull: true
+		url:   'https://github.com/Chocobozzz/PeerTube.git'
+		pull:  true
 		reset: true
 	)!
 	dest := repo.get_path()!

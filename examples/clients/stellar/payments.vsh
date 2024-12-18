@@ -12,10 +12,10 @@ account3 := stellar.generate_keys(name: 'account3', network: .testnet, fund: tru
 println('Account 3: ${account3}')
 
 mut client := stellar.new_client(
-	account_name: 'default'
+	account_name:   'default'
 	account_secret: account1.secret
-	network: .testnet
-	cache: false
+	network:        .testnet
+	cache:          false
 )!
 
 mut signers := [
@@ -29,17 +29,17 @@ mut hash := client.update_threshold(med_threshold: 5)!
 println('update threshold tx hash: ${hash}')
 
 signer1 := stellar.new_signer(
-	key: account1.address
+	key:    account1.address
 	weight: 3
 )
 
 signer2 := stellar.new_signer(
-	key: account2.address
+	key:    account2.address
 	weight: 4
 )
 
 signer3 := stellar.new_signer(
-	key: account3.address
+	key:    account3.address
 	weight: 5
 )
 
@@ -51,7 +51,7 @@ println('add signer tx hash: ${hash2}')
 // this would fail if we don't add enough singers
 hash2 = client.payment_send(
 	destination: account2.address
-	amount: 200
-	signers: signers
+	amount:      200
+	signers:     signers
 )!
 println('payment tx hash: ${hash2}')

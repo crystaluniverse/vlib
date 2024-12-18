@@ -61,11 +61,11 @@ pub fn (mut c Cluster) add_node(nodeargs NodeArgs) !&Node {
 		return error('Node with number ${nodeargs.nr} already exists')
 	}
 	node := Node{
-		nr: nodeargs.nr
-		name: nodeargs.name.to_lower()
+		nr:          nodeargs.nr
+		name:        nodeargs.name.to_lower()
 		description: nodeargs.description
-		ipaddress: nodeargs.ipaddress
-		active: nodeargs.active
+		ipaddress:   nodeargs.ipaddress
+		active:      nodeargs.active
 	}
 	c.nodes << node
 	return &node
@@ -74,7 +74,7 @@ pub fn (mut c Cluster) add_node(nodeargs NodeArgs) !&Node {
 @[params]
 pub struct ServiceArgs {
 pub mut:
-	name        string   @[required]
+	name        string @[required]
 	description string
 	port        []int
 	port_public []int
@@ -92,15 +92,15 @@ pub fn (mut c Cluster) add_service(serviceargs ServiceArgs) !&Service {
 		return error('Service with name "${name}" already exists')
 	}
 	service := Service{
-		name: name
+		name:        name
 		description: serviceargs.description
-		port: serviceargs.port
+		port:        serviceargs.port
 		port_public: serviceargs.port_public
-		active: serviceargs.active
-		installer: serviceargs.installer.to_lower()
-		depends: serviceargs.depends.map(it.to_lower())
-		nodes: serviceargs.nodes
-		master: serviceargs.master
+		active:      serviceargs.active
+		installer:   serviceargs.installer.to_lower()
+		depends:     serviceargs.depends.map(it.to_lower())
+		nodes:       serviceargs.nodes
+		master:      serviceargs.master
 	}
 	c.services << service
 	return &service
@@ -118,10 +118,10 @@ pub mut:
 // Helper method to add an admin to the cluster
 pub fn (mut c Cluster) add_admin(adminargs AdminArgs) {
 	admin := Admin{
-		name: adminargs.name.to_lower()
+		name:        adminargs.name.to_lower()
 		description: adminargs.description
-		ipaddress: adminargs.ipaddress
-		active: adminargs.active
+		ipaddress:   adminargs.ipaddress
+		active:      adminargs.active
 	}
 	c.admins << admin
 }

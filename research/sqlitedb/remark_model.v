@@ -75,10 +75,10 @@ pub fn (mut o Remarks) remark_add(args_ RemarkAddArgs) !Remark {
 	time_obj := args.time or { ourtime.new('')! }
 	mut r := Remark{
 		content: args.content
-		time: time_obj
-		author: args.author
-		rtype: args.rtype
-		params: paramsparser.parse(args.params)!
+		time:    time_obj
+		author:  args.author
+		rtype:   args.rtype
+		params:  paramsparser.parse(args.params)!
 	}
 	o.remarks << r
 

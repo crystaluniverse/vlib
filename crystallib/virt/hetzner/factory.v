@@ -73,10 +73,10 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 		instance := p.get_default('instance', 'default')!
 		// cfg.keyname = p.get('keyname')!
 		mut cl := get(instance,
-			login: p.get('login')!
-			passwd: p.get('passwd')!
+			login:       p.get('login')!
+			passwd:      p.get('passwd')!
 			description: p.get_default('description', '')!
-			baseurl: p.get_default('baseurl', '')!
+			baseurl:     p.get_default('baseurl', '')!
 		)!
 		cl.config_save()!
 	}

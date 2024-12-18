@@ -67,9 +67,9 @@ pub fn (mut w RpcWsClient) send_json_rpc[T, D](method string, data T, timeout in
 pub fn new_rpcwsclient(address string, logger &log.Logger) !&RpcWsClient {
 	mut c := websocket.new_client(address, websocket.ClientOpt{})!
 	mut rpcwsclient := RpcWsClient{
-		client: c
+		client:                    c
 		channel_incoming_messages: chan string{}
-		logger: unsafe { logger }
+		logger:                    unsafe { logger }
 	}
 	c.on_message(rpcwsclient.on_message)
 	c.connect()!
@@ -79,9 +79,9 @@ pub fn new_rpcwsclient(address string, logger &log.Logger) !&RpcWsClient {
 pub fn new_client(address string, logger &log.Logger) !&RpcWsClient {
 	mut c := websocket.new_client(address, websocket.ClientOpt{})!
 	mut rpcwsclient := RpcWsClient{
-		client: c
+		client:                    c
 		channel_incoming_messages: chan string{}
-		logger: unsafe { logger }
+		logger:                    unsafe { logger }
 	}
 	c.on_message(rpcwsclient.on_message)
 	c.connect() or { return error('Websocket client failed to connect:\n${err}') }

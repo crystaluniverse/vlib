@@ -20,7 +20,7 @@ pub mut:
 pub fn new(instance string, cfg Config) !GiteaClient[Config] {
 	mut con := httpconnection.HTTPConnection{}
 	mut self := GiteaClient[Config]{
-		type_name: 'GiteaClient'
+		type_name:  'GiteaClient'
 		connection: &con
 	}
 	self.init(instance: instance, action: .new)!
@@ -32,7 +32,7 @@ pub fn new(instance string, cfg Config) !GiteaClient[Config] {
 pub fn get(instance string) !GiteaClient[Config] {
 	mut con := httpconnection.HTTPConnection{}
 	mut self := GiteaClient[Config]{
-		type_name: 'GiteaClient'
+		type_name:  'GiteaClient'
 		connection: &con
 	}
 
@@ -43,7 +43,7 @@ pub fn get(instance string) !GiteaClient[Config] {
 pub fn delete(instance string) ! {
 	mut con := httpconnection.HTTPConnection{}
 	mut self := GiteaClient[Config]{
-		type_name: 'GiteaClient'
+		type_name:  'GiteaClient'
 		connection: &con
 	}
 

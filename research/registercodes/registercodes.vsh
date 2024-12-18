@@ -6,9 +6,7 @@ import regex
 import math
 import rand
 
-const (
-	data_dir = '/tmp/dir'
-)
+const data_dir = '/tmp/dir'
 
 fn get_path(referralcode string) string {
 	mydirpath := '${data_dir}/referralcodes'

@@ -15,9 +15,9 @@ fn test_new_controller() {
 	}
 
 	client := smtp.Client{
-		server: 'smtp-relay.brevo.com'
-		from: 'verify@authenticator.io'
-		port: 587
+		server:   'smtp-relay.brevo.com'
+		from:     'verify@authenticator.io'
+		port:     587
 		username: env.value('BREVO_SMTP_USERNAME').string()
 		password: env.value('BREVO_SMTP_PASSWORD').string()
 	}

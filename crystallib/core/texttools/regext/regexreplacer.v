@@ -64,8 +64,8 @@ fn (mut self ReplaceInstructions) add_item(regex_find_str string, replace_with s
 		item = item[2..] // remove ^r
 		r := regex.regex_opt(item) or { panic('regex_opt failed') }
 		self.instructions << ReplaceInstruction{
-			regex_str: item
-			regex: r
+			regex_str:    item
+			regex:        r
 			replace_with: replace_with
 		}
 	} else if item.starts_with('^S') {
@@ -73,14 +73,14 @@ fn (mut self ReplaceInstructions) add_item(regex_find_str string, replace_with s
 		item2 := regex_rewrite(item)!
 		r := regex.regex_opt(item2) or { panic('regex_opt failed') }
 		self.instructions << ReplaceInstruction{
-			regex_str: item
-			regex: r
+			regex_str:    item
+			regex:        r
 			replace_with: replace_with
 		}
 	} else {
 		self.instructions << ReplaceInstruction{
 			replace_with: replace_with
-			find_str: item
+			find_str:     item
 		}
 	}
 }
@@ -122,13 +122,13 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ! {
 // ^Sfindstr:^Sfindstr2::^Rregex2:replacewith
 // ''''
 pub fn (mut ri ReplaceInstructions) add_from_text(txt string) ! {
-	mut replacelist:=[]string{}
-	for line in txt.split_into_lines(){
-		if line.trim_space() == ""{
+	mut replacelist := []string{}
+	for line in txt.split_into_lines() {
+		if line.trim_space() == '' {
 			continue
 		}
-		if line.contains(":"){
-			replacelist	<< line
+		if line.contains(':') {
+			replacelist << line
 		}
 	}
 	ri.add(replacelist)!

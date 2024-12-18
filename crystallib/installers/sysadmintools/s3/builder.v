@@ -27,9 +27,9 @@ pub fn build(args BuildArgs) ! {
 
 	mut gs := gittools.get()!
 	mut repo := gs.get_repo(
-		url: 'https://github.com/leesmet/s3-cas',
-		reset: false,
-		pull: true
+		url:   'https://github.com/leesmet/s3-cas'
+		reset: false
+		pull:  true
 	)!
 
 	mut path := repo.get_path()!

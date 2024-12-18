@@ -13,7 +13,7 @@ pub fn (logger Logger) new_log(log Log) ! {
 pub struct LogFilter {
 	Log
 	matches_all bool
-	limit int
+	limit       int
 }
 
 pub fn (logger Logger) filter_logs(filter LogFilter) ![]Log {
@@ -24,7 +24,7 @@ pub fn (logger Logger) filter_logs(filter LogFilter) ![]Log {
 	if filter.event != '' {
 		matchers << "event == '${filter.event}'"
 	}
-    
+
 	if filter.subject != '' {
 		matchers << "subject == '${filter.subject}'"
 	}
@@ -43,7 +43,7 @@ pub fn (logger Logger) filter_logs(filter LogFilter) ![]Log {
 	}
 
 	responses := db.exec(select_stmt)!
-	
+
 	mut logs := []Log{}
 	for response in responses {
 		logs << sql db {

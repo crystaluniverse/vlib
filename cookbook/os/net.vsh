@@ -3,4 +3,4 @@
 import os
 import freeflowuniverse.crystallib.osal
 
-println(osal.tcp_port_test(address:"65.21.132.119",port:22,timeout:1000))
+println(osal.tcp_port_test(address: '65.21.132.119', port: 22, timeout: 1000))

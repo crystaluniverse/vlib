@@ -4,29 +4,28 @@ import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.core.pathlib
 
-
-//will ask questions when not in force mode
+// will ask questions when not in force mode
 // & generate the module
 pub fn generate(args_ GeneratorArgs) ! {
 	mut myconsole := console.new()
 	mut args := args_
 
-	console.print_header("Generate code for path: ${args.path} (reset:${args.force}, force:${args.force})")
+	console.print_header('Generate code for path: ${args.path} (reset:${args.force}, force:${args.force})')
 	console.print_debug(args)
-	if args.path==""{
+	if args.path == '' {
 		args.path = os.getwd()
 	}
 
-	if args.name==""{
+	if args.name == '' {
 		args.name = os.base(args.path)
 	}
 
-	if args.force{
+	if args.force {
 		mut config_path0 := pathlib.get_file(path: '${args.path}/.heroscript', create: false)!
 		if !config_path0.exists() {
 			return error("can't generate in force mode (non interactive) if ${config_path0.path} not found.")
 		}
-		generate_exec(args.path,args.reset)!			
+		generate_exec(args.path, args.reset)!
 		return
 	}
 
@@ -34,28 +33,30 @@ pub fn generate(args_ GeneratorArgs) ! {
 	console.print_header('Configure generation of code for a module on path:')
 	console.print_green('Path: ${args.path}')
 	console.lf()
-	
+
 	mut config_path := pathlib.get_file(path: '${args.path}/.heroscript', create: false)!
-	mut pathok:=false
+	mut pathok := false
 	if config_path.exists() {
 		console.print_stdout(config_path.read()!)
 		console.lf()
-		myyes := myconsole.ask_yesno(description: 'We found this heroscript, do you want to make a new one?')!
+		myyes := myconsole.ask_yesno(
+			description: 'We found this heroscript, do you want to make a new one?'
+		)!
 		if myyes {
 			config_path.delete()!
 			pathok = true
-		}else{
+		} else {
 			myyes2 := myconsole.ask_yesno(description: 'Do you want to run it?')!
-			if myyes2{
-				generate_exec(args.path,args.reset)!				
-			}else{
+			if myyes2 {
+				generate_exec(args.path, args.reset)!
+			} else {
 				console.print_stderr('Generation aborted.')
 			}
 			return
-		}		
+		}
 	}
 
-	if pathok==false{
+	if pathok == false {
 		yesno := myconsole.ask_yesno(description: 'Is this path ok?')!
 		if !yesno {
 			return error("can't continue without a valid path")
@@ -69,7 +70,7 @@ pub fn generate(args_ GeneratorArgs) ! {
 			'installer',
 			'client',
 		]
-		warning: 'Please select a category'
+		warning:     'Please select a category'
 	)!
 
 	if mycat == 'installer' {
@@ -96,13 +97,13 @@ pub fn generate(args_ GeneratorArgs) ! {
 		description: 'Title of the ${mycat} (optional)'
 	)!
 
-	if args.cat == .installer{
+	if args.cat == .installer {
 		args.hasconfig = myconsole.ask_yesno(
 			description: 'Does your installer have a config (normally yes)?'
-		)!	
+		)!
 	}
 
-	if args.hasconfig{
+	if args.hasconfig {
 		args.default = myconsole.ask_yesno(
 			description: 'Is it ok when doing new() that a default is created (normally yes)?'
 		)!
@@ -121,7 +122,6 @@ pub fn generate(args_ GeneratorArgs) ! {
 	// 	]
 	// 	warning: 'Please select one or more platforms'
 	// )!
-
 
 	if args.cat == .installer {
 		args.templates = myconsole.ask_yesno(
@@ -142,7 +142,7 @@ pub fn generate(args_ GeneratorArgs) ! {
 	// 	question:    'This will overwrite all files in your existing dir, be carefule?'
 	// )!
 	create_heroscript(args)!
-	generate_exec(args.path,true)!
+	generate_exec(args.path, true)!
 }
 
 pub fn create_heroscript(args GeneratorArgs) ! {
@@ -171,7 +171,11 @@ pub fn create_heroscript(args GeneratorArgs) ! {
 			'0'
 		}}
     startupmanager:${if args.startupmanager { '1' } else { '0' }}
-	hasconfig:${if args.hasconfig { '1' } else { '0' }}
+	hasconfig:${if args.hasconfig {
+			'1'
+		} else {
+			'0'
+		}}
     build:${if args.build {
 			'1'
 		} else {
@@ -188,7 +192,11 @@ pub fn create_heroscript(args GeneratorArgs) ! {
 			'0'
 		}}
     default:${if args.default { '1' } else { '0' }}
-	hasconfig:${if args.hasconfig { '1' } else { '0' }}
+	hasconfig:${if args.hasconfig {
+			'1'
+		} else {
+			'0'
+		}}
     reset:${if args.reset {
 			'1'
 		} else {

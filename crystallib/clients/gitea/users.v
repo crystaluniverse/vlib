@@ -19,7 +19,7 @@ pub struct SearchUsersResponse {
 pub fn (mut client GiteaClient[T]) search_users(options SearchOptions) ![]User {
 	r := client.connection.get_json(
 		prefix: 'users/search'
-		data: json.encode(options)
+		data:   json.encode(options)
 	)!
 
 	decoded := json.decode(SearchUsersResponse, r)!
@@ -36,7 +36,7 @@ pub struct UserReposOptions {
 pub fn (mut client GiteaClient[T]) user_repos(username string, options UserReposOptions) ![]Repo {
 	r := client.connection.get_json_list(
 		prefix: 'users/${username}/repos'
-		data: json.encode(options)
+		data:   json.encode(options)
 	)!
 
 	mut res := []Repo{}
@@ -62,14 +62,14 @@ pub mut:
 	created             string
 	restricted          bool
 	active              bool
-	prohibit_login      bool   @[json: 'prohibit_login']
+	prohibit_login      bool @[json: 'prohibit_login']
 	location            string
 	website             string
 	description         string
 	visibility          string
-	followers_count     int    @[json: 'followers_count']
-	following_count     int    @[json: 'following_count']
-	starred_repos_count int    @[json: 'starred_repos_count']
+	followers_count     int @[json: 'followers_count']
+	following_count     int @[json: 'following_count']
+	starred_repos_count int @[json: 'starred_repos_count']
 	username            string
 }
 

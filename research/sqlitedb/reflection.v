@@ -23,11 +23,11 @@ pub mut:
 // the returned object must still be added using the set method.
 pub fn (db DB) new[T](args NewArgs[T]) !T {
 	base := db.new_base(
-		params: args.params
-		name: args.name
+		params:      args.params
+		name:        args.name
 		description: args.description
-		mtime: args.mtime
-		ctime: args.ctime
+		mtime:       args.mtime
+		ctime:       args.ctime
 	)!
 	mut o := args.object
 	o.Base = base
@@ -51,11 +51,11 @@ pub fn (db DB) set[T](object T) ! {
 		}
 	}
 	db.set_data(
-		gid: object.gid
-		index_int: index_int
+		gid:          object.gid
+		index_int:    index_int
 		index_string: index_string
-		data: data
-		baseobj: object.Base
+		data:         data
+		baseobj:      object.Base
 	)!
 }
 
@@ -99,7 +99,7 @@ pub fn (db DB) find[T](args FindArgs[T]) ![]T {
 		}
 	}
 	dbfindoargs := DBFindArgs{
-		query_int: query_int
+		query_int:    query_int
 		query_string: query_string
 	}
 

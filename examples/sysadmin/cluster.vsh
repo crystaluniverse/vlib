@@ -4,8 +4,7 @@ import freeflowuniverse.crystallib.sysadmin.cluster
 import freeflowuniverse.crystallib.core.playbook
 
 pub fn play(mut plbook playbook.PlayBook) ! {
-
-	mut cl:=cluster.new()
+	mut cl := cluster.new()
 
 	mut actions_cluster_define := plbook.find(filter: 'cluster.define')!
 
@@ -16,70 +15,66 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 		cl.secret = p.get('secret')!
 	}
 
-	if cl.name==""{
-		return error("we need 1 cluster defined")
+	if cl.name == '' {
+		return error('we need 1 cluster defined')
 	}
 
-	//now we have the cluster
+	// now we have the cluster
 
 	mut actions_add_node := plbook.find(filter: 'cluster.add_node')!
 
 	for action in actions_add_node {
 		mut p := action.params
-		mut n:=cluster.Node{
-			nr: p.get_int('nr')!
-			name: p.get_default('name', 'node1')!
+		mut n := cluster.Node{
+			nr:          p.get_int('nr')!
+			name:        p.get_default('name', 'node1')!
 			description: p.get_default('description', '')!
-			ipaddress: p.get('ipaddress')!
-			active: p.get_default_true('active')
+			ipaddress:   p.get('ipaddress')!
+			active:      p.get_default_true('active')
 		}
-		cl.nodes<<n
+		cl.nodes << n
 	}
-
 
 	mut actions_add_admin := plbook.find(filter: 'cluster.add_admin')!
 
 	for action in actions_add_admin {
 		mut p := action.params
-		mut a:=cluster.Admin{
-			name: p.get_default('name', 'admin1')!
+		mut a := cluster.Admin{
+			name:        p.get_default('name', 'admin1')!
 			description: p.get_default('description', '')!
-			ipaddress: p.get('ipaddress')!
-			active: p.get_default_true('active')
+			ipaddress:   p.get('ipaddress')!
+			active:      p.get_default_true('active')
 		}
-		cl.admins<<a
-	}	
+		cl.admins << a
+	}
 
 	mut actions_add_service := plbook.find(filter: 'cluster.add_service')!
 
 	for action in actions_add_service {
 		mut p := action.params
-		mut s:=cluster.Service{
-			name: p.get('name')!
+		mut s := cluster.Service{
+			name:        p.get('name')!
 			description: p.get_default('description', '')!
-			port: p.get_list_int_default('port', [])
+			port:        p.get_list_int_default('port', [])
 			port_public: p.get_list_int_default('port_public', [])
-			active: p.get_default_true('active')
-			installer: p.get_default('installer', '')!
-			depends: p.get_list_namefix_default('depends', [])!
-			nodes: p.get_list_int_default('nodes', [])
+			active:      p.get_default_true('active')
+			installer:   p.get_default('installer', '')!
+			depends:     p.get_list_namefix_default('depends', [])!
+			nodes:       p.get_list_int_default('nodes', [])
 		}
-		if p.exists("master"){
-			s.master= p.get_int('master')!
+		if p.exists('master') {
+			s.master = p.get_int('master')!
 		}
-		
-		cl.services<<s
-	}		
+
+		cl.services << s
+	}
 
 	cl.check()!
 
 	println(cl)
-
 }
 
-
-
-heroscript:="
+heroscript := "
 !!cluster.define
     name: 'my_cluster'
     active: true
@@ -125,9 +120,7 @@ heroscript:="
 
 "
 
-
-
-//see freeflowuniverse.crystallib.sysadmin.cluster for the model description
+// see freeflowuniverse.crystallib.sysadmin.cluster for the model description
 
 mut plbook := playbook.new(text: heroscript)!
 play(mut plbook)!

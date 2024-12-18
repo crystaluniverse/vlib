@@ -29,12 +29,12 @@ pub fn new(args_ AppArgs) !App {
 	}
 	mut engine := docker.new(
 		sshkeys_allowed: args.sshkeys_allowed
-		localonly: args.localonly
-		prefix: args.prefix
+		localonly:       args.localonly
+		prefix:          args.prefix
 	)!
 
 	mut a := App{
-		name: name
+		name:   name
 		docker: engine
 	}
 	if args.deploy {

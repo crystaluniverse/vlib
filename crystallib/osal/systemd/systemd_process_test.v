@@ -10,8 +10,8 @@ import os
 pub fn testsuite_begin() ! {
 	mut systemdfactory := new()!
 	mut process := systemdfactory.new(
-		cmd: 'redis-server'
-		name: 'testservice'
+		cmd:   'redis-server'
+		name:  'testservice'
 		start: false
 	)!
 
@@ -21,8 +21,8 @@ pub fn testsuite_begin() ! {
 pub fn testsuite_end() ! {
 	mut systemdfactory := new()!
 	mut process := systemdfactory.new(
-		cmd: 'redis-server'
-		name: 'testservice'
+		cmd:   'redis-server'
+		name:  'testservice'
 		start: false
 	)!
 
@@ -32,8 +32,8 @@ pub fn testsuite_end() ! {
 pub fn test_systemd_process_status() ! {
 	mut systemdfactory := new()!
 	mut process := systemdfactory.new(
-		cmd: 'redis-server'
-		name: 'testservice'
+		cmd:   'redis-server'
+		name:  'testservice'
 		start: false
 	)!
 

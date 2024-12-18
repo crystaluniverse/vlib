@@ -20,9 +20,9 @@ fn configure_controller() !AuthServer {
 
 	return new_server(
 		smtp: email.SmtpConfig{
-			server: env.value('SMTP_SERVER').string()
-			from: 'verify@authenticator.io'
-			port: env.value('SMTP_PORT').int()
+			server:   env.value('SMTP_SERVER').string()
+			from:     'verify@authenticator.io'
+			port:     env.value('SMTP_PORT').int()
 			username: env.value('SMTP_USERNAME').string()
 			password: env.value('SMTP_PASSWORD').string()
 		}
@@ -33,7 +33,7 @@ fn test_register() {
 	// controller := configure_controller()!
 	// spawn vweb.run(&controller, 8091)
 	console.print_debug('registering1')
-	req := http.new_request(.post, '${auth.server_url}/register', 'test@email.com')
+	req := http.new_request(.post, '${server_url}/register', 'test@email.com')
 	resp := req.do()!
 
 	registration := json.decode(Registration, resp.body)!
@@ -48,17 +48,17 @@ fn test_authenticate() {
 	// spawn vweb.run(&controller, 8092)
 	console.print_debug('registering2')
 
-	req0 := http.new_request(.post, '${auth.server_url}/register', 'test@email2.com')
+	req0 := http.new_request(.post, '${server_url}/register', 'test@email2.com')
 	resp0 := req0.do()!
 	registration := json.decode(Registration, resp0.body)!
 
-	mut req1 := http.new_request(.post, '${auth.server_url}/authenticate', '')
+	mut req1 := http.new_request(.post, '${server_url}/authenticate', '')
 	req1.add_cookie(
-		name: 'access_token'
+		name:  'access_token'
 		value: registration.tokens.access_token
 	)
 	req1.add_cookie(
-		name: 'refresh_token'
+		name:  'refresh_token'
 		value: registration.tokens.refresh_token
 	)
 	resp1 := req1.do()!

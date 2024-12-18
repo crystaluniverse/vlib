@@ -44,24 +44,24 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client) ! {
 
 			// Deploy new machine
 			machines := tw.MachinesModel{
-				name: 'ms1'
-				network: tw.Network{
-					ip_range: '10.200.0.0/16'
-					name: 'net'
+				name:     'ms1'
+				network:  tw.Network{
+					ip_range:   '10.200.0.0/16'
+					name:       'net'
 					add_access: false
 				}
 				machines: [
 					tw.Machine{
-						name: 'm1'
-						node_id: 2
-						public_ip: false
-						planetary: true
-						cpu: 1
-						memory: 1024
+						name:        'm1'
+						node_id:     2
+						public_ip:   false
+						planetary:   true
+						cpu:         1
+						memory:      1024
 						rootfs_size: 1
-						flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-						entrypoint: '/sbin/zinit init'
-						env: tw.Env{
+						flist:       'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+						entrypoint:  '/sbin/zinit init'
+						env:         tw.Env{
 							ssh_key: 'ADD_YOUR_SSH'
 						}
 					},

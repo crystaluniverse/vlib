@@ -10,7 +10,7 @@ pub enum RowAction {
 	roundint
 	max
 	min
-	reverse //+1 becomes -1
+	reverse    //+1 becomes -1
 	forwardavg // try to find 12 forward looking cells and do avg where we are
 }
 
@@ -58,18 +58,18 @@ pub mut:
 //
 pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 	mut args := args_
-	if args.name == ""{
+	if args.name == '' {
 		args.name = r.name
 		r.sheet.delete(r.name)
 	}
 
 	mut row_result := r.copy(
-			name:args.name,
-			tags:args.tags,
-			descr:args.descr,
-			subgroup:args.subgroup,
-			aggregatetype:args.aggregatetype
-		)!
+		name:          args.name
+		tags:          args.tags
+		descr:         args.descr
+		subgroup:      args.subgroup
+		aggregatetype: args.aggregatetype
+	)!
 
 	mut prevval := 0.0
 	for x in 0 .. r.sheet.nrcol {

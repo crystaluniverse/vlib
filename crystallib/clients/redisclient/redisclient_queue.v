@@ -10,7 +10,7 @@ pub mut:
 
 pub fn (mut r Redis) queue_get(key string) RedisQueue {
 	return RedisQueue{
-		key: key
+		key:   key
 		redis: r
 	}
 }

@@ -29,8 +29,8 @@ ruleset.deny(
 ruleset.deny(
 	port: 21
 	from: '2001:db8::1'
-	udp: true
-	tcp: false
+	udp:  true
+	tcp:  false
 	ipv6: true
 )
 

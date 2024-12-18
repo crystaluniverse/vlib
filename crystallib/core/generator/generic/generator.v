@@ -3,21 +3,19 @@ module generic
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 
-
-fn generate_exec(path string,reset bool) ! {
-
-	mut args:=args_get(path)!
+fn generate_exec(path string, reset bool) ! {
+	mut args := args_get(path)!
 	console.print_debug('generate code for path: ${path}')
 
-	if reset{
+	if reset {
 		args.reset = true
 	}
 
 	mut path_actions := pathlib.get(args.path + '/${args.name}_actions.v')
-	if args.reset{
+	if args.reset {
 		path_actions.delete()!
 	}
-	if !path_actions.exists() && args.cat == .installer{
+	if !path_actions.exists() && args.cat == .installer {
 		console.print_debug('write installer actions')
 		mut templ_1 := $tmpl('templates/objname_actions.vtemplate')
 		pathlib.template_write(templ_1, '${args.path}/${args.name}_actions.v', true)!
@@ -34,14 +32,13 @@ fn generate_exec(path string,reset bool) ! {
 		pathlib.template_write(templ_3, '${args.path}/${args.name}_model.v', true)!
 	}
 
-	//TODO: check case sensistivity for delete
+	// TODO: check case sensistivity for delete
 	mut path_readme := pathlib.get(args.path + '/readme.md')
-	if args.reset{
-		path_readme.delete()!
-	}		
-	name := args.name
-	mut templ_readme := $tmpl('templates/readme.md')	
-	pathlib.template_write(templ_readme, '${args.path}/readme.md', true)!
+	if args.reset || !path_readme.exists() {
+		name := args.name
+		mut templ_readme := $tmpl('templates/readme.md')
+		pathlib.template_write(templ_readme, '${args.path}/readme.md', true)!
+	}
 
 	mut path_templ_dir := pathlib.get_dir(path: args.path + '/templates', create: false)!
 	if args.reset {
@@ -50,7 +47,7 @@ fn generate_exec(path string,reset bool) ! {
 	if args.templates {
 		if !path_templ_dir.exists() {
 			mut templ_6 := $tmpl('templates/atemplate.yaml')
-			pathlib.template_write(templ_6, '${args.path}/templates/atemplate.yaml',true)!
+			pathlib.template_write(templ_6, '${args.path}/templates/atemplate.yaml', true)!
 		}
 	}
 }

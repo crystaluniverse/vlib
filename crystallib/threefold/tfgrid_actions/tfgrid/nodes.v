@@ -94,10 +94,10 @@ pub fn (mut h TFGridHandler) nodes(action Action) ! {
 			randomize := action.params.get_default_false('randomize')
 
 			req := FindNodes{
-				filters: filter
+				filters:    filter
 				pagination: Limit{
-					page: page
-					size: size
+					page:      page
+					size:      size
 					randomize: randomize
 				}
 			}

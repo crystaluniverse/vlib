@@ -48,8 +48,8 @@ pub mut:
 
 pub fn (mut nt NodeTemplate) components_add(cg ComponentGroupArgs) {
 	nt.components << ComponentGroup{
-		name: cg.component.name
-		nr: cg.nr
+		name:      cg.component.name
+		nr:        cg.nr
 		component: cg.component
 	}
 	nt.calc()

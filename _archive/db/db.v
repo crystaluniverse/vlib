@@ -31,10 +31,10 @@ pub fn new(args_ DBArgs) !DB {
 	osal.dir_ensure(args.dbpath)!
 	sqldb := sqlite.connect('${args.dbpath}/${args.circle_id}.db')!
 	mut db := DB{
-		dbpath: args.dbpath
+		dbpath:      args.dbpath
 		circle_name: args.circle_name
-		circle_id: args.circle_id
-		sqldb: sqldb
+		circle_id:   args.circle_id
+		sqldb:       sqldb
 	}
 
 	// for each known model class we need to insert this

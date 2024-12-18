@@ -12,8 +12,8 @@ pub mut:
 fn (mut f RoomOrderFlow) room_choice() ! {
 	i := f.ui.ask_dropdown(
 		description: 'Which type of room do you want?'
-		items: ['penthouse', 'normal', 'single', 'appartment_room']
-		warning: 'Please select your right type of room'
+		items:       ['penthouse', 'normal', 'single', 'appartment_room']
+		warning:     'Please select your right type of room'
 	)!
 
 	println(i)

@@ -41,11 +41,11 @@ fn test_decode_jsonrpcrequest() {
 	request := jsonrpcrequest_decode[MyParams](payload)!
 	assert request == JsonRpcRequest[MyParams]{
 		jsonrpc: '2.0'
-		method: 'mymethod'
-		params: MyParams{
+		method:  'mymethod'
+		params:  MyParams{
 			attr1: 'test'
 		}
-		id: '564'
+		id:      '564'
 	}
 }
 

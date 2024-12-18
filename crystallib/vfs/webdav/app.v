@@ -11,8 +11,8 @@ struct App {
 	root_dir pathlib.Path      @[vweb_global]
 pub mut:
 	lock_manager LockManager
-	server_port int
-	middlewares map[string][]vweb.Middleware
+	server_port  int
+	middlewares  map[string][]vweb.Middleware
 }
 
 @[params]
@@ -26,8 +26,8 @@ pub mut:
 pub fn new_app(args AppArgs) !&App {
 	root_dir := pathlib.get_dir(path: args.root_dir, create: true)!
 	mut app := &App{
-		user_db: args.user_db.clone()
-		root_dir: root_dir
+		user_db:     args.user_db.clone()
+		root_dir:    root_dir
 		server_port: args.server_port
 	}
 

@@ -29,9 +29,9 @@ pub mut:
 
 pub fn (mut m MemDB) person_new(args PersonNewArgs) ! {
 	mut p := Person{
-		id: args.id
-		firstname: args.firstname
-		lastname: args.lastname
+		id:          args.id
+		firstname:   args.firstname
+		lastname:    args.lastname
 		description: args.description
 	}
 }

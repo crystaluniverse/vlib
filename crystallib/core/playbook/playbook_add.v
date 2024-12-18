@@ -20,8 +20,8 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 	if args.git_url.len > 0 {
 		mut gs := gittools.get()!
 		mut repo := gs.get_repo(
-			url: args.git_url
-			pull: args.git_pull
+			url:   args.git_url
+			pull:  args.git_pull
 			reset: args.git_reset
 		)!
 		args.path = repo.get_path()!
@@ -44,7 +44,7 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 			mut paths := ol0.paths.clone()
 			mut ol1 := p.list(recursive: true, regex: [r'.*\.hero$'])!
 			paths << ol1.paths
-			
+
 			for mut p2 in paths {
 				c2 := p2.read()!
 				plbook.add(text: c2, prio: args.prio, session: args_.session)!

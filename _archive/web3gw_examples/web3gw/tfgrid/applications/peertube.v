@@ -7,9 +7,7 @@ import flag { FlagParser }
 import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_peertube(mut fp FlagParser, mut t TFGridClient) !PeertubeResult {
 	fp.usage_example('deploy [options]')
@@ -26,10 +24,10 @@ fn deploy_peertube(mut fp FlagParser, mut t TFGridClient) !PeertubeResult {
 
 	mut peertube_client := t.applications().peertube()
 	return peertube_client.deploy(
-		name: name
-		farm_id: u64(farm_id)
-		capacity: capacity
-		ssh_key: ssh_key
+		name:        name
+		farm_id:     u64(farm_id)
+		capacity:    capacity
+		ssh_key:     ssh_key
 		admin_email: admin_email
 		db_username: db_username
 		db_password: db_password
@@ -90,7 +88,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Credentials{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

@@ -13,7 +13,7 @@ pub fn new(zola_ Zola) !Zola {
 	}
 
 	if zola.install {
-		mut i:=zolainstaller.get()!
+		mut i := zolainstaller.get()!
 		i.install()!
 	}
 

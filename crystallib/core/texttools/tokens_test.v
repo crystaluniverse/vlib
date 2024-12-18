@@ -16,28 +16,28 @@ fn test_tokens() {
 
 	r2 := TokenizerResult{
 		items: [TokenizerItem{
-			toreplace: 'ramdom'
+			toreplace:   'ramdom'
 			matchstring: 'ramdom'
 		}, TokenizerItem{
-			toreplace: 'words'
+			toreplace:   'words'
 			matchstring: 'words'
 		}, TokenizerItem{
-			toreplace: 'blue'
+			toreplace:   'blue'
 			matchstring: 'blue'
 		}, TokenizerItem{
-			toreplace: 'lagoon'
+			toreplace:   'lagoon'
 			matchstring: 'lagoon'
 		}, TokenizerItem{
-			toreplace: 'Blue'
+			toreplace:   'Blue'
 			matchstring: 'blue'
 		}, TokenizerItem{
-			toreplace: 'blue_lagoon'
+			toreplace:   'blue_lagoon'
 			matchstring: 'bluelagoon'
 		}, TokenizerItem{
-			toreplace: 'blue_Lagoon'
+			toreplace:   'blue_Lagoon'
 			matchstring: 'bluelagoon'
 		}, TokenizerItem{
-			toreplace: 'blueLagoon'
+			toreplace:   'blueLagoon'
 			matchstring: 'bluelagoon'
 		}]
 	}
@@ -104,7 +104,7 @@ fn test_tokens3() {
 
 	assert r == TokenizerResult{
 		items: [TokenizerItem{
-			toreplace: 'test'
+			toreplace:   'test'
 			matchstring: 'test'
 		}]
 	}

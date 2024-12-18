@@ -213,7 +213,7 @@ fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT, stellar Raw_StellarAccount) StatsT
 
 			final.locked_tokens_info << LockedTokensInfo{
 				amount: parsef(x[0])
-				until: x[3] + ' ' + x[4]
+				until:  x[3] + ' ' + x[4]
 			}
 		}
 	}
@@ -252,9 +252,9 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 
 	// Farming rewards after April 19 2018 (***)
 	group['farming-rewards-2018'] = Group{
-		name: 'Farming rewards after April 19 2018'
+		name:         'Farming rewards after April 19 2018'
 		distribution: 0.75
-		done: s.total_tokens - 695000000 // Genesis pool
+		done:         s.total_tokens - 695000000 // Genesis pool
 	}
 
 	mut grant_amount := f64(0)
@@ -273,16 +273,16 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 
 	// Ecosystem Grants  (*)
 	group['ecosystem-grants'] = Group{
-		name: 'Ecosystem Grants'
+		name:         'Ecosystem Grants'
 		distribution: 0.03
-		done: grant_amount
+		done:         grant_amount
 	}
 
 	// Promotion & Marketing Effort
 	group['promotion-marketing'] = Group{
-		name: 'Promotion & Marketing Effort '
+		name:         'Promotion & Marketing Effort '
 		distribution: 0.05
-		done: 100000000 // estimation
+		done:         100000000 // estimation
 	}
 
 	mut liquidity_amount := i64(0)
@@ -297,21 +297,21 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 
 	// Ecosystem Contribution, Liquidity Exchanges
 	group['ecosystem-contribution'] = Group{
-		name: 'Ecosystem Contribution, Liquidity Exchanges'
+		name:         'Ecosystem Contribution, Liquidity Exchanges'
 		distribution: 0.04
-		done: liquidity_amount
+		done:         liquidity_amount
 	}
 
 	// Technology Acquisition + Starting Team (40p)
 	group['technology'] = Group{
-		name: 'Technology Acquisition + Starting Team'
+		name:         'Technology Acquisition + Starting Team'
 		distribution: 0.07
-		done: 290000000
+		done:         290000000
 	}
 
 	// Advisors, Founders & Team
 	group['advisors-founders'] = Group{
-		name: 'Advisors, Founders & Team'
+		name:         'Advisors, Founders & Team'
 		distribution: 0.06
 	}
 
@@ -327,7 +327,7 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 fn parse_balance(bal Raw_Balance) Balance {
 	return Balance{
 		amount: parsef(bal.amount)
-		asset: bal.asset
+		asset:  bal.asset
 	}
 }
 
@@ -342,7 +342,7 @@ fn account_info(account Raw_Account) Account {
 
 	for vest in account.vesting_accounts {
 		mut vesting := VestingAccount{
-			address: vest.address
+			address:       vest.address
 			vestingscheme: vest.vestingscheme
 		}
 
@@ -355,7 +355,7 @@ fn account_info(account Raw_Account) Account {
 
 	for locking in account.locked_amounts {
 		mut locked := LockedAmount{
-			address: locking.address
+			address:      locking.address
 			locked_until: locking.locked_until
 		}
 

@@ -4,11 +4,11 @@ import freeflowuniverse.crystallib.core.texttools
 
 enum ParamStatus {
 	start
-	name // found name of the var (could be an arg)
+	name       // found name of the var (could be an arg)
 	value_wait // wait for value to start (can be quote or end of spaces and first meaningful char)
-	value // value started, so was no quote
-	quote // quote found means value in between ''
-	value_end // quote found means value in between ''
+	value      // value started, so was no quote
+	quote      // quote found means value in between ''
+	value_end  // quote found means value in between ''
 	comment
 }
 

@@ -43,19 +43,19 @@ pub fn (mut z Zdb) challenge() string {
 
 pub struct ZdbResult {
 pub mut:
-	namespace string @[json: 'Namespace']
+	namespace string   @[json: 'Namespace']
 	ips       []string @[json: 'IPs']
-	port      u32 @[json: 'Port']
+	port      u32      @[json: 'Port']
 }
 
 pub fn (z Zdb) to_workload(args WorkloadArgs) Workload {
 	return Workload{
-		version: args.version or { 0 }
-		name: args.name
-		type_: workload_types.zdb
-		data: json.encode(z)
-		metadata: args.metadata or { '' }
+		version:     args.version or { 0 }
+		name:        args.name
+		type_:       workload_types.zdb
+		data:        json.encode(z)
+		metadata:    args.metadata or { '' }
 		description: args.description or { '' }
-		result: args.result or { WorkloadResult{} }
+		result:      args.result or { WorkloadResult{} }
 	}
 }

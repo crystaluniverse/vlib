@@ -6,65 +6,65 @@ import freeflowuniverse.crystallib.ui.console
 
 pub fn cmd_postgres(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'postgres'
-		description: 'manage postgresql'
+		name:          'postgres'
+		description:   'manage postgresql'
 		required_args: 0
-		execute: postgres_help
+		execute:       postgres_help
 	}
 
 	mut cmd_exec := Command{
 		required_args: 1
-		name: 'exec'
-		execute: cmd_postgres_execute
-		description: 'execute the following query'
+		name:          'exec'
+		execute:       cmd_postgres_execute
+		description:   'execute the following query'
 	}
 
 	mut cmd_check := Command{
-		name: 'check'
-		execute: cmd_postgres_check
+		name:        'check'
+		execute:     cmd_postgres_check
 		description: 'check the postgresql connection'
 	}
 
 	mut cmd_configure := Command{
-		name: 'configure'
-		execute: cmd_postgres_configure
+		name:        'configure'
+		execute:     cmd_postgres_configure
 		description: 'Configure a postgresl connection.'
 	}
 
 	mut cmd_print := Command{
-		name: 'print'
-		execute: cmd_postgres_print
+		name:        'print'
+		execute:     cmd_postgres_print
 		description: 'Print configure info.'
 	}
 
 	cmd_print.add_flag(Flag{
-		flag: .string
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		name:        'name'
+		abbrev:      'n'
 		description: 'name of the postgresql connection!'
 	})
 
 	mut cmd_backupall := Command{
-		name: 'backup'
-		execute: cmd_postgres_backupall
+		name:        'backup'
+		execute:     cmd_postgres_backupall
 		description: 'backup all databases'
 	}
 	cmd_backupall.add_flag(Flag{
-		flag: .string
-		name: 'dest'
-		abbrev: 'd'
+		flag:        .string
+		name:        'dest'
+		abbrev:      'd'
 		description: 'path where backups will be done'
 	})
 	cmd_backupall.add_flag(Flag{
-		flag: .string
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		name:        'name'
+		abbrev:      'n'
 		description: 'name of the postgresql db!'
 	})
 
 	mut cmd_list := Command{
-		name: 'list'
-		execute: cmd_postgres_list
+		name:        'list'
+		execute:     cmd_postgres_list
 		description: 'list databases'
 	}
 
@@ -72,9 +72,9 @@ pub fn cmd_postgres(mut cmdroot Command) {
 
 	for mut c in allcmdsref_gen {
 		c.add_flag(Flag{
-			flag: .string
-			name: 'name'
-			abbrev: 'n'
+			flag:        .string
+			name:        'name'
+			abbrev:      'n'
 			description: 'name of the postgresql connection!'
 		})
 		cmd_run.add_command(*c)

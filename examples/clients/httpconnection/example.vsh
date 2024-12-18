@@ -3,8 +3,11 @@
 import freeflowuniverse.crystallib.clients.httpconnection
 import json
 
-
-mut conn := httpconnection.new(name: 'test', url: 'https://jsonplaceholder.typicode.com/', cache: true)!
+mut conn := httpconnection.new(
+	name:  'test'
+	url:   'https://jsonplaceholder.typicode.com/'
+	cache: true
+)!
 println(conn)
 // drop all caches
 conn.cache_drop()!
@@ -42,9 +45,9 @@ assert keys.len == 2
 // Creating a resource, response won't be cached here, as by default we cache requests made by GET and HEAD methods only,
 // also POST is unsafe method it would invalidate caches for resource `/posts` on subsequent GET requests.
 payload := {
-  'title':  'foo'
-  'body':   'bar'
-  'userId': '1'
+	'title':  'foo'
+	'body':   'bar'
+	'userId': '1'
 }
 res = conn.send(method: .post, prefix: 'posts', data: json.encode(payload), cache_disable: false)!
 println(res.code)
@@ -63,20 +66,32 @@ assert keys.len == 2
 // Updating a resource post id 1, would be invalidate caches for these resources, `/posts` and `/posts/1`
 // so on subsequent GET requests you get fresh response from the server
 updated_payload := {
-  'title':  'foo'
-  'body':   'bar'
-  'userId': '1'
+	'title':  'foo'
+	'body':   'bar'
+	'userId': '1'
 }
-res = conn.send(method: .put, prefix: 'posts', id: '1', data: json.encode(updated_payload), cache_disable: false)!
+res = conn.send(
+	method:        .put
+	prefix:        'posts'
+	id:            '1'
+	data:          json.encode(updated_payload)
+	cache_disable: false
+)!
 println(res.code)
 keys = conn.redis.keys('http:${conn.cache.key}*')!
 assert keys.len == 0
 // Patching a resource post id 1, would be invalidate caches for these resources, `/posts` and `/posts/1`
 // so on subsequent GET requests you get fresh response from the server.
 patch_payload := {
-  'title': 'foo'
+	'title': 'foo'
 }
-res = conn.send(method: .patch, prefix: 'posts', id: '1', data: json.encode(patch_payload), cache_disable: false)!
+res = conn.send(
+	method:        .patch
+	prefix:        'posts'
+	id:            '1'
+	data:          json.encode(patch_payload)
+	cache_disable: false
+)!
 println(res.code)
 keys = conn.redis.keys('http:${conn.cache.key}*')!
 assert keys.len == 0
@@ -88,11 +103,11 @@ keys = conn.redis.keys('http:${conn.cache.key}*')!
 assert keys.len == 0
 // using query parameters,
 res = conn.send(
-  prefix: 'posts'
-  params: {
-    'userId': '1'
-  }
-  cache_disable: false
+	prefix:        'posts'
+	params:        {
+		'userId': '1'
+	}
+	cache_disable: false
 )!
 println(res.code)
 

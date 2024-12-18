@@ -82,7 +82,7 @@ pub fn (mut db OurDB) set_(x u32, old_location Location, data []u8) ! {
 	// Get current file position for lookup
 	db.file.seek(0, .end)!
 	new_location := Location{
-		file_nr: file_nr
+		file_nr:  file_nr
 		position: u32(db.file.tell()!)
 	}
 
@@ -208,7 +208,7 @@ fn (mut db OurDB) condense() ! {
 
 	// Track current position in temp file
 	mut new_pos := Location{
-		file_nr: 0
+		file_nr:  0
 		position: 0
 	}
 

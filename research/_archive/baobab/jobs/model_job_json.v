@@ -36,19 +36,19 @@ pub fn (job ActionJob) pub_get() ActionJobPublic {
 		.error { statestr = 'error' }
 	}
 	mut job2 := ActionJobPublic{
-		twinid: job.twinid
-		action: job.action
-		args: job.args
-		result: job.result
-		state: statestr
-		start: job.start.unix_time()
-		end: job.end.unix_time()
+		twinid:       job.twinid
+		action:       job.action
+		args:         job.args
+		result:       job.result
+		state:        statestr
+		start:        job.start.unix_time()
+		end:          job.end.unix_time()
 		grace_period: job.grace_period
-		error: job.error
-		timeout: job.timeout
-		guid: job.guid
-		src_twinid: job.src_twinid
-		src_action: job.src_action
+		error:        job.error
+		timeout:      job.timeout
+		guid:         job.guid
+		src_twinid:   job.src_twinid
+		src_action:   job.src_action
 		dependencies: job.dependencies
 	}
 	return job2
@@ -78,19 +78,19 @@ pub fn json_load(data string) !ActionJob {
 		else { return error('Could not find job state, needs to be init, tostart, recurring, scheduled, active, done, error') }
 	}
 	mut jobout := ActionJob{
-		twinid: job.twinid
-		action: job.action
-		args: job.args
-		result: job.result
-		state: statecat
-		start: time.unix(job.start)
-		end: time.unix(job.end)
+		twinid:       job.twinid
+		action:       job.action
+		args:         job.args
+		result:       job.result
+		state:        statecat
+		start:        time.unix(job.start)
+		end:          time.unix(job.end)
 		grace_period: job.grace_period
-		error: job.error
-		timeout: job.timeout
-		guid: job.guid
-		src_twinid: job.src_twinid
-		src_action: job.src_action
+		error:        job.error
+		timeout:      job.timeout
+		guid:         job.guid
+		src_twinid:   job.src_twinid
+		src_action:   job.src_action
 	}
 	return jobout
 }

@@ -7,8 +7,7 @@ const singleton = false
 const default = false
 
 pub fn heroscript_default() !string {
-
-    heroscript:="
+	heroscript := "
 	!!rclone.configure
 		name: 'default'
 		cat: 'b2' 
@@ -19,10 +18,8 @@ pub fn heroscript_default() !string {
 		endpoint: ''
         "
 
-    return heroscript
-
+	return heroscript
 }
-
 
 // THIS THE THE SOURCE OF THE INFORMATION OF THIS FILE, HERE WE HAVE THE CONFIG OBJECT CONFIGURED AND MODELLED
 pub struct RClone {
@@ -44,26 +41,23 @@ pub enum RCloneCat {
 
 fn cfg_play(p paramsparser.Params) !RClone {
 	mut mycfg := RClone{
-		name: p.get_default('name', 'default')!
-		cat: match p.get_default('cat', 'b2')! {
+		name:        p.get_default('name', 'default')!
+		cat:         match p.get_default('cat', 'b2')! {
 			'b2' { RCloneCat.b2 }
 			's3' { RCloneCat.s3 }
 			'ftp' { RCloneCat.ftp }
 			else { return error('Invalid RCloneCat') }
 		}
-		s3_account: p.get_default('s3_account', '')!
-		s3_key: p.get_default('s3_key', '')!
-		s3_secret: p.get_default('s3_secret', '')!
+		s3_account:  p.get_default('s3_account', '')!
+		s3_key:      p.get_default('s3_key', '')!
+		s3_secret:   p.get_default('s3_secret', '')!
 		hard_delete: p.get_default_false('hard_delete')
-		endpoint: p.get_default('endpoint', '')!
+		endpoint:    p.get_default('endpoint', '')!
 	}
 	return mycfg
 }
 
-fn obj_init(obj_ RClone)!RClone{
-    mut obj:=obj_
-    return obj
+fn obj_init(obj_ RClone) !RClone {
+	mut obj := obj_
+	return obj
 }
-
-
-

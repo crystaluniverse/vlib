@@ -7,9 +7,7 @@ import log
 import os
 import encoding.base64
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger) ! {
 	mut ipfs_client := ipfs.new(mut client)

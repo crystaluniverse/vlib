@@ -8,45 +8,44 @@ import freeflowuniverse.crystallib.ui.console
 pub fn playmacro(action playbook.Action) !string {
 	p := action.params
 
-	bizname:=action.params.get("bizname") or {
+	bizname := action.params.get('bizname') or {
 		return error("Can't find param:'bizname' for action: ${action.name}, please specify as bizname: ...")
 	}
 
-	mut sim:=get(bizname)!
+	mut sim := get(bizname)!
 
 	if action.name == 'employee_wiki' {
-		return employee_wiki(p,sim)!
+		return employee_wiki(p, sim)!
 	} else if action.name == 'employees_wiki' {
-		return employees_wiki(p,sim)!
+		return employees_wiki(p, sim)!
 	} else if action.name == 'department_wiki' {
-		return department_wiki(p,sim)!
-	}else if action.name == 'revenues_wiki' {
-		return revenues_wiki(p,mut sim)!
+		return department_wiki(p, sim)!
+	} else if action.name == 'revenues_wiki' {
+		return revenues_wiki(p, mut sim)!
 	}
 
 	return error("couldn't find macro '${action.name}' for bizmodel.")
-
 }
 
-fn employee_wiki (p paramsparser.Params, sim BizModel)!string{
+fn employee_wiki(p paramsparser.Params, sim BizModel) !string {
 	console.print_green('playmacro employee_wiki')
 	mut id := p.get_default('id', '')!
 	if id !in sim.employees {
 		id = p.get_default('name', '')!
 	}
 
-	if ! (id in sim.employees) {
+	if id !in sim.employees {
 		println(id)
 		println(sim.employees)
-		panic("sss")
+		panic('sss')
 		return error('employee with name \'${id}\' not found')
 	}
 
-	employee := sim.employees[id] or { panic("bug") }
+	employee := sim.employees[id] or { panic('bug') }
 
 	println(employee)
 
-	//OUTPUTS:
+	// OUTPUTS:
 	// &bizmodel.Employee{
 	//     name: 'despiegk'
 	//     description: 'CTO'
@@ -59,44 +58,39 @@ fn employee_wiki (p paramsparser.Params, sim BizModel)!string{
 	//     page: 'cto.md'
 	// }	
 
-	//if true{panic("s")}
+	// if true{panic("s")}
 
- 	//theme := 'light' 
-	theme := 'dark' 
-	mut t:=$tmpl('./templates/employee.md')
+	// theme := 'light'
+	theme := 'dark'
+	mut t := $tmpl('./templates/employee.md')
 	return t
 }
 
-
-fn employees_wiki (p paramsparser.Params, sim BizModel)!string{
-
-    mut deps := []Department{}
-	for _,dep in sim.departments{
+fn employees_wiki(p paramsparser.Params, sim BizModel) !string {
+	mut deps := []Department{}
+	for _, dep in sim.departments {
 		deps << dep
 	}
-    deps.sort(a.order < b.order)
+	deps.sort(a.order < b.order)
 
-	mut employee_names :=  map[string]string{}
-	for _,empl in sim.employees{
+	mut employee_names := map[string]string{}
+	for _, empl in sim.employees {
 		employee_names[empl.name] = empl.name
-		if empl.page.len>0{
-			employee_names[empl.name] = "[${empl.name}](${empl.page})"
+		if empl.page.len > 0 {
+			employee_names[empl.name] = '[${empl.name}](${empl.page})'
 		}
 	}
-	mut t:=$tmpl('./templates/departments.md')
+	mut t := $tmpl('./templates/departments.md')
 
 	return t
-
 }
 
-fn department_wiki (p paramsparser.Params, sim BizModel)!string{
-	return ""
-
+fn department_wiki(p paramsparser.Params, sim BizModel) !string {
+	return ''
 }
 
-fn revenues_wiki (p paramsparser.Params, mut sim BizModel)!string{
-
-    mut revs := map[string]string{}
+fn revenues_wiki(p paramsparser.Params, mut sim BizModel) !string {
+	mut revs := map[string]string{}
 
 	// for name,_ in sim.products{
 	// 	myrow:=sim.sheet.row_get('${name}_rev_total') or { panic("bug in revenues_wiki macro") }
@@ -110,8 +104,7 @@ fn revenues_wiki (p paramsparser.Params, mut sim BizModel)!string{
 	panic('fix template below')
 	// mut t:=$tmpl('./templates/revenue_overview.md')
 
-	//title:'REVENUE FOR ${name1.to_lower().replace("_"," ")}' 
+	// title:'REVENUE FOR ${name1.to_lower().replace("_"," ")}'
 
 	// return t
-
 }

@@ -11,7 +11,7 @@ pub fn (mut cl CouchDBClient[Config]) db_instance(db_name string) !CouchDBInstan
 	}
 
 	return CouchDBInstance{
-		name: db_name
+		name:       db_name
 		connection: cl.connection
 	}
 }
@@ -40,7 +40,7 @@ pub fn (mut cl CouchDBClient[Config]) db_create(args CoudDBCreateArgs) ! {
 	res = cl.connection.send(
 		method: .put
 		prefix: '${args.name}/_security'
-		data: json.encode({
+		data:   json.encode({
 			'admins':  {
 				'names': args.admins
 				'roles': []string{}

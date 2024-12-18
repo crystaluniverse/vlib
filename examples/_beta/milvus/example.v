@@ -54,7 +54,7 @@ fn collection_methods(client milvus.Client, mut logger log.Log) ! {
 fn create_collection(client milvus.Client, collection_name string) ! {
 	client.create_collection(
 		collection_name: collection_name
-		dimension: u16(5)
+		dimension:       u16(5)
 	) or { return error('failed to create collection: ${err}') }
 }
 
@@ -113,8 +113,8 @@ fn vector_methods(client milvus.Client, mut logger log.Log) ! {
 fn insert_vector(client milvus.Client, collection_name string) !u32 {
 	data := [
 		Vector{
-			title: 'hamada'
-			link: 'google.com'
+			title:  'hamada'
+			link:   'google.com'
 			vector: [f32(0.23254494), 0.01374953, 0.88497432, 0.05292784, 0.02204868] // the number of elements has to match the collection's dimension
 		},
 	]
@@ -129,8 +129,8 @@ fn insert_vector(client milvus.Client, collection_name string) !u32 {
 fn query_vector(client milvus.Client, collection_name string) ![]Vector {
 	query_res := client.query_vector(
 		collection_name: collection_name
-		filter: 'link in ["google.com"]'
-		output_fields: ['id', 'title']
+		filter:          'link in ["google.com"]'
+		output_fields:   ['id', 'title']
 	) or { return error('failed to query vectors: ${err}') }
 
 	return decode_multiple_vectors(query_res)
@@ -139,9 +139,9 @@ fn query_vector(client milvus.Client, collection_name string) ![]Vector {
 fn search_vector(client milvus.Client, collection_name string) ![]Vector {
 	search_res := client.search_vector(
 		collection_name: collection_name
-		filter: 'link in ["google.com"]'
-		vector: [f32(0.23254494), 0.01374953, 0.88497432, 0.05292784, 0.02204868]
-		output_fields: ['id', 'title', 'link', 'vector']
+		filter:          'link in ["google.com"]'
+		vector:          [f32(0.23254494), 0.01374953, 0.88497432, 0.05292784, 0.02204868]
+		output_fields:   ['id', 'title', 'link', 'vector']
 	) or { return error('failed to search for vector: ${err}') }
 
 	return decode_multiple_vectors(search_res)
@@ -159,7 +159,7 @@ fn upsert_vector(client milvus.Client, collection_name string) !milvus.UpsertVec
 	data := []json2.Any{}
 	upserted_vectors := client.upsert_vector(
 		collection_name: collection_name
-		data: data
+		data:            data
 	) or { return error('failed to upsert vector: ${err}') }
 	return upserted_vectors
 }
@@ -167,8 +167,8 @@ fn upsert_vector(client milvus.Client, collection_name string) !milvus.UpsertVec
 fn get_vector(client milvus.Client, collection_name string, id u64) ![]Vector {
 	get_vector_res := client.get_vector(
 		collection_name: collection_name
-		id: id
-		output_fields: [
+		id:              id
+		output_fields:   [
 			'id',
 			'title',
 			'link',

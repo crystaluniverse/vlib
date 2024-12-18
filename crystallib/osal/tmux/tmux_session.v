@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.ui.console
 @[heap]
 struct Session {
 pub mut:
-	tmux    &Tmux     @[str: skip] // reference back
+	tmux    &Tmux @[str: skip] // reference back
 	windows []&Window // session has windows
 	name    string
 }

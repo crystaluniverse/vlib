@@ -79,8 +79,8 @@ pub fn get(name_ string) !Server {
 		args := json.decode(Config, data)!
 
 		mut server := Server{
-			name: name
-			config: args
+			name:        name
+			config:      args
 			path_config: pathlib.get_dir(path: '${args.path}/cfg', create: true)!
 		}
 

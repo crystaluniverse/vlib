@@ -3,7 +3,7 @@ module sendgrid
 @[params]
 pub struct Personalizations {
 pub mut:
-	to                    []Recipient        @[required]
+	to                    []Recipient @[required]
 	from                  ?Recipient
 	cc                    ?[]Recipient
 	bcc                   ?[]Recipient

@@ -12,7 +12,7 @@ pub struct CacheConfig {
 pub mut:
 	key               string // as used to identity in redis
 	allowable_methods []Method = [.get, .head]
-	allowable_codes   []int    = httpconnection.default_cacheable_codes
+	allowable_codes   []int    = default_cacheable_codes
 	disable           bool     = true // default cache is not working
 	expire_after      int      = 3600 // default expire_after is 1h
 	match_headers     bool // cache the request header to be matched later
@@ -21,7 +21,7 @@ pub mut:
 @[heap]
 pub struct HTTPConnection {
 pub mut:
-	redis          Redis       @[str: skip]
+	redis          Redis @[str: skip]
 	base_url       string // the base url
 	default_header Header
 	cache          CacheConfig @[str: skip]

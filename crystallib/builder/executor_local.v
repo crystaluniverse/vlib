@@ -75,12 +75,12 @@ pub fn (mut executor ExecutorLocal) info() map[string]string {
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorLocal) upload(args SyncArgs) ! {
 	mut rsargs := rsync.RsyncArgs{
-		source: args.source
-		dest: args.dest
-		delete: args.delete
-		ignore: args.ignore
+		source:         args.source
+		dest:           args.dest
+		delete:         args.delete
+		ignore:         args.ignore
 		ignore_default: args.ignore_default
-		stdout: args.stdout
+		stdout:         args.stdout
 	}
 	rsync.rsync(rsargs)!
 }
@@ -88,12 +88,12 @@ pub fn (mut executor ExecutorLocal) upload(args SyncArgs) ! {
 // download from executor FS to local FS
 pub fn (mut executor ExecutorLocal) download(args SyncArgs) ! {
 	mut rsargs := rsync.RsyncArgs{
-		source: args.source
-		dest: args.dest
-		delete: args.delete
-		ignore: args.ignore
+		source:         args.source
+		dest:           args.dest
+		delete:         args.delete
+		ignore:         args.ignore
 		ignore_default: args.ignore_default
-		stdout: args.stdout
+		stdout:         args.stdout
 	}
 	rsync.rsync(rsargs)!
 }

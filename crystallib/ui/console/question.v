@@ -43,10 +43,10 @@ pub fn (mut c UIConsole) ask_question(args QuestionArgs) !string {
 	}
 	if args.minlen > 0 && choice.len < args.minlen {
 		return c.ask_question(
-			reset: args.reset
+			reset:       args.reset
 			description: args.description
-			warning: 'Min lenght of answer is: ${args.minlen}'
-			question: args.question
+			warning:     'Min lenght of answer is: ${args.minlen}'
+			question:    args.question
 		)
 	}
 	return choice

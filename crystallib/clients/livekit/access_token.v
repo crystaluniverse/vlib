@@ -77,7 +77,6 @@ module livekit
 // 	token.grants.video = grant
 // }
 
-
 // // Method to generate a JWT token
 // pub fn (token AccessToken) to_jwt() !string {
 // 	// Create JWT payload

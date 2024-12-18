@@ -21,18 +21,16 @@ struct ResultData {
 	ciphertext  string
 }
 
-const (
-	file_dose_not_exist    = "Couldn't parse kyes file, just make sure that you have kyes.toml by running create_keys.v file, then send its path when you running the client app."
-	signed_attempt_missing = 'signedAttempt parameter is missing.'
-	invalid_json           = 'Invalid JSON Payload.'
-	no_double_name         = 'DoubleName is missing.'
-	data_verfication_field = 'Data verfication failed!.'
-	not_contain_doublename = 'Decrypted data does not contain (doubleName).'
-	not_contain_state      = 'Decrypted data does not contain (state).'
-	username_mismatch      = 'username mismatch!'
-	data_decrypting_error  = 'Error decrypting data!'
-	email_not_verified     = 'Email is not verified'
-)
+const file_dose_not_exist = "Couldn't parse kyes file, just make sure that you have kyes.toml by running create_keys.v file, then send its path when you running the client app."
+const signed_attempt_missing = 'signedAttempt parameter is missing.'
+const invalid_json = 'Invalid JSON Payload.'
+const no_double_name = 'DoubleName is missing.'
+const data_verfication_field = 'Data verfication failed!.'
+const not_contain_doublename = 'Decrypted data does not contain (doubleName).'
+const not_contain_state = 'Decrypted data does not contain (state).'
+const username_mismatch = 'username mismatch!'
+const data_decrypting_error = 'Error decrypting data!'
+const email_not_verified = 'Email is not verified'
 
 fn parse_keys(file_path string) !toml.Doc {
 	return toml.parse_file(file_path)!
@@ -58,10 +56,10 @@ fn request_to_verify_sei(sei string) !http.Response {
 	})
 
 	request := http.Request{
-		url: 'https://openkyc.live/verification/verify-sei'
+		url:    'https://openkyc.live/verification/verify-sei'
 		method: http.Method.post
 		header: header
-		data: json.encode({
+		data:   json.encode({
 			'signedEmailIdentifier': sei
 		})
 	}

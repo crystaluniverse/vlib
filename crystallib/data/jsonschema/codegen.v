@@ -73,8 +73,8 @@ pub fn (schema Schema) vtype_encode() !string {
 				property_str = '[]${items_schema.typ}'
 			}
 		}
-	} else if schema.typ in jsonschema.vtypes.keys() {
-		property_str = jsonschema.vtypes[schema.typ]
+	} else if schema.typ in vtypes.keys() {
+		property_str = vtypes[schema.typ]
 	} else if schema.title != '' {
 		property_str = schema.title
 	} else {
@@ -87,11 +87,11 @@ pub fn (schema Schema) to_code() !CodeItem {
 	if schema.typ == 'object' {
 		return CodeItem(schema.to_struct()!)
 	}
-	if schema.typ in jsonschema.vtypes {
+	if schema.typ in vtypes {
 		return Alias{
 			name: schema.title
-			typ: Type{
-				symbol: jsonschema.vtypes[schema.typ]
+			typ:  Type{
+				symbol: vtypes[schema.typ]
 			}
 		}
 	}
@@ -101,7 +101,7 @@ pub fn (schema Schema) to_code() !CodeItem {
 				items_schema := schema.items as Schema
 				return Alias{
 					name: schema.title
-					typ: Type{
+					typ:  Type{
 						symbol: '[]${items_schema.typ}'
 					}
 				}
@@ -109,7 +109,7 @@ pub fn (schema Schema) to_code() !CodeItem {
 				items_ref := schema.items as Reference
 				return Alias{
 					name: schema.title
-					typ: Type{
+					typ:  Type{
 						symbol: '[]${items_ref.to_type_symbol()}'
 					}
 				}
@@ -133,9 +133,9 @@ pub fn (schema Schema) to_struct() !Struct {
 	}
 
 	return Struct{
-		name: schema.title
+		name:        schema.title
 		description: schema.description
-		fields: fields
+		fields:      fields
 	}
 }
 
@@ -143,21 +143,21 @@ pub fn (schema SchemaRef) to_struct_field(name string) !StructField {
 	if schema is Reference {
 		return StructField{
 			name: name
-			typ: Type{
+			typ:  Type{
 				symbol: schema.to_type_symbol()
 			}
 		}
 	} else if schema is Schema {
 		mut field := StructField{
-			name: name
+			name:        name
 			description: schema.description
 		}
 		if schema.typ == 'object' {
 			// then is anonymous struct
 			field.anon_struct = schema.to_struct()!
 			return field
-		} else if schema.typ in jsonschema.vtypes {
-			field.typ.symbol = jsonschema.vtypes[schema.typ]
+		} else if schema.typ in vtypes {
+			field.typ.symbol = vtypes[schema.typ]
 			return field
 		}
 		return error('Schema typ ${schema.typ} not supported for code generation')

@@ -29,11 +29,11 @@ pub fn (mut session Session) error(args_ ErrorArgs) !ErrorItem {
 	args.cat = texttools.name_fix(args.cat)
 
 	mut l := ErrorItem{
-		cat: args.cat
-		error: args.error
+		cat:       args.cat
+		error:     args.error
 		errortype: args.errortype
-		time: ourtime.now()
-		session: session.name
+		time:      ourtime.now()
+		session:   session.name
 	}
 
 	// TODO: get string output and put to redis

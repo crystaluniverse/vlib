@@ -63,9 +63,9 @@ pub fn (mut r DockerBuilderRecipe) add_sshserver() ! {
 	r.add_package(name: 'openssh-server')!
 
 	r.add_zinit_cmd(
-		name: 'sshd-setup'
+		name:    'sshd-setup'
 		oneshot: true
-		exec: "
+		exec:    "
 			mkdir -p /run/sshd
 			ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
 			ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa
@@ -75,9 +75,9 @@ pub fn (mut r DockerBuilderRecipe) add_sshserver() ! {
 	)!
 
 	r.add_zinit_cmd(
-		name: 'ssh-keys'
+		name:  'ssh-keys'
 		after: 'sshd-setup'
-		exec: '
+		exec:  '
 			if [ ! -d /root/.ssh ]; then
 				mkdir -m 700 /root/.ssh
 			fi

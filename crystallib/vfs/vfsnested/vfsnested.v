@@ -46,10 +46,10 @@ pub fn (mut self NestedVFS) root_get() !vfscore.FSEntry {
 	// Return a special root entry that represents the nested VFS
 	return &RootEntry{
 		metadata: vfscore.Metadata{
-			name: ''
-			file_type: .directory
-			size: 0
-			created_at: 0
+			name:        ''
+			file_type:   .directory
+			size:        0
+			created_at:  0
 			modified_at: 0
 			accessed_at: 0
 		}
@@ -82,7 +82,6 @@ pub fn (mut self NestedVFS) dir_create(path string) !vfscore.FSEntry {
 }
 
 pub fn (mut self NestedVFS) dir_list(path string) ![]vfscore.FSEntry {
-	
 	// Special case for root directory
 	if path == '' || path == '/' {
 		mut entries := []vfscore.FSEntry{}
@@ -90,14 +89,14 @@ pub fn (mut self NestedVFS) dir_list(path string) ![]vfscore.FSEntry {
 			root := impl.root_get() or { continue }
 			entries << &MountEntry{
 				metadata: vfscore.Metadata{
-					name: prefix
-					file_type: .directory
-					size: 0
-					created_at: 0
+					name:        prefix
+					file_type:   .directory
+					size:        0
+					created_at:  0
 					modified_at: 0
 					accessed_at: 0
 				}
-				impl: impl
+				impl:     impl
 			}
 		}
 		return entries
@@ -179,7 +178,7 @@ fn (e &RootEntry) get_path() string {
 pub struct MountEntry {
 pub mut:
 	metadata vfscore.Metadata
-	impl    vfscore.VFSImplementation
+	impl     vfscore.VFSImplementation
 }
 
 fn (e &MountEntry) get_metadata() vfscore.Metadata {

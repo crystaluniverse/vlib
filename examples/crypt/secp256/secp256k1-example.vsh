@@ -15,7 +15,7 @@ console.print_debug('Wendy Private base64: ${wendy.private_key_base64()} ${wendy
 console.print_debug('Wendy Public base64: ${wendy.public_key_base64()} ${wendy.public_key_base64().len}')
 
 // create 'bob' from a private key, full features will be available
-bob_privhex:= '478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83'
+bob_privhex := '478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83'
 bob := secp256k1.new(privhex: bob_privhex)!
 assert bob.private_key_hex() == bob_privhex
 bob_privbase64 := bob.private_key_base64()
@@ -24,16 +24,14 @@ assert bob2.private_key_hex() == bob_privhex
 
 console.print_debug('Box Private hex: ${bob.private_key_hex()} ${bob.private_key_hex().len}')
 
-
 // create 'alice' from a private key, full features will be available
 alice := secp256k1.new(
 	privhex: '8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec'
 )!
 
-
 console.print_debug('-------\nSHOW HOW TO GET PUBKEY OBJ FROM PUBLICKEY')
-console.print_debug("bob pubkey as input hex: ${bob.public_key_hex()}")
-console.print_debug("bob pubkey as input base64: ${bob.public_key_base64()}")
+console.print_debug('bob pubkey as input hex: ${bob.public_key_hex()}')
+console.print_debug('bob pubkey as input base64: ${bob.public_key_base64()}')
 
 // create 'bobpub' from bob only public key, reduced features available (only sign check, shared keys, etc.)
 bobpub := secp256k1.new(
@@ -47,7 +45,6 @@ alicepub := secp256k1.new(
 
 assert bobpub.public_key_base64() == bob.public_key_base64()
 assert alicepub.public_key_base64() == alice.public_key_base64()
-
 
 console.print_debug('-----\nSHOW HOW SHARED KEYS CAN BE DERIVED')
 
@@ -64,8 +61,7 @@ console.print_debug('bob shared key with alice from pub: ${shr1pub}')
 shr2pub := alice.sharedkeys_hex(bobpub)
 console.print_debug('alice shared key with bob from pub ${shr2pub}')
 
-
-console.print_debug('----- SIGN test' )
+console.print_debug('----- SIGN test')
 
 mut message := 'Hello world, this is my awesome message'
 message += message
@@ -91,7 +87,7 @@ console.print_debug('sign_data_base64: ${signed_base64} ${signed_base64.len}')
 signed_str := alice.sign_str_base64(message)
 console.print_debug('sign_str sign_str_base64:  ${signed_str} ${signed_str.len}')
 
-signedbin := alice.sign_str(message) //binary format
+signedbin := alice.sign_str(message) // binary format
 
 assert signed_str == signed_base64
 

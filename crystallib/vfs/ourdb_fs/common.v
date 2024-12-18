@@ -16,12 +16,12 @@ pub mut:
 	name        string // name of file or directory
 	file_type   FileType
 	size        u64
-	created_at  i64    // unix epoch timestamp
-	modified_at i64    // unix epoch timestamp
-	accessed_at i64    // unix epoch timestamp
-	mode       u32     // file permissions
-	owner      string
-	group      string
+	created_at  i64 // unix epoch timestamp
+	modified_at i64 // unix epoch timestamp
+	accessed_at i64 // unix epoch timestamp
+	mode        u32 // file permissions
+	owner       string
+	group       string
 }
 
 // Get time.Time objects from epochs

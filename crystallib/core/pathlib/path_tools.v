@@ -92,8 +92,8 @@ pub fn (mut path Path) expand(dest string) !Path {
 	} else if path.name().to_lower().ends_with('.bz2') {
 		cmd := '
 			bunzip2 -f -k ${path.path}
-			'
-		// console.print_debug(cmd)
+			' // console.print_debug(cmd)
+
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('Could not expand bz2.\n${res.output}')
@@ -179,14 +179,14 @@ pub fn (path Path) parent() !Path {
 		return error('no parent for path ${path.path}')
 	} else if parent == '' {
 		return Path{
-			path: '/'
-			cat: Category.dir
+			path:  '/'
+			cat:   Category.dir
 			exist: .unknown
 		}
 	}
 	return Path{
-		path: parent
-		cat: Category.dir
+		path:  parent
+		cat:   Category.dir
 		exist: .unknown
 	}
 }
@@ -426,7 +426,7 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 	}
 	p.check()
 
-	if p.cat != .dir && p.cat != .linkdir  {
+	if p.cat != .dir && p.cat != .linkdir {
 		return error('Cannot do path_relative()! if source is not a dir Now:${source_} is ${p.cat}')
 	} else if !p.exists() {
 		return error('Cannot do path_relative()! if source doesnt exist. Now:${source_}')

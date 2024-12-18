@@ -4,9 +4,7 @@ import freeflowuniverse.crystallib.threefold.web3gw.sftpgo
 import flag
 import os
 
-const (
-	default_server_address = 'http://localhost:8080/api/v2'
-)
+const default_server_address = 'http://localhost:8080/api/v2'
 
 fn main() {
 	mut fp := flag.new_flag_parser(os.args)
@@ -19,7 +17,7 @@ fn main() {
 	password := fp.string('password', `p`, '', 'user password')
 
 	args := sftpgo.JWTArgs{
-		address: address
+		address:  address
 		username: username
 		password: password
 	}

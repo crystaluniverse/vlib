@@ -68,13 +68,13 @@ pub fn new(config AuthenticatorConfig) !Authenticator {
 	return Authenticator{
 		identity: identity.new()!
 		// analytics: analytics.new()!
-		access_secret: config.access_secret
-		session: session.new()!
+		access_secret:  config.access_secret
+		session:        session.new()!
 		refresh_secret: config.refresh_secret
 		// backend: new_database_backend()!
-		logger: config.logger
-		email: email.new(
-			smtp: config.smtp
+		logger:     config.logger
+		email:      email.new(
+			smtp:    config.smtp
 			backend: email.new_database_backend()!
 		)!
 		authorizer: config.authorizer

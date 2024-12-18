@@ -7,11 +7,11 @@ pub fn (mut h Web3GWHandler) keys_define(action Action) ! {
 	tfc_network := action.params.get_default('network', 'main')!
 	if tfc_mnemonic != '' {
 		h.clients.tfc_client.load(
-			network: tfc_network
+			network:  tfc_network
 			mnemonic: tfc_mnemonic
 		)!
 		h.clients.tfg_client.load(
-			network: tfc_network
+			network:  tfc_network
 			mnemonic: tfc_mnemonic
 		)!
 	}
@@ -31,7 +31,7 @@ pub fn (mut h Web3GWHandler) keys_define(action Action) ! {
 	eth_secret := action.params.get_default('ethereum_secret', '')!
 	if eth_url != '' || eth_secret != '' {
 		h.clients.eth_client.load(
-			url: eth_url
+			url:    eth_url
 			secret: eth_secret
 		)!
 	}
@@ -41,7 +41,7 @@ pub fn (mut h Web3GWHandler) keys_define(action Action) ! {
 	if str_secret != '' {
 		h.clients.str_client.load(
 			network: str_network
-			secret: str_secret
+			secret:  str_secret
 		)!
 	}
 }

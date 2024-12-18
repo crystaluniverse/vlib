@@ -37,7 +37,7 @@ const textin5 = "
 "
 
 fn test_export_helper1() {
-	params := parse(paramsparser.textin5) or { panic(err) }
+	params := parse(textin5) or { panic(err) }
 
 	// presort []string
 	// args_allowed bool=true
@@ -61,7 +61,7 @@ fn test_export_helper1() {
 }
 
 fn test_export_helper2() {
-	params := parse(paramsparser.textin5) or { panic(err) }
+	params := parse(textin5) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
 
 	assert sha256.hexhash(o.str()) == '0bb7fb65107a69b1a0296dbdd1b0505b178e8bebdb33d2cec307f411b05c6033'
@@ -79,7 +79,7 @@ const textin6 = "
 "
 
 fn test_export_6() {
-	params := parse(paramsparser.textin6) or { panic(err) }
+	params := parse(textin6) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
 
 	paramsout := params.export()
@@ -113,7 +113,7 @@ const textin7 = "
 "
 
 fn test_export_7() {
-	params := parse(paramsparser.textin7) or { panic(err) }
+	params := parse(textin7) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
 	console.print_debug('${o}')
 
@@ -155,7 +155,7 @@ const textin8 = "
 "
 
 fn test_export_8() {
-	params := parse(paramsparser.textin8) or { panic(err) }
+	params := parse(textin8) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
 	console.print_debug('${o}')
 
@@ -200,7 +200,7 @@ const textin9 = "
 "
 
 fn test_export_9() {
-	params := parse(paramsparser.textin9) or { panic(err) }
+	params := parse(textin9) or { panic(err) }
 	o := params.export_helper(oneline: true) or { panic(err) }
 	console.print_debug('${o}')
 
@@ -245,7 +245,7 @@ const textin10 = "
 "
 
 fn test_export_10() {
-	params := parse(paramsparser.textin10) or { panic(err) }
+	params := parse(textin10) or { panic(err) }
 	o := params.export_helper(oneline: false, pre: '!!remark.define') or { panic(err) }
 	console.print_debug('${o}')
 
@@ -283,7 +283,7 @@ fn test_export_text() {
 	params := Params{
 		params: [
 			Param{
-				key: 'text'
+				key:   'text'
 				value: "This content contains the character ' in it"
 			},
 		]

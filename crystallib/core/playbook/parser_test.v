@@ -12,7 +12,7 @@ const text1 = "
 "
 
 fn test_parse_1() {
-	mut a := new(text: playbook.text1) or { panic(err) }
+	mut a := new(text: text1) or { panic(err) }
 
 	assert a.actions.len == 1
 	mut s := a.actions_sorted()!
@@ -34,7 +34,7 @@ fn test_parse_1() {
 }
 
 fn test_parser() {
-	mut pb := new(text: playbook.text1) or { panic(err) }
+	mut pb := new(text: text1) or { panic(err) }
 	mut a := pb.actions[0]
 	assert a.actor == 'payment'
 	assert a.name == 'add'

@@ -6,10 +6,10 @@ import freeflowuniverse.crystallib.crypt.aes_symmetric
 // this is me, my representation
 pub struct MyConfig {
 pub mut:
-	id          u32       @[primary; sql: serial]
-	name        string    @[nonull; unique]
+	id          u32    @[primary; sql: serial]
+	name        string @[nonull; unique]
 	description string
-	config      string    @[skip]    // this is heroscript which holds the initialization content for configuration of anything
+	config      string    @[skip] // this is heroscript which holds the initialization content for configuration of anything
 	keysafe     &KeysSafe @[skip] // allows us to remove ourselves from mem, or go to db
 	config_enc  string
 }
@@ -39,22 +39,22 @@ pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 	exists := ks.myconfig_db_exists(name: args.name)!
 	if exists {
 		return GetError{
-			args: GetArgs{
-				id: 0
+			args:       GetArgs{
+				id:   0
 				name: args_.name
 			}
-			msg: 'myconfig with name: ${args.name} already exist'
+			msg:        'myconfig with name: ${args.name} already exist'
 			error_type: GetErrorType.alreadyexists
 		}
 	}
 
 	config_enc := hex.encode(aes_symmetric.encrypt(args.config.bytes(), ks.secret))
 	myconfig := MyConfig{
-		name: args.name
+		name:        args.name
 		description: args.description
-		config: args.config
-		config_enc: config_enc
-		keysafe: ks
+		config:      args.config
+		config_enc:  config_enc
+		keysafe:     ks
 	}
 
 	sql ks.db {
@@ -80,8 +80,8 @@ pub fn (mut ks KeysSafe) myconfig_get(args GetArgs) !MyConfig {
 		return myconfig
 	}
 	return GetError{
-		args: args
-		msg: "couldn't get myconfig with name: ${args.name}"
+		args:       args
+		msg:        "couldn't get myconfig with name: ${args.name}"
 		error_type: GetErrorType.notfound
 	}
 }

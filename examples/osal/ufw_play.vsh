@@ -35,6 +35,5 @@ heroscript := "
     "
 
 mut plbook := playbook.new(text: heroscript)!
-rs:=ufw.play(mut plbook)!
+rs := ufw.play(mut plbook)!
 println(rs)
-

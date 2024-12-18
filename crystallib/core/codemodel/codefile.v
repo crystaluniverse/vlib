@@ -17,7 +17,7 @@ pub mut:
 pub fn new_file(config CodeFile) CodeFile {
 	return CodeFile{
 		...config
-		mod: texttools.name_fix(config.mod)
+		mod:   texttools.name_fix(config.mod)
 		items: config.items
 	}
 }
@@ -58,7 +58,7 @@ pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
 	}
 
 	mut file := pathlib.get_file(
-		path: filepath.path
+		path:   filepath.path
 		create: true
 	)!
 	file.write('module ${code.mod}\n${imports_str}\n${consts_str}\n${code_str}')!

@@ -19,8 +19,8 @@ pub mut:
 // add one of more name (alpine packages), no need to do update, upgrade first,
 pub fn (mut b DockerBuilderRecipe) add_package(args PackageArgs) ! {
 	mut package := PackageItem{
-		recipe: &b
-		names: args.names
+		recipe:   &b
+		names:    args.names
 		platform: b.platform
 	}
 	if args.name == '' && args.names == [] {

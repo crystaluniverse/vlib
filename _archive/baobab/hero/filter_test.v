@@ -122,7 +122,7 @@ fn test_filter_with_names_list_with_empty_string() ! {
 	// ANSWER: I think yes as you technically want the parser where the name is an empty string
 	mut parser := new(
 		default_cid: 1
-		text: playbook.text2
+		text:        playbook.text2
 	)!
 
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
@@ -137,12 +137,12 @@ fn test_filter_with_names_list_with_empty_string() ! {
 fn test_filter_with_names_in_same_order() ! {
 	mut parser := new(
 		default_cid: 1
-		text: playbook.text2
+		text:        playbook.text2
 	)!
 
 	sorted := parser.filtersort(
-		actor: 'people'
-		circle: 'aaa'
+		actor:        'people'
+		circle:       'aaa'
 		names_filter: [
 			'person_delete',
 			'person_define',
@@ -160,12 +160,12 @@ fn test_filter_with_names_in_same_order() ! {
 fn test_filter_with_names_in_different_order() ! {
 	mut parser := new(
 		default_cid: 1
-		text: playbook.text2
+		text:        playbook.text2
 	)!
 
 	sorted := parser.filtersort(
-		actor: 'people'
-		circle: 'aaa'
+		actor:        'people'
+		circle:       'aaa'
 		names_filter: [
 			'circle_comment',
 			'person_define',
@@ -185,12 +185,12 @@ fn test_filter_with_only_two_names_in_filter() ! {
 	// ANSWER: yes
 	mut parser := new(
 		default_cid: 1
-		text: playbook.text2
+		text:        playbook.text2
 	)!
 
 	sorted := parser.filtersort(
-		actor: 'people'
-		circle: 'aaa'
+		actor:        'people'
+		circle:       'aaa'
 		names_filter: [
 			'person_define',
 			'person_delete',

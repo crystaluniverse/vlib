@@ -8,7 +8,7 @@ import libsodium
 // signkey_bytes is the seed to generate a signing key from which can then generate priv key
 pub struct PrivKey25519 {
 pub:
-	signkey_bytes []u8 // signing key in bytes
+	signkey_bytes []u8                 // signing key in bytes
 	signkey       libsodium.SigningKey // master key (is a signing key)
 	privkey       libsodium.PrivateKey // derivated from master key
 	pubkey        PubKey25519
@@ -30,10 +30,10 @@ pub fn new_private_key_25519() PrivKey25519 {
 	privkey := libsodium.new_private_key_from_signing_ed25519(signkey)
 	pubkey := priv_to_public_key(signkey)
 	return PrivKey25519{
-		signkey: signkey
-		privkey: privkey
+		signkey:       signkey
+		privkey:       privkey
 		signkey_bytes: seed
-		pubkey: pubkey
+		pubkey:        pubkey
 	}
 }
 
@@ -49,7 +49,7 @@ fn priv_to_public_key(priv_sign_key libsodium.SigningKey) PubKey25519 {
 	libsodium.crypto_sign_ed25519_pk_to_curve25519(curve_bytes.data, ed_bytes.data)
 
 	return PubKey25519{
-		ed_bytes: ed_bytes
+		ed_bytes:    ed_bytes
 		curve_bytes: curve_bytes
 	}
 }

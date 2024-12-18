@@ -42,8 +42,8 @@ fn executor_new(args_ ExecutorNewArguments) !Executor {
 		}
 		mut e := ExecutorSSH{
 			ipaddr: ipaddr
-			user: args.user
-			debug: args.debug
+			user:   args.user
+			debug:  args.debug
 		}
 		e.init()!
 		return e

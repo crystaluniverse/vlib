@@ -8,17 +8,16 @@ import os
 
 limainstaller.install()!
 
-mut virtmanager:=lima.new()!
+mut virtmanager := lima.new()!
 
 virtmanager.vm_delete_all()!
 
 // virtmanager.vm_new(reset:true,template:.alpine,name:'alpine',install_crystal:false)!
 
+// virtmanager.vm_new(reset:true,template:.arch,name:'arch',install_crystal:true)!
 
-//virtmanager.vm_new(reset:true,template:.arch,name:'arch',install_crystal:true)!
-
-virtmanager.vm_new(reset:true,template:.ubuntucloud,name:'hero',install_crystal:false)!
-mut vm:=virtmanager.vm_get('hero')!
+virtmanager.vm_new(reset: true, template: .ubuntucloud, name: 'hero', install_crystal: false)!
+mut vm := virtmanager.vm_get('hero')!
 
 println(vm)
 

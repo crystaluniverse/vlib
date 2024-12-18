@@ -21,7 +21,7 @@ pub fn (mut dao DAO) account_get(address string, name string) !&Account {
 	}
 
 	mut account := Account{
-		name: name_
+		name:    name_
 		address: address_
 	}
 

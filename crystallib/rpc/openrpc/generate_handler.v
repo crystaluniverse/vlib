@@ -17,11 +17,11 @@ pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]
 	]
 
 	mut file := CodeFile{
-		name: 'handler'
-		mod: name
+		name:    'handler'
+		mod:     name
 		imports: imports
-		items: jsonrpc.generate_handler(
-			methods: method_map.values()
+		items:   jsonrpc.generate_handler(
+			methods:  method_map.values()
 			receiver: receiver
 		)!
 	}
@@ -59,11 +59,11 @@ pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[st
 			continue
 		}
 		method_handle_test := Function{
-			name: 'test_handle_${method.name}'
+			name:   'test_handle_${method.name}'
 			result: Result{
 				result: true
 			}
-			body: "mut handler := ${receiver.name}Handler {${handler_name}.get(name: actor_name)!}
+			body:   "mut handler := ${receiver.name}Handler {${handler_name}.get(name: actor_name)!}
 		request := new_jsonrpcrequest[${method.params[0].typ.symbol}]('${method.name}', ${get_mock_value(method.params[0].typ.symbol)!})
 		response_json := handler.handle(request.to_json())!"
 		}
@@ -83,10 +83,10 @@ pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[st
 	imports := parse_import('freeflowuniverse.crystallib.rpc.jsonrpc {new_jsonrpcrequest, jsonrpcresponse_decode, jsonrpcerror_decode}')
 
 	mut file := CodeFile{
-		name: 'handler_test'
-		mod: name
+		name:    'handler_test'
+		mod:     name
 		imports: [imports]
-		items: items
+		items:   items
 	}
 
 	for key, object in object_map {

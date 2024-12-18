@@ -20,10 +20,10 @@ pub fn (o OpenRPC) generate_client_file(object_map map[string]Struct) !CodeFile 
 		codemodel.parse_import('log')]
 	code << methods.map(CodeItem(it))
 	mut file := CodeFile{
-		name: 'client'
-		mod: name
+		name:    'client'
+		mod:     name
 		imports: imports
-		items: code
+		items:   code
 	}
 	for key, object in object_map {
 		file.add_import(mod: object.mod, types: [object.name])!
@@ -39,7 +39,7 @@ pub fn (method Method) to_code() !Function {
 		}
 	}
 	return Function{
-		name: texttools.name_fix_pascal_to_snake(method.name)
+		name:   texttools.name_fix_pascal_to_snake(method.name)
 		params: params
 		result: method.result.to_result()!
 	}
@@ -48,7 +48,7 @@ pub fn (method Method) to_code() !Function {
 pub fn (cd ContentDescriptor) to_code() !codemodel.Param {
 	return codemodel.Param{
 		name: cd.name
-		typ: cd.schema.to_code()!
+		typ:  cd.schema.to_code()!
 	}
 }
 
@@ -56,7 +56,7 @@ pub fn (cd ContentDescriptorRef) to_result() !codemodel.Result {
 	if cd is ContentDescriptor {
 		return codemodel.Result{
 			name: cd.name
-			typ: cd.schema.to_code()!
+			typ:  cd.schema.to_code()!
 		}
 	}
 	return codemodel.Result{}
@@ -85,14 +85,14 @@ pub fn (o OpenRPC) generate_client_test_file(methods_map map[string]Function, ob
 		code << func
 	}
 	mut file := CodeFile{
-		name: 'client_test'
-		mod: name
+		name:    'client_test'
+		mod:     name
 		imports: [
 			codemodel.parse_import('freeflowuniverse.crystallib.rpc.jsonrpc'),
 			codemodel.parse_import('freeflowuniverse.crystallib.rpc.rpcwebsocket'),
 			codemodel.parse_import('log'),
 		]
-		items: code
+		items:   code
 	}
 
 	for key, object in object_map {

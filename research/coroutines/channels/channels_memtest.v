@@ -3,12 +3,10 @@ module main
 import coroutines
 import time
 
-pub struct TestStruct{
+pub struct TestStruct {
 pub mut:
 	mycounter int
 }
-
-
 
 fn monitor(ch chan string, counter int, mut t &TestStruct) {
 	t.mycounter += 1
@@ -17,17 +15,15 @@ fn monitor(ch chan string, counter int, mut t &TestStruct) {
 	println(t)
 }
 
-
-
 fn main() {
 	ch1 := chan string{}
 	ch2 := chan string{}
 
-	mut t:=TestStruct{}
-	mut c:=0
-	for i in 0..1000 {
+	mut t := TestStruct{}
+	mut c := 0
+	for i in 0 .. 1000 {
 		c++
-		go monitor(ch2,c,mut &t)
+		go monitor(ch2, c, mut &t)
 	}
 
 	coroutines.sleep(4000 * time.second)

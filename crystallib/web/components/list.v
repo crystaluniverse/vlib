@@ -5,41 +5,41 @@ import net.html
 // Define HTML element structs implementing the IComponent interface
 pub struct Anchor {
 pub:
-    href string
-    content string
+	href    string
+	content string
 }
 
 pub struct Paragraph {
 pub:
-    content string
+	content string
 }
 
 pub struct ListItem {
-    children []IComponent
+	children []IComponent
 }
 
 pub struct UnorderedList {
-    children []IComponent
+	children []IComponent
 }
 
 // Implement html() for Anchor
 fn (a Anchor) html() string {
-    return '<a href="${a.href}">${a.content}</a>'
+	return '<a href="${a.href}">${a.content}</a>'
 }
 
 // Implement html() for Paragraph
 fn (p Paragraph) html() string {
-    return '<p>${p.content}</p>'
+	return '<p>${p.content}</p>'
 }
 
 // Implement html() for ListItem
 fn (li ListItem) html() string {
-    mut result := '<li>'
-    for child in li.children {
-        result += child.html() // Call the html() method of each child
-    }
-    result += '</li>'
-    return result
+	mut result := '<li>'
+	for child in li.children {
+		result += child.html() // Call the html() method of each child
+	}
+	result += '</li>'
+	return result
 }
 
 // // Implement html() for UnorderedList
@@ -107,10 +107,10 @@ fn (li ListItem) html() string {
 //     mut components := []IComponent{}
 
 //     doc := html.parse(html_str)
-    
+
 //     for tag in doc.get_tags() {
 //         components << parse_html_tag(tag)!
 //     }
-    
+
 //     return components
 // }

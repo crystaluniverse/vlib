@@ -124,8 +124,8 @@ pub fn (mut d Deployment) add_signature(twin u32, signature string) {
 	}
 
 	d.signature_requirement.signatures << Signature{
-		twin_id: twin
-		signature: signature
+		twin_id:        twin
+		signature:      signature
 		signature_type: 'sr25519'
 	}
 }
@@ -152,13 +152,13 @@ pub fn (dl Deployment) count_public_ips() u8 {
 
 pub fn new_deployment(args DeploymentArgs) Deployment {
 	return Deployment{
-		version: args.version or { 0 }
-		twin_id: args.twin_id
-		contract_id: args.contract_id
-		expiration: args.expiration or { 0 }
-		metadata: args.metadata.json_encode()
-		description: args.description or { '' }
-		workloads: args.workloads
+		version:               args.version or { 0 }
+		twin_id:               args.twin_id
+		contract_id:           args.contract_id
+		expiration:            args.expiration or { 0 }
+		metadata:              args.metadata.json_encode()
+		description:           args.description or { '' }
+		workloads:             args.workloads
 		signature_requirement: args.signature_requirement
 	}
 }
@@ -176,9 +176,9 @@ pub fn (data DeploymentData) json_encode() string {
 
 pub fn (mut dl Deployment) add_metadata(type_ string, project_name string) {
 	mut data := DeploymentData{
-		type_: type_
-		name: project_name
-		project_name: "${type_}/${project_name}" // To be listed in the dashboard.
+		type_:        type_
+		name:         project_name
+		project_name: '${type_}/${project_name}' // To be listed in the dashboard.
 	}
 	dl.metadata = data.json_encode()
 }

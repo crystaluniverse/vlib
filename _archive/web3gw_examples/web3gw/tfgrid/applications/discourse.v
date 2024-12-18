@@ -7,9 +7,7 @@ import flag { FlagParser }
 import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_discourse(mut fp FlagParser, mut t TFGridClient) !DiscourseResult {
 	fp.usage_example('deploy [options]')
@@ -30,18 +28,18 @@ fn deploy_discourse(mut fp FlagParser, mut t TFGridClient) !DiscourseResult {
 
 	mut discourse_client := t.applications().discourse()
 	return discourse_client.deploy(
-		name: name
-		farm_id: u32(farm_id)
-		capacity: capacity
-		disk_size: u32(disk_size)
-		ssh_key: ssh_key
+		name:            name
+		farm_id:         u32(farm_id)
+		capacity:        capacity
+		disk_size:       u32(disk_size)
+		ssh_key:         ssh_key
 		developer_email: developer_email
-		smtp_address: smtp_address
-		smtp_username: smtp_username
-		smtp_password: smtp_password
+		smtp_address:    smtp_address
+		smtp_username:   smtp_username
+		smtp_password:   smtp_password
 		smtp_enable_tls: smtp_enable_tls
-		smtp_port: u32(smtp_port)
-		public_ipv6: public_ipv6
+		smtp_port:       u32(smtp_port)
+		public_ipv6:     public_ipv6
 	)!
 }
 
@@ -102,7 +100,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Credentials{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

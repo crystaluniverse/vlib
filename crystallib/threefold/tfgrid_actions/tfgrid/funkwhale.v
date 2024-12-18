@@ -16,11 +16,11 @@ fn (mut t TFGridHandler) funkwhale(action Action) ! {
 			admin_password := action.params.get_default('admin_password', '')!
 
 			deploy_res := t.tfgrid.deploy_funkwhale(
-				name: name
-				farm_id: u64(farm_id)
-				capacity: capacity
-				ssh_key: ssh_key
-				admin_email: admin_email
+				name:           name
+				farm_id:        u64(farm_id)
+				capacity:       capacity
+				ssh_key:        ssh_key
+				admin_email:    admin_email
 				admin_username: admin_username
 				admin_password: admin_password
 			)!

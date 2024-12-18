@@ -28,9 +28,9 @@ pub fn new(args NewSimulatorArgs) !Simulator {
 	mut it := investortool.play(mut plbook)!
 
 	return Simulator{
-		name: args.name
-		it: it
-		user_views: map[string][]&investortool.User{}
+		name:           args.name
+		it:             it
+		user_views:     map[string][]&investortool.User{}
 		investor_views: map[string][]&investortool.Investor{}
 	}
 }

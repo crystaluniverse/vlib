@@ -5,12 +5,12 @@ module texttools
 // check also splitsmart which is more intelligent
 pub fn to_array(r string) []string {
 	mut res := []string{}
-	mut r2 := texttools.dedent(r)
+	mut r2 := dedent(r)
 	r2 = r2.replace(',', '\n')
 
 	for mut line in r2.split_into_lines() {
 		line = line.trim_space()
-		if line.trim("'\"") == '' {
+		if line.trim('\'"') == '' {
 			continue
 		}
 		res << line.trim("'")

@@ -31,7 +31,7 @@ pub mut:
 	updated         time.Time
 	weight          int
 	draft           bool
-	slug            string              @[omitempty]
+	slug            string @[omitempty]
 	path            string
 	aliases         []string
 	authors         []string
@@ -57,19 +57,19 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 	mut page := site.tree.page_get('${args.collection}:${args.file}') or { return err }
 
 	pages_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/pages'
+		path:   '${site.path_build.path}/pages'
 		create: true
 	)!
 	collection_file := pathlib.get_file(
-		path: '${site.path_build.path}/pages/.collection'
+		path:   '${site.path_build.path}/pages/.collection'
 		create: true
 	)!
 
 	mut zola_page := new_page(
-		name: args.name
+		name:     args.name
 		homepage: args.homepage
 		template: args.template
-		Page: page
+		Page:     page
 	)!
 
 	front_matter := zola_page.PageFrontMatter.markdown()

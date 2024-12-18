@@ -21,7 +21,7 @@ pub:
 }
 
 pub fn new(args HTTPConnectionArgs) !&HTTPConnection {
-	mut f := httpconnection.factory
+	mut f := factory
 
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
@@ -33,14 +33,14 @@ pub fn new(args HTTPConnectionArgs) !&HTTPConnection {
 
 	// Init connection
 	mut conn := HTTPConnection{
-		redis: redisclient.core_get(RedisURL{})!
+		redis:          redisclient.core_get(RedisURL{})!
 		default_header: header
-		cache: CacheConfig{
+		cache:          CacheConfig{
 			disable: !args.cache
-			key: args.name
+			key:     args.name
 		}
-		retry: args.retry
-		base_url: args.url.trim('/')
+		retry:          args.retry
+		base_url:       args.url.trim('/')
 	}
 
 	// Store new connection
@@ -53,7 +53,7 @@ pub fn new(args HTTPConnectionArgs) !&HTTPConnection {
 }
 
 pub fn get(name string) !&HTTPConnection {
-	mut f := httpconnection.factory
+	mut f := factory
 	mut r := f.connections[name] or {
 		return error('cannot find httpconnection with name ${name} .')
 	}

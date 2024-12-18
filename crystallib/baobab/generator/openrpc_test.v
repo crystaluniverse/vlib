@@ -8,11 +8,11 @@ pub fn test_generate_openrpc() ! {
 		methods: [
 			ActorMethod{
 				func: Function{
-					name: 'get_object'
+					name:   'get_object'
 					params: [
 						Param{
 							name: 'id'
-							typ: Type{
+							typ:  Type{
 								symbol: 'int'
 							}
 						},

@@ -67,7 +67,7 @@ pub fn (mut cl ZeroHubClient) get_me() !json2.Any {
 	req := http.Request{
 		method: http.Method.get
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me'
+		url:    'https://${cl.url}/api/flist/me'
 	}
 
 	resp := req.do()!
@@ -78,7 +78,7 @@ pub fn (mut cl ZeroHubClient) get_my_flist(flist string) !FlistContents {
 	req := http.Request{
 		method: http.Method.get
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me/${flist}'
+		url:    'https://${cl.url}/api/flist/me/${flist}'
 	}
 
 	resp := req.do()!
@@ -90,7 +90,7 @@ pub fn (mut cl ZeroHubClient) remove_my_flist(flist string) !json2.Any {
 	req := http.Request{
 		method: http.Method.delete
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me/${flist}'
+		url:    'https://${cl.url}/api/flist/me/${flist}'
 	}
 
 	resp := req.do()!
@@ -101,7 +101,7 @@ pub fn (mut cl ZeroHubClient) symlink(source string, linkname string) !string {
 	req := http.Request{
 		method: http.Method.get
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me/${source}/link/${linkname}'
+		url:    'https://${cl.url}/api/flist/me/${source}/link/${linkname}'
 	}
 	resp := req.do()!
 	return resp.body
@@ -111,7 +111,7 @@ pub fn (mut cl ZeroHubClient) cross_symlink(repo string, source string, linkname
 	req := http.Request{
 		method: http.Method.get
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me/${linkname}/crosslink/${repo}/${source}'
+		url:    'https://${cl.url}/api/flist/me/${linkname}/crosslink/${repo}/${source}'
 	}
 	resp := req.do()!
 	return resp.body
@@ -121,7 +121,7 @@ pub fn (mut cl ZeroHubClient) rename(source string, dest string) !string {
 	req := http.Request{
 		method: http.Method.get
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me/${source}/rename/${dest}'
+		url:    'https://${cl.url}/api/flist/me/${source}/rename/${dest}'
 	}
 	resp := req.do()!
 	return resp.body
@@ -132,7 +132,7 @@ pub fn (mut cl ZeroHubClient) promote(source_repo string, source_name string, lo
 	req := http.Request{
 		method: http.Method.get
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me/promote/${source_repo}/${source_name}/${localname}'
+		url:    'https://${cl.url}/api/flist/me/promote/${source_repo}/${source_name}/${localname}'
 	}
 	resp := req.do()!
 	return resp.body
@@ -140,7 +140,7 @@ pub fn (mut cl ZeroHubClient) promote(source_repo string, source_name string, lo
 
 pub fn (mut cl ZeroHubClient) convert(image string) !string {
 	form := http.PostMultipartFormConfig{
-		form: {
+		form:   {
 			'image': image
 		}
 		header: cl.header
@@ -154,8 +154,8 @@ pub fn (mut cl ZeroHubClient) merge_flists(flists []string, target string) !stri
 	req := http.Request{
 		method: http.Method.post
 		header: cl.header
-		url: 'https://${cl.url}/api/flist/me/merge/${target}'
-		data: json.encode(flists)
+		url:    'https://${cl.url}/api/flist/me/merge/${target}'
+		data:   json.encode(flists)
 	}
 	resp := req.do()!
 	return resp.body

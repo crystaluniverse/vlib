@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.core.pathlib
 const doc_path = '${os.dir(@FILE)}/testdata/openrpc.json'
 
 fn test_generate_model() ! {
-	mut doc_file := pathlib.get_file(path: openrpc.doc_path)!
+	mut doc_file := pathlib.get_file(path: doc_path)!
 	content := doc_file.read()!
 	object := decode(content)!
 	model := object.generate_model()!

@@ -21,15 +21,15 @@ pub mut:
 	namefilter    []string // only include the exact names as secified for the rows
 	includefilter []string // to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
 	excludefilter []string
-	period_type   PeriodType       // year, month, quarter
-	aggregate     bool = true // if more than 1 row matches should we aggregate or not
+	period_type   PeriodType // year, month, quarter
+	aggregate     bool             = true // if more than 1 row matches should we aggregate or not
 	aggregatetype RowAggregateType = .sum // important if used with include/exclude, because then we group
 	unit          UnitType
 	title         string
 	title_sub     string
 	size          string
 	rowname_show  bool = true // show the name of the row
-	descr_show bool
+	descr_show    bool
 	description   string
 }
 
@@ -122,16 +122,16 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 
 	if args.period_type == .year {
 		s2 = s.toyear(
-			name: args.rowname
-			namefilter: args.namefilter
+			name:          args.rowname
+			namefilter:    args.namefilter
 			includefilter: args.includefilter
 			excludefilter: args.excludefilter
 		)!
 	}
 	if args.period_type == .quarter {
 		s2 = s.toquarter(
-			name: args.rowname
-			namefilter: args.namefilter
+			name:          args.rowname
+			namefilter:    args.namefilter
 			includefilter: args.includefilter
 			excludefilter: args.excludefilter
 		)!
@@ -175,7 +175,7 @@ pub fn (mut s Sheet) filter(args RowGetArgs) !&Sheet {
 	}
 
 	tga := ToYearQuarterArgs{
-		namefilter: args.namefilter
+		namefilter:    args.namefilter
 		includefilter: args.includefilter
 		excludefilter: args.excludefilter
 		period_months: period_months

@@ -18,7 +18,7 @@ mut z := zinit.new()!
 
 p := z.process_new(
 	name: 'test'
-	cmd: '/bin/bash'
+	cmd:  '/bin/bash'
 )!
 
 println(p)

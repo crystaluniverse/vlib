@@ -10,8 +10,8 @@ fn test_configure() {
 	instance := 'test_instance'
 	cfg := Config{
 		homedir: '/tmp/caddy'
-		reset: false
-		file: CaddyFile{}
+		reset:   false
+		file:    CaddyFile{}
 	}
 
 	// Ensure the Caddyfile does not exist initially
@@ -31,8 +31,8 @@ fn test_get() {
 	instance := 'test_instance'
 	mut cfg := Config{
 		homedir: '/tmp/caddy'
-		reset: false
-		file: CaddyFile{}
+		reset:   false
+		file:    CaddyFile{}
 	}
 
 	mut caddy_instance := configure(instance, cfg) or {

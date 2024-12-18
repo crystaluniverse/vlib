@@ -11,7 +11,7 @@ pub mut:
 	rows     map[string]&Row
 	nrcol    int = 60
 	params   SheetParams
-	currency currency.Currency = currency.get("USD")!
+	currency currency.Currency = currency.get('USD')!
 }
 
 pub struct SheetParams {
@@ -83,10 +83,10 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 		return error('name cannot be empty')
 	}
 	mut rowout := s.row_new(
-		name: name
-		tags: args.tags
-		descr: args.descr
-		subgroup: args.subgroup
+		name:          name
+		tags:          args.tags
+		descr:         args.descr
+		subgroup:      args.subgroup
 		aggregatetype: args.aggregatetype
 	)!
 	for _, row in s.rows {
@@ -132,19 +132,19 @@ pub fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
 		panic('is bug, can only be 4 or 12')
 	}
 	mut sheet_out := sheet_new(
-		name: sheetname
-		nrcol: nrcol_new
+		name:          sheetname
+		nrcol:         nrcol_new
 		visualize_cur: s.params.visualize_cur
-		curr: s.currency.name
+		curr:          s.currency.name
 	)!
 	for _, row in s.rows {
 		// QUESTION: how to parse period_months
 		ok := row.filter(
-			rowname: args.name
-			namefilter: args.namefilter
+			rowname:       args.name
+			namefilter:    args.namefilter
 			includefilter: args.includefilter
 			excludefilter: args.excludefilter
-			period_type: .month
+			period_type:   .month
 		)!
 		// console.print_debug("process row in to smaller: ${row.name}, result ${ok}")
 		if ok == false {
@@ -152,11 +152,11 @@ pub fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
 		}
 		// means filter not specified or filtered
 		mut rnew := sheet_out.row_new(
-			name: row.name
+			name:          row.name
 			aggregatetype: row.aggregatetype
-			tags: row.tags
-			growth: '0:0.0'
-			descr: row.description
+			tags:          row.tags
+			growth:        '0:0.0'
+			descr:         row.description
 		)!
 		for x in 0 .. nrcol_new {
 			mut newval := 0.0
@@ -284,7 +284,6 @@ pub fn (mut s Sheet) cell_get(row string, col int) !&Cell {
 	}
 	return &c
 }
-
 
 // find row, report error if not found
 pub fn (mut s Sheet) delete(name string) {

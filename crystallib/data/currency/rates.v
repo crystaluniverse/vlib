@@ -39,11 +39,11 @@ struct ResponseBody {
 // - an array of crypto codes e.g ['TERRA']
 // e.g.
 pub fn rates_get(cur_array []string, crypto bool) ! {
-	panic("not implemented,api changed")
+	panic('not implemented,api changed')
 	// http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 	mut conn := httpconnection.new(
-		name: 'example'
-		url: 'https://api.apilayer.com/exchangerates_data/'
+		name:  'example'
+		url:   'https://api.apilayer.com/exchangerates_data/'
 		cache: true
 	)!
 	// do the cache on the connection
@@ -64,7 +64,7 @@ pub fn rates_get(cur_array []string, crypto bool) ! {
 	println(decoded.rates)
 	for key, rate in decoded.rates {
 		c := Currency{
-			name: key.to_upper()
+			name:   key.to_upper()
 			usdval: 1 / rate
 		}
 		lock {
@@ -72,6 +72,3 @@ pub fn rates_get(cur_array []string, crypto bool) ! {
 		}
 	}
 }
-
-
-

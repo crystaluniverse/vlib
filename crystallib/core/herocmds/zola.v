@@ -10,9 +10,9 @@ import freeflowuniverse.crystallib.ui.console
 // coderoot string //the location of coderoot if its another one
 pub fn cmd_zola(mut cmdroot Command) {
 	mut cmd_zola := Command{
-		name: 'zola'
-		description: 'cool web publishing tool.'
-		usage: '
+		name:          'zola'
+		description:   'cool web publishing tool.'
+		usage:         '
 ## Manage your zolas
 
 example:
@@ -24,15 +24,15 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 
 		'
 		required_args: 0
-		execute: cmd_zola_execute
+		execute:       cmd_zola_execute
 	}
 
 	cmd_run_add_flags(mut cmd_zola)
 
 	cmd_zola.add_flag(Flag{
-		flag: .string
-		name: 'name'
-		abbrev: 'n'
+		flag:        .string
+		name:        'name'
+		abbrev:      'n'
 		description: 'name of the zola.'
 	})
 
@@ -44,10 +44,10 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 	// })
 
 	cmd_zola.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'open'
-		abbrev: 'o'
+		flag:        .bool
+		required:    false
+		name:        'open'
+		abbrev:      'o'
 		description: 'will open the generated site.'
 	})
 

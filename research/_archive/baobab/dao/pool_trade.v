@@ -37,7 +37,7 @@ pub fn (mut dao DAO) trade_info(args PoolTradeArgs) !TradeInfo {
 	mut r := dao.pools_wallet_get(args.account, args.currency, true)!
 
 	return TradeInfo{
-		currency: r.poolcur.currency
+		currency:       r.poolcur.currency
 		tokenprice_usd: r.poolcur.usdprice_buy
 		orderprice_usd: args.amount / r.poolcur.usdprice_buy
 	}

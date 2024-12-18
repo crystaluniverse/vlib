@@ -39,7 +39,7 @@ pub fn install_node_exporter(args_ InstallArgs) ! {
 		}
 
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 9000
 			expand_dir: '/tmp/prometheus'
 		)!

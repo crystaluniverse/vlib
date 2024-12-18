@@ -7,4 +7,3 @@ mut engine := docker.new()!
 engine.reset_all()!
 
 println(engine)
-

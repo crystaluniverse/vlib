@@ -10,7 +10,7 @@ import freeflowuniverse.crystallib.installers.sysadmintools.restic as resticinst
 import freeflowuniverse.crystallib.installers.sysadmintools.rclone as rcloneinstaller
 import freeflowuniverse.crystallib.installers.virt.podman as podmaninstaller
 
-mut reset:=false
+mut reset := false
 
 // reset=true
 
@@ -21,4 +21,4 @@ mut reset:=false
 // goinstaller.install(reset:reset)!
 // resticinstaller.install(reset:reset)!
 // rcloneinstaller.install(reset:reset)!
-podmaninstaller.install(reset:reset)!
+podmaninstaller.install(reset: reset)!

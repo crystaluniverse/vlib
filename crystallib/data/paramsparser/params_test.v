@@ -63,25 +63,25 @@ const textin3 = '
 '
 
 fn test_hexhash() {
-	mut params := parse(paramsparser.textin2)!
+	mut params := parse(textin2)!
 	console.print_debug('${params}')
 	h := params.hexhash()
 	assert h == 'fca5c320391e7a91ec91999b1b3d66bf5cb7658905284c431777ff6d2fa4a4c3'
 }
 
 fn test_textin3() {
-	params := parse(paramsparser.textin3) or { panic(err) }
+	params := parse(textin3) or { panic(err) }
 	assert params == Params{
-		params: [Param{
-			key: 'id'
-			value: 'a1'
+		params:   [Param{
+			key:     'id'
+			value:   'a1'
 			comment: 'comment 2'
 		}, Param{
-			key: 'name6'
-			value: 'aaaaa'
+			key:     'name6'
+			value:   'aaaaa'
 			comment: ''
 		}]
-		args: ['zz']
+		args:     ['zz']
 		comments: ['comment 1']
 	}
 }
@@ -92,16 +92,16 @@ fn test_macro_args() {
 
 	expexted_res := Params{
 		params: [Param{
-			key: 'color'
+			key:   'color'
 			value: 'red'
 		}, Param{
-			key: 'priority'
+			key:   'priority'
 			value: 'incredible'
 		}, Param{
-			key: 'description'
+			key:   'description'
 			value: 'with spaces, lets see if ok'
 		}]
-		args: ['arg1', 'arg2']
+		args:   ['arg1', 'arg2']
 	}
 
 	assert expexted_res == params

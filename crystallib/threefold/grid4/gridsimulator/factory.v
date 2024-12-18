@@ -44,8 +44,8 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 	// mut cs := currency.new()
 	mut sh := spreadsheet.sheet_new(name: 'tfgridsim_${args.name}')!
 	mut sim := Simulator{
-		name: args.name
-		sheet: sh
+		name:   args.name
+		sheet:  sh
 		params: args
 		// currencies: cs
 	}
@@ -53,9 +53,9 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 	if args.git_url.len > 0 {
 		mut gs := gittools.new()!
 		mut repo := gs.get_repo(
-			url: args.git_url
-			pull: args.git_pull
-			reset: args.git_reset
+			url:    args.git_url
+			pull:   args.git_pull
+			reset:  args.git_reset
 			reload: false
 		)!
 

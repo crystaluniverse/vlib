@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 pub fn play_ufw(mut plbook playbook.PlayBook) !RuleSet {
 	mut ufw_status := UFWStatus{
 		active: false
-		rules: []
+		rules:  []
 	}
 
 	mut ruleset := RuleSet{}
@@ -29,11 +29,11 @@ pub fn play_ufw(mut plbook playbook.PlayBook) !RuleSet {
 			'ufw.add_rule' {
 				mut rule := Rule{
 					allow: p.get_default_true('allow')!
-					port: p.get_int('port')!
-					from: p.get_default('from', 'any')!
-					tcp: p.get_default_true('tcp')!
-					udp: p.get_default('udp', false)!
-					ipv6: p.get_default('ipv6', false)!
+					port:  p.get_int('port')!
+					from:  p.get_default('from', 'any')!
+					tcp:   p.get_default_true('tcp')!
+					udp:   p.get_default('udp', false)!
+					ipv6:  p.get_default('ipv6', false)!
 				}
 				ruleset.rules << rule
 			}

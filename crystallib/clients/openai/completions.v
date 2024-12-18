@@ -57,7 +57,7 @@ pub fn (mut f OpenAIClient[Config]) chat_completion(model_type ModelType, msgs M
 	}
 	for msg in msgs.messages {
 		mr := MessageRaw{
-			role: roletype_str(msg.role)
+			role:    roletype_str(msg.role)
 			content: msg.content
 		}
 		m.messages << mr

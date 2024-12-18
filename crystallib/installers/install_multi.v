@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.installers.develapps.vscode
 import freeflowuniverse.crystallib.installers.develapps.chrome
 import freeflowuniverse.crystallib.installers.virt.podman as podman_installer
 import freeflowuniverse.crystallib.installers.virt.buildah as buildah_installer
-
 import freeflowuniverse.crystallib.installers.virt.lima
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.core.texttools
@@ -104,8 +103,8 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'crystal' {
 				crystallib.install(
-					reset: args.reset
-					git_pull: args.gitpull
+					reset:     args.reset
+					git_pull:  args.gitpull
 					git_reset: args.gitreset
 				)!
 			}
@@ -113,7 +112,7 @@ pub fn install_multi(args_ InstallArgs) ! {
 				crystallib.hero_install(reset: args.reset)!
 			}
 			'caddy' {
-				//caddy.install(reset: args.reset)!
+				// caddy.install(reset: args.reset)!
 				// caddy.configure_examples()!
 			}
 			'chrome' {
@@ -133,12 +132,12 @@ pub fn install_multi(args_ InstallArgs) ! {
 				lima.install(reset: args.reset, uninstall: args.uninstall)!
 			}
 			'herocontainers' {
-				mut podman_installer0:= podman_installer.get()!
-				mut buildah_installer0:= buildah_installer.get()!
+				mut podman_installer0 := podman_installer.get()!
+				mut buildah_installer0 := buildah_installer.get()!
 
-				if args.reset{
-					podman_installer0.destroy()! //will remove all
-					buildah_installer0.destroy()! //will remove all
+				if args.reset {
+					podman_installer0.destroy()! // will remove all
+					buildah_installer0.destroy()! // will remove all
 				}
 				podman_installer0.install()!
 				buildah_installer0.install()!
@@ -173,16 +172,16 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'zola' {
 				mut i2 := zola.get()!
-				i2.install()!				//will also install tailwind
+				i2.install()! // will also install tailwind
 			}
 			'tailwind' {
 				mut i := tailwind.get()!
 				i.install()!
-			}	
+			}
 			'zinit' {
 				mut i := zinit.get()!
 				i.install()!
-			}									
+			}
 			else {
 				return error('cannot find installer for: ${item}')
 			}

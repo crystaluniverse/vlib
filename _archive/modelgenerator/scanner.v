@@ -14,7 +14,7 @@ fn new(path_in string, path_out string) !CodeGenerator {
 	mut path_in2 := pathlib.get_dir(path_in, false)!
 	mut path_out2 := pathlib.get_dir(path_out, true)!
 	return CodeGenerator{
-		path_in: path_in2
+		path_in:  path_in2
 		path_out: path_out2
 	}
 }

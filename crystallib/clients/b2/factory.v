@@ -55,8 +55,8 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 		instance := p.get_default('instance', 'default')!
 		// cfg.keyname = p.get('keyname')!
 		mut cl := get(instance,
-			keyid: p.get('keyid')!
-			appkey: p.get('appkey')!
+			keyid:      p.get('keyid')!
+			appkey:     p.get('appkey')!
 			bucketname: p.get('bucketname')!
 		)!
 	}
@@ -72,19 +72,19 @@ pub fn (mut self B2Client[Config]) config_interactive() ! {
 
 	self.instance = myui.ask_question(
 		question: 'name for B2 (backblaze) client'
-		default: self.instance
+		default:  self.instance
 	)!
 
 	cfg.keyid = myui.ask_question(
 		question: 'keyid e.g. 003e2a7be6357fb0000000001'
-		minlen: 5
-		default: cfg.keyid
+		minlen:   5
+		default:  cfg.keyid
 	)!
 
 	cfg.appkey = myui.ask_question(
 		question: 'appkey e.g. K008UsdrYOAou2ulBHA8p4KBe/dL2n4'
-		minlen: 5
-		default: cfg.appkey
+		minlen:   5
+		default:  cfg.appkey
 	)!
 
 	buckets := self.list_buckets()!
@@ -92,7 +92,7 @@ pub fn (mut self B2Client[Config]) config_interactive() ! {
 
 	cfg.bucketname = myui.ask_dropdown(
 		question: 'choose default bucket name'
-		items: bucket_names
+		items:    bucket_names
 	)!
 
 	self.config_save()!

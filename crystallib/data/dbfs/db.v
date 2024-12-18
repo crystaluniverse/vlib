@@ -146,7 +146,7 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 		args.id = db.parent.incr()!
 		pathsrc = db.path_get(args.id)!
 	}
-	console.print_debug("keydb ${pathsrc}")
+	console.print_debug('keydb ${pathsrc}')
 	if db.config.encrypted {
 		args.valueb = aes_symmetric.encrypt(args.valueb, db.secret()!)
 		pathsrc.write(base64.encode(args.valueb))!
@@ -166,7 +166,7 @@ fn (mut db DB) path_get(myid u32) !pathlib.Path {
 		destname += '.${db.config.ext}'
 	}
 	mut mydatafile := pathlib.get_file(
-		path: '${db.path.path}/${a}/${b}/${destname}'
+		path:   '${db.path.path}/${a}/${b}/${destname}'
 		create: false
 	)!
 	return mydatafile

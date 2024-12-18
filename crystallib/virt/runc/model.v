@@ -1,62 +1,62 @@
 module runc
 
 struct LinuxNamespace {
-    typ string
-    path string
+	typ  string
+	path string
 }
 
 struct LinuxIDMapping {
-    container_id u32
-    host_id u32
-    size u32
+	container_id u32
+	host_id      u32
+	size         u32
 }
 
 struct LinuxResource {
-    blkio_weight           u16
-    blkio_weight_device    []string
-    blkio_throttle_read_bps_device []string
-    blkio_throttle_write_bps_device []string
-    blkio_throttle_read_iops_device []string
-    blkio_throttle_write_iops_device []string
-    cpu_period             u64
-    cpu_quota              i64
-    cpu_shares             u64
-    cpuset_cpus            string
-    cpuset_mems            string
-    devices                []string
-    memory_limit           u64
-    memory_reservation     u64
-    memory_swap_limit      u64
-    memory_kernel_limit    u64
-    memory_swappiness      i64
-    pids_limit             i64
+	blkio_weight                     u16
+	blkio_weight_device              []string
+	blkio_throttle_read_bps_device   []string
+	blkio_throttle_write_bps_device  []string
+	blkio_throttle_read_iops_device  []string
+	blkio_throttle_write_iops_device []string
+	cpu_period                       u64
+	cpu_quota                        i64
+	cpu_shares                       u64
+	cpuset_cpus                      string
+	cpuset_mems                      string
+	devices                          []string
+	memory_limit                     u64
+	memory_reservation               u64
+	memory_swap_limit                u64
+	memory_kernel_limit              u64
+	memory_swappiness                i64
+	pids_limit                       i64
 }
 
 struct LinuxDevice {
-    typ string
-    major int
-    minor int
-    permissions string
-    file_mode u32
-    uid u32
-    gid u32
+	typ         string
+	major       int
+	minor       int
+	permissions string
+	file_mode   u32
+	uid         u32
+	gid         u32
 }
 
 struct Hooks {
-    prestart []string
-    poststart []string
-    poststop []string
+	prestart  []string
+	poststart []string
+	poststop  []string
 }
 
-//see https://github.com/opencontainers/runtime-spec/blob/main/config.md#process
+// see https://github.com/opencontainers/runtime-spec/blob/main/config.md#process
 struct Process {
-    terminal bool
-    user User
-    args []string
-    env []string //do as dict
-    cwd string
-    capabilities Capabilities
-    rlimits []Rlimit
+	terminal     bool
+	user         User
+	args         []string
+	env          []string // do as dict
+	cwd          string
+	capabilities Capabilities
+	rlimits      []Rlimit
 }
 
 // Enum for Rlimit types
@@ -86,33 +86,32 @@ struct Rlimit {
 	soft u64
 }
 
-
 struct User {
-    uid u32
-    gid u32
-    additional_gids []u32
+	uid             u32
+	gid             u32
+	additional_gids []u32
 }
 
 struct Root {
-    path string
-    readonly bool
+	path     string
+	readonly bool
 }
 
 struct Linux {
-    namespaces []LinuxNamespace
-    resources LinuxResource
-    devices []LinuxDevice
+	namespaces []LinuxNamespace
+	resources  LinuxResource
+	devices    []LinuxDevice
 }
 
 struct Spec {
-    version string
-    platform Platform
-    process Process
-    root Root
-    hostname string
-    mounts []Mount
-    linux Linux
-    hooks Hooks
+	version  string
+	platform Platform
+	process  Process
+	root     Root
+	hostname string
+	mounts   []Mount
+	linux    Linux
+	hooks    Hooks
 }
 
 // Enum for supported operating systems
@@ -214,9 +213,9 @@ enum Capability {
 }
 
 struct Capabilities {
-	bounding     []Capability
-	effective    []Capability
-	inheritable  []Capability
-	permitted    []Capability
-	ambient      []Capability
+	bounding    []Capability
+	effective   []Capability
+	inheritable []Capability
+	permitted   []Capability
+	ambient     []Capability
 }

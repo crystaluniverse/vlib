@@ -23,7 +23,7 @@ pub struct Role {
 }
 
 pub struct Asset {
-	id          string               @[primary]
+	id          string @[primary]
 	permissions int
 	acl         []AccessControlEntry @[fkey: 'asset_id']
 }

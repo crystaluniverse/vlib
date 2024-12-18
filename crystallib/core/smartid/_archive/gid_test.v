@@ -26,20 +26,20 @@ fn test_sid() {
 
 	assert gid1 == GID{
 		region: 0
-		cid: CID{
+		cid:    CID{
 			circle: 11
 		}
-		id: 370
+		id:     370
 	}
 
 	gid2 := cid1.gid(oid_str: 'ab') or { panic(err) }
 
 	assert gid2 == GID{
 		region: 0
-		cid: CID{
+		cid:    CID{
 			circle: 11
 		}
-		id: 371
+		id:     371
 	}
 
 	assert gid2.str() == 'b.ab'

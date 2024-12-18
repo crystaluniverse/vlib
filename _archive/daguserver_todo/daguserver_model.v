@@ -40,14 +40,14 @@ pub mut:
 
 fn cfg_play(p paramsparser.Params) ! {
 	mut mycfg := DaguServer{
-		homedir: p.get_default('homedir', '{HOME}/hero/var/dagu')!
+		homedir:    p.get_default('homedir', '{HOME}/hero/var/dagu')!
 		configpath: p.get_default('configpath', '{HOME}/hero/var/dagu/admin.yaml')!
-		username: p.get_default('username', 'admin')!
-		password: p.get_default('password', '')!
-		secret: p.get_default('secret', '')!
-		title: p.get_default('title', 'HERO DAG')!
-		host: p.get_default('host', 'localhost')!
-		port: p.get_int_default('port', 8888)!
+		username:   p.get_default('username', 'admin')!
+		password:   p.get_default('password', '')!
+		secret:     p.get_default('secret', '')!
+		title:      p.get_default('title', 'HERO DAG')!
+		host:       p.get_default('host', 'localhost')!
+		port:       p.get_int_default('port', 8888)!
 	}
 
 	if mycfg.password == '' && mycfg.secret == '' {

@@ -17,14 +17,13 @@ pub fn get(instance string) !PostgresClient[Config] {
 	config := self.config()!
 
 	mut db := pg.connect(
-		host: config.host
-		user: config.user
-		port: config.port
+		host:     config.host
+		user:     config.user
+		port:     config.port
 		password: config.password
-		dbname: config.dbname
+		dbname:   config.dbname
 	)!
 
 	self.db = db
 	return self
 }
-

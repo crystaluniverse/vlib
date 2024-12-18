@@ -7,9 +7,7 @@ import flag { FlagParser }
 import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_funkwhale(mut fp FlagParser, mut t TFGridClient) !FunkwhaleResult {
 	fp.usage_example('deploy [options]')
@@ -26,14 +24,14 @@ fn deploy_funkwhale(mut fp FlagParser, mut t TFGridClient) !FunkwhaleResult {
 
 	mut funkwhale_client := t.applications().funkwhale()
 	return funkwhale_client.deploy(
-		name: name
-		farm_id: u32(farm_id)
-		capacity: capacity
-		admin_email: admin_email
-		ssh_key: ssh_key
+		name:           name
+		farm_id:        u32(farm_id)
+		capacity:       capacity
+		admin_email:    admin_email
+		ssh_key:        ssh_key
 		admin_username: admin_username
 		admin_password: admin_password
-		public_ipv6: public_ipv6
+		public_ipv6:    public_ipv6
 	)!
 }
 
@@ -95,7 +93,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Credentials{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

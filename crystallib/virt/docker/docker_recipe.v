@@ -51,12 +51,12 @@ pub fn (mut e DockerEngine) recipe_new(args RecipeArgs) DockerBuilderRecipe {
 		panic('name cannot be empty.')
 	}
 	return DockerBuilderRecipe{
-		engine: &e
+		engine:   &e
 		platform: args.platform
-		name: args.name
-		zinit: args.zinit
-		tag: args.tag
-		prefix: args.prefix
+		name:     args.name
+		zinit:    args.zinit
+		tag:      args.tag
+		prefix:   args.prefix
 	}
 }
 
@@ -68,7 +68,7 @@ pub mut:
 	tag      string
 	params   Params
 	files    []embed_file.EmbedFileData
-	engine   &DockerEngine              @[str: skip]
+	engine   &DockerEngine @[str: skip]
 	items    []RecipeItem
 	platform PlatformType
 	zinit    bool
@@ -182,9 +182,9 @@ fn (mut b DockerBuilderRecipe) check_conf_add() ! {
 		}
 	}
 	b.items.insert(lastfromcounter + 1, AddFileEmbeddedItem{
-		recipe: &b
-		source: 'conf.sh'
-		dest: '/conf.sh'
+		recipe:      &b
+		source:      'conf.sh'
+		dest:        '/conf.sh'
 		check_embed: false
 	})
 }

@@ -258,7 +258,7 @@ Aland Islands	AX	ALA	248
 // ARGS:
 pub fn countries_get() map[string]&Country {
 	mut cs := map[string]&Country{}
-	for country__ in people.country_string.split_into_lines() {
+	for country__ in country_string.split_into_lines() {
 		mut country_ := country__.trim_space()
 		country_ = country_.replace('\t', ' ').replace('  ', ' ').replace('  ', ' ')
 		if country_ == '' {
@@ -271,7 +271,7 @@ pub fn countries_get() map[string]&Country {
 		code2 := country_.all_after_last(' ')
 		country_ = country_.all_before_last(' ')
 		c := Country{
-			name: country_
+			name:  country_
 			codes: ['', code2, code3]
 			// QUESTION: nr: nr, what is nr for?
 		}

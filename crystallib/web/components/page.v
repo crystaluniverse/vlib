@@ -13,9 +13,9 @@ pub fn (page Page) html() string {
 
 pub struct PageHeading {
 pub:
-	title string
-	subtitle string
-	buttons []Button
+	title       string
+	subtitle    string
+	buttons     []Button
 	breadcrumbs ?Breadcrumbs
 }
 
@@ -24,11 +24,10 @@ pub:
 	components []IComponent
 }
 
-
 pub struct Heading {
 pub:
 	content string
-	level HeadingLevel
+	level   HeadingLevel
 }
 
 pub fn (heading Heading) html() string {
@@ -46,7 +45,7 @@ pub enum HeadingLevel {
 pub struct Breadcrumbs {
 pub:
 	anchors []Anchor // anchors for breadcrumbs
-	label string // label of current page
+	label   string   // label of current page
 }
 
 pub fn (breadcrumbs Breadcrumbs) html() string {
@@ -61,10 +60,14 @@ pub fn (heading PageHeading) html() string {
 	}
 	subtitle := if heading.subtitle != '' {
 		'\n<p>${heading.subtitle}</p>'
-	} else {''}
+	} else {
+		''
+	}
 	buttons := if heading.buttons.len > 0 {
 		'<div>${heading.buttons.map(it.html()).join_lines()}</div>'
-	} else {''}
+	} else {
+		''
+	}
 	return '<header class="grid" style="grid-template-columns: 4fr 1fr;">\n\t<hgroup>\n\t<h1>${heading.title}</h1>${subtitle}\n${breadcrumbs_html}\n</hgroup>\n${buttons}\n</header>'
 }
 

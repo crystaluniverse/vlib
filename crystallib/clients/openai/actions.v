@@ -13,7 +13,7 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 		instance := p.get_default('instance', 'default')!
 		// cfg.keyname = p.get('keyname')!
 		mut cl := get(instance,
-			openaikey: p.get('openaikey')!
+			openaikey:   p.get('openaikey')!
 			description: p.get_default('description', '')!
 		)!
 		cl.config_save()!

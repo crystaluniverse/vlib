@@ -11,7 +11,7 @@ mut:
 pub fn new() !GithubClient {
 	mut conn := httpconnection.new(
 		name: 'github-graphql'
-		url: 'https://api.github.com/graphql'
+		url:  'https://api.github.com/graphql'
 	)!
 
 	env := os.environ()

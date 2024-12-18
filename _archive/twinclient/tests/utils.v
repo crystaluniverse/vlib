@@ -35,9 +35,9 @@ fn (mut usr Users) set(username string, field BlockChainFields, value string) tw
 }
 
 fn genrate_dummey_data(username string) tw.BlockChainCreateModel {
-	mut u := tests.users
+	mut u := users
 	if username in u.all {
-		return tests.users.all[username]
+		return users.all[username]
 	}
 	user := tw.BlockChainCreateModel{
 		name: username

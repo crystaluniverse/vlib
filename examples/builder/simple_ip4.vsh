@@ -10,7 +10,7 @@ mut n := b.node_new(ipaddr: 'root@51.195.61.5')!
 
 println(n)
 
-r:=n.exec(cmd:"ls /")!
+r := n.exec(cmd: 'ls /')!
 println(r)
 
 // n.upload(source: myexamplepath, dest: '/tmp/myexamplepath2')!

@@ -40,7 +40,7 @@ pub fn (mut c GridProxyClient) get_node_by_id(node_id u64) !Node {
 	mut http_client := c.http_client.clone()!
 
 	res := http_client.send(prefix: 'nodes/', id: '${node_id}') or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -48,12 +48,12 @@ pub fn (mut c GridProxyClient) get_node_by_id(node_id u64) !Node {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	node := json.decode(Node, res.data) or {
 		return error_with_code('error to get jsonstr for node data, json decode: node id: ${node_id}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return node
 }
@@ -68,7 +68,7 @@ pub fn (mut c GridProxyClient) get_node_stats_by_id(node_id u64) !NodeStats {
 	mut http_client := c.http_client.clone()!
 
 	res := http_client.send(prefix: 'nodes/', id: '${node_id}/statistics') or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -76,12 +76,12 @@ pub fn (mut c GridProxyClient) get_node_stats_by_id(node_id u64) !NodeStats {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	node_stats := json.decode(NodeStats, res.data) or {
 		return error_with_code('error to get jsonstr for node data, json decode: node id: ${node_id}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return node_stats
 }
@@ -96,7 +96,7 @@ pub fn (mut c GridProxyClient) get_gateway_by_id(node_id u64) !Node {
 	mut http_client := c.http_client.clone()!
 
 	res := http_client.send(prefix: 'gateways/', id: '${node_id}') or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -104,12 +104,12 @@ pub fn (mut c GridProxyClient) get_gateway_by_id(node_id u64) !Node {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	node := json.decode(Node, res.data) or {
 		return error_with_code('error to get jsonstr for gateway data, json decode: gateway id: ${node_id}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return node
 }
@@ -158,7 +158,7 @@ pub fn (mut c GridProxyClient) get_nodes(params NodeFilter) ![]Node {
 	mut http_client := c.http_client.clone()!
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'nodes/', params: params_map) or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -166,12 +166,12 @@ pub fn (mut c GridProxyClient) get_nodes(params NodeFilter) ![]Node {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	nodes_ := json.decode([]Node_, res.data) or {
 		return error_with_code('error to get jsonstr for node list data, json decode: node filter: ${params_map}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	nodes := nodes_.map(it.with_nested_capacity())
 	return nodes
@@ -221,7 +221,7 @@ pub fn (mut c GridProxyClient) get_gateways(params NodeFilter) ![]Node {
 	mut http_client := c.http_client.clone()!
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'gateways/', params: params_map) or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -229,12 +229,12 @@ pub fn (mut c GridProxyClient) get_gateways(params NodeFilter) ![]Node {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	nodes_ := json.decode([]Node_, res.data) or {
 		return error_with_code('error to get jsonstr for gateways list data, json decode: gateway filter: ${params_map}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	nodes := nodes_.map(it.with_nested_capacity())
 	return nodes
@@ -255,7 +255,7 @@ pub fn (mut c GridProxyClient) get_stats(filter StatFilter) !GridStat {
 	}
 
 	res := http_client.send(prefix: 'stats/', params: params_map) or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -263,12 +263,12 @@ pub fn (mut c GridProxyClient) get_stats(filter StatFilter) !GridStat {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	stats := json.decode(GridStat, res.data) or {
 		return error_with_code('error to get jsonstr for grid stats data, json decode: stats filter: ${params_map}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return stats
 }
@@ -289,7 +289,7 @@ pub fn (mut c GridProxyClient) get_twins(params TwinFilter) ![]Twin {
 	mut http_client := c.http_client.clone()!
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'twins/', params: params_map) or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -297,12 +297,12 @@ pub fn (mut c GridProxyClient) get_twins(params TwinFilter) ![]Twin {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	twins := json.decode([]Twin, res.data) or {
 		return error_with_code('error to get jsonstr for twin list data, json decode: twin filter: ${params_map}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return twins
 }
@@ -330,7 +330,7 @@ pub fn (mut c GridProxyClient) get_contracts(params ContractFilter) ![]Contract 
 	mut http_client := c.http_client.clone()!
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'contracts/', params: params_map) or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -338,12 +338,12 @@ pub fn (mut c GridProxyClient) get_contracts(params ContractFilter) ![]Contract 
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	contracts := json.decode([]Contract, res.data) or {
 		return error_with_code('error to get jsonstr for contract list data, json decode: contract filter: ${params_map}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return contracts
 }
@@ -353,7 +353,7 @@ pub fn (mut c GridProxyClient) get_contract_bill(contract_id u64) ![]Bill {
 	mut http_client := c.http_client.clone()!
 
 	res := http_client.send(prefix: 'contracts/', id: '${contract_id}/bills') or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -361,12 +361,12 @@ pub fn (mut c GridProxyClient) get_contract_bill(contract_id u64) ![]Bill {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 	console.print_debug(res.data)
 	bills := json.decode([]Bill, res.data) or {
 		return error_with_code('error to get jsonstr for billing data, json decode: contract_id id: ${contract_id}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return bills
 }
@@ -424,7 +424,7 @@ pub fn (mut c GridProxyClient) get_farms(params FarmFilter) ![]Farm {
 	mut http_client := c.http_client.clone()!
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'farms/', params: params_map) or {
-		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+		return error_with_code('http client error: ${err.msg()}', err_http_client)
 	}
 
 	if !res.is_ok() {
@@ -432,12 +432,12 @@ pub fn (mut c GridProxyClient) get_farms(params FarmFilter) ![]Farm {
 	}
 
 	if res.data == '' {
-		return error_with_code('empty response', gridproxy.err_invalid_resp)
+		return error_with_code('empty response', err_invalid_resp)
 	}
 
 	farms := json.decode([]Farm, res.data) or {
 		return error_with_code('error to get jsonstr for farm list data, json decode: farm filter: ${params_map}, data: ${res.data}',
-			gridproxy.err_json_parse)
+			err_json_parse)
 	}
 	return farms
 }

@@ -24,9 +24,9 @@ fn (mut j Juggler) load(config_path string) ! {
 fn (mut j Juggler) load_repository(path string, itenv_path string) !u32 {
 	relpath := path.trim_string_left(itenv_path).trim('/')
 	mut repo := Repository{
-		host: relpath.split('/')[0]
-		owner: relpath.split('/')[1]
-		name: relpath.split('/')[2]
+		host:   relpath.split('/')[0]
+		owner:  relpath.split('/')[1]
+		name:   relpath.split('/')[2]
 		branch: relpath.split('/')[3]
 	}
 	if repo.host == 'github' {
@@ -38,10 +38,10 @@ fn (mut j Juggler) load_repository(path string, itenv_path string) !u32 {
 fn (mut j Juggler) load_trigger(repo_id u32, script_ids []u32) ! {
 	repo := j.osis.generic_get[Repository](repo_id)!
 	git_trigger := Trigger{
-		name: 'git push ${repo.name} [${repo.branch}]'
+		name:        'git push ${repo.name} [${repo.branch}]'
 		description: 'git push ${repo.name} [${repo.branch}]'
-		object_id: repo_id
-		script_ids: script_ids
+		object_id:   repo_id
+		script_ids:  script_ids
 	}
 	j.new_trigger(git_trigger)!
 }
@@ -101,9 +101,9 @@ fn code_get(cfg Config) !string {
 	mut gs := gittools.get(coderoot: args.coderoot)!
 	if args.url.len > 0 {
 		repo := gs.get_repo(
-			pull: false
+			pull:  false
 			reset: false
-			url: cfg.url
+			url:   cfg.url
 		)!
 		return repo.get_path()!
 	}
@@ -165,11 +165,11 @@ pub fn (mut j Juggler) load_script_from_path(path_ pathlib.Path) !u32 {
 	}
 
 	script := Script{
-		name: name
-		category: category
+		name:        name
+		category:    category
 		description: description
-		url: '${j.url}/src/branch/main/${relpath.trim('/')}'
-		path: path.path
+		url:         '${j.url}/src/branch/main/${relpath.trim('/')}'
+		path:        path.path
 	}
 
 	return j.osis.generic_new[Script](script)!

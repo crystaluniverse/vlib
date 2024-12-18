@@ -27,11 +27,9 @@ fn (s SignedAttempt) load(data map[string]string) !SignedAttempt {
 	return initial_data
 }
 
-const (
-	file_dose_not_exist    = "Couldn't parse kyes file, just make sure that you have kyes.toml by running create_keys.v file, then send its path when you running the client app."
-	signed_attempt_missing = 'signedAttempt parameter is missing.'
-	server_host            = 'http://localhost:8000'
-)
+const file_dose_not_exist = "Couldn't parse kyes file, just make sure that you have kyes.toml by running create_keys.v file, then send its path when you running the client app."
+const signed_attempt_missing = 'signedAttempt parameter is missing.'
+const server_host = 'http://localhost:8000'
 
 fn parse_keys(file_path string) !toml.Doc {
 	return toml.parse_file(file_path)!
@@ -56,10 +54,10 @@ fn request_to_server_to_verify(data SignedAttempt) !http.Response {
 	})
 
 	request := http.Request{
-		url: '${server_host}/verify'
+		url:    '${server_host}/verify'
 		method: http.Method.post
 		header: header
-		data: json.encode(data)
+		data:   json.encode(data)
 	}
 	result := request.do()!
 	return result

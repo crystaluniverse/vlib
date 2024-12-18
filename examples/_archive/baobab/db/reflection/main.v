@@ -5,10 +5,8 @@ import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
 import log
 
-const (
-	circle_name = 'example'
-	object_type = 'task'
-)
+const circle_name = 'example'
+const object_type = 'task'
 
 __global (
 	example_begin ourtime.OurTime
@@ -57,7 +55,7 @@ fn do() ! {
 fn db_new(circle_name string) !ExampleDB {
 	mut example_db := ExampleDB{
 		circlename: circle_name
-		objtype: 'mystruct'
+		objtype:    'mystruct'
 	}
 	example_db.init()!
 	example_db.delete_all()!
@@ -67,9 +65,9 @@ fn db_new(circle_name string) !ExampleDB {
 // create_tasks populates db
 fn create_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	mut basic_task := example_db.new[Task](
-		name: 'basic_task'
+		name:        'basic_task'
 		description: 'A very basic task'
-		object: Task{
+		object:      Task{
 			title: 'Basic Task'
 		}
 	)!
@@ -77,9 +75,9 @@ fn create_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	logger.info('Created task: ${basic_task}')
 
 	mut important_task := example_db.new[Task](
-		name: 'important_task'
+		name:        'important_task'
 		description: 'An important task'
-		object: Task{
+		object:      Task{
 			title: 'Important Task'
 		}
 	)!
@@ -87,9 +85,9 @@ fn create_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	logger.info('Created task: ${important_task}')
 
 	important_task2 := example_db.new[Task](
-		name: 'important_task2'
+		name:        'important_task2'
 		description: 'Another important task'
-		object: Task{
+		object:      Task{
 			title: 'Another Important Task'
 		}
 	)!
@@ -100,7 +98,7 @@ fn create_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 // prioritize_tasks sets a priority to all tasks in db
 fn prioritize_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	basic_tasks := example_db.find[Task](
-		name: 'basic_task'
+		name:   'basic_task'
 		object: Task{}
 	)!
 	mut basic_task := basic_tasks[0]
@@ -109,7 +107,7 @@ fn prioritize_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	logger.info('Prioritized basic_task: ${basic_task}')
 
 	important_tasks := example_db.find[Task](
-		name: 'important_task'
+		name:   'important_task'
 		object: Task{}
 	)!
 	mut important_task := important_tasks[0]
@@ -118,7 +116,7 @@ fn prioritize_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	logger.info('Prioritized important_task: ${important_task}')
 
 	important_tasks2 := example_db.find[Task](
-		name: 'important_task2'
+		name:   'important_task2'
 		object: Task{}
 	)!
 	mut important_task2 := important_tasks2[0]
@@ -140,16 +138,16 @@ fn review_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	logger.info('Found all tasks with priority 3 (high): ${objects_found.map(it.name)}')
 
 	objects_found = example_db.find[Task](
-		object: Task{}
+		object:     Task{}
 		ctime_from: ourtime.new('-1h')!
-		ctime_to: ourtime.now()
+		ctime_to:   ourtime.now()
 	)!
 	logger.info('Found all tasks created in the last hour: ${objects_found.map(it.name)}')
 
 	objects_found = example_db.find[Task](
-		object: Task{}
+		object:     Task{}
 		ctime_from: ourtime.new('')!
-		ctime_to: ourtime.new('-1h')!
+		ctime_to:   ourtime.new('-1h')!
 	)!
 	logger.info('Found all tasks created before the last hour: ${objects_found.map(it.name)}')
 

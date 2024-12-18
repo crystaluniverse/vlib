@@ -49,9 +49,9 @@ fn cfg_play(p paramsparser.Params) !TFGridDeployer {
 	}
 
 	mut mycfg := TFGridDeployer{
-		ssh_key: p.get_default('ssh_key', '')!
+		ssh_key:  p.get_default('ssh_key', '')!
 		mnemonic: p.get_default('mnemonic', '')!
-		network: network
+		network:  network
 	}
 	return mycfg
 }

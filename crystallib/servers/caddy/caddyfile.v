@@ -31,7 +31,7 @@ pub fn (file CaddyFile) export(path_ string) ! {
 		path = '${path}.json'
 	}
 	mut existing_file := pathlib.get_file(
-		path: path
+		path:   path
 		create: true
 	)!
 

@@ -5,13 +5,11 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
 // import freeflowuniverse.crystallib.builder
 import time
-
 import os
 
+mut pm := herocontainers.new(herocompile: false)!
 
-mut pm:=herocontainers.new(herocompile:false)!
-
-mut b:=pm.builder_new()!
+mut b := pm.builder_new()!
 
 println(b)
 

@@ -3,7 +3,7 @@
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.ui.console
 
-mut gp_client := gridproxy.new(net:.test, cache:true)!
+mut gp_client := gridproxy.new(net: .test, cache: true)!
 
 // get twin list
 twins := gp_client.get_twins()!
@@ -28,4 +28,3 @@ console.print_debug('${contracts}')
 // get grid stats
 stats := gp_client.get_stats()!
 console.print_debug('${stats}')
-

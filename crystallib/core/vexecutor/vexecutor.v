@@ -56,10 +56,10 @@ pub fn new_executor(initial_file_path_ string, execution_file_path_ string, fina
 
 	// create an VExecutor object
 	mut v_executor := VExecutor{
-		execution_file: execution_file
+		execution_file:      execution_file
 		execution_file_path: execution_file_path
-		final_file_path: final_file_path
-		actions: [initial_action]
+		final_file_path:     final_file_path
+		actions:             [initial_action]
 	}
 
 	return v_executor
@@ -117,7 +117,7 @@ fn scan_file(mut path pathlib.Path) !VAction {
 
 	return VAction{
 		lines: trimmed_lines
-		path: path
+		path:  path
 	}
 }
 

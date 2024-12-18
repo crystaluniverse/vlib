@@ -5,8 +5,6 @@ import encoding.hex
 import crypto.sha256
 import freeflowuniverse.crystallib.crypt.secp256k1
 
-
-
 //
 // signature (schnorr)
 //

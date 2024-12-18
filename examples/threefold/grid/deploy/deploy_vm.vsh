@@ -17,38 +17,38 @@ fn main() {
 	network_name := 'network1'
 	wg_port := deployer.assign_wg_port(node_id)!
 	mut network := models.Znet{
-		ip_range: '10.1.0.0/16'
-		subnet: '10.1.1.0/24'
+		ip_range:              '10.1.0.0/16'
+		subnet:                '10.1.1.0/24'
 		wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE='
 		wireguard_listen_port: wg_port
-		peers: [
+		peers:                 [
 			models.Peer{
-				subnet: '10.1.2.0/24'
+				subnet:               '10.1.2.0/24'
 				wireguard_public_key: '4KTvZS2KPWYfMr+GbiUUly0ANVg8jBC7xP9Bl79Z8zM='
-				allowed_ips: ['10.1.2.0/24', '100.64.1.2/32']
+				allowed_ips:          ['10.1.2.0/24', '100.64.1.2/32']
 			},
 		]
 	}
 	mut znet_workload := network.to_workload(name: network_name, description: 'test_network1')
 
 	zmachine := models.Zmachine{
-		flist: 'https://hub.grid.tf/tf-official-apps/threefoldtech-ubuntu-22.04.flist'
-		network: models.ZmachineNetwork{
-			public_ip: ''
+		flist:            'https://hub.grid.tf/tf-official-apps/threefoldtech-ubuntu-22.04.flist'
+		network:          models.ZmachineNetwork{
+			public_ip:  ''
 			interfaces: [
 				models.ZNetworkInterface{
 					network: network_name
-					ip: '10.1.1.3'
+					ip:      '10.1.1.3'
 				},
 			]
-			planetary: true
+			planetary:  true
 		}
-		entrypoint: '/sbin/zinit init'
+		entrypoint:       '/sbin/zinit init'
 		compute_capacity: models.ComputeCapacity{
-			cpu: 1
+			cpu:    1
 			memory: i64(1024) * 1024 * 1024 * 2
 		}
-		env: {
+		env:              {
 			'SSH_KEY': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTwULSsUubOq3VPWL6cdrDvexDmjfznGydFPyaNcn7gAL9lRxwFbCDPMj7MbhNSpxxHV2+/iJPQOTVJu4oc1N7bPP3gBCnF51rPrhTpGCt5pBbTzeyNweanhedkKDsCO2mIEh/92Od5Hg512dX4j7Zw6ipRWYSaepapfyoRnNSriW/s3DH/uewezVtL5EuypMdfNngV/u2KZYWoeiwhrY/yEUykQVUwDysW/xUJNP5o+KSTAvNSJatr3FbuCFuCjBSvageOLHePTeUwu6qjqe+Xs4piF1ByO/6cOJ8bt5Vcx0bAtI8/MPApplUU/JWevsPNApvnA/ntffI+u8DCwgP'
 		}
 	}
@@ -56,18 +56,18 @@ fn main() {
 
 	signature_requirement := models.SignatureRequirement{
 		weight_required: 1
-		requests: [
+		requests:        [
 			models.SignatureRequest{
 				twin_id: deployer.twin_id
-				weight: 1
+				weight:  1
 			},
 		]
 	}
 
 	mut deployment := models.new_deployment(
-		twin_id: deployer.twin_id
-		description: 'test deployment'
-		workloads: [znet_workload, zmachine_workload]
+		twin_id:               deployer.twin_id
+		description:           'test deployment'
+		workloads:             [znet_workload, zmachine_workload]
 		signature_requirement: signature_requirement
 	)
 	deployment.add_metadata('vm', 'SimpleVM')

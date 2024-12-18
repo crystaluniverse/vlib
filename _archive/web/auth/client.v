@@ -25,11 +25,11 @@ pub struct ClientConfig {
 
 pub fn new_client(config ClientConfig) Client {
 	return Client{
-		url: config.url
+		url:      config.url
 		identity: identity.Client{
 			url: '${config.url}/identity'
 		}
-		session: session.Client{
+		session:  session.Client{
 			url: '${config.url}/session'
 		}
 	}

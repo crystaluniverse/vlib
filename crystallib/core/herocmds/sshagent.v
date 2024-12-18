@@ -7,60 +7,60 @@ import cli { Command, Flag }
 
 pub fn cmd_sshagent(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'sshagent'
+		name:        'sshagent'
 		description: 'Work with SSHAgent'
 		// required_args: 1
-		usage: 'sub commands of generate are list, generate, unload, load'
-		execute: cmd_sshagent_execute
+		usage:         'sub commands of generate are list, generate, unload, load'
+		execute:       cmd_sshagent_execute
 		sort_commands: true
 	}
 
 	mut sshagent_command_list := Command{
-		sort_flags: true
-		name: 'list'
-		execute: cmd_sshagent_execute
+		sort_flags:  true
+		name:        'list'
+		execute:     cmd_sshagent_execute
 		description: 'list ssh-keys.'
 	}
 
 	mut sshagent_command_generate := Command{
-		sort_flags: true
-		name: 'generate'
-		execute: cmd_sshagent_execute
+		sort_flags:  true
+		name:        'generate'
+		execute:     cmd_sshagent_execute
 		description: 'generate ssh-key.'
 	}
 
 	mut sshagent_command_add := Command{
-		sort_flags: true
-		name: 'add'
-		execute: cmd_sshagent_execute
+		sort_flags:  true
+		name:        'add'
+		execute:     cmd_sshagent_execute
 		description: 'add a key starting from private key, only works interactive for nows.'
 	}
 
 	sshagent_command_generate.add_flag(Flag{
-		flag: .bool
-		name: 'load'
-		abbrev: 'l'
+		flag:        .bool
+		name:        'load'
+		abbrev:      'l'
 		description: 'should key be loaded'
 	})
 
 	mut sshagent_command_load := Command{
-		sort_flags: true
-		name: 'load'
-		execute: cmd_sshagent_execute
+		sort_flags:  true
+		name:        'load'
+		execute:     cmd_sshagent_execute
 		description: 'load ssh-key in agent.'
 	}
 
 	mut sshagent_command_unload := Command{
-		sort_flags: true
-		name: 'forget'
-		execute: cmd_sshagent_execute
+		sort_flags:  true
+		name:        'forget'
+		execute:     cmd_sshagent_execute
 		description: 'Unload ssh-key from agent.'
 	}
 
 	mut sshagent_command_reset := Command{
-		sort_flags: true
-		name: 'reset'
-		execute: cmd_sshagent_execute
+		sort_flags:  true
+		name:        'reset'
+		execute:     cmd_sshagent_execute
 		description: 'Reset all keys, means unload them all.'
 	}
 
@@ -68,10 +68,10 @@ pub fn cmd_sshagent(mut cmdroot Command) {
 		&sshagent_command_reset, &sshagent_command_add]
 	for mut d in allcmdsref_gen0 {
 		d.add_flag(Flag{
-			flag: .string
-			name: 'name'
-			abbrev: 'n'
-			required: true
+			flag:        .string
+			name:        'name'
+			abbrev:      'n'
+			required:    true
 			description: 'name of the key'
 		})
 	}
@@ -87,9 +87,9 @@ pub fn cmd_sshagent(mut cmdroot Command) {
 		// 	description: 'do you want to reset all? Dangerous!'
 		// })
 		c.add_flag(Flag{
-			flag: .bool
-			name: 'script'
-			abbrev: 's'
+			flag:        .bool
+			name:        'script'
+			abbrev:      's'
 			description: 'runs non interactive!'
 		})
 

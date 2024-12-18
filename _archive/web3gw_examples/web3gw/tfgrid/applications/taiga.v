@@ -7,9 +7,7 @@ import flag { FlagParser }
 import os
 import freeflowuniverse.crystallib.data.rpcwebsocket
 
-const (
-	default_server_address = 'ws://127.0.0.1:8080'
-)
+const default_server_address = 'ws://127.0.0.1:8080'
 
 fn deploy_taiga(mut fp FlagParser, mut t TFGridClient) !TaigaResult {
 	fp.usage_example('deploy [options]')
@@ -25,13 +23,13 @@ fn deploy_taiga(mut fp FlagParser, mut t TFGridClient) !TaigaResult {
 
 	mut taiga_client := t.applications().taiga()
 	return taiga_client.deploy(
-		name: name
-		farm_id: u64(farm_id)
-		capacity: capacity
-		ssh_key: ssh_key
+		name:           name
+		farm_id:        u64(farm_id)
+		capacity:       capacity
+		ssh_key:        ssh_key
 		admin_username: admin_username
 		admin_password: admin_password
-		admin_email: admin_email
+		admin_email:    admin_email
 	)!
 }
 
@@ -90,7 +88,7 @@ fn main() {
 
 	tfgrid_client.load(tfgrid.Credentials{
 		mnemonic: mnemonic
-		network: network
+		network:  network
 	})!
 
 	match operation {

@@ -58,31 +58,31 @@ pub fn (mut budget Budget) office_add(args OfficeAddArgs) !&BudgetItemOffice {
 	vat_percent := args.country.vat_percent
 	mut vat_extra := finance.Amount{
 		currency: food.currency
-		val: (total_cost.val - insurance.val) * vat_percent / 100
+		val:      (total_cost.val - insurance.val) * vat_percent / 100
 	}
 
 	item := BudgetItemOffice{
-		id: id
-		name: args.name
-		remark: args.remark
-		start: time_from_string(args.start) or {
+		id:                id
+		name:              args.name
+		remark:            args.remark
+		start:             time_from_string(args.start) or {
 			return error('Failed to get time from start string: ${args.start}')
 		}
-		stop: time_from_string(args.stop) or {
+		stop:              time_from_string(args.stop) or {
 			return error('Failed to get time from stop string: ${args.stop}')
 		}
-		cost_fixed: &total_cost
-		cost_fixed_min: &total_cost
-		cost_fixed_max: &total_cost
-		country: args.country // TODO how best to do this? enum or custom struct?
-		office_rent: office_rent
-		food: food
-		utilities: utilities
-		insurance: insurance
+		cost_fixed:        &total_cost
+		cost_fixed_min:    &total_cost
+		cost_fixed_max:    &total_cost
+		country:           args.country // TODO how best to do this? enum or custom struct?
+		office_rent:       office_rent
+		food:              food
+		utilities:         utilities
+		insurance:         insurance
 		accomodation_rent: accomodation_rent
-		office_supplies: office_supplies
-		vat_extra: &vat_extra
-		vat_percent: vat_percent
+		office_supplies:   office_supplies
+		vat_extra:         &vat_extra
+		vat_percent:       vat_percent
 	}
 
 	budget.planning << item

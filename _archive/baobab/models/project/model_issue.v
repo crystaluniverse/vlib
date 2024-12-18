@@ -13,11 +13,11 @@ pub mut:
 	description      string
 	priority         Priority
 	deadline         ourtime.OurTime
-	assignment       []smartid.GID   @[root_object: 'Person, Team']
+	assignment       []smartid.GID @[root_object: 'Person, Team']
 	effort_remaining int // remaining hours
 	percent_done     f64
 	state            State
-	costcenters      []smartid.GID   @[root_object: CostCenter]
+	costcenters      []smartid.GID @[root_object: CostCenter]
 }
 
 pub enum IssueType {

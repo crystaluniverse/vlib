@@ -5,20 +5,16 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
 // import freeflowuniverse.crystallib.builder
 import time
-
 import os
 
+mut pm := herocontainers.new(herocompile: true, install: false)!
 
-mut pm:=herocontainers.new(herocompile:true,install:false)!
+mut mybuildcontainer := pm.builder_get('builder_heroweb')!
 
-mut mybuildcontainer := pm.builder_get("builder_heroweb")!
+// bash & python can be executed directly in build container
 
-//bash & python can be executed directly in build container
-
-//any of the herocommands can be executed like this
-mybuildcontainer.run(cmd:"installers -n heroweb",runtime:.herocmd)!
-
-
+// any of the herocommands can be executed like this
+mybuildcontainer.run(cmd: 'installers -n heroweb', runtime: .herocmd)!
 
 // //following will execute heroscript in the buildcontainer
 // mybuildcontainer.run(
@@ -31,13 +27,10 @@ mybuildcontainer.run(cmd:"installers -n heroweb",runtime:.herocmd)!
 // 	",
 // 	runtime:.heroscript)!
 
-//there are also shortcuts for this
+// there are also shortcuts for this
 
-//mybuildcontainer.hero_copy()!
-//mybuildcontainer.shell()!
+// mybuildcontainer.hero_copy()!
+// mybuildcontainer.shell()!
 
-
-//mut b2:=pm.builder_get("builderv")!
-//b2.shell()!
-
-
+// mut b2:=pm.builder_get("builderv")!
+// b2.shell()!

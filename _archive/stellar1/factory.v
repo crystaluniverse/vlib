@@ -70,18 +70,18 @@ pub fn (mut self StellarClient[Config]) config_interactive() ! {
 
 	self.instance = myui.ask_question(
 		question: 'name for stellar client'
-		default: self.instance
+		default:  self.instance
 	)!
 
 	cfg.description = myui.ask_question(
 		question: 'description'
-		minlen: 0
-		default: cfg.description
+		minlen:   0
+		default:  cfg.description
 	)!
 	cfg.secret = myui.ask_question(
 		question: 'secret e.g. ...'
-		minlen: 5
-		default: cfg.secret
+		minlen:   5
+		default:  cfg.secret
 	)!
 
 	// buckets := self.list_buckets()!

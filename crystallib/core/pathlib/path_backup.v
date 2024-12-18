@@ -63,11 +63,11 @@ pub fn (mut path Path) backup_path(args BackupArgs) !Path {
 		path_str_next := '${dest}/${rel}${path.name_no_ext()}.${path.extension()}.${i + 1}'
 		mut path_found := Path{
 			path: path_str
-			cat: .file
+			cat:  .file
 		}
 		mut path_found_next := Path{
 			path: path_str_next
-			cat: .file
+			cat:  .file
 		}
 		if !path_found.exists() {
 			if args.restore {

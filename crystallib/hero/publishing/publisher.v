@@ -1,10 +1,10 @@
 module publishing
 
 import os
-import freeflowuniverse.crystallib.core.pathlib {Path}
+import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.doctree { Tree }
-import freeflowuniverse.crystallib.web.mdbook { MDBook }
+import freeflowuniverse.crystallib.web.mdbook
 
 __global (
 	publisher Publisher
@@ -12,38 +12,30 @@ __global (
 
 pub struct Publisher {
 pub mut:
-	tree Tree
-	books map[string]Book
+	tree      Tree
+	books     map[string]Book
 	root_path string = os.join_path(os.home_dir(), 'hero/publisher')
 }
 
 // returns the directory of a given collecation
 fn (p Publisher) collection_directory(name string) ?Path {
 	mut cols_dir := p.collections_directory()
-	return cols_dir.dir_get(name) or {
-		return none
-	}
+	return cols_dir.dir_get(name) or { return none }
 }
 
-pub fn (p Publisher) collections_directory() pathlib.Path {
+pub fn (p Publisher) collections_directory() Path {
 	collections_path := '${p.root_path}/collections'
-	return pathlib.get_dir(path: collections_path) or {
-		panic('this should never happen ${err}')
-	}
+	return pathlib.get_dir(path: collections_path) or { panic('this should never happen ${err}') }
 }
 
-pub fn (p Publisher) build_directory() pathlib.Path {
+pub fn (p Publisher) build_directory() Path {
 	build_path := '${p.root_path}/build'
-	return pathlib.get_dir(path: build_path) or {
-		panic('this should never happen ${err}')
-	}
+	return pathlib.get_dir(path: build_path) or { panic('this should never happen ${err}') }
 }
 
-pub fn (p Publisher) publish_directory() pathlib.Path {
+pub fn (p Publisher) publish_directory() Path {
 	publish_path := '${p.root_path}/publish'
-	return pathlib.get_dir(path: publish_path) or {
-		panic('this should never happen ${err}')
-	}
+	return pathlib.get_dir(path: publish_path) or { panic('this should never happen ${err}') }
 }
 
 @[params]
@@ -59,25 +51,24 @@ pub fn (p Publisher) publish(name string, params PublishParams) ! {
 }
 
 pub struct Book {
-	name string
-	title string
+	name        string
+	title       string
 	description string
-	path string
+	path        string
 }
 
 pub fn (book Book) publish(path string, params PublishParams) ! {
 	os.execute_opt('	
 		cd ${book.path}
-		mdbook build --dest-dir ${path}/${book.name}'
-	)!
+		mdbook build --dest-dir ${path}/${book.name}')!
 }
 
 pub struct NewBook {
-	name string
-	title string
-	description string
+	name         string
+	title        string
+	description  string
 	summary_path string
-	collections []string
+	collections  []string
 }
 
 pub fn (p Publisher) new_book(book NewBook) ! {
@@ -95,16 +86,16 @@ pub fn (p Publisher) new_book(book NewBook) ! {
 	}
 
 	_ := mdbooks.generate(
-		name: book.name
-		title: book.title
+		name:         book.name
+		title:        book.title
 		summary_path: book.summary_path
-		collections: col_paths
+		collections:  col_paths
 	)!
-	publisher.books[book.name] = Book {
-		name: book.name
-		title: book.title
+	publisher.books[book.name] = Book{
+		name:        book.name
+		title:       book.title
 		description: book.description
-		path: '${p.build_directory().path}/${book.name}'
+		path:        '${p.build_directory().path}/${book.name}'
 	}
 }
 

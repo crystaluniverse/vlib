@@ -1,31 +1,33 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+
 import freeflowuniverse.crystallib.data.encoderhero
 import freeflowuniverse.crystallib.core.base
 
-//this is docu at top
-@[name:"teststruct " ; params]
+// this is docu at top
+@[name: 'teststruct ']
+@[params]
 pub struct TestStruct {
-//this is docu at mid
+	// this is docu at mid
 pub mut:
-	id    int 	@[hi]
-	descr string
-	secret string @[secret]
-	number  int = 1 @[min:1 ;max:10]
+	id      int @[hi]
+	descr   string
+	secret  string @[secret]
+	number  int = 1    @[max: 10; min: 1]
 	yesno   bool
 	liststr []string
 	listint []int
-	ss 		SubStruct
-	ss2 	[]SubStruct
+	ss      SubStruct
+	ss2     []SubStruct
 }
 
 pub struct SubStruct {
 pub mut:
 	color string
-	size int
+	size  int
 }
 
-fn (self TestStruct) heroscript()!string {
-	mut out:=""
+fn (self TestStruct) heroscript() !string {
+	mut out := ''
 	mut p := encoderhero.encode[TestStruct](self)!
 	// out += "!!hr.teststruct_define " + p.heroscript() + "\n"
 	// p = paramsparser.encode[SubStruct](self.ss)!
@@ -39,10 +41,9 @@ fn (self TestStruct) heroscript()!string {
 	return p
 }
 
-
 mut t := TestStruct{
-	id:100
-	descr: '
+	id:      100
+	descr:   '
 		test
 		muliline
 		s
@@ -50,15 +51,24 @@ mut t := TestStruct{
 		muliline
 		test
 		muliline				
-		'	
-	number: 2
-	yesno: true
+		'
+	number:  2
+	yesno:   true
 	liststr: ['one', 'two+two']
 	listint: [1, 2]
-	ss:SubStruct{color:"red",size:10}
+	ss:      SubStruct{
+		color: 'red'
+		size:  10
+	}
 }
-t.ss2<<	SubStruct{color:"red1",size:11}
-t.ss2<<	SubStruct{color:"red2",size:12}
+t.ss2 << SubStruct{
+	color: 'red1'
+	size:  11
+}
+t.ss2 << SubStruct{
+	color: 'red2'
+	size:  12
+}
 
 println(t.heroscript()!)
 

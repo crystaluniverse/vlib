@@ -9,49 +9,49 @@ import os
 
 pub fn cmd_bootstrap(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'bootstrap'
-		description: 'bootstrap hero'
+		name:          'bootstrap'
+		description:   'bootstrap hero'
 		required_args: 0
-		execute: cmd_bootstrap_execute
+		execute:       cmd_bootstrap_execute
 	}
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'reset'
-		abbrev: 'r'
+		flag:        .bool
+		required:    false
+		name:        'reset'
+		abbrev:      'r'
 		description: 'will reset.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'develop'
-		abbrev: 'd'
+		flag:        .bool
+		required:    false
+		name:        'develop'
+		abbrev:      'd'
 		description: 'will put system in development mode.'
 	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'compileupload'
-		abbrev: 'c'
+		flag:        .bool
+		required:    false
+		name:        'compileupload'
+		abbrev:      'c'
 		description: 'Compile and upload hero.'
-	})	
+	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'update'
-		abbrev: 'u'
+		flag:        .bool
+		required:    false
+		name:        'update'
+		abbrev:      'u'
 		description: 'Update/install hero.'
-	})		
+	})
 
 	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'hero'
-		abbrev: 'u'
+		flag:        .bool
+		required:    false
+		name:        'hero'
+		abbrev:      'u'
 		description: 'Update hero.'
 	})
 
@@ -64,9 +64,9 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 	// })
 
 	cmd_run.add_flag(Flag{
-		flag: .string
-		name: 'address'
-		abbrev: 'a'
+		flag:        .string
+		name:        'address'
+		abbrev:      'a'
 		description: 'address in form root@212.3.4.5:2222 or root@212.3.4.5 or root@info.three.com'
 	})
 
@@ -76,10 +76,10 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 fn cmd_bootstrap_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
-	
+
 	mut compileupload := cmd.flags.get_bool('compileupload') or { false }
 	mut update := cmd.flags.get_bool('update') or { false }
-	
+
 	// mut hero := cmd.flags.get_bool('hero') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
 	if address == '' {
@@ -102,21 +102,19 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 		}
 		// return error(cmd.help_message())
 	}
-	if compileupload{
+	if compileupload {
 		// mycmd:='
 		// 	\${HOME}/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 		// '
 		// osal.exec(cmd: mycmd)!
-		println("please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/githubactions.sh")
-
+		println('please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/githubactions.sh')
 	}
 
-	
-	if update{
+	if update {
 		// mycmd:='
 		// 	\${HOME}/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 		// '
 		// osal.exec(cmd: mycmd)!
-		println("please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/install_hero.sh")
+		println('please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/install_hero.sh')
 	}
 }

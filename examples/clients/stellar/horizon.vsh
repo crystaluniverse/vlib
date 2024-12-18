@@ -7,10 +7,10 @@ generated_account := stellar.generate_keys(name: 'account', network: .testnet, f
 println('Account: ${generated_account}')
 
 mut stellar_client := stellar.new_client(
-	account_name: generated_account.name
+	account_name:   generated_account.name
 	account_secret: generated_account.secret
-	network: .testnet
-	cache: false
+	network:        .testnet
+	cache:          false
 )!
 
 mut horizon_client := stellar.new_horizon_client(.testnet)!

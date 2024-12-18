@@ -16,7 +16,7 @@ pub struct Playground {
 @[params]
 pub struct PlaygroundConfig {
 pub:
-	dest  pathlib.Path   @[required]
+	dest  pathlib.Path @[required]
 	specs []pathlib.Path
 }
 
@@ -46,7 +46,7 @@ pub fn export_playground(config PlaygroundConfig) ! {
 const build_path = '${os.dir(@FILE)}/playground'
 
 pub fn new_playground(config PlaygroundConfig) !&Playground {
-	build_dir := pathlib.get_dir(path: openrpc.build_path)!
+	build_dir := pathlib.get_dir(path: build_path)!
 	mut pg := Playground{
 		build: build_dir
 	}
@@ -73,7 +73,7 @@ fn encode_env(specs_ []pathlib.Path) !string {
 		name := texttools.name_fix(o.info.title)
 		examples << ExampleSpec{
 			name: name
-			url: '/specs/${name}.json'
+			url:  '/specs/${name}.json'
 		}
 	}
 	mut examples_str := "window._env_ = { ACTORS: '${json.encode(examples)}' }"

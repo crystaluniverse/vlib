@@ -9,7 +9,7 @@ pub mut:
 	size             u64 // size of the rootfs disk in bytes
 	compute_capacity ComputeCapacity
 	mounts           []Mount
-	entrypoint       string // how to invoke that in a vm?
+	entrypoint       string            // how to invoke that in a vm?
 	env              map[string]string // environment for the zmachine
 	corex            bool
 	gpu              []string
@@ -17,9 +17,9 @@ pub mut:
 
 pub struct ZmachineNetwork {
 pub mut:
-	public_ip  string // PublicIP optional public IP attached to this machine. If set it must be a valid name of a PublicIP workload in the same deployment
+	public_ip  string              // PublicIP optional public IP attached to this machine. If set it must be a valid name of a PublicIP workload in the same deployment
 	interfaces []ZNetworkInterface // Interfaces list of user znets to join
-	planetary  bool // Planetary support planetary network
+	planetary  bool                // Planetary support planetary network
 	mycelium   ?MyceliumIP
 }
 
@@ -107,13 +107,13 @@ pub mut:
 
 pub fn (z Zmachine) to_workload(args WorkloadArgs) Workload {
 	return Workload{
-		version: args.version or { 0 }
-		name: args.name
-		type_: workload_types.zmachine
-		data: json.encode(z)
-		metadata: args.metadata or { '' }
+		version:     args.version or { 0 }
+		name:        args.name
+		type_:       workload_types.zmachine
+		data:        json.encode(z)
+		metadata:    args.metadata or { '' }
 		description: args.description or { '' }
-		result: args.result or { WorkloadResult{} }
+		result:      args.result or { WorkloadResult{} }
 	}
 }
 

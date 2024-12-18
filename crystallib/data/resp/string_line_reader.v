@@ -10,7 +10,7 @@ mut:
 pub fn new_line_reader(data []u8) StringLineReader {
 	return StringLineReader{
 		data: data
-		y: data.len
+		y:    data.len
 	}
 }
 

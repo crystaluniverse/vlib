@@ -35,7 +35,7 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 			content: it
 		})
 		// TODO: need to use the build in mechanism to filter rows
-		rows: rows
+		rows:       rows
 		alignments: [.left, .left, .left]
 	}
 	return table.markdown()

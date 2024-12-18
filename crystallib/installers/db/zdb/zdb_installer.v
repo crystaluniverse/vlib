@@ -53,13 +53,13 @@ pub fn install(args_ InstallArgs) ! {
 		}
 
 		mut dest := osal.download(
-			url: url
+			url:        url
 			minsize_kb: 1000
 		)!
 
 		osal.cmd_add(
 			cmdname: 'zdb'
-			source: dest.path
+			source:  dest.path
 		)!
 	}
 
@@ -103,7 +103,7 @@ pub fn start(args_ InstallArgs) ! {
 
 	sm.start(
 		name: 'zdb'
-		cmd: cmd
+		cmd:  cmd
 	)!
 
 	console.print_debug(cmd)

@@ -9,10 +9,8 @@ import flag
 import log
 import os
 
-const (
-	default_server_address = 'http://127.0.0.1:8080'
-	mainnet_ethereum_node  = 'ws://185.69.167.224:8546'
-)
+const default_server_address = 'http://127.0.0.1:8080'
+const mainnet_ethereum_node = 'ws://185.69.167.224:8546'
 
 @[params]
 pub struct Arguments {
@@ -60,7 +58,7 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, args Arguments) !
 
 	hash_bridge_to_stellar := eth_client.bridge_to_stellar(
 		destination: stellar_address
-		amount: quote
+		amount:      quote
 	)!
 	stellar_client.await_bridged_from_ethereum(memo: hash_bridge_to_stellar)!
 	logger.info('bridge to stellar done')
@@ -78,7 +76,7 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, args Arguments) !
 	logger.info('tft balance: ${tfchain_balance}')
 
 	hash_bridge_to_tfchain := stellar_client.bridge_to_tfchain(
-		amount: stellar_balance
+		amount:  stellar_balance
 		twin_id: tfchain_twinid
 	)!
 	tfchain_client.await_bridged_from_stellar(hash_bridge_to_tfchain)!
@@ -92,20 +90,20 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, args Arguments) !
 
 	machines_deployment := tfgrid_client.deploy_vm(tfgrid.DeployVM{
 		add_wireguard_access: false
-		name: 'vm1'
-		farm_id: 1
-		cpu: 2
-		memory: 2048
-		rootfs_size: 1024
-		public_ip6: true
-		env_vars: {
+		name:                 'vm1'
+		farm_id:              1
+		cpu:                  2
+		memory:               2048
+		rootfs_size:          1024
+		public_ip6:           true
+		env_vars:             {
 			'SSH_KEY': args.ssh_key
 		}
-		disks: [tfgrid.Disk{
-			size: 10
+		disks:                [tfgrid.Disk{
+			size:       10
 			mountpoint: '/mnt/disk1'
 		}]
-		description: 'My deployment using ethereum'
+		description:          'My deployment using ethereum'
 	})!
 	logger.info('machines deployment: ${machines_deployment}')
 }
@@ -144,9 +142,9 @@ fn main() {
 	_ := spawn myclient.run()
 
 	arguments := Arguments{
-		eth_secret: eth_secret
+		eth_secret:       eth_secret
 		tfchain_mnemonic: tfchain_mnemonic
-		ssh_key: ssh_key
+		ssh_key:          ssh_key
 	}
 
 	execute_rpcs(mut myclient, mut logger, arguments) or {

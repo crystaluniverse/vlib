@@ -29,41 +29,41 @@ fn testsuite_begin() ! {
 fn test_cancel() ! {
 	mut robot := new()!
 	result := robot.deploy(
-		name: '${tfrobot.test_name}_deployment'
-		mnemonic: mnemonics
-		network: .main
+		name:        '${test_name}_deployment'
+		mnemonic:    mnemonics
+		network:     .main
 		node_groups: [
 			NodeGroup{
-				name: '${tfrobot.test_name}_group'
+				name:        '${test_name}_group'
 				nodes_count: 1
-				free_cpu: 1
-				free_mru: 256
+				free_cpu:    1
+				free_mru:    256
 			},
 		]
-		vms: [
+		vms:         [
 			VMConfig{
-				name: '${tfrobot.test_name}_vm'
-				vms_count: 1
-				cpu: 1
-				mem: 256
-				node_group: '${tfrobot.test_name}_group'
-				ssh_key: '${tfrobot.test_name}_key'
-				entry_point: tfrobot.test_entrypoint
-				flist: tfrobot.test_flist
+				name:        '${test_name}_vm'
+				vms_count:   1
+				cpu:         1
+				mem:         256
+				node_group:  '${test_name}_group'
+				ssh_key:     '${test_name}_key'
+				entry_point: test_entrypoint
+				flist:       test_flist
 			},
 		]
-		ssh_keys: {
-			'${tfrobot.test_name}_key': ssh_key
+		ssh_keys:    {
+			'${test_name}_key': ssh_key
 		}
 	)!
 
-	assert result.ok.keys() == ['${tfrobot.test_name}_group']
+	assert result.ok.keys() == ['${test_name}_group']
 	robot.cancel(
-		name: '${tfrobot.test_name}_deployment'
-		mnemonic: mnemonics
-		network: .main
+		name:        '${test_name}_deployment'
+		mnemonic:    mnemonics
+		network:     .main
 		node_groups: [CancelGroup{
-			name: '${tfrobot.test_name}_group'
+			name: '${test_name}_group'
 		}]
 	)!
 }

@@ -1,15 +1,15 @@
 module accounts
+
 import freeflowuniverse.crystallib.pathlib
 import encoding.binary as bin
 import crypto.ed25519
 
-pub struct Account{
+pub struct Account {
 pub mut:
-	uid u32
-	pubkey ed25519.PublicKey
+	uid       u32
+	pubkey    ed25519.PublicKey
 	positions []Position
 }
-
 
 // fn (p Position) serialize() []u8 {
 // 	mut data = []u8{len: 8}

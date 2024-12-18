@@ -40,7 +40,7 @@ pub fn get(instance string, cfg Config) !DaguClient {
 	// if self.connection.base_url != '${cfg2.url}/api/v1' {
 	mut con := httpconnection.new(
 		name: 'dagu'
-		url: '${cfg2.url}/api/v1'
+		url:  '${cfg2.url}/api/v1'
 	)!
 	con.basic_auth(cfg2.username, cfg2.password)
 	self.connection = con
@@ -60,7 +60,7 @@ pub fn configure(instance_ string) ! {
 	if instance == '' {
 		instance = myui.ask_question(
 			question: 'name for Dagu client'
-			default: instance
+			default:  instance
 		)!
 	}
 
@@ -70,26 +70,26 @@ pub fn configure(instance_ string) ! {
 
 	cfg.url = myui.ask_question(
 		question: 'dagu server url e.g. http://localhost:8080'
-		minlen: 5
-		default: cfg.url
+		minlen:   5
+		default:  cfg.url
 	)!
 
 	cfg.username = myui.ask_question(
 		question: 'dagu server username'
-		minlen: 2
-		default: cfg.username
+		minlen:   2
+		default:  cfg.username
 	)!
 
 	cfg.password = myui.ask_question(
 		question: 'dagu server password'
-		default: cfg.password
-		minlen: 6
+		default:  cfg.password
+		minlen:   6
 	)!
 
 	cfg.apisecret = myui.ask_question(
 		question: 'dagu server api secret'
-		default: cfg.password
-		minlen: 6
+		default:  cfg.password
+		minlen:   6
 	)!
 
 	get(instance, cfg)!

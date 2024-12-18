@@ -77,7 +77,7 @@ fn main() {
 	println('Copied file content: ${copy_data.bytestr()}')
 
 	println('\nCleanup...')
-	
+
 	// Cleanup
 	nested_vfs.destroy() or { panic(err) }
 	os.rmdir_all('/tmp/test_nested_vfs') or { panic(err) }

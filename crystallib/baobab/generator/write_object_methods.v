@@ -7,7 +7,7 @@ import os
 
 const id_param = Param{
 	name: 'id'
-	typ: Type{
+	typ:  Type{
 		symbol: 'u32'
 	}
 }
@@ -23,19 +23,19 @@ pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
 
 	items << generate_object_methods(actor, object)
 	mut file := codemodel.new_file(
-		mod: texttools.name_fix(actor.name)
-		name: obj_name
+		mod:     texttools.name_fix(actor.name)
+		name:    obj_name
 		imports: [
 			Import{
-				mod: object.structure.mod
+				mod:   object.structure.mod
 				types: [object_type]
 			},
 			Import{
-				mod: 'freeflowuniverse.crystallib.baobab.backend'
+				mod:   'freeflowuniverse.crystallib.baobab.backend'
 				types: ['FilterParams']
 			},
 		]
-		items: items
+		items:   items
 	)
 
 	if object.structure.fields.any(it.attrs.any(it.name == 'index')) {
@@ -54,23 +54,23 @@ fn generate_get_method(actor Struct, object BaseObject) Function {
 	object_type := object.structure.name
 
 	get_method := Function{
-		name: 'get_${object_name}'
+		name:        'get_${object_name}'
 		description: 'gets the ${object_name} with the given object id'
-		receiver: Param{
+		receiver:    Param{
 			mutable: true
-			name: 'actor'
-			typ: Type{
+			name:    'actor'
+			typ:     Type{
 				symbol: actor.name
 			}
 		}
-		params: [generator.id_param]
-		result: Result{
-			typ: Type{
+		params:      [id_param]
+		result:      Result{
+			typ:    Type{
 				symbol: object.structure.name
 			}
 			result: true
 		}
-		body: 'return actor.backend.get[${object_type}](id)!'
+		body:        'return actor.backend.get[${object_type}](id)!'
 	}
 	return get_method
 }
@@ -81,33 +81,33 @@ fn generate_set_method(actor Struct, object BaseObject) Function {
 	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
-		structure: object.structure
-		prefix: ''
+		structure:    object.structure
+		prefix:       ''
 		only_mutable: true
 	)
 	body := 'actor.backend.set[${object_type}](${object_name})!'
 	get_method := Function{
-		name: 'set_${object_name}'
+		name:        'set_${object_name}'
 		description: 'updates the ${object.structure.name} with the given object id'
-		receiver: Param{
+		receiver:    Param{
 			mutable: true
-			name: 'actor'
-			typ: Type{
+			name:    'actor'
+			typ:     Type{
 				symbol: actor.name
 			}
 		}
-		params: [
+		params:      [
 			Param{
 				name: object_name
-				typ: Type{
+				typ:  Type{
 					symbol: object_type
 				}
 			},
 		]
-		result: Result{
+		result:      Result{
 			result: true
 		}
-		body: body
+		body:        body
 	}
 	return get_method
 }
@@ -119,20 +119,20 @@ fn generate_delete_method(actor Struct, object BaseObject) Function {
 
 	body := 'actor.backend.delete[${object_type}](id)!'
 	get_method := Function{
-		name: 'delete_${object_name}'
+		name:        'delete_${object_name}'
 		description: 'deletes the ${object.structure.name} with the given object id'
-		receiver: Param{
+		receiver:    Param{
 			mutable: true
-			name: 'actor'
-			typ: Type{
+			name:    'actor'
+			typ:     Type{
 				symbol: actor.name
 			}
 		}
-		params: [generator.id_param]
-		result: Result{
+		params:      [id_param]
+		result:      Result{
 			result: true
 		}
-		body: body
+		body:        body
 	}
 	return get_method
 }
@@ -143,36 +143,36 @@ fn generate_new_method(actor Struct, object BaseObject) Function {
 	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
-		structure: object.structure
-		prefix: ''
+		structure:    object.structure
+		prefix:       ''
 		only_mutable: false
 	)
 	body := 'return actor.backend.new[${object_type}](${object_name})!'
 	new_method := Function{
-		name: 'new_${object_name}'
+		name:        'new_${object_name}'
 		description: 'news the ${object.structure.name} with the given object id'
-		receiver: Param{
-			name: 'actor'
-			typ: Type{
+		receiver:    Param{
+			name:    'actor'
+			typ:     Type{
 				symbol: actor.name
 			}
 			mutable: true
 		}
-		params: [
+		params:      [
 			Param{
 				name: object_name
-				typ: Type{
+				typ:  Type{
 					symbol: object_type
 				}
 			},
 		]
-		result: Result{
+		result:      Result{
 			result: true
-			typ: Type{
+			typ:    Type{
 				symbol: 'u32'
 			}
 		}
-		body: body
+		body:        body
 	}
 	return new_method
 }
@@ -182,12 +182,12 @@ fn generate_list_result_struct(actor Struct, object BaseObject) Struct {
 	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 	return Struct{
-		name: '${object_type}List'
+		name:   '${object_type}List'
 		is_pub: true
 		fields: [
 			StructField{
 				name: 'items'
-				typ: Type{
+				typ:  Type{
 					symbol: '[]${object_type}'
 				}
 			},
@@ -201,11 +201,11 @@ fn generate_list_method(actor Struct, object BaseObject) Function {
 	object_type := object.structure.name
 
 	list_struct := Struct{
-		name: '${object_type}List'
+		name:   '${object_type}List'
 		fields: [
 			StructField{
 				name: 'items'
-				typ: Type{
+				typ:  Type{
 					symbol: '[]${object_type}'
 				}
 			},
@@ -213,8 +213,8 @@ fn generate_list_method(actor Struct, object BaseObject) Function {
 	}
 
 	param_getters := generate_param_getters(
-		structure: object.structure
-		prefix: ''
+		structure:    object.structure
+		prefix:       ''
 		only_mutable: false
 	)
 	body := 'return ${object_type}List{items:actor.backend.list[${object_type}]()!}'
@@ -224,18 +224,18 @@ fn generate_list_method(actor Struct, object BaseObject) Function {
 	result.typ.symbol = result.structure.name
 	result.result = true
 	new_method := Function{
-		name: 'list_${object_name}'
+		name:        'list_${object_name}'
 		description: 'lists all of the ${object_name} objects'
-		receiver: Param{
-			name: 'actor'
-			typ: Type{
+		receiver:    Param{
+			name:    'actor'
+			typ:     Type{
 				symbol: actor.name
 			}
 			mutable: true
 		}
-		params: []
-		result: result
-		body: body
+		params:      []
+		result:      result
+		body:        body
 	}
 	return new_method
 }
@@ -246,24 +246,24 @@ fn generate_filter_params(actor Struct, object BaseObject) []Struct {
 
 	return [
 		Struct{
-			name: 'Filter${object_type}Params'
+			name:   'Filter${object_type}Params'
 			fields: [
 				StructField{
 					name: 'filter'
-					typ: Type{
+					typ:  Type{
 						symbol: '${object_type}Filter'
 					}
 				},
 				StructField{
 					name: 'params'
-					typ: Type{
+					typ:  Type{
 						symbol: 'FilterParams'
 					}
 				},
 			]
 		},
 		Struct{
-			name: '${object_type}Filter'
+			name:   '${object_type}Filter'
 			fields: object.structure.fields.filter(it.attrs.any(it.name == 'index'))
 		},
 	]
@@ -275,37 +275,37 @@ fn generate_filter_method(actor Struct, object BaseObject) Function {
 	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
-		structure: object.structure
-		prefix: ''
+		structure:    object.structure
+		prefix:       ''
 		only_mutable: false
 	)
 	params_type := 'Filter${object_type}Params'
 	body := 'return actor.backend.filter[${object_type}, ${object_type}Filter](filter.filter, filter.params)!'
 	return Function{
-		name: 'filter_${object_name}'
+		name:        'filter_${object_name}'
 		description: 'lists all of the ${object_name} objects'
-		receiver: Param{
-			name: 'actor'
-			typ: Type{
+		receiver:    Param{
+			name:    'actor'
+			typ:     Type{
 				symbol: actor.name
 			}
 			mutable: true
 		}
-		params: [
+		params:      [
 			Param{
 				name: 'filter'
-				typ: Type{
+				typ:  Type{
 					symbol: params_type
 				}
 			},
 		]
-		result: Result{
-			typ: Type{
+		result:      Result{
+			typ:    Type{
 				symbol: '[]${object_type}'
 			}
 			result: true
 		}
-		body: body
+		body:        body
 	}
 }
 
@@ -318,24 +318,24 @@ fn generate_object_methods(actor Struct, object BaseObject) []Function {
 	for method in object.methods {
 		mut params := [Param{
 			name: 'id'
-			typ: Type{
+			typ:  Type{
 				symbol: 'u32'
 			}
 		}]
 		params << method.params
 		funcs << Function{
-			name: method.name
+			name:        method.name
 			description: method.description
-			receiver: Param{
-				name: 'actor'
-				typ: Type{
+			receiver:    Param{
+				name:    'actor'
+				typ:     Type{
 					symbol: actor.name
 				}
 				mutable: true
 			}
-			params: params
-			result: method.result
-			body: 'obj := actor.backend.get[${method.receiver.typ.symbol}](id)!
+			params:      params
+			result:      method.result
+			body:        'obj := actor.backend.get[${method.receiver.typ.symbol}](id)!
 			obj.${method.name}(${method.params.map(it.name).join(',')})
 			actor.backend.set[${method.receiver.typ.symbol}](obj)!
 			'
@@ -364,7 +364,7 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 			subgetters := generate_param_getters(GenerateParamGetters{
 				...params
 				structure: field.structure
-				prefix: '${field.name}_'
+				prefix:    '${field.name}_'
 			})
 			// name of the tested object, used for param declaration
 			// ex: fruits []Fruit becomes fruit_name

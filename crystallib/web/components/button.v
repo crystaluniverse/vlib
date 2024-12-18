@@ -1,11 +1,11 @@
 module components
 
-pub struct Button{
+pub struct Button {
 	Unpoly
 pub mut:
-	onclick string
-	typ string
-	content string
+	onclick  string
+	typ      string
+	content  string
 	navigate string // the route the button is to navigate to, if it is
 }
 
@@ -23,7 +23,6 @@ pub fn (button Button) html() string {
 
 	return '<button ${tags.join(' ')} ${button.Unpoly.html()}>${button.content}</button>'
 }
-
 
 pub struct Unpoly {
 pub:

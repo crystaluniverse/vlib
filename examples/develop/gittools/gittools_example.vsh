@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.osal
 import time
 
-
 mut gs_default := gittools.new()!
 
 println(gs_default)

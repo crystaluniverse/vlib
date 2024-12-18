@@ -41,8 +41,8 @@ pub fn generate_definers(params GenerateDefinersParams) ! {
 
 		definers << generate_root_object_definers(
 			circle_struct: circle_struct
-			root_struct: structure
-			sub_structs: sub_objects
+			root_struct:   structure
+			sub_structs:   sub_objects
 		)!
 	}
 
@@ -82,29 +82,29 @@ pub fn generate_root_object_definers(params GenerateRootObjectDefiner) ![]codemo
 
 	root_obj_definer := codemodel.Function{
 		receiver: codemodel.Param{
-			name: 'circle'
+			name:    'circle'
 			struct_: params.circle_struct
 			mutable: true
 		}
-		name: 'define_${texttools.name_fix(params.root_struct.name)}'
-		params: [
+		name:     'define_${texttools.name_fix(params.root_struct.name)}'
+		params:   [
 			codemodel.Param{
-				name: 'params'
+				name:    'params'
 				struct_: params.root_struct
 			},
 		]
-		result: codemodel.Result{
+		result:   codemodel.Result{
 			result: true
 		}
-		body: method_body
+		body:     method_body
 	}
 
 	mut sub_object_definers := []codemodel.Function{}
 	for structure in params.sub_structs {
 		sub_object_definers << generate_sub_object_definer(
-			root_struct: params.root_struct
+			root_struct:   params.root_struct
 			circle_struct: params.circle_struct
-			structure: structure
+			structure:     structure
 		)!
 	}
 	mut definers := [root_obj_definer]
@@ -154,21 +154,21 @@ pub fn generate_sub_object_definer(params GenerateSubObjectDefiner) !codemodel.F
 
 	sub_obj_definer := codemodel.Function{
 		receiver: codemodel.Param{
-			name: 'circle'
+			name:    'circle'
 			struct_: params.circle_struct
 			mutable: true
 		}
-		name: 'define_${texttools.name_fix(params.structure.name)}'
-		params: [
+		name:     'define_${texttools.name_fix(params.structure.name)}'
+		params:   [
 			codemodel.Param{
-				name: 'params'
+				name:    'params'
 				struct_: params.structure
 			},
 		]
-		result: codemodel.Result{
+		result:   codemodel.Result{
 			result: true
 		}
-		body: method_body
+		body:     method_body
 	}
 	return sub_obj_definer
 }

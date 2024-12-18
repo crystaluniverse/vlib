@@ -1,0 +1,13 @@
+
+!!hero_code.generate_installer
+    name:'meilisearchinstaller'
+    classname:'MeilisearchServer'
+    singleton:0
+    templates:0
+    default:1
+    title:''
+    supported_platforms:''
+    reset:0
+    startupmanager:1
+	hasconfig:1
+    build:1

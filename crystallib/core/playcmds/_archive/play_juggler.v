@@ -27,10 +27,10 @@ pub fn play_juggler(mut plbook playbook.PlayBook) ! {
 		port := p.get_int_default('port', 8000)!
 
 		j = juggler.configure(
-			url: 'https://git.ourworld.tf/projectmycelium/itenv'
+			url:      'https://git.ourworld.tf/projectmycelium/itenv'
 			username: username
 			password: password
-			reset: true
+			reset:    true
 		)!
 		config_actions[0].done = true
 	}

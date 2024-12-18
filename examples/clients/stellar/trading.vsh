@@ -8,25 +8,25 @@ account1 := stellar.generate_keys(name: 'account1', network: .testnet, fund: tru
 println('Account 1: ${account1}')
 
 mut client := stellar.new_client(
-	account_name: 'default'
+	account_name:   'default'
 	account_secret: account1.secret
-	network: .testnet
-	cache: false
+	network:        .testnet
+	cache:          false
 )!
 
 mut hash := client.add_trust_line(
 	asset_code: 'TFT'
-	issuer: tft_issuer // tft issuer id
+	issuer:     tft_issuer // tft issuer id
 )!
 println('add tft trustline tx hash: ${hash}')
 
 // Make sell offer
 sell_offer_args := stellar.OfferArgs{
 	selling: stellar.OfferAssetType('native')
-	buying: stellar.OfferAssetType(stellar.new_asset_type('TFT', tft_issuer))
-	sell: true
-	amount: 50
-	price: 10
+	buying:  stellar.OfferAssetType(stellar.new_asset_type('TFT', tft_issuer))
+	sell:    true
+	amount:  50
+	price:   10
 }
 mut sell_offer_result := client.create_offer(sell_offer_args)!
 if sell_offer_result.claimed {
@@ -38,10 +38,10 @@ if sell_offer_result.claimed {
 // Make buy offer
 mut buy_offer_args := stellar.OfferArgs{
 	selling: stellar.OfferAssetType('native')
-	buying: stellar.OfferAssetType(stellar.new_asset_type('TFT', tft_issuer))
-	buy: true
-	amount: 50
-	price: 10
+	buying:  stellar.OfferAssetType(stellar.new_asset_type('TFT', tft_issuer))
+	buy:     true
+	amount:  50
+	price:   10
 }
 
 mut buy_offer_result := client.create_offer(buy_offer_args)!

@@ -13,7 +13,7 @@ mut:
 
 pub struct Person {
 pub:
-	cid           string      @[required]
+	cid           string @[required]
 	name          string
 	page_path     string
 	biography     string
@@ -36,16 +36,16 @@ pub struct PeopleAddArgs {
 pub fn (mut site ZolaSite) people_add(args PeopleAddArgs) ! {
 	people_section := Section{
 		...args.Section
-		name: 'people'
-		title: if args.title != '' { args.title } else { 'People' }
-		sort_by: if args.sort_by != .@none { args.sort_by } else { .weight }
-		template: if args.template != '' { args.template } else { 'layouts/people.html' }
+		name:          'people'
+		title:         if args.title != '' { args.title } else { 'People' }
+		sort_by:       if args.sort_by != .@none { args.sort_by } else { .weight }
+		template:      if args.template != '' { args.template } else { 'layouts/people.html' }
 		page_template: if args.page_template != '' {
 			args.page_template
 		} else {
 			'partials/personCard.html'
 		}
-		paginate_by: if args.paginate_by != 0 { args.paginate_by } else { 4 }
+		paginate_by:   if args.paginate_by != 0 { args.paginate_by } else { 4 }
 	}
 	site.add_section(people_section)!
 }
@@ -72,11 +72,11 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 	image := person.image or { return error('Person must have an image') }
 
 	person_page := new_page(
-		name: person.cid
-		Page: page
-		title: person.name
+		name:        person.cid
+		Page:        page
+		title:       person.name
 		description: person.description
-		taxonomies: {
+		taxonomies:  {
 			'people':      [person.cid]
 			'memberships': person.memberships
 			'categories':  person.categories
@@ -131,12 +131,12 @@ fn (site ZolaSite) get_person(args_ PersonAddArgs) !Person {
 	name := definition.params.get_default('name', '')!
 	image_ := definition.params.get_default('image_path', '')!
 	mut person := Person{
-		name: name
-		cid: definition.params.get_default('cid', '')!
-		description: definition.params.get_default('description', '')!
+		name:          name
+		cid:           definition.params.get_default('cid', '')!
+		description:   definition.params.get_default('description', '')!
 		organizations: definition.params.get_list_default('organizations', [])!
-		biography: definition.params.get_default('bio', '')!
-		page_path: definition.params.get_default('page_path', '')!
+		biography:     definition.params.get_default('bio', '')!
+		page_path:     definition.params.get_default('page_path', '')!
 	}
 
 	if person.cid == '' {

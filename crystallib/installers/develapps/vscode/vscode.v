@@ -34,17 +34,17 @@ pub fn install(args_ InstallArgs) ! {
 	}
 	console.print_debug(' download ${url}')
 	_ = osal.download(
-		url: url
-		minsize_kb: 5000
-		reset: args.reset
-		dest: '/tmp/vscode.zip'
+		url:         url
+		minsize_kb:  5000
+		reset:       args.reset
+		dest:        '/tmp/vscode.zip'
 		expand_file: '/tmp/download/vscode'
 	)!
 
 	osal.cmd_add(
 		cmdname: 'code'
-		source: '/tmp/download/vscode/code'
-		reset: true
+		source:  '/tmp/download/vscode/code'
+		reset:   true
 	)!
 
 	extensions_install(default: true)!

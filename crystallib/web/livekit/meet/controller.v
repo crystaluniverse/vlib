@@ -10,10 +10,10 @@ import time
 
 // Struct for ConnectionDetails
 pub struct ConnectionDetails {
-	server_url        string [json: 'serverUrl']
-	room_name         string [json: 'roomName']
-	participant_token string [json: 'participantToken']
-	participant_name  string [json: 'participantName']
+	server_url        string @[json: 'serverUrl']
+	room_name         string @[json: 'roomName']
+	participant_token string @[json: 'participantToken']
+	participant_name  string @[json: 'participantName']
 }
 
 // GET endpoint to handle participant token generation
@@ -31,24 +31,22 @@ pub fn (app &App) participant_endpoint(mut ctx Context) veb.Result {
 
 	// Determine the LiveKit server URL based on region
 	livekit_server_url := if region != '' {
-		get_livekit_url(region) or {
-			return ctx.server_error('Invalid region: $err')
-		}
+		get_livekit_url(region) or { return ctx.server_error('Invalid region: ${err}') }
 	} else {
 		app.livekit_url
 	}
 
 	// Generate participant token
 	participant_token := app.create_participant_token(participant_name, room_name, metadata) or {
-		return ctx.server_error('Failed to create participant token: $err')
+		return ctx.server_error('Failed to create participant token: ${err}')
 	}
 
 	// Create connection details response
 	connection_details := ConnectionDetails{
-		server_url: livekit_server_url
-		room_name: room_name
+		server_url:        livekit_server_url
+		room_name:         room_name
 		participant_token: participant_token
-		participant_name: participant_name
+		participant_name:  participant_name
 	}
 
 	// Return JSON response
@@ -63,9 +61,9 @@ fn (app &App) create_participant_token(participant_name string, room_name string
 	// Set up access token options
 	options := AccessTokenOptions{
 		identity: identity
-		name: participant_name
+		name:     participant_name
 		metadata: metadata
-		ttl: 300 // Token expiration: 5 minutes
+		ttl:      300 // Token expiration: 5 minutes
 	}
 
 	// Create a new access token using the client
@@ -73,11 +71,11 @@ fn (app &App) create_participant_token(participant_name string, room_name string
 
 	// Create a video grant and add it to the token
 	video_grant := VideoGrant{
-		room: room_name
-		room_join: true
-		can_publish: true
+		room:             room_name
+		room_join:        true
+		can_publish:      true
 		can_publish_data: true
-		can_subscribe: true
+		can_subscribe:    true
 	}
 	token.add_video_grant(video_grant)
 

@@ -34,7 +34,7 @@ pub fn (mut t OurThread) rpc(args RPCArg) !string {
 pub fn (mut t OurThread) stop() ! {
 	mut a := RPCArg{
 		method: 'STOP'
-		async: true
+		async:  true
 	}
 	t.ch_send.push(&a)
 }

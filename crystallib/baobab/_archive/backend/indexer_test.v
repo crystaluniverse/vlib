@@ -9,14 +9,14 @@ const db_dir = '${os.dir(@FILE)}/testdata/db'
 
 fn testsuite_begin() {
 	pathlib.get_dir(
-		path: db_dir
+		path:  db_dir
 		empty: true
 	)!
 }
 
 fn testsuite_end() {
 	mut dir := pathlib.get_dir(
-		path: db_dir
+		path:   db_dir
 		delete: true
 	)!
 }
@@ -28,7 +28,7 @@ fn db_path(db_name string) string {
 // fn test_new_indexer() ! {
 // 	sqlite_db :=  sqlite.connect(db_path(@FN))!
 // 	sqlite_indexer := new_indexer(sqlite_db: sqlite_db)!
-	
+
 // 	postgres_db := pg.connect(dbname: 'default')!
 // 	postgres_indexer := new_indexer(postgres_db: postgres_db)!
 // }
@@ -46,7 +46,7 @@ fn db_path(db_name string) string {
 // 	sqlite_db :=  sqlite.connect(db_path(@FN))!
 // 	mut sqlite_indexer := new_indexer(sqlite_db: sqlite_db)!
 // 	// mut postgres_indexer := new_indexer(new_db(@FN, PostgresConfig{})!)!
-	
+
 // 	sqlite_indexer.new(TestStruct{
 // 		text: 'test_text'
 // 		number: 41
@@ -72,7 +72,7 @@ fn db_path(db_name string) string {
 // fn test_indexer_filter() ! {
 // 	sqlite_db :=  sqlite.connect(db_path(@FN))!
 // 	mut sqlite_indexer := new_indexer(sqlite_db: sqlite_db)!
-	
+
 // 	sqlite_indexer.new(TestStruct{
 // 		text: 'test_text'
 // 		number: 41

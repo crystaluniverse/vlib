@@ -28,9 +28,9 @@ pub fn (mut ossl OpenSSL) new(args OpenSSLGenerateArgs) !OpenSSLKey {
 	}
 
 	r := OpenSSLKey{
-		name: args.name
-		domain: args.domain
-		path_key: path_keyo
+		name:      args.name
+		domain:    args.domain
+		path_key:  path_keyo
 		path_cert: path_certo
 		path_json: path_jsono
 	}

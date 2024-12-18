@@ -30,9 +30,9 @@ pub fn (mut j Juggler) get_gitea_event(data string) !Event {
 	}
 
 	repo := Repository{
-		owner: name_split[0]
-		name: name_split[1]
-		host: event.repository.clone_url.trim_string_left('https://').all_before('/')
+		owner:  name_split[0]
+		name:   name_split[1]
+		host:   event.repository.clone_url.trim_string_left('https://').all_before('/')
 		branch: event.ref.all_after_last('/')
 	}
 
@@ -49,12 +49,12 @@ pub fn (mut j Juggler) get_gitea_event(data string) !Event {
 	}
 	commit := event.commits[0]
 	return Event{
-		commit: Commit{
+		commit:    Commit{
 			committer: commit.committer.name
-			hash: commit.id
-			message: commit.message
-			time: time.parse_iso8601(commit.timestamp)!
-			url: commit.url
+			hash:      commit.id
+			message:   commit.message
+			time:      time.parse_iso8601(commit.timestamp)!
+			url:       commit.url
 		}
 		object_id: repo_id
 	}
@@ -64,9 +64,9 @@ pub fn (mut j Juggler) get_github_event(data string) !Event {
 	payload := json.decode(GitHubPayload, data) or { return error('failed to decode github event') }
 
 	repo := Repository{
-		owner: payload.repository.owner.name
-		name: payload.repository.name
-		host: 'github.com'
+		owner:  payload.repository.owner.name
+		name:   payload.repository.name
+		host:   'github.com'
 		branch: payload.ref.all_after_last('/')
 	}
 
@@ -80,12 +80,12 @@ pub fn (mut j Juggler) get_github_event(data string) !Event {
 
 	return Event{
 		object_id: repo_id
-		commit: Commit{
-			hash: payload.commits[0].id
-			url: payload.commits[0].url
-			message: payload.commits[0].message
+		commit:    Commit{
+			hash:      payload.commits[0].id
+			url:       payload.commits[0].url
+			message:   payload.commits[0].message
 			committer: payload.commits[0].committer.name
-			time: time.parse_iso8601(payload.commits[0].timestamp)!
+			time:      time.parse_iso8601(payload.commits[0].timestamp)!
 		}
 	}
 }
