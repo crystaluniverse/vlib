@@ -1,0 +1,63 @@
+module @{name}
+
+import os
+import cli { Command }
+import vweb
+import freeflowuniverse.crystallib.rpc.openrpc
+import freeflowuniverse.crystallib.core.pathlib
+
+
+const openrpc_path = '@{dollar}{os.dir(os.dir(@@FILE))}/openrpc.json'
+const playground_path = '@{dollar}{os.dir(os.dir(@@FILE))}/playground'
+
+fn do() ! {
+	mut cmd := new_command()
+	cmd.setup()
+	cmd.parse(os.args)
+}
+
+pub fn new_command() Command {
+	mut cmd := Command{
+		name: '@{name}'
+		description: 'Your @{name} toolset.'
+		version: '1.0.16'
+	}
+
+
+	mut cmd_run := Command{
+		name: 'run_server'
+		description: 'Run @{name} websocket server.'
+		usage: ''
+		required_args: 0
+		execute: cmd_run_wsserver
+	}
+
+	mut cmd_playground := Command{
+		name: 'playground'
+		description: 'Run @{name} playground server.'
+		usage: ''
+		required_args: 0
+		execute: playground
+	}
+
+	cmd.add_command(cmd_run)
+	cmd.add_command(cmd_playground)
+	return cmd
+}
+
+fn cmd_run_wsserver(cmd Command) ! {
+	// accountant.run_wsserver(3000)!
+}
+
+fn playground(cmd Command) ! {
+    pg := openrpc.new_playground(
+	    dest: pathlib.get_dir(path: playground_path)!
+	    specs: [pathlib.get_file(path:openrpc_path)!]
+    )!
+    vweb.run(pg, 8080)
+}
+
+
+fn main() {
+	do() or { panic(err) }
+}

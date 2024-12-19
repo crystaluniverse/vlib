@@ -17,7 +17,7 @@ const spec_json = os.read_file(spec_path) or { panic(err) }
 // Main function to start the server
 fn main() {
     // Initialize the Redis client and RPC mechanism
-    mut redis := redisclient.new(['localhost:6379'])!
+    mut redis := redisclient.new('localhost:6379')!
     mut rpc := redis.rpc_get('procedure_queue')
 
     // Initialize the server

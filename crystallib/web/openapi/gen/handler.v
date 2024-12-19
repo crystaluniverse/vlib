@@ -1,6 +1,6 @@
 module generation
 
-import freeflowuniverse.crystallib.web.openapi
+import freeflowuniverse.crystallib.web.openapi {OpenAPI}
 
 pub fn openapi_to_handler_file(spec OpenAPI) string {
 	mut operation_handlers := []string{}

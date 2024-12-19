@@ -48,7 +48,7 @@ struct User {
 
 // Entry point for the actor
 fn main() {
-    mut redis := redisclient.new(['localhost:6379']) or {panic(err)}
+    mut redis := redisclient.new('localhost:6379') or {panic(err)}
     mut rpc := redis.rpc_get('procedure_queue')
 
     mut actor := Actor{
