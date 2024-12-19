@@ -126,7 +126,7 @@ pub fn (mut tree Tree) scan_concurrent(args_ TreeScannerArgs) ! {
 		)
 	}
 
-	for i, t in threads {
+	for _, t in threads {
 		new_collection := t.wait() or { return error('Error executing thread: ${err}') }
 		tree.collections[new_collection.name] = &new_collection
 	}

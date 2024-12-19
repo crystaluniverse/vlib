@@ -38,7 +38,7 @@ pub fn install_blackbox_exporter(args_ InstallArgs) ! {
 			return error('unsuported platform, only linux amd64 for now')
 		}
 
-		mut dest := osal.download(
+        _ := osal.download(
 			url:        url
 			minsize_kb: 9000
 			expand_dir: '/tmp/prometheus'

@@ -42,8 +42,8 @@ pub mut:
 	node_group  string
 	cpu         int  = 4 @[required]
 	mem         int  = 4 @[required]         // in GB
-	public_ip4  bool = false
-	public_ip6  bool = false
+	public_ip4  bool
+	public_ip6  bool
 	ygg_ip      bool = true
 	mycelium_ip bool = true
 	flist       string @[required]
@@ -52,8 +52,6 @@ pub mut:
 	ssh_key     string
 	env_vars    map[string]string
 }
-
-// pub struct SSHKey
 
 pub struct DeployResult {
 pub:

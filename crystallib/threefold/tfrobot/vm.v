@@ -35,7 +35,7 @@ pub mut:
 // return ssh node (can be used to do actions remotely)
 // will check all available channels till it can ssh into the node
 pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
-	mut b := builder.new()!
+    mut b := builder.new()!
 	start_time := time.now().unix_milli()
 	mut run_time := 0.0
 	for true {
@@ -46,7 +46,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 				return b.node_new(
 					ipaddr: 'root@${vm.public_ip4}'
 					name:   '${vm.deployment_name}_${vm.name}'
-				)!
+				)
 			}
 		}
 		if args.ip6 && vm.public_ip6.len > 0 {
@@ -56,7 +56,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 				return b.node_new(
 					ipaddr: 'root@[${vm.public_ip6}]'
 					name:   '${vm.deployment_name}_${vm.name}'
-				)!
+				)
 			}
 		}
 		if args.planetary && vm.yggdrasil_ip.len > 0 {
@@ -66,7 +66,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 				return b.node_new(
 					ipaddr: 'root@[${vm.yggdrasil_ip}]'
 					name:   '${vm.deployment_name}_${vm.name}'
-				)!
+				)
 			}
 		}
 		run_time = time.now().unix_milli()
@@ -79,7 +79,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 }
 
 pub fn (vm VMOutput) tcpport_addr_get(port int) !string {
-	mut b := builder.new()!
+    mut b := builder.new()!
 	start_time := time.now().unix_milli()
 	mut run_time := 0.0
 	for true {
@@ -180,22 +180,18 @@ pub fn (vm VMOutput) tcpport_addr_get(port int) !string {
 pub fn (vm VMOutput) vscode() ! {
 	r := vm.dagu_addr_get()!
 	cmd3 := "open 'http://[${r.addr}]:8080'"
-	// http://[302:1d81:cef8:3049:fbe1:69ba:bd8c:52ec]:8080/?folder=/root/Holochain/hello-world
-	// console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 
 pub fn (vm VMOutput) vscode_holochain() ! {
 	r := vm.dagu_addr_get()!
 	cmd3 := "open 'http://[${r.addr}]:8080/?folder=/root/Holochain/hello-world'"
-	// console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 
 pub fn (vm VMOutput) vscode_holochain_proxy() ! {
 	r := vm.dagu_addr_get()!
 	cmd3 := "open 'http://[${r.addr}]:8080/proxy/8282/"
-	// console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 

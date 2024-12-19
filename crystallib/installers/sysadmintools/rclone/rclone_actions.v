@@ -53,11 +53,11 @@ fn install() ! {
 }
 
 fn configure() ! {
-	mut cfg := get()!
+	_ := get()!
 
 	// THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
 
-	mut mycode := $tmpl('templates/rclone.yaml')
+	_ := $tmpl('templates/rclone.yaml')
 	// mut path := pathlib.get_file(path: cfg.configpath, create: true)!
 	// path.write(mycode)!
 	// console.print_debug(mycode)

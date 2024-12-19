@@ -38,7 +38,7 @@ pub fn install_alertmanager(args_ InstallArgs) ! {
 			return error('unsported platform, only linux amd64 for now')
 		}
 
-		mut dest := osal.download(
+        _ := osal.download(
 			url:        url
 			minsize_kb: 28000
 			expand_dir: '/tmp/prometheus'

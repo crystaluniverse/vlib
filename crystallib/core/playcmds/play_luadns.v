@@ -5,12 +5,12 @@ import freeflowuniverse.crystallib.core.playbook
 import os
 
 pub fn play_luadns(mut plbook playbook.PlayBook) ! {
-	mut buildroot := '${os.home_dir()}/hero/var/mdbuild'
-	mut publishroot := '${os.home_dir()}/hero/www/info'
-	mut coderoot := ''
+	_ := '${os.home_dir()}/hero/var/mdbuild'
+	_ := '${os.home_dir()}/hero/www/info'
+	_ := ''
 	// mut install := false
-	mut reset := false
-	mut pull := false
+	_ := false
+	_ := false
 
 	for mut action in plbook.find(filter: 'luadns.set_domain')! {
 		mut p := action.params

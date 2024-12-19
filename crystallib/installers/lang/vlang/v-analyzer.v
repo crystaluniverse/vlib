@@ -10,7 +10,7 @@ pub fn v_analyzer_install(args_ InstallArgs) ! {
 	mut args := args_
 	console.print_header('install v-analyzer (reset: ${args.reset})')
 	version := '0.0.4'
-	pl := osal.platform()
+    _ := osal.platform()
 	res := os.execute('${osal.profile_path_source_and()} v-analyzer version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().starts_with('v-analyzer'))

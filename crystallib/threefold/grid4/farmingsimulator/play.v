@@ -14,7 +14,7 @@ pub fn play(mut plbook PlayBook) ! {
 		return
 	}
 
-	mut name := ''
+    _ := ''
 	// console.print_header("AAAA")
 	// console.print_debug(plbook)
 	// console.print_header("BBBB")

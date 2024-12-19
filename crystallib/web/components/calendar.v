@@ -117,7 +117,7 @@ fn (mut self CalendarView) generate_calendar() string {
 		month: self.current_month + 1
 		day:   0
 	})
-	days_in_month := last_day.day
+    _ := last_day.day
 	starting_day := int(first_day.day_of_week())
 
 	mut calendar_html := '<div class="calendar">'

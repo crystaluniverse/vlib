@@ -29,7 +29,7 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 			return error('unsuported platform, only linux amd64 for now')
 		}
 
-		mut dest := osal.download(
+        _ := osal.download(
 			url:        url
 			minsize_kb: 3000
 			expand_dir: '/tmp/prometheus'

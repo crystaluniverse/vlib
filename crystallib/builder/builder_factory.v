@@ -7,7 +7,7 @@ pub struct BuilderFactory {
 }
 
 pub fn new() !BuilderFactory {
-	mut c := base.context()!
+    _ := base.context()!
 	mut bf := BuilderFactory{}
 	return bf
 }

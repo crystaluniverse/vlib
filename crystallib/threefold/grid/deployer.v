@@ -300,7 +300,7 @@ pub fn (mut d Deployer) batch_deploy(name_contracts []string, mut dls map[u32]&m
 			continue
 		}
 
-		mut dl := dls[data.node]
+        mut dl := dls[data.node] or { return error('Node ${data.node} not found in dls map') }
 		dl.contract_id = contract_id
 		threads << spawn d.handle_deploy(data.node, mut dl, hash_map[data.node])
 	}

@@ -266,7 +266,7 @@ fn (mut repo GitRepo) set_sshkey(key_name string) ! {
 	}
 
 	private_key := key.private_key_path()!
-	cmd := 'git config core.sshcommand "ssh -i ~/.ssh/${private_key.path}"'
+    _ := 'git config core.sshcommand "ssh -i ~/.ssh/${private_key.path}"'
 	repo.deploysshkey = key_name
 }
 

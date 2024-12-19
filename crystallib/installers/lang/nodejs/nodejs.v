@@ -12,7 +12,7 @@ pub mut:
 }
 
 pub fn install(args_ InstallArgs) ! {
-	mut args := args_
+    _ := args_
 	pl := osal.platform()
 	if pl == .arch {
 		osal.package_install('npm')!

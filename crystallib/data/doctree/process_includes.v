@@ -102,7 +102,7 @@ fn (mut tree Tree) generate_pages_graph() !map[string]map[string]bool {
 
 fn (mut tree Tree) collection_page_graph(col &collection.Collection) !map[string]map[string]bool {
 	mut graph := map[string]map[string]bool{}
-	mut ths := []thread !GraphResponse{}
+    _ := []thread !GraphResponse{}
 	for _, page in col.pages {
 		resp := tree.generate_page_graph(page, col.name)!
 		for k, v in resp.graph {

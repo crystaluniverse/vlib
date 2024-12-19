@@ -95,7 +95,7 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		product.has_oneoffs = true
 	}
 
-	mut cogs_perc := m.sheet.row_new(
+    _ := m.sheet.row_new(
 		name:          '${name}_cogs_perc'
 		growth:        action.params.get_default('cogs_perc', '0')!
 		tags:          'rev  name:${name}'
@@ -205,7 +205,7 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 			nrmonths: nr_months_recurring
 		)!
 
-		nr_sold_recurring := nr_sold.recurring(
+        _ := nr_sold.recurring(
 			name:          '${name}_nr_sold_recurring'
 			descr:         'Nr products active because of recurring for ${name2}'
 			nrmonths:      nr_months_recurring

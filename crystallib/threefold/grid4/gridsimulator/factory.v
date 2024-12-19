@@ -72,7 +72,7 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 pub fn simulator_get(name string) !&Simulator {
 	rlock grid_simulators {
 		if name in grid_simulators {
-			return grid_simulators[name]
+            return grid_simulators[name] or { return error('Grid simulator ${name} not found') }
 		}
 	}
 	return error("cann't find tfgrid gridsimulator:'${name}' in global grid_simulators")

@@ -35,7 +35,6 @@ fn generate_exec(path string, reset bool) ! {
 	// TODO: check case sensistivity for delete
 	mut path_readme := pathlib.get(args.path + '/readme.md')
 	if args.reset || !path_readme.exists() {
-		name := args.name
 		mut templ_readme := $tmpl('templates/readme.md')
 		pathlib.template_write(templ_readme, '${args.path}/readme.md', true)!
 	}

@@ -61,7 +61,7 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	r.expire('mdbook:${args.name}:build', 3600 * 12)! // expire after 12h
 	r.expire('mdbook:${args.name}:publish', 3600 * 12)!
 
-	mut gs := gittools.get()!
+	_ := gittools.get()!
 
 	mut src_path := pathlib.get_dir(path: '${args.build_path}/src', create: true)!
 	_ := pathlib.get_dir(path: '${args.build_path}/.edit', create: true)!
@@ -69,7 +69,7 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	for col_path in args.collections {
 		// link collections from col_path to src
 		mut p := pathlib.get_dir(path: col_path)!
-		mut entries := p.list(dirs_only: true, recursive: false)!
+		_ := p.list(dirs_only: true, recursive: false)!
 
 		if _ := collection_set[p.name()] {
 			return error('collection with name ${p.name()} already exists')

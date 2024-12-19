@@ -58,7 +58,7 @@ pub fn new(args_ TreeArgsGet) !&Tree {
 pub fn tree_get(name string) !&Tree {
 	rlock doctrees {
 		if name in doctrees {
-			return doctrees[name]
+            return doctrees[name] or { return error('Doctree ${name} not found') }
 		}
 	}
 	return error("cann't doctree:'${name}'")
