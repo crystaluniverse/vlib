@@ -1,112 +1,90 @@
 module herocmds
 
-import freeflowuniverse.crystallib.installers.web.zola as zola_installer
-import freeflowuniverse.crystallib.web.zola
 import cli { Command, Flag }
-import os
+import freeflowuniverse.crystallib.ui.console
 
+// path string //if location on filessytem, if exists, this has prio on git_url
+// git_url   string // location of where the hero scripts are
+// git_pull     bool // means when getting new repo will pull even when repo is already there
+// git_pullreset bool // means we will force a pull and reset old content
+// coderoot string //the location of coderoot if its another one
 pub fn cmd_zola(mut cmdroot Command) {
-	mut zola_cmd := Command{
+	mut cmd_zola := Command{
 		name:          'zola'
-		description:   'a fantastic web builder'
+		description:   'cool web publishing tool.'
+		usage:         '
+## Manage your zolas
+
+example:
+
+hero zola -u https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/heroscript
+
+If you do -gp it will pull newest book content from git and give error if there are local changes.
+If you do -gr it will pull newest book content from git and overwrite local changes (careful).
+
+		'
 		required_args: 0
 		execute:       cmd_zola_execute
 	}
 
-	mut zola_run_cmd := Command{
-		sort_flags:  true
-		name:        'run'
-		execute:     cmd_zola_execute
-		description: ''
-	}
+	cmd_run_add_flags(mut cmd_zola)
 
-	zola_run_cmd.add_flag(Flag{
-		flag:        .bool
-		required:    false
-		name:        'reset'
-		abbrev:      'r'
-		description: 'will reset.'
-	})
-
-	zola_run_cmd.add_flag(Flag{
-		flag:        .bool
-		required:    false
-		name:        'serve'
-		abbrev:      's'
-		description: 'serve the content over webserver.'
-	})
-
-	zola_run_cmd.add_flag(Flag{
+	cmd_zola.add_flag(Flag{
 		flag:        .string
-		required:    false
-		name:        'path'
-		abbrev:      'p'
-		description: 'If not specified will try currentdir/content, is where the source info is.'
-	})
-
-	zola_run_cmd.add_flag(Flag{
-		flag:        .string
-		required:    false
-		name:        'dest'
-		abbrev:      'd'
-		description: 'If not specified will be currentdir/public.'
-	})
-
-	zola_run_cmd.add_flag(Flag{
-		flag:        .string
-		required:    false
 		name:        'name'
 		abbrev:      'n'
-		description: 'Name of the website.'
+		description: 'name of the zola.'
 	})
 
-	zola_cmd.add_command(zola_run_cmd)
+	// cmd_zola.add_flag(Flag{
+	// 	flag: .bool
+	// 	required: false
+	// 	name: 'edit'
+	// 	description: 'will open vscode for collections & summary.'
+	// })
 
-	cmdroot.add_command(zola_cmd)
+	cmd_zola.add_flag(Flag{
+		flag:        .bool
+		required:    false
+		name:        'open'
+		abbrev:      'o'
+		description: 'will open the generated site.'
+	})
+
+	cmdroot.add_command(cmd_zola)
 }
 
 fn cmd_zola_execute(cmd Command) ! {
-	if cmd.name == 'run' {
-		mut reset := cmd.flags.get_bool('reset') or { false }
+	mut name := cmd.flags.get_string('name') or { '' }
 
-		zola_installer.install()!
+	mut url := cmd.flags.get_string('url') or { '' }
+	mut path := cmd.flags.get_string('path') or { '' }
+	if path.len > 0 || url.len > 0 {
+		// execute the attached playbook
+		mut plbook, _ := plbook_run(cmd)!
 
-		mut path := cmd.flags.get_string('path') or { '' }
-		if path == '' {
-			path = os.getwd()
+		// get name from the book.generate action
+		if name == '' {
+			mut a := plbook.action_get(actor: 'zola', name: 'generate')!
+			name = a.params.get('name') or { '' }
 		}
-		if !os.exists('${path}/content') {
-			return error("can't find path for content for the website, tried: ${path}/content")
-		}
-
-		mut dest := cmd.flags.get_string('dest') or { '' }
-		if dest == '' {
-			dest = '${path}/public'
-		}
-
-		mut name := cmd.flags.get_string('name') or { 'default' }
-
-		mut serve := cmd.flags.get_bool('serve') or { false }
-
-		mut site := zola.new_site(
-			name:         name
-			url:          'http://localhost:8089'
-			path_content: '${path}/content'
-			path_build:   '/tmp/zola_build_${name}'
-			path_publish: dest
-		)!
-
-		site.prepare()!
-		site.generate()!
-		if serve {
-			site.serve(
-				port: 8089
-				open: true
-			)!
-		}
-
-		return
 	} else {
 		return error(cmd.help_message())
 	}
+
+	if name == '' {
+		console.print_debug('did not find name of book to generate, check in heroscript or specify with --name')
+		return error(cmd.help_message())
+	}
+
+	// edit := cmd.flags.get_bool('edit') or { false }
+	// open := cmd.flags.get_bool('open') or { false }
+	// if open {
+	// 	zola.site_open(name)!
+	// }
+
+	// TODO
+	// if edit {
+	// 	zola.site_edit(name)!
+	// }
 }

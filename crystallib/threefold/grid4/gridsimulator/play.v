@@ -91,7 +91,7 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 				cell.val = cell.val * node.cost
 			}
 
-			mut churn := self.sheet.row_new(
+			_ = self.sheet.row_new(
 				name:          '${node_name}_churn'
 				growth:        action.params.get('churn')!
 				tags:          'churn nodetype:${node_name}'
@@ -204,21 +204,22 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 
 	// MAIN SIMULATION LOGIC
 
-	incaprice := self.sheet.rows['incaprice'] or { return error("can't find row incaprice") }
+	// Removed unused variables
+	// incaprice := self.sheet.rows['incaprice'] or { return error("can't find row incaprice") }
 
-	mut rev_usd := self.sheet.group2row(
-		name:    'noderev'
-		tags:    'nodestats_total'
-		include: ['noderev']
-		descr:   'revenue in USD from all nodes per month'
-	)!
+	// mut rev_usd := self.sheet.group2row(
+	// 	name:    'noderev'
+	// 	tags:    'nodestats_total'
+	// 	include: ['noderev']
+	// 	descr:   'revenue in USD from all nodes per month'
+	// )!
 
-	mut investment_usd := self.sheet.group2row(
-		name:    'investment'
-		tags:    'nodestats_total'
-		include: ['node_investment']
-		descr:   'investment in USD from all nodes per month'
-	)!
+	// mut investment_usd := self.sheet.group2row(
+	// 	name:    'investment'
+	// 	tags:    'nodestats_total'
+	// 	include: ['node_investment']
+	// 	descr:   'investment in USD from all nodes per month'
+	// )!
 
 	// mut investment_usd := self.sheet.group2row(
 	// 	name: 'investment_usd'

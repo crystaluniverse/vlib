@@ -121,7 +121,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 	mut s2 := s
 
 	if args.period_type == .year {
-		s2 = s.toyear(
+		s.toyear(
 			name:          args.rowname
 			namefilter:    args.namefilter
 			includefilter: args.includefilter
@@ -129,7 +129,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 		)!
 	}
 	if args.period_type == .quarter {
-		s2 = s.toquarter(
+		s.toquarter(
 			name:          args.rowname
 			namefilter:    args.namefilter
 			includefilter: args.includefilter

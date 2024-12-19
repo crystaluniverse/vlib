@@ -40,24 +40,19 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 }
 
 fn play_configure(mut action Action) ! {
-	mut buildroot := '${os.home_dir()}/hero/var/mdbuild'
-	mut publishroot := '${os.home_dir()}/hero/www/info'
-	mut coderoot := ''
-	// mut install := false
-	mut reset := false
-	mut pull := false
 	mut p := action.params
+	// Variables removed as they were unused
 	if p.exists('buildroot') {
-		buildroot = p.get('buildroot')!
+		_ = p.get('buildroot')!
 	}
 	if p.exists('coderoot') {
-		coderoot = p.get('coderoot')!
+		_ = p.get('coderoot')!
 	}
 	if p.exists('publishroot') {
-		publishroot = p.get('publishroot')!
+		_ = p.get('publishroot')!
 	}
 	if p.exists('reset') {
-		reset = p.get_default_false('reset')
+		_ = p.get_default_false('reset')
 	}
 	action.done = true
 }
@@ -65,7 +60,7 @@ fn play_configure(mut action Action) ! {
 fn play_new_collection(mut p Params) ! {
 	url := p.get_default('url', '')!
 	path := p.get_default('path', '')!
-	name := p.get_default('name', '')!
+	// name removed as unused
 	reset := p.get_default_false('reset')
 	pull := p.get_default_false('pull')
 
@@ -101,7 +96,7 @@ fn play_book_define(mut params Params) ! {
 fn play_book_publish(p Params) ! {
 	name := p.get('name')!
 	params := p.decode[PublishParams]()!
-	production := p.get_default_false('production')
+	// production removed as unused
 	publisher.publish(name, params)!
 }
 

@@ -30,7 +30,6 @@ pub fn play(mut plbook playbook.PlayBook) !&SlidesViewData {
 	}
 
 	mut slide_actions_coll := plbook.find(filter: 'slides.add_collection')!
-	mut gs := gittools.get()!
 
 	mut tree := doctree.new(
 		name: 'slides'

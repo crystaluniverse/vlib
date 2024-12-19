@@ -79,7 +79,6 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 }
 
 pub fn (vm VMOutput) tcpport_addr_get(port int) !string {
-    mut b := builder.new()!
 	start_time := time.now().unix_milli()
 	mut run_time := 0.0
 	for true {

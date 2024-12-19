@@ -11,7 +11,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     [ -f "$prf" ] && source "$prf"
     # v -cg -enable-globals -w -cflags -static -cc gcc hero.v
     # v -gc none -cg -enable-globals -w -n hero.v
-    v -enable-globals -w -n -prod -parallel-cc hero.v
+    #v -enable-globals -w -n -prod -parallel-cc hero.v
+    v -enable-globals -w -n -prod hero.v
 else
     v -cg -enable-globals -parallel-cc -w -n hero.v
     #v -cg -enable-globals -w -cflags -static -cc gcc hero.v

@@ -105,7 +105,6 @@ pub fn (book Book) print() {
 
 pub fn (p Publisher) open(name string) ! {
 	p.publish(name)!
-	book := p.books[name]
 	cmd := 'open \'${p.publish_directory().path}/${name}/index.html\''
 	osal.exec(cmd: cmd)!
 }

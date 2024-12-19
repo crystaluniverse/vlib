@@ -10,7 +10,7 @@
 `@{employee.cost}`
 
 
-@if (employee.cost_percent_revenue > 0.0)
+@if employee.cost_percent_revenue > 0.0
 
 **Cost Percent Revenue:**  
 
@@ -19,7 +19,7 @@
 @end
 
 
-@if (employee.nrpeople.len > 1)
+@if employee.nrpeople.len > 1
 
 **Number of People in this group** 
 
