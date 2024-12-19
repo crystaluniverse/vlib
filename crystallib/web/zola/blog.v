@@ -4,6 +4,11 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.doctree.collection.data
 
+const (
+    err_post_image_required = error('Post must have an image')
+    err_post_page_required = error('post page not attached')
+)
+
 // Blog section for Zola site
 pub struct Blog {
 	Section
@@ -68,9 +73,18 @@ pub fn (mut site ZolaSite) post_add(args_ PostAddArgs) ! {
 		site.blog_add()!
 	}
 	post := site.get_post(args)!
-	image := post.image or { return error('Post must have an image') }
+	image := if post.image == none {
+		return err_post_image_required
+	} else {
+		post.image or { return err_post_image_required }
+	}
+	page := if post.page == none {
+		return err_post_page_required
+	} else {
+		post.page or { return err_post_page_required }
+	}
 	mut post_page := new_page(
-		Page:        post.page or { return error('post page not attached') }
+		Page:        page
 		title:       post.title
 		date:        post.date.time()
 		description: post.description
@@ -79,7 +93,7 @@ pub fn (mut site ZolaSite) post_add(args_ PostAddArgs) ! {
 			'tags':       post.tags
 			'categories': post.categories
 		}
-		assets:      [post.image?.path]
+		assets:      [image.path]
 		extra:       {
 			'imgPath': image.file_name()
 		}

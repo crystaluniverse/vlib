@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 cd ~/code/github/freeflowuniverse/crystallib/cli/hero
 
 export HEROPATH='/usr/local/bin/hero'    
@@ -11,9 +11,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     [ -f "$prf" ] && source "$prf"
     # v -cg -enable-globals -w -cflags -static -cc gcc hero.v
     # v -gc none -cg -enable-globals -w -n hero.v
-    v -enable-globals -w -n hero.v
+    v -enable-globals -w -n -prod -parallel-cc hero.v
 else
-    v -cg -enable-globals -w -n hero.v
+    v -cg -enable-globals -parallel-cc -w -n hero.v
     #v -cg -enable-globals -w -cflags -static -cc gcc hero.v
 fi
 

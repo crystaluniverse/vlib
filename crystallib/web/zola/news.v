@@ -6,6 +6,11 @@ import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.data.ourtime
 // import freeflowuniverse.crystallib.core.texttools
 
+const (
+    err_article_image_required = error('Article must have an image')
+    err_article_page_not_found = error('article page not found')
+)
+
 // News section for Zola site
 pub struct News {
 	sort_by SortBy = .date
@@ -70,11 +75,20 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 		site.news_add()!
 	}
 
-	image := article.image or { return error('Article must have an image') }
+	image := if article.image == none {
+		return err_article_image_required
+	} else {
+		article.image or { return err_article_image_required }
+	}
+	page := if article.page == none {
+		return err_article_page_not_found
+	} else {
+		article.page or { return err_article_page_not_found }
+	}
 
 	news_page := new_page(
 		name:        article.name
-		Page:        article.page or { return error('article page for ${article.name} not found') }
+		Page:        page
 		title:       article.title
 		authors:     article.authors
 		description: article.description
@@ -84,7 +98,7 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 			'news-category': article.categories
 		}
 		date:        article.date.time()
-		assets:      [article.image?.path]
+		assets:      [image.path]
 		extra:       {
 			'imgPath': image.file_name()
 		}
