@@ -3,7 +3,7 @@ module code
 // import freeflowuniverse.crystallib.core.pathlib {Path}
 // import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.core.codeparser
-import freeflowuniverse.crystallib.core.codemodel {Module, CodeFile, Function, Struct}
+import freeflowuniverse.crystallib.core.codemodel {Module, VFile, Function, Struct}
 
 // read reads an actor from a given v module
 pub fn (actor Actor) write(actor_path string) ! {
@@ -16,7 +16,7 @@ pub fn (actor Actor) to_module () !Module {
 		name: actor.name
 	}
 
-	mut files := []CodeFile{}
+	mut files := []VFile{}
 	for object in actor.objects {
 		files << object.to_code_file()!
 	}
@@ -45,15 +45,15 @@ pub fn (actor Actor) to_module () !Module {
 	return mod
 }
 
-fn (object BaseObject) to_code_file() !CodeFile {
+fn (object BaseObject) to_code_file() !VFile {
 	// object_name := texttools.name_fix_snake_to_pascal(file.name.all_after('model_').all_before('.'))
 	// object_structure := file.structs().filter(it.name == object_name)[0]
-	return CodeFile {
+	return VFile {
 		name: 'model_${object.structure.name}'
 		items: [object.structure]
 	}
 }
 
-// fn file_to_actor_methods(file CodeFile) ![]ActorMethod {
+// fn file_to_actor_methods(file VFile) ![]ActorMethod {
 // 	return file.functions().map(ActorMethod{name: it.name, func: it})
 // }

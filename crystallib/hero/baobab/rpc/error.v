@@ -1,4 +1,4 @@
-module processor
+module rpc
 
 // ProcedureError struct for error handling
 pub struct ProcedureError {

@@ -45,14 +45,14 @@ fn test_generate_model() {
 	assert (model_file.items[0] as Struct).name == 'SomeModel'
 }
 
-// fn (mut gen ClientGenerator) generate_model(structs []Struct) !CodeFile {
-// 	return CodeFile{
+// fn (mut gen ClientGenerator) generate_model(structs []Struct) !VFile {
+// 	return VFile{
 // 		name: 'model'
 // 		items: structs.map(CodeItem(it))
 // 	}
 // }
 
-// fn (mut gen ClientGenerator) generate_methods(paths []Path) !CodeFile {
+// fn (mut gen ClientGenerator) generate_methods(paths []Path) !VFile {
 // 	mut code := []CodeItem{}
 // 	for path in paths {
 // 		for operation in path.operations {
@@ -62,7 +62,7 @@ fn test_generate_model() {
 // 			code << gen.generate_client_method()!
 // 		}
 // 	}
-// 	return CodeFile{
+// 	return VFile{
 // 		name: 'methods'
 // 		items: code
 // 	}

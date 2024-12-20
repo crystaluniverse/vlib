@@ -47,7 +47,7 @@ pub fn (actor Actor) generate_openrpc_code() !Module {
 			server_file,
 			server_test_file,
 		]
-		misc_files: [openrpc_file]
+		// misc_files: [openrpc_file]
 	}
 }
 

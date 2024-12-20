@@ -106,7 +106,7 @@ pub struct Path {}
 // 	description string // A description which by default SHOULD override that of the referenced component. CommonMark syntax MAY be used for rich text representation. If the referenced object-type does not allow a description field, then this field has no effect.
 // }
 
-type PathRef = Path | Reference
+pub type PathRef = Path | Reference
 
 pub struct Components {
 pub mut:
@@ -242,7 +242,7 @@ pub struct Example {
 pub struct SecurityScheme {}
 
 pub struct RequestBody {
-mut:
+pub mut:
 	description string                  // A brief description of the request body. This could contain examples of use. CommonMark syntax MAY be used for rich text representation.
 	content     map[string]MediaType     // The content of the request body. The key is a media type (e.g., `application/json`) and the value describes it.
 	required    bool            // Determines if the request body is required in the request. Defaults to false.

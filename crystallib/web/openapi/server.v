@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.data.jsonschema {Schema}
 import x.json2 {Any}
 import net.http
 
-pub struct Server {
+pub struct Controller {
 pub:
     specification OpenAPI
 pub mut:
@@ -55,7 +55,7 @@ fn is_path_match(req_path string, template string) bool {
 }
 
 @['/:path...'; get; post; put; delete; patch]
-pub fn (mut server Server) index(mut ctx Context, path string) veb.Result {
+pub fn (mut server Controller) index(mut ctx Context, path string) veb.Result {
 	println('Requested path: $path')
 
     // Extract the HTTP method
@@ -141,12 +141,12 @@ fn (mut ctx Context) handle_error(possible_responses map[string]ResponseSpec, er
         }
     }
 
-    // Default to 500 Internal Server Error if no match is found
+    // Default to 500 Internal Controller Error if no match is found
     ctx.res.set_status(.internal_server_error)
     ctx.set_content_type('application/json')
     return ctx.send_response_to_client(
         'application/json',
-        '{"error": "Internal Server Error", "status": 500}'
+        '{"error": "Internal Controller Error", "status": 500}'
     )
 }
 

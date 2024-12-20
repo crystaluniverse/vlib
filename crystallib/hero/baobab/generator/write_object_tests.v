@@ -1,13 +1,13 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, CustomCode, Function, Import, Struct }
+import freeflowuniverse.crystallib.core.codemodel { VFile, CustomCode, Function, Import, Struct }
 import freeflowuniverse.crystallib.core.codeparser
 import rand
 import freeflowuniverse.crystallib.core.texttools
 import os
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
+pub fn generate_object_test_code(actor Struct, object BaseObject) !VFile {
 	consts := CustomCode{"const db_dir = '\${os.home_dir()}/hero/db'
 	const actor_name = '${actor.name}_test_actor'"}
 
@@ -28,7 +28,7 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 	object_type := object.structure.name
 	// TODO: support modules outside of crystal
 
-	mut file := CodeFile{
+	mut file := VFile{
 		name: '${object_name}_test'
 		mod: texttools.name_fix(actor_name)
 		imports: [

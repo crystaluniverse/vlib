@@ -59,63 +59,6 @@ pub:
 	arg     string // [name: arg]
 }
 
-pub struct Function {
-pub:
-	name     string
-	receiver Param
-	is_pub   bool
-	mod      string
-pub mut:
-	description string
-	params      []Param
-	body        string
-	result      Result
-	has_return  bool
-}
-
-pub fn parse_function(code_ string) !Function {
-	mut code := code_.trim_space()
-	is_pub := code.starts_with('pub ')
-	if is_pub {
-		code = code.trim_string_left('pub ').trim_space()
-	}
-
-	is_fn := code.starts_with('fn ')
-	if !is_fn {
-		return error('invalid function format')
-	}
-	code = code.trim_string_left('fn ').trim_space()
-
-	receiver := if code.starts_with('(') {
-		param_str := code.all_after('(').all_before(')').trim_space()
-		code = code.all_after(')').trim_space()
-		parse_param(param_str)!
-	} else {
-		Param{}
-	}
-
-	name := code.all_before('(').trim_space()
-	code = code.trim_string_left(name).trim_space()
-
-	params_str := code.all_after('(').all_before(')')
-	params := if params_str.trim_space() != '' {
-		params_str_lst := params_str.split(',')
-		params_str_lst.map(parse_param(it)!)
-	} else {
-		[]Param{}
-	}
-	result := parse_result(code.all_after(')').all_before('{').replace(' ', ''))!
-
-	body := if code.contains('{') { code.all_after('{').all_before_last('}') } else { '' }
-	return Function{
-		name: name
-		receiver: receiver
-		params: params
-		result: result
-		body: body
-	}
-}
-
 pub fn parse_param(code_ string) !Param {
 	mut code := code_.trim_space()
 	is_mut := code.starts_with('mut ')
@@ -149,28 +92,6 @@ pub fn parse_result(code_ string) !Result {
 	}
 }
 
-pub struct Param {
-pub:
-	required    bool
-	mutable     bool
-	is_shared   bool
-	is_optional bool
-	description string
-	name        string
-	typ         Type
-	struct_     Struct
-}
-
-pub struct Result {
-pub mut:
-	typ         Type
-	description string
-	name        string
-	result      bool // whether is result type
-	optional    bool // whether is result type
-	structure   Struct
-}
-
 // todo: maybe make 'is_' fields methods?
 pub struct Type {
 pub mut:
@@ -183,18 +104,6 @@ pub mut:
 	is_result    bool   @[str: skip]
 	symbol       string
 	mod          string @[str: skip]
-}
-
-pub struct File {
-pub mut:
-	name      string
-	extension string
-	content   string
-}
-
-pub fn (f File) write(path string) ! {
-	mut fd_file := pathlib.get_file(path: '${path}/${f.name}.${f.extension}')!
-	fd_file.write(f.content)!
 }
 
 pub struct Alias {

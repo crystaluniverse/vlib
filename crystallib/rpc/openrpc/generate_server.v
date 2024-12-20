@@ -1,6 +1,6 @@
 module openrpc
 
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, CustomCode, parse_function, parse_import }
+import freeflowuniverse.crystallib.core.codemodel { VFile, CustomCode, parse_function, parse_import }
 import freeflowuniverse.crystallib.core.texttools
 
 // pub fn (mut handler AccountantHandler) handle_ws(client &websocket.Client, message string) string {
@@ -14,7 +14,7 @@ import freeflowuniverse.crystallib.core.texttools
 // 	server.run()!
 // }
 
-pub fn (o OpenRPC) generate_server_file() !CodeFile {
+pub fn (o OpenRPC) generate_server_file() !VFile {
 	name := texttools.name_fix(o.info.title)
 	mut handle_ws_fn := parse_function('pub fn (mut handler ${name.title()}Handler) handle_ws(client &websocket.Client, message string) string ')!
 	handle_ws_fn.body = 'return handler.handle(message) or { panic(err) }'
@@ -28,7 +28,7 @@ pub fn (o OpenRPC) generate_server_file() !CodeFile {
 	server.run()!"
 	items := handle_ws_fn
 
-	return CodeFile{
+	return VFile{
 		mod: name
 		name: 'server'
 		imports: [
@@ -40,7 +40,7 @@ pub fn (o OpenRPC) generate_server_file() !CodeFile {
 	}
 }
 
-pub fn (o OpenRPC) generate_server_test_file() !CodeFile {
+pub fn (o OpenRPC) generate_server_test_file() !VFile {
 	name := texttools.name_fix(o.info.title)
 	// mut handle_ws_fn := parse_function('pub fn (mut handler ${name.title()}Handler) handle_ws(client &websocket.Client, message string) string ')!
 	// handle_ws_fn.body = "return handler.handle(message) or { panic(err) }"
@@ -55,7 +55,7 @@ pub fn (o OpenRPC) generate_server_test_file() !CodeFile {
 	mut test_fn := parse_function('pub fn test_wsserver() !')!
 	test_fn.body = 'spawn run_wsserver(port)'
 
-	return CodeFile{
+	return VFile{
 		mod: name
 		name: 'server_test'
 		items: [

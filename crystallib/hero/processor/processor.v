@@ -1,6 +1,5 @@
 module processor
 
-import json
 import freeflowuniverse.crystallib.clients.redisclient
 
 // Processor struct for managing procedure calls

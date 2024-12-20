@@ -1,7 +1,7 @@
 module gen
 
 import net.http
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Struct, Type }
+import freeflowuniverse.crystallib.core.codemodel { VFile, CodeItem, Struct, Type }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 
@@ -13,8 +13,8 @@ pub mut:
 	generated_methods []string
 }
 
-fn (mut gen ClientGenerator) generate_client() CodeFile {
-	return CodeFile{
+fn (mut gen ClientGenerator) generate_client() VFile {
+	return VFile{
 		name: 'client'
 		mod: '${gen.api_name}_client'
 		imports: []
@@ -75,7 +75,7 @@ fn generate_client_config() Struct {
 	}
 }
 
-fn (mut gen ClientGenerator) generate_factory() CodeFile {
+fn (mut gen ClientGenerator) generate_factory() VFile {
 	client_name := texttools.name_fix(gen.api_name)
 	client_struct := gen.generate_client_struct()
 	config_struct := generate_client_config()
@@ -83,7 +83,7 @@ fn (mut gen ClientGenerator) generate_factory() CodeFile {
 	heroplay_function := gen.heroplay_function(client_struct)
 	config_interactive_function := gen.config_interactive_function(client_struct)
 
-	return CodeFile{
+	return VFile{
 		name: 'factory'
 		mod: '${gen.api_name}_client'
 		imports: []
@@ -205,15 +205,15 @@ fn (mut gen ClientGenerator) config_interactive_function(client Struct) codemode
 	}
 }
 
-fn (mut gen ClientGenerator) generate_model(structs []Struct) !CodeFile {
-	return CodeFile{
+fn (mut gen ClientGenerator) generate_model(structs []Struct) !VFile {
+	return VFile{
 		name: 'model'
 		mod: '${gen.api_name}_client'
 		items: structs.map(CodeItem(it))
 	}
 }
 
-fn (mut gen ClientGenerator) generate_methods(paths []Path) !CodeFile {
+fn (mut gen ClientGenerator) generate_methods(paths []Path) !VFile {
 	mut code := []CodeItem{}
 	for path in paths {
 		for operation in path.operations {
@@ -223,7 +223,7 @@ fn (mut gen ClientGenerator) generate_methods(paths []Path) !CodeFile {
 			code << gen.generate_client_method()!
 		}
 	}
-	return CodeFile{
+	return VFile{
 		name: 'methods'
 		items: code
 	}

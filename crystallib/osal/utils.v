@@ -37,5 +37,5 @@ pub fn get_logger() log.Log {
 		'error' { .error }
 		else { .info }
 	})
-	return logger
+	return *logger
 }

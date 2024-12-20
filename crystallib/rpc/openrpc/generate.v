@@ -1,16 +1,16 @@
 module openrpc
 
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, File, Function, Struct }
+import freeflowuniverse.crystallib.core.codemodel { VFile, File, Function, Struct }
 
 pub struct OpenRPCCode {
 pub mut:
 	openrpc_json File
-	handler      CodeFile
-	handler_test CodeFile
-	client       CodeFile
-	client_test  CodeFile
-	server       CodeFile
-	server_test  CodeFile
+	handler      VFile
+	handler_test VFile
+	client       VFile
+	client_test  VFile
+	server       VFile
+	server_test  VFile
 }
 
 pub fn (o OpenRPC) generate_code(receiver Struct, methods_map map[string]Function, objects_map map[string]Struct) !OpenRPCCode {

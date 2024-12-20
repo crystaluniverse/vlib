@@ -64,8 +64,8 @@ fn generate_individual_handler(method string, operation_id string, params string
 
 // Helper function to generate a case block for the main router
 fn generate_route_case(method string, path string, operation_id string) string {
-	mut case_block := '        "$operation_id" {'
-	case_block += '\n            println("Handling $operation_id for $method $path")'
+	mut case_block := '        "${operation_id}" {'
+	case_block += '\n            println("Handling $operation_id for ${method}")'
 	case_block += '\n            response := h.actor.handle_$operation_id(req.body) or {'
 	case_block += '\n                return Response{ status: http.Status.internal_server_error, body: "Internal server error: $err" }'
 	case_block += '\n            }'

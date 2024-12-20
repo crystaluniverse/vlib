@@ -1,6 +1,6 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Type }
+import freeflowuniverse.crystallib.core.codemodel { VFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Type }
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import os
@@ -12,7 +12,7 @@ const id_param = Param{
 	}
 }
 
-pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
+pub fn generate_object_code(actor Struct, object BaseObject) VFile {
 	obj_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 

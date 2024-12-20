@@ -1,6 +1,6 @@
 module jsonrpc
 
-import freeflowuniverse.crystallib.core.codemodel { Attribute, CodeFile, CodeItem, Function, Module, Param, Struct, StructField, Type, parse_function }
+import freeflowuniverse.crystallib.core.codemodel { Attribute, VFile, CodeItem, Function, Module, Param, Struct, StructField, Type, parse_function }
 import freeflowuniverse.crystallib.core.texttools
 
 pub struct GenerateClientConfig {
@@ -18,12 +18,12 @@ pub fn generate_client(config GenerateClientConfig) Module {
 }
 
 // generate_client_factory generates a factory code file with factory functions for the client
-pub fn generate_client_factory(name string) !CodeFile {
+pub fn generate_client_factory(name string) !VFile {
 	mut code := []CodeItem{}
 	code << generate_client_struct(name)
 	code << generate_ws_factory_code(name)!
 
-	return CodeFile{
+	return VFile{
 		mod: name
 		imports: []
 		items: code

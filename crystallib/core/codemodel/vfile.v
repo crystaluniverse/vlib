@@ -4,7 +4,8 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-pub struct CodeFile {
+
+pub struct VFile {
 pub mut:
 	name    string
 	mod     string
@@ -14,15 +15,15 @@ pub mut:
 	content string
 }
 
-pub fn new_file(config CodeFile) CodeFile {
-	return CodeFile{
+pub fn new_file(config VFile) VFile {
+	return VFile{
 		...config
 		mod: texttools.name_fix(config.mod)
 		items: config.items
 	}
 }
 
-pub fn (mut file CodeFile) add_import(import_ Import) ! {
+pub fn (mut file VFile) add_import(import_ Import) ! {
 	for mut i in file.imports {
 		if i.mod == import_.mod {
 			i.add_types(import_.types)
@@ -32,7 +33,7 @@ pub fn (mut file CodeFile) add_import(import_ Import) ! {
 	file.imports << import_
 }
 
-pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
+pub fn (code VFile) write(path string, options WriteOptions) ! {
 	filename := '${options.prefix}${texttools.name_fix(code.name)}.v'
 	mut filepath := pathlib.get('${path}/${filename}')
 
@@ -67,7 +68,7 @@ pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
 	}
 }
 
-pub fn (file CodeFile) get_function(name string) ?Function {
+pub fn (file VFile) get_function(name string) ?Function {
 	functions := file.items.filter(it is Function).map(it as Function)
 	target_lst := functions.filter(it.name == name)
 
@@ -80,7 +81,7 @@ pub fn (file CodeFile) get_function(name string) ?Function {
 	return target_lst[0]
 }
 
-pub fn (mut file CodeFile) set_function(function Function) ! {
+pub fn (mut file VFile) set_function(function Function) ! {
 	function_names := file.items.map(if it is Function { it.name } else { '' })
 
 	index := function_names.index(function.name)
@@ -90,10 +91,10 @@ pub fn (mut file CodeFile) set_function(function Function) ! {
 	file.items[index] = function
 }
 
-pub fn (file CodeFile) functions() []Function {
+pub fn (file VFile) functions() []Function {
 	return file.items.filter(it is Function).map(it as Function)
 }
 
-pub fn (file CodeFile) structs() []Struct {
+pub fn (file VFile) structs() []Struct {
 	return file.items.filter(it is Struct).map(it as Struct)
 }

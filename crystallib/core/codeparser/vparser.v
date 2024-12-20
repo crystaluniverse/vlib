@@ -4,7 +4,7 @@ import v.ast
 import v.parser
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.codemodel { Module, CodeFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
+import freeflowuniverse.crystallib.core.codemodel {IFile, Module, VFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -81,11 +81,11 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path, mut table ast.Table) ![]
 }
 
 // parse_vfile parses and returns code items from a v code file
-pub fn parse_file(path string, vparser VParser) !CodeFile {
+pub fn parse_file(path string, vparser VParser) !VFile {
 	mut file := pathlib.get_file(path: path)!
 	mut table := ast.new_table()
 	items := vparser.parse_vfile(file.path, mut table)
-	return CodeFile{
+	return VFile{
 		name: file.name().trim_string_right('.v')
 		imports: parse_imports(file.read()!)
 		consts: parse_consts(file.read()!)!
@@ -192,7 +192,7 @@ pub fn parse_module(path_ string, vparser VParser) !Module {
 	}
 
 	mut table := ast.new_table()
-	mut code := []CodeFile{}
+	mut code := []IFile{}
 	// fpref := &pref.Preferences{ // preferences for parsing
 	// 	is_fmt: true
 	// }
