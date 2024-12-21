@@ -1,0 +1,517 @@
+{
+  "openrpc": "1.2.6",
+  "info": {
+    "title": "RPC Socket Manager API",
+    "version": "1.0.0",
+    "description": "API specification for RPC Socket Managers"
+  },
+  "methods": [
+    {
+      "name": "job.set",
+      "description": "Create or update a job",
+      "tags": [
+        {
+          "name": "job",
+          "description": "Job management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "job",
+          "description": "The job to create or update",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": ["actor", "action"],
+            "properties": {
+              "id": { "type": "integer" },
+              "actor": { "type": "string" },
+              "action": { "type": "string" },
+              "job_type": { "type": "string" },
+              "completed": { "type": "boolean" },
+              "state": { "type": "string" },
+              "agent": { "type": "integer" },
+              "executor": { "type": "integer" }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "job",
+        "description": "The created or updated job",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "actor": { "type": "string" },
+            "action": { "type": "string" },
+            "job_type": { "type": "string" },
+            "completed": { "type": "boolean" },
+            "state": { "type": "string" },
+            "agent": { "type": "integer" },
+            "executor": { "type": "integer" },
+            "create_date": { "type": "string", "format": "date-time" },
+            "schedule_date": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 400,
+          "message": "Invalid job parameters"
+        }
+      ]
+    },
+    {
+      "name": "job.get",
+      "description": "Get a job by ID",
+      "tags": [
+        {
+          "name": "job",
+          "description": "Job management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "id",
+          "description": "Job ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "result": {
+        "name": "job",
+        "description": "The requested job",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "actor": { "type": "string" },
+            "action": { "type": "string" },
+            "job_type": { "type": "string" },
+            "completed": { "type": "boolean" },
+            "state": { "type": "string" },
+            "agent": { "type": "integer" },
+            "executor": { "type": "integer" },
+            "create_date": { "type": "string", "format": "date-time" },
+            "schedule_date": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 404,
+          "message": "Job not found"
+        }
+      ]
+    },
+    {
+      "name": "job.delete",
+      "description": "Delete a job by ID",
+      "tags": [
+        {
+          "name": "job",
+          "description": "Job management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "id",
+          "description": "Job ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "result": {
+        "name": "success",
+        "description": "Whether the deletion was successful",
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "errors": [
+        {
+          "code": 404,
+          "message": "Job not found"
+        }
+      ]
+    },
+    {
+      "name": "job.find",
+      "description": "Find jobs based on parameters",
+      "tags": [
+        {
+          "name": "job",
+          "description": "Job management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "params",
+          "description": "Search parameters",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "actor": { "type": "string" },
+              "action": { "type": "string" },
+              "job_type": { "type": "string" },
+              "completed": { "type": "boolean" },
+              "state": { "type": "string" },
+              "agent": { "type": "integer" },
+              "executor": { "type": "integer" }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "jobs",
+        "description": "Array of matching jobs",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "actor": { "type": "string" },
+              "action": { "type": "string" },
+              "job_type": { "type": "string" },
+              "completed": { "type": "boolean" },
+              "state": { "type": "string" },
+              "agent": { "type": "integer" },
+              "executor": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "executor.set",
+      "description": "Create or update an executor",
+      "tags": [
+        {
+          "name": "executor",
+          "description": "Executor management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "executor",
+          "description": "The executor to create or update",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" },
+              "state": { "type": "string" },
+              "actors": { "type": "object" }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "executor",
+        "description": "The created or updated executor",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "name": { "type": "string" },
+            "state": { "type": "string" },
+            "actors": { "type": "object" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 400,
+          "message": "Invalid executor parameters"
+        }
+      ]
+    },
+    {
+      "name": "executor.get",
+      "description": "Get an executor by ID",
+      "tags": [
+        {
+          "name": "executor",
+          "description": "Executor management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "id",
+          "description": "Executor ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "result": {
+        "name": "executor",
+        "description": "The requested executor",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "name": { "type": "string" },
+            "state": { "type": "string" },
+            "actors": { "type": "object" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 404,
+          "message": "Executor not found"
+        }
+      ]
+    },
+    {
+      "name": "executor.get_by_name",
+      "description": "Get an executor by name",
+      "tags": [
+        {
+          "name": "executor",
+          "description": "Executor management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "name",
+          "description": "Executor name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "executor",
+        "description": "The requested executor",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "name": { "type": "string" },
+            "state": { "type": "string" },
+            "actors": { "type": "object" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 404,
+          "message": "Executor not found"
+        }
+      ]
+    },
+    {
+      "name": "agent.set",
+      "description": "Create or update an agent",
+      "tags": [
+        {
+          "name": "agent",
+          "description": "Agent management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "agent",
+          "description": "The agent to create or update",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" },
+              "ipaddr": { "type": "string" },
+              "location": { "type": "string" },
+              "pubkey": { "type": "string" }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "agent",
+        "description": "The created or updated agent",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "name": { "type": "string" },
+            "ipaddr": { "type": "string" },
+            "location": { "type": "string" },
+            "pubkey": { "type": "string" },
+            "create_date": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 400,
+          "message": "Invalid agent parameters"
+        }
+      ]
+    },
+    {
+      "name": "agent.get",
+      "description": "Get an agent by ID",
+      "tags": [
+        {
+          "name": "agent",
+          "description": "Agent management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "id",
+          "description": "Agent ID",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "result": {
+        "name": "agent",
+        "description": "The requested agent",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "name": { "type": "string" },
+            "ipaddr": { "type": "string" },
+            "location": { "type": "string" },
+            "pubkey": { "type": "string" },
+            "create_date": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 404,
+          "message": "Agent not found"
+        }
+      ]
+    },
+    {
+      "name": "joblog.set",
+      "description": "Create or update a job log",
+      "tags": [
+        {
+          "name": "joblog",
+          "description": "Job log management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "log",
+          "description": "The job log to create or update",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": ["job", "category"],
+            "properties": {
+              "id": { "type": "integer" },
+              "job": { "type": "string" },
+              "category": { "type": "string" },
+              "log_sequence": { "type": "integer" }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "log",
+        "description": "The created or updated job log",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "job": { "type": "string" },
+            "category": { "type": "string" },
+            "log_sequence": { "type": "integer" },
+            "log_time": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 400,
+          "message": "Invalid log parameters"
+        }
+      ]
+    },
+    {
+      "name": "signature.set",
+      "description": "Create or update a signature request",
+      "tags": [
+        {
+          "name": "signature",
+          "description": "Signature request management operations"
+        }
+      ],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "request",
+          "description": "The signature request to create or update",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": ["job", "pubkey"],
+            "properties": {
+              "id": { "type": "integer" },
+              "job": { "type": "integer" },
+              "pubkey": { "type": "string" },
+              "verified": { "type": "boolean" }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "request",
+        "description": "The created or updated signature request",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "job": { "type": "integer" },
+            "pubkey": { "type": "string" },
+            "verified": { "type": "boolean" },
+            "date": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "errors": [
+        {
+          "code": 400,
+          "message": "Invalid request parameters"
+        }
+      ]
+    }
+  ],
+  "externalDocs": {
+    "description": "Find more info here",
+    "url": "https://github.com/freeflowuniverse/crystallib/tree/main/servers/rpcsocket"
+  }
+}

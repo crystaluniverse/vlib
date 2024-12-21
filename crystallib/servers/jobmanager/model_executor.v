@@ -9,7 +9,14 @@ pub mut:
 	name         string        @[required]
 	description  string
 	state        ExecutorState @[required]
-	actors       map[string]&Actor
+	actors       map[string]&Actor = map[string]&Actor{}
+}
+
+fn (mut e Executor) cleanup() {
+	for _, mut actor in e.actors {
+		actor.actions.clear()
+	}
+	e.actors.clear()
 }
 
 pub enum ExecutorState {
@@ -42,7 +49,11 @@ pub mut:
 	executor     string    @[required] // References Executor.name
 	description  string
 mut:
-	actions      map[string]&Action
+	actions      map[string]&Action = map[string]&Action{}
+}
+
+fn (mut a Actor) cleanup() {
+	a.actions.clear()
 }
 
 pub fn (mut a Actor) add_action(action &Action) ! {

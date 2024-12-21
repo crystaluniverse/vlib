@@ -43,7 +43,7 @@ pub fn (mut m ExecutorManager) set(mut executor Executor) !Executor {
 // Get an executor by ID
 pub fn (m ExecutorManager) get(id u32) !Executor {
 	if id in m.executors {
-		return m.executors[id]
+		return m.executors[id] or { return error('Failed to get executor') }
 	}
 	return error('Executor with ID ${id} not found')
 }
@@ -90,17 +90,23 @@ pub fn (m ExecutorManager) find(params ExecutorFindParams) []Executor {
 
 // Helper function to check if an executor matches the find parameters
 fn matches_executor_params(executor Executor, params ExecutorFindParams) bool {
-	if params.id != none && params.id != executor.id {
-		return false
+	if id := params.id {
+		if id != executor.id {
+			return false
+		}
 	}
-	if params.name != none && name_fix(executor.name) != name_fix(params.name) {
-		return false
+	if name := params.name {
+		if name_fix(executor.name) != name_fix(name) {
+			return false
+		}
 	}
-	if params.state != none && params.state != executor.state {
-		return false
+	if state := params.state {
+		if state != executor.state {
+			return false
+		}
 	}
-	if params.actor_name != none {
-		actor_name_fixed := name_fix(params.actor_name)
+	if actor_name := params.actor_name {
+		actor_name_fixed := name_fix(actor_name)
 		if actor_name_fixed !in executor.actors {
 			return false
 		}
@@ -113,7 +119,7 @@ pub fn (mut m ExecutorManager) add_actor(executor_id u32, mut actor Actor) ! {
 	if executor_id !in m.executors {
 		return error('Executor with ID ${executor_id} not found')
 	}
-	mut executor := m.executors[executor_id]
+	mut executor := m.executors[executor_id] or { return error('Failed to get executor') }
 	executor.add_actor(actor)!
 	m.executors[executor_id] = executor
 }
@@ -123,7 +129,7 @@ pub fn (m ExecutorManager) get_actor(executor_id u32, actor_name string) !&Actor
 	if executor_id !in m.executors {
 		return error('Executor with ID ${executor_id} not found')
 	}
-	executor := m.executors[executor_id]
+	executor := m.executors[executor_id] or { return error('Failed to get executor') }
 	return executor.get_actor(actor_name)
 }
 
@@ -132,7 +138,7 @@ pub fn (mut m ExecutorManager) add_action(executor_id u32, actor_name string, mu
 	if executor_id !in m.executors {
 		return error('Executor with ID ${executor_id} not found')
 	}
-	mut executor := m.executors[executor_id]
+	mut executor := m.executors[executor_id] or { return error('Failed to get executor') }
 	mut actor := executor.get_actor(actor_name)!
 	actor.add_action(action)!
 	executor.actors[name_fix(actor_name)] = actor
@@ -144,7 +150,7 @@ pub fn (m ExecutorManager) get_action(executor_id u32, actor_name string, action
 	if executor_id !in m.executors {
 		return error('Executor with ID ${executor_id} not found')
 	}
-	executor := m.executors[executor_id]
+	executor := m.executors[executor_id] or { return error('Failed to get executor') }
 	actor := executor.get_actor(actor_name)!
 	return actor.get_action(action_name)
 }

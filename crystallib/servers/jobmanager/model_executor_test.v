@@ -6,6 +6,9 @@ fn test_executor_creation() {
 		name: 'test_executor'
 		state: .init
 	}
+	defer {
+		executor.cleanup()
+	}
 	assert executor.id == 1
 	assert executor.name == 'test_executor'
 	assert executor.state == .init
@@ -17,6 +20,9 @@ fn test_executor_add_get_actor() ! {
 		id: 1
 		name: 'test_executor'
 		state: .init
+	}
+	defer {
+		executor.cleanup()
 	}
 
 	mut actor := &Actor{
@@ -39,6 +45,9 @@ fn test_executor_duplicate_actor() ! {
 		name: 'test_executor'
 		state: .init
 	}
+	defer {
+		executor.cleanup()
+	}
 
 	mut actor1 := &Actor{
 		name: 'test_actor'
@@ -60,6 +69,9 @@ fn test_actor_add_get_action() ! {
 	mut actor := &Actor{
 		name: 'test_actor'
 		executor: 'test_executor'
+	}
+	defer {
+		actor.cleanup()
 	}
 
 	mut action := &Action{
@@ -146,6 +158,9 @@ fn test_executor_encode_decode() ! {
 		description: 'Test description'
 		state: .running
 	}
+	defer {
+		original.cleanup()
+	}
 
 	mut actor := &Actor{
 		name: 'test_actor'
@@ -192,6 +207,9 @@ fn test_invalid_actor_reference() ! {
 		name: 'test_actor'
 		executor: 'test_executor'
 	}
+	defer {
+		actor.cleanup()
+	}
 
 	mut action := &Action{
 		id: 1
@@ -210,6 +228,9 @@ fn test_get_nonexistent_actor() ! {
 		name: 'test_executor'
 		state: .init
 	}
+	defer {
+		executor.cleanup()
+	}
 
 	if _ := executor.get_actor('nonexistent') {
 		assert false, 'Should not find nonexistent actor'
@@ -220,6 +241,9 @@ fn test_get_nonexistent_action() ! {
 	mut actor := &Actor{
 		name: 'test_actor'
 		executor: 'test_executor'
+	}
+	defer {
+		actor.cleanup()
 	}
 
 	if _ := actor.get_action('nonexistent') {

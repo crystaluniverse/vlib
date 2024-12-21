@@ -77,17 +77,25 @@ pub fn (m SignatureRequestManager) find(params SignatureRequestFindParams) []Sig
 
 // Helper function to check if a signature request matches the find parameters
 fn matches_signature_request_params(request SignatureRequest, params SignatureRequestFindParams) bool {
-	if params.id != none && params.id != request.id {
-		return false
+	if id := params.id {
+		if id != request.id {
+			return false
+		}
 	}
-	if params.job != none && params.job != request.job {
-		return false
+	if job := params.job {
+		if job != request.job {
+			return false
+		}
 	}
-	if params.pubkey != none && params.pubkey != request.pubkey {
-		return false
+	if pubkey := params.pubkey {
+		if pubkey != request.pubkey {
+			return false
+		}
 	}
-	if params.verified != none && params.verified != request.verified {
-		return false
+	if verified := params.verified {
+		if verified != request.verified {
+			return false
+		}
 	}
 	return true
 }

@@ -79,23 +79,35 @@ pub fn (m JobLogManager) find(params JobLogFindParams) []JobLog {
 
 // Helper function to check if a job log matches the find parameters
 fn matches_job_log_params(log JobLog, params JobLogFindParams) bool {
-	if params.id != none && params.id != log.id {
-		return false
+	if id := params.id {
+		if id != log.id {
+			return false
+		}
 	}
-	if params.job != none && params.job != log.job {
-		return false
+	if job := params.job {
+		if job != log.job {
+			return false
+		}
 	}
-	if params.category != none && params.category != log.category {
-		return false
+	if category := params.category {
+		if category != log.category {
+			return false
+		}
 	}
-	if params.log_sequence != none && params.log_sequence != log.log_sequence {
-		return false
+	if log_sequence := params.log_sequence {
+		if log_sequence != log.log_sequence {
+			return false
+		}
 	}
-	if params.min_sequence != none && log.log_sequence < params.min_sequence {
-		return false
+	if min_sequence := params.min_sequence {
+		if log.log_sequence < min_sequence {
+			return false
+		}
 	}
-	if params.max_sequence != none && log.log_sequence > params.max_sequence {
-		return false
+	if max_sequence := params.max_sequence {
+		if log.log_sequence > max_sequence {
+			return false
+		}
 	}
 	return true
 }

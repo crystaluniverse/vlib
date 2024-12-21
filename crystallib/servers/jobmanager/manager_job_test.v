@@ -1,20 +1,31 @@
 module rpcsocket
 
+import freeflowuniverse.crystallib.data.ourtime
+
 fn test_job_manager() {
 	mut manager := new_job_manager()
 
 	// Test creating new jobs
+	now := ourtime.OurTime{
+		unixt: i64(0)
+	}
 	mut job1 := Job{
+		id: 0 // Will be set by manager
 		actor: 'test_actor'
 		action: 'test_action'
 		job_type: 'test_type'
 		state: .init
+		create_date: now
+		schedule_date: now
 	}
 	mut job2 := Job{
+		id: 0 // Will be set by manager
 		actor: 'test_actor2'
 		action: 'test_action2'
 		job_type: 'test_type2'
 		state: .running
+		create_date: now
+		schedule_date: now
 	}
 
 	// Test set (create)
@@ -98,10 +109,13 @@ fn test_job_manager() {
 
 	// Test creating job after delete_all
 	mut job3 := Job{
+		id: 0 // Will be set by manager
 		actor: 'test_actor3'
 		action: 'test_action3'
 		job_type: 'test_type3'
 		state: .init
+		create_date: now
+		schedule_date: now
 	}
 	job3 = manager.set(mut job3)!
 	assert job3.id == 1 // ID should start from 1 again
@@ -111,8 +125,12 @@ fn test_job_manager_params() {
 	mut manager := new_job_manager()
 
 	// Create jobs with different states and parameters
+	now := ourtime.OurTime{
+		unixt: i64(0)
+	}
 	mut jobs := [
 		Job{
+			id: 0 // Will be set by manager
 			actor: 'actor1'
 			action: 'action1'
 			job_type: 'type1'
@@ -120,8 +138,11 @@ fn test_job_manager_params() {
 			completed: false
 			agent: 1
 			executor: 10
+			create_date: now
+			schedule_date: now
 		},
 		Job{
+			id: 0 // Will be set by manager
 			actor: 'actor1'
 			action: 'action2'
 			job_type: 'type1'
@@ -129,8 +150,11 @@ fn test_job_manager_params() {
 			completed: true
 			agent: 2
 			executor: 20
+			create_date: now
+			schedule_date: now
 		},
 		Job{
+			id: 0 // Will be set by manager
 			actor: 'actor2'
 			action: 'action1'
 			job_type: 'type2'
@@ -138,6 +162,8 @@ fn test_job_manager_params() {
 			completed: true
 			agent: 1
 			executor: 30
+			create_date: now
+			schedule_date: now
 		}
 	]
 

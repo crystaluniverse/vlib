@@ -84,29 +84,45 @@ pub fn (m JobManager) find(params JobFindParams) []Job {
 
 // Helper function to check if a job matches the find parameters
 fn matches_job_params(job Job, params JobFindParams) bool {
-	if params.id != none && params.id != job.id {
-		return false
+	if id := params.id {
+		if id != job.id {
+			return false
+		}
 	}
-	if params.actor != none && params.actor != job.actor {
-		return false
+	if actor := params.actor {
+		if actor != job.actor {
+			return false
+		}
 	}
-	if params.action != none && params.action != job.action {
-		return false
+	if action := params.action {
+		if action != job.action {
+			return false
+		}
 	}
-	if params.job_type != none && params.job_type != job.job_type {
-		return false
+	if job_type := params.job_type {
+		if job_type != job.job_type {
+			return false
+		}
 	}
-	if params.completed != none && params.completed != job.completed {
-		return false
+	if completed := params.completed {
+		if completed != job.completed {
+			return false
+		}
 	}
-	if params.state != none && params.state != job.state {
-		return false
+	if state := params.state {
+		if state != job.state {
+			return false
+		}
 	}
-	if params.agent != none && params.agent != job.agent {
-		return false
+	if agent := params.agent {
+		if agent != job.agent {
+			return false
+		}
 	}
-	if params.executor != none && params.executor != job.executor {
-		return false
+	if executor := params.executor {
+		if executor != job.executor {
+			return false
+		}
 	}
 	return true
 }

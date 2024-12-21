@@ -78,20 +78,30 @@ pub fn (m AgentManager) find(params AgentFindParams) []Agent {
 
 // Helper function to check if an agent matches the find parameters
 fn matches_agent_params(agent Agent, params AgentFindParams) bool {
-	if params.id != none && params.id != agent.id {
-		return false
+	if id := params.id {
+		if id != agent.id {
+			return false
+		}
 	}
-	if params.name != none && params.name != agent.name {
-		return false
+	if name := params.name {
+		if name != agent.name {
+			return false
+		}
 	}
-	if params.ipaddr != none && params.ipaddr != agent.ipaddr {
-		return false
+	if ipaddr := params.ipaddr {
+		if ipaddr != agent.ipaddr {
+			return false
+		}
 	}
-	if params.location != none && params.location != agent.location {
-		return false
+	if location := params.location {
+		if location != agent.location {
+			return false
+		}
 	}
-	if params.pubkey != none && params.pubkey != agent.pubkey {
-		return false
+	if pubkey := params.pubkey {
+		if pubkey != agent.pubkey {
+			return false
+		}
 	}
 	return true
 }
