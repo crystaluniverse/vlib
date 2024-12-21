@@ -12,6 +12,17 @@ pub mut:
 	// methods VFile
 }
 
+pub fn new_module(mod Module) Module {
+	return Module {
+		...mod
+		files: mod.files.map(
+			if it is VFile {
+				IFile(VFile{...it, mod: mod.name})
+			} else {it}
+		)
+	}
+}
+
 
 pub fn (mod Module) write(path string, options WriteOptions) ! {
 	mut module_dir := pathlib.get_dir(

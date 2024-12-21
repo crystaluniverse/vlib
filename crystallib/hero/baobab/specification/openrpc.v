@@ -44,3 +44,23 @@ pub fn (s ActorSpecification) to_openrpc() OpenRPC {
 
 	}
 }
+
+// pub fn (actor Actor) generate_openrpc() OpenRPC {
+// 	mut schemas := map[string]SchemaRef{}
+// 	for obj in actor.objects {
+// 		schemas[obj.structure.name] = jsonschema.struct_to_schema(obj.structure)
+// 		for child in obj.children {
+// 			schemas[child.name] = jsonschema.struct_to_schema(child)
+// 		}
+// 	}
+// 	return OpenRPC{
+// 		info: openrpc.Info{
+// 			title: actor.name.title()
+// 			version: '1.0.0'
+// 		}
+// 		methods: actor.methods.map(openrpc.fn_to_method(it.func))
+// 		components: Components{
+// 			schemas: schemas
+// 		}
+// 	}
+// }

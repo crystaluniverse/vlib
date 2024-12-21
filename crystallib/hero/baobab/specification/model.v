@@ -7,8 +7,16 @@ pub mut:
 	name        string      @[omitempty]
 	description string      @[omitempty]
 	structure   Struct      @[omitempty]
+	interfaces []ActorInterface @[omitempty]
 	methods     []ActorMethod @[omitempty]
 	objects     []BaseObject @[omitempty]
+}
+
+pub enum ActorInterface {
+	openrpc
+	openapi
+	webui
+	command
 }
 
 pub struct ActorMethod {

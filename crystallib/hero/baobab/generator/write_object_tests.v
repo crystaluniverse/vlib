@@ -2,6 +2,7 @@ module generator
 
 import freeflowuniverse.crystallib.core.codemodel { VFile, CustomCode, Function, Import, Struct }
 import freeflowuniverse.crystallib.core.codeparser
+import freeflowuniverse.crystallib.hero.baobab.specification {BaseObject}
 import rand
 import freeflowuniverse.crystallib.core.texttools
 import os

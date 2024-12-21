@@ -7,8 +7,9 @@ import freeflowuniverse.crystallib.core.pathlib
 import os
 
 const actor_spec = specification.ActorSpecification{
-    name: 'Pet Store API'
+    name: 'Pet Store'
     description: 'A sample API for a pet store'
+	interfaces: [.openrpc, .command]
     methods: [specification.ActorMethod{
         name: 'listPets'
         description: 'List all pets'
@@ -128,6 +129,5 @@ const destination = '${os.dir(@FILE)}/testdata'
 
 fn test_generate_actor_module() {
 	actor_module := generate_actor_module(actor_spec)!
-	actor_module.write(destination)!
-	panic(actor_module)
+	actor_module.write(destination, overwrite: true)!
 }

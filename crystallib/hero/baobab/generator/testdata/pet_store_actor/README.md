@@ -1,2 +1,2 @@
-# Pet Store API
+# Pet Store
 A sample API for a pet store

@@ -45,7 +45,7 @@ pub fn (mut p Client) monologue(call ProcedureCall, params Params) ! {
 }
 
 // Process the procedure call
-pub fn (mut p Client) dialogue(call ProcedureCall, params Params) !ProcedureResponse {
+pub fn (mut p Client) call(procedure Procedure, params Params) !ProcedureResponse {
 	// Use RedisRpc's `call` to send the call and wait for the response
 	response_data := p.rpc.call(redisclient.RPCArgs{
 		cmd:     call.method

@@ -1,5 +1,6 @@
 module generator
 
+import freeflowuniverse.crystallib.hero.baobab.specification {BaseObject}
 import freeflowuniverse.crystallib.core.codemodel { VFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Type }
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
