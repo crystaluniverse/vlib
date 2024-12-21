@@ -16,6 +16,7 @@ pub mut:
 	ignore_default bool = true // if set will ignore a common set
 	stdout         bool = true
 	fast_rsync     bool
+	sshkey 		   string
 }
 
 // flexible tool to sync files from to, does even support ssh .
@@ -46,6 +47,7 @@ pub fn rsync(args_ RsyncArgs) ! {
 		ignore:         args.ignore
 		ignore_default: args.ignore_default
 		fast_rsync:     args.fast_rsync
+		sshkey:args.sshkey		
 	}
 
 	// TODO: is only for ssh right now, we prob need support for a real ssh server as well

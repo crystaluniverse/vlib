@@ -2,6 +2,29 @@ module httpconnection
 
 import crypto.md5
 import json
+import net.http { Header, Method }
+
+// https://cassiomolin.com/2016/09/09/which-http-status-codes-are-cacheable/
+const default_cacheable_codes = [200, 203, 204, 206, 300, 404, 405, 410, 414, 501]
+
+const unsafe_http_methods = [Method.put, .patch, .post, .delete]
+
+pub struct CacheConfig {
+pub mut:
+	key               string // as used to identity in redis
+	allowable_methods []Method = [.get, .head]
+	allowable_codes   []int    = default_cacheable_codes
+	disable           bool     = true // default cache is not working
+	expire_after      int      = 3600 // default expire_after is 1h
+	match_headers     bool // cache the request header to be matched later
+}
+
+pub struct Result {
+pub mut:
+	code int
+	data string
+}
+
 
 // calculate the key for the cache starting from data and url
 fn (mut h HTTPConnection) cache_key(req Request) string {
@@ -22,18 +45,22 @@ fn (mut h HTTPConnection) cache_get(req Request) !Result {
 	key := h.cache_key(req)
 	mut data := h.redis.get(key) or {
 		assert '${err}' == 'none'
+		//console.print_debug("cache get: ${key} not in redis")
 		return Result{
 			code: -1
 		}
 	}
 	if data == '' {
+		//console.print_debug("cache get: ${key} empty data")
 		return Result{
 			code: -1
 		}
 	}
 	result := json.decode(Result, data) or {
+		//console.print_debug("cache get: ${key} coud not decode")
 		return error('failed to decode result with error: ${err}.\ndata:\n${data}')
 	}
+	//console.print_debug("cache get: ${key} ok")
 	return result
 }
 

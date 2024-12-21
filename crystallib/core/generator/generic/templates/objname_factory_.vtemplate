@@ -3,11 +3,11 @@ module ${args.name}
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
 
 @if args.cat == .installer
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.ui.console
 import time
 @end
 

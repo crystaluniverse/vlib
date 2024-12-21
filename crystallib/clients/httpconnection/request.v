@@ -2,6 +2,12 @@ module httpconnection
 
 import net.http { Header, Method }
 
+pub enum DataFormat {
+	json //application/json
+	urlencoded //
+	multipart_form //
+}
+
 @[params]
 pub struct Request {
 pub mut:
@@ -10,31 +16,14 @@ pub mut:
 	id            string
 	params        map[string]string
 	data          string
-	cache_disable bool = true
-	header        Header
-	dict_key      string
+	cache_disable bool  //do not put this default on true, this is set on the connection, this is here to be overruled in specific cases
+	header        ?Header
+	dict_key      string //if the return is a dict, then will take the element out of the dict with the key and process further
+	list_dict_key string //if the output is a list of dicts, then will process each element of the list to take the val with key out of that dict
 	debug         bool
+	dataformat    DataFormat
 }
 
-// get new request
-//
-// ```
-// method        Method (.get, .post, .put, ...)
-// prefix        string
-// id            string
-// params        map[string]string
-// data          string
-// cache_disable bool = true
-// header        Header
-// dict_key      string
-// ```	
-// for header see https://modules.vlang.io/net.http.html#Method .
-// for method see https://modules.vlang.io/net.http.html#Header
-pub fn new_request(args_ Request) !&Request {
-	mut args := args_
-	mut header := http.new_header_from_map({
-		http.CommonHeader.content_type: 'application/json'
-	})
-	args.header = header
-	return &args
-}
+
+
+

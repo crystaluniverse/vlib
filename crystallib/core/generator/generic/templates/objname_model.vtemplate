@@ -61,6 +61,7 @@ pub fn heroscript_default() !string {
 
 //THIS THE THE SOURCE OF THE INFORMATION OF THIS FILE, HERE WE HAVE THE CONFIG OBJECT CONFIGURED AND MODELLED
 @if args.cat == .installer
+@[heap]
 pub struct ${args.classname} {
 pub mut:
     name string = 'default'
@@ -99,6 +100,7 @@ fn cfg_play(p paramsparser.Params) !${args.classname} {
 
 @else
 
+@[heap]
 pub struct ${args.classname} {
 pub mut:
     name string = 'default'

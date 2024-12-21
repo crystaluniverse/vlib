@@ -99,3 +99,41 @@ pub fn json_dict_filter_string(r string, clean bool, include []string, exclude [
 	}
 	return res2
 }
+
+
+
+
+// the input is a list of dicts e.g. [{"key":{"name":"kristof@incubaid.com",...},{"key":...}]
+// in this key the key would be key
+// returns list of json2.any
+pub fn json_list_dict_get_any(r string, clean bool, key string) ![]json2.Any {
+	mut r2 := r
+	if clean {
+		r2 = texttools.ascii_clean(r2)
+	}
+	if r2.trim(' \n') == '' {
+		return error('Cannot do json2 raw decode in json_dict_get_any.\ndata was empty.')
+	}
+	data_raw := json2.raw_decode(r2) or {
+		return error('Cannot do json2 raw decode in json_dict_get_any.\ndata:\n${r2}\nerror:${err}')
+	}
+	mut res_list := data_raw.arr()
+	mut res_final := []json2.Any{}
+	for item in res_list{
+		mut res := item.as_map()
+		if key in res {
+			res_final << res[key] or {panic("bug")}
+		}else{
+			return error('Could not find key:${key} in ${res} as part of json_list_dict_get_any')
+		}
+	}
+	return res_final
+}
+
+// the input is a list of dicts e.g. [{"key":{"name":"kristof@incubaid.com",...},{"key":...}]
+// in this key the key would be key
+// returns list strings which can be parsed as json
+pub fn json_list_dict_get_string(r string, clean bool, key string) ![]string {
+	r2 := json_list_dict_get_any(r, clean, key)!
+	return r2.map(it.json_str())
+}

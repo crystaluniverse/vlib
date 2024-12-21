@@ -10,6 +10,7 @@ pub mut:
 	ipaddr string
 	user   string = 'root'
 	debug  bool
+	checkconnect int
 }
 
 // create new executor (is way how to execute in std way onto a local or remote machine)
@@ -24,7 +25,7 @@ pub mut:
 //- format ipadd6: [666:555:555:...]
 //- format ipaddr: any ipv6 addr
 //- if ipaddr is empty or starts with localhost or 127.0.0.1 -> will be the ExecutorLocal
-fn executor_new(args_ ExecutorNewArguments) !Executor {
+pub fn executor_new(args_ ExecutorNewArguments) !Executor {
 	mut args := args_
 	hasport := args.ipaddr.contains(':')
 	if !hasport {
@@ -44,6 +45,7 @@ fn executor_new(args_ ExecutorNewArguments) !Executor {
 			ipaddr: ipaddr
 			user:   args.user
 			debug:  args.debug
+			checkconnect: args.checkconnect
 		}
 		e.init()!
 		return e

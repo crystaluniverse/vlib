@@ -1,7 +1,5 @@
 module hetzner
-
-import json
-import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.core.texttools
 
 pub struct SSHKey {
 pub mut:
@@ -13,34 +11,62 @@ pub mut:
 	data        string
 }
 
-struct SSHRoot {
-	key SSHKey
+pub fn (mut h HetznerManager) keys_get() ![]SSHKey {
+	mut conn := h.connection()!
+	return conn.get_json_list_generic[SSHKey](method: .get, prefix:'key', list_dict_key:'key',dataformat: .urlencoded)!
 }
 
-pub fn (mut h HetznerClient[Config]) keys_get() ![]SSHKey {
-	mut redis := redisclient.core_get()!
-	mut rkey := 'hetzner.api.get.${h.instance}'
-	mut data := redis.get(rkey)!
-	if data == '' {
-		data = h.request_get('/key')!
+// Get a specific SSH key by fingerprint
+pub fn (mut h HetznerManager) key_get(name string) !SSHKey {
+	name_fixed := texttools.name_fix(name)
+	keys := h.keys_get()!
+	for key in keys {
+		if texttools.name_fix(key.name) == name_fixed {
+			return key
+		}
 	}
-
-	redis.set(rkey, data)!
-	redis.expire(rkey, 120)! // only cache for 1 minute
-
-	// console.print_debug(data)
-
-	items := json.decode([]SSHRoot, data) or {
-		return error('could not json deserialize for servers_list\n${data}')
-	}
-
-	mut result := items.map(it.key)
-	return result
+	return error('SSH key with name "${name}" not found')
 }
 
-pub fn (mut h HetznerClient[Config]) key_set() ! {
-	panic('implement')
-	// key SSHKey
+pub fn (mut h HetznerManager) key_exists(name string) bool {
+	name_fixed := texttools.name_fix(name)
+	keys := h.keys_get() or { return false }
+	for key in keys {
+		if texttools.name_fix(key.name) == name_fixed {
+			return true
+		}
+	}
+	return false
+}
 
-	// TODO: need to get keys also from ssh agent
+
+// Create a new SSH key
+pub fn (mut h HetznerManager) key_create(name string, data string) !SSHKey {
+	name_fixed := texttools.name_fix(name)
+	mut conn := h.connection()!
+	if h.key_exists(name_fixed) {
+		return error('SSH key with name "${name_fixed}" already exists')
+	}
+	return conn.post_json_generic[SSHKey](
+		method: .post
+		prefix: 'key'
+		dataformat: .urlencoded
+		params: {
+			'name': name_fixed
+			'data': data
+		})!
+}
+
+// Delete an SSH key
+pub fn (mut h HetznerManager) key_delete(name string) ! {
+ 	if !h.key_exists(name){
+		return
+	}
+	key:=h.key_get(name)!
+	mut conn := h.connection()!
+	conn.delete(
+		method: .delete
+		prefix: 'key/${key.fingerprint}'		
+		dataformat: .urlencoded
+	)!
 }

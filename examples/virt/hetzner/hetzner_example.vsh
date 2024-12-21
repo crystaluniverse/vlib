@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.ui.console
@@ -9,32 +9,63 @@ import os
 
 console.print_header('Hetzner login.')
 
-// USE IF YOU WANT TO CONFIGURE THE HETZNER, ONLY DO THIS ONCE
-// hetzner.configure("test")!
-
-mut cl := hetzner.get('test')!
-
-for i in 0 .. 5 {
-	println('test cache, first time slow then fast')
-	cl.servers_list()!
+// Check for required environment variables
+user := os.getenv('HETZNER_USER')
+if user == '' {
+    eprintln('Error: HETZNER_USER environment variable is not set')
+    eprintln('Please set it using: export HETZNER_USER=your-username')
+    exit(1)
 }
 
-println(cl.servers_list()!)
+password := os.getenv('HETZNER_PASSWD')
+if password == '' {
+    eprintln('Error: HETZNER_PASSWD environment variable is not set')
+    eprintln('Please set it using: export HETZNER_PASSWD=your-password')
+    exit(1)
+}
 
-mut serverinfo := cl.server_info_get(name: 'kristof2')!
+// Configure Hetzner using heroscript
+heroscript := "
+!!hetzner.configure
+    name:'test'
+    url:'https://robot-ws.your-server.de'
+    user:'${user}'
+    password:'${password}'
+    whitelist:''
+"
 
-println(serverinfo)
+// Play the heroscript to configure Hetzner (only needed once)
+hetzner.play(heroscript: heroscript)!
 
-// cl.server_reset(name:"kristof2",wait:true)!
+// Get the Hetzner client instance
+mut cl := hetzner.get(name: 'test')!
 
-// cl.server_rescue(name:"kristof2",wait:true)!
+// EXAMPLE TO SHOW HOW TO REMOVE THE CACHE
+// mut httpconnection:=cl.connection()!
+// httpconnection.cache_drop()!
 
-console.print_header('SSH login')
-mut b := builder.new()!
-mut n := b.node_new(ipaddr: serverinfo.server_ip)!
+// keys:=cl.keys_get()!
+// println(keys)
 
-// n.crystal_install()!
-// n.hero_compile_debug()!
 
-// mut ks:=cl.keys_get()!
-// println(ks)
+// for i in 0 .. 5 {
+// 	println('test cache, first time slow then fast')
+// 	cl.servers_list()!
+// }
+
+//servers:=cl.servers_list()!
+//println(servers)
+
+// mut serverinfo := cl.server_info_get(name: 'kristof2')!
+
+// println(serverinfo)
+
+//cl.server_reset(name:"kristof2",wait:true)!
+
+//get the server in rescue mode, if its already in rescue then will not reboot, but just go there
+//hero_install will make sure we have hero in the rescue server
+mut n:= cl.server_rescue_node(name:"kristof2",wait:true,sshkey_name:"kristof@incubaid.com",hero_install:true)!
+
+
+
+

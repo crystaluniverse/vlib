@@ -1,12 +1,10 @@
 module hetzner
 
-import json
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.clients.redisclient
 import time
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
-import net.urllib
+
 import freeflowuniverse.crystallib.builder
 
 /////////////////////////// LIST
@@ -25,7 +23,24 @@ pub mut:
 	paid_until      string
 	ip              []string
 	subnet          []Subnet
+	
 }
+
+pub struct ServerInfoDetailed {
+	ServerInfo
+pub mut:
+
+    reset                bool
+    rescue               bool
+    vnc                  bool
+    windows              bool
+    plesk                bool
+    cpanel               bool
+    wol                  bool
+    hot_swap             bool
+    //linked_storagebox    int
+}
+
 
 pub struct Subnet {
 pub mut:
@@ -33,32 +48,13 @@ pub mut:
 	mask string
 }
 
-struct ServerRoot {
-	server ServerInfo
+pub fn (mut h HetznerManager) servers_list() ![]ServerInfo {
+	mut conn := h.connection()!
+	return conn.get_json_list_generic[ServerInfo](method: .get, prefix:'server', list_dict_key:'server')!
 }
 
-pub fn (mut h HetznerClient[Config]) servers_list() ![]ServerInfo {
-	mut redis := redisclient.core_get()!
-	mut rkey := 'hetzner.api.list.${h.instance}'
-	mut data := redis.get(rkey)!
-	if data == '' {
-		data = h.request_get('/server')!
-	}
 
-	redis.set(rkey, data)!
-	redis.expire(rkey, 60)! // only cache for 1 minute
-
-	// console.print_debug(data)
-
-	srvs := json.decode([]ServerRoot, data) or {
-		return error('could not json deserialize for servers_list\n${data}')
-	}
-
-	mut result := srvs.map(it.server)
-	return result
-}
-
-///////////////////////////GETID
+// ///////////////////////////GETID
 
 pub struct ServerGetArgs {
 pub mut:
@@ -66,7 +62,7 @@ pub mut:
 	name string
 }
 
-pub fn (mut h HetznerClient[Config]) server_info_get(args_ ServerGetArgs) !ServerInfo {
+pub fn (mut h HetznerManager) server_info_get(args_ ServerGetArgs) !ServerInfoDetailed {
 	mut args := args_
 
 	args.name = texttools.name_fix(args.name)
@@ -92,10 +88,14 @@ pub fn (mut h HetznerClient[Config]) server_info_get(args_ ServerGetArgs) !Serve
 	if res.len == 0 {
 		return error("couldn't find server with: '${args}'")
 	}
-	return res[0] or { panic('bug') }
+	
+	mut conn := h.connection()!
+	return conn.get_json_generic[ServerInfoDetailed](method: .get, prefix:'server/${res[0].server_number}',dict_key:'server',cache_disable:true)!	
+
+
 }
 
-///////////////////////////RESCUE
+// ///////////////////////////RESCUE
 
 pub struct RescueInfo {
 pub mut:
@@ -110,50 +110,56 @@ pub mut:
 	host_key        []string
 }
 
-struct RescueRoot {
-	rescue RescueInfo
-}
-
 pub struct ServerRescueArgs {
 pub mut:
 	id              int
 	name            string
 	wait            bool = true
 	crystal_install bool
+	hero_install 	bool
+	sshkey_name  string
+	reset bool //ask to do reset/rescue even if its already in that state
 }
 
-// put server in rescue mode
-pub fn (mut h HetznerClient[Config]) server_rescue(args ServerRescueArgs) !RescueInfo {
+// put server in rescue mode, if sshkey_name not specified then will use the first one in the list
+pub fn (mut h HetznerManager) server_rescue(args ServerRescueArgs) !ServerInfoDetailed {
 	mut serverinfo := h.server_info_get(id: args.id, name: args.name)!
 
 	console.print_header('server ${serverinfo.server_name} goes into rescue mode')
 
-	keys := h.keys_get()!
+	//only do it if its not in rescue yet
+	if serverinfo.rescue==false || args.reset{
 
-	mut keysdata := ''
-	for key in keys {
-		keysdata += key.fingerprint + '&'
+		mut key := h.keys_get()![0]
+		if args.sshkey_name == ""{
+			key = h.key_get(args.sshkey_name)!
+		}
+
+		mut conn := h.connection()!
+		rescue := conn.post_json_generic[RescueInfo](
+			prefix: 'boot/${serverinfo.server_number}/rescue'
+			params: {
+				'os': 'linux'
+				'authorized_key':key.fingerprint
+				
+			}
+			dict_key:'rescue'
+			dataformat: .urlencoded
+		)!
+
+
+		console.print_debug("hetzner rescue\n${rescue}")
+
+		h.server_reset(id: args.id, name: args.name, wait: args.wait)!
 	}
-	keysdata = keysdata.trim('&')
 
-	mut nv := urllib.new_values()
-	nv.add('os', 'linux')
-	nv.add('authorized_key', keysdata)
-	data := nv.encode()
 
-	// TODO: see what happens if there are more than 1 key
-
-	response := h.request_post('/boot/${serverinfo.server_number}/rescue', data)!
-
-	if response.status_code != 200 {
-		return error('could not process request: error ${response.status_code} ${response.body}')
+	if args.wait{
+		//now we should check if ssh is responding
+		//next will do that check
+		builder.executor_new(ipaddr: serverinfo.server_ip,checkconnect:60)!
 	}
 
-	rescue := json.decode(RescueRoot, response.body) or {
-		return error('could not process request.\n${response.body}')
-	}
-
-	h.server_reset(id: args.id, name: args.name, wait: args.wait)!
 
 	if args.crystal_install {
 		mut b := builder.new()!
@@ -161,21 +167,35 @@ pub fn (mut h HetznerClient[Config]) server_rescue(args ServerRescueArgs) !Rescu
 		n.crystal_install()!
 	}
 
-	return rescue.rescue
+	if args.hero_install {
+		mut b := builder.new()!
+		mut n := b.node_new(ipaddr: serverinfo.server_ip)!
+		n.hero_install()!
+	}	
+
+	mut serverinfo2 := h.server_info_get(id: args.id, name: args.name)!
+
+	return serverinfo2
 }
 
-/////////////////////////////////////RESET
+pub fn (mut h HetznerManager) server_rescue_node (args ServerRescueArgs) !&builder.Node {
+
+	mut serverinfo := h.server_rescue(args)!
+
+	mut b := builder.new()!
+	mut n := b.node_new(ipaddr: serverinfo.server_ip)!
+
+	return n
+
+}
+
+// /////////////////////////////////////RESET
 
 struct ResetInfo {
 	server_ip       string
 	server_ipv6_net string
 	server_number   int
-	// type string // FIXME
 	operating_status string
-}
-
-struct ResetRoot {
-	reset ResetInfo
 }
 
 pub struct ServerRebootArgs {
@@ -185,7 +205,7 @@ pub mut:
 	wait bool = true
 }
 
-pub fn (mut h HetznerClient[Config]) server_reset(args ServerRebootArgs) !ResetInfo {
+pub fn (mut h HetznerManager) server_reset(args ServerRebootArgs) !ResetInfo {
 	mut serverinfo := h.server_info_get(id: args.id, name: args.name)!
 
 	console.print_header('server ${serverinfo.server_name} goes for reset')
@@ -198,14 +218,13 @@ pub fn (mut h HetznerClient[Config]) server_reset(args ServerRebootArgs) !ResetI
 		console.print_debug('server ${serverinfo.server_name} is down')
 	}
 
-	response := h.request_post('/reset/${serverinfo.server_number}', 'type=hw')!
-
-	if response.status_code != 200 {
-		return error('could not process request: error ${response.status_code} ${response.body}')
-	}
-
-	o := json.decode(ResetRoot, response.body) or { return error('could not process request') }
-
+	mut conn := h.connection()!
+	o := conn.post_json_generic[ResetInfo](
+		prefix: 'reset/${serverinfo.server_number}'
+		params: {"type":"hw"}
+		dataformat: .urlencoded
+		//dict_key:'reset'
+	)!
 	// now need to wait till it goes off
 	if serveractive {
 		for {
@@ -226,7 +245,7 @@ pub fn (mut h HetznerClient[Config]) server_reset(args ServerRebootArgs) !ResetI
 			if osal.ping(address: serverinfo.server_ip)! == .ok {
 				console.print_debug('ping ok')
 				osal.tcp_port_test(address: serverinfo.server_ip, port: 22, timeout: 3000)
-				console.print_debug('ssh ok')
+				console.print_debug('ssh tcp port ok')
 				console.print_header('server is rebooted: ${serverinfo.server_name}')
 				break
 			}
@@ -238,29 +257,21 @@ pub fn (mut h HetznerClient[Config]) server_reset(args ServerRebootArgs) !ResetI
 		}
 	}
 
-	return o.reset
+	return o
 }
 
-/////////////////////////////////////BOOT
+// /////////////////////////////////////BOOT
 
-struct BootRoot {
-	boot Boot
-}
+// struct BootRoot {
+// 	boot Boot
+// }
 
-struct Boot {
-	rescue RescueInfo
-}
+// struct Boot {
+// 	rescue RescueInfo
+// }
 
-pub fn (mut h HetznerClient[Config]) server_boot(id int) !RescueInfo {
-	data := h.request_get('/boot/${id}')!
-
-	console.print_debug(data)
-
-	if true {
-		panic('serverboot')
-	}
-
-	boot := json.decode(BootRoot, data) or { return error('could not process request: ${err}') }
-
-	return boot.boot.rescue
-}
+// pub fn (mut h HetznerManager) server_boot(id int) !RescueInfo {
+// 	mut conn := h.connection()!
+// 	boot := conn.get_json[BootRoot](prefix: 'boot/${id}')!
+// 	return boot.boot.rescue
+// }
