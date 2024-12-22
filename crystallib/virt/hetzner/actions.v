@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.core.texttools
 import time
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
-
 import freeflowuniverse.crystallib.builder
 
 /////////////////////////// LIST
@@ -23,24 +22,21 @@ pub mut:
 	paid_until      string
 	ip              []string
 	subnet          []Subnet
-	
 }
 
 pub struct ServerInfoDetailed {
 	ServerInfo
 pub mut:
-
-    reset                bool
-    rescue               bool
-    vnc                  bool
-    windows              bool
-    plesk                bool
-    cpanel               bool
-    wol                  bool
-    hot_swap             bool
-    //linked_storagebox    int
+	reset    bool
+	rescue   bool
+	vnc      bool
+	windows  bool
+	plesk    bool
+	cpanel   bool
+	wol      bool
+	hot_swap bool
+	// linked_storagebox    int
 }
-
 
 pub struct Subnet {
 pub mut:
@@ -50,9 +46,12 @@ pub mut:
 
 pub fn (mut h HetznerManager) servers_list() ![]ServerInfo {
 	mut conn := h.connection()!
-	return conn.get_json_list_generic[ServerInfo](method: .get, prefix:'server', list_dict_key:'server')!
+	return conn.get_json_list_generic[ServerInfo](
+		method:        .get
+		prefix:        'server'
+		list_dict_key: 'server'
+	)!
 }
-
 
 // ///////////////////////////GETID
 
@@ -88,11 +87,14 @@ pub fn (mut h HetznerManager) server_info_get(args_ ServerGetArgs) !ServerInfoDe
 	if res.len == 0 {
 		return error("couldn't find server with: '${args}'")
 	}
-	
+
 	mut conn := h.connection()!
-	return conn.get_json_generic[ServerInfoDetailed](method: .get, prefix:'server/${res[0].server_number}',dict_key:'server',cache_disable:true)!	
-
-
+	return conn.get_json_generic[ServerInfoDetailed](
+		method:        .get
+		prefix:        'server/${res[0].server_number}'
+		dict_key:      'server'
+		cache_disable: true
+	)!
 }
 
 // ///////////////////////////RESCUE
@@ -116,9 +118,9 @@ pub mut:
 	name            string
 	wait            bool = true
 	crystal_install bool
-	hero_install 	bool
-	sshkey_name  string
-	reset bool //ask to do reset/rescue even if its already in that state
+	hero_install    bool
+	sshkey_name     string
+	reset           bool // ask to do reset/rescue even if its already in that state
 }
 
 // put server in rescue mode, if sshkey_name not specified then will use the first one in the list
@@ -127,39 +129,34 @@ pub fn (mut h HetznerManager) server_rescue(args ServerRescueArgs) !ServerInfoDe
 
 	console.print_header('server ${serverinfo.server_name} goes into rescue mode')
 
-	//only do it if its not in rescue yet
-	if serverinfo.rescue==false || args.reset{
-
+	// only do it if its not in rescue yet
+	if serverinfo.rescue == false || args.reset {
 		mut key := h.keys_get()![0]
-		if args.sshkey_name == ""{
+		if args.sshkey_name == '' {
 			key = h.key_get(args.sshkey_name)!
 		}
 
 		mut conn := h.connection()!
 		rescue := conn.post_json_generic[RescueInfo](
-			prefix: 'boot/${serverinfo.server_number}/rescue'
-			params: {
-				'os': 'linux'
-				'authorized_key':key.fingerprint
-				
+			prefix:     'boot/${serverinfo.server_number}/rescue'
+			params:     {
+				'os':             'linux'
+				'authorized_key': key.fingerprint
 			}
-			dict_key:'rescue'
+			dict_key:   'rescue'
 			dataformat: .urlencoded
 		)!
 
-
-		console.print_debug("hetzner rescue\n${rescue}")
+		console.print_debug('hetzner rescue\n${rescue}')
 
 		h.server_reset(id: args.id, name: args.name, wait: args.wait)!
 	}
 
-
-	if args.wait{
-		//now we should check if ssh is responding
-		//next will do that check
-		builder.executor_new(ipaddr: serverinfo.server_ip,checkconnect:60)!
+	if args.wait {
+		// now we should check if ssh is responding
+		// next will do that check
+		builder.executor_new(ipaddr: serverinfo.server_ip, checkconnect: 60)!
 	}
-
 
 	if args.crystal_install {
 		mut b := builder.new()!
@@ -171,30 +168,28 @@ pub fn (mut h HetznerManager) server_rescue(args ServerRescueArgs) !ServerInfoDe
 		mut b := builder.new()!
 		mut n := b.node_new(ipaddr: serverinfo.server_ip)!
 		n.hero_install()!
-	}	
+	}
 
 	mut serverinfo2 := h.server_info_get(id: args.id, name: args.name)!
 
 	return serverinfo2
 }
 
-pub fn (mut h HetznerManager) server_rescue_node (args ServerRescueArgs) !&builder.Node {
-
+pub fn (mut h HetznerManager) server_rescue_node(args ServerRescueArgs) !&builder.Node {
 	mut serverinfo := h.server_rescue(args)!
 
 	mut b := builder.new()!
 	mut n := b.node_new(ipaddr: serverinfo.server_ip)!
 
 	return n
-
 }
 
 // /////////////////////////////////////RESET
 
 struct ResetInfo {
-	server_ip       string
-	server_ipv6_net string
-	server_number   int
+	server_ip        string
+	server_ipv6_net  string
+	server_number    int
 	operating_status string
 }
 
@@ -220,10 +215,12 @@ pub fn (mut h HetznerManager) server_reset(args ServerRebootArgs) !ResetInfo {
 
 	mut conn := h.connection()!
 	o := conn.post_json_generic[ResetInfo](
-		prefix: 'reset/${serverinfo.server_number}'
-		params: {"type":"hw"}
+		prefix:     'reset/${serverinfo.server_number}'
+		params:     {
+			'type': 'hw'
+		}
 		dataformat: .urlencoded
-		//dict_key:'reset'
+		// dict_key:'reset'
 	)!
 	// now need to wait till it goes off
 	if serveractive {

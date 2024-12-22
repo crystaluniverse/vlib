@@ -1,20 +1,20 @@
-module servers.rpcsocket
+module jobmanager
 
 import net
 import json
 
 // RPCRequest represents an incoming JSON-RPC request
 struct RPCRequest {
-	jsonrpc string    @[required]
-	id      int       @[required]
-	method  string    @[required]
+	jsonrpc string @[required]
+	id      int    @[required]
+	method  string @[required]
 	params  json.Any
 }
 
 // RPCResponse represents a JSON-RPC response
 struct RPCResponse {
-	jsonrpc string    @[required]
-	id      int       @[required]
+	jsonrpc string @[required]
+	id      int    @[required]
 	result  json.Any
 	error   ?RPCError
 }
@@ -34,16 +34,16 @@ mut:
 
 // new_server creates a new RPC socket server
 pub fn new_server(port int) !&Server {
-	listener := net.listen_tcp(.ip6, ':$port')!
+	listener := net.listen_tcp(.ip6, ':${port}')!
 	return &Server{
 		listener: listener
-		port: port
+		port:     port
 	}
 }
 
 // start starts the RPC socket server
 pub fn (mut s Server) start() ! {
-	println('RPC server listening on port $s.port')
+	println('RPC server listening on port ${s.port}')
 	for {
 		mut conn := s.listener.accept() or { continue }
 		go s.handle_connection(mut conn)
@@ -53,20 +53,22 @@ pub fn (mut s Server) start() ! {
 // handle_connection handles an incoming client connection
 fn (mut s Server) handle_connection(mut conn net.TcpConn) {
 	defer { conn.close() or {} }
-	
+
 	for {
 		request := conn.read_line() or { break }
-		if request.len == 0 { break }
-		
+		if request.len == 0 {
+			break
+		}
+
 		// Parse the JSON-RPC request
 		rpc_req := json.decode(RPCRequest, request) or {
 			s.send_error(mut conn, 0, -32700, 'Parse error')
 			continue
 		}
-		
+
 		// Handle the RPC method
 		response := s.handle_request(rpc_req)
-		
+
 		// Send the response
 		response_json := json.encode(response)
 		conn.write_string(response_json + '\n') or { break }
@@ -76,23 +78,45 @@ fn (mut s Server) handle_connection(mut conn net.TcpConn) {
 // handle_request processes an RPC request and returns a response
 fn (mut s Server) handle_request(req RPCRequest) RPCResponse {
 	match req.method {
-		'job.set' { return s.handle_job_set(req) }
-		'job.get' { return s.handle_job_get(req) }
-		'job.delete' { return s.handle_job_delete(req) }
-		'job.find' { return s.handle_job_find(req) }
-		'executor.set' { return s.handle_executor_set(req) }
-		'executor.get' { return s.handle_executor_get(req) }
-		'executor.get_by_name' { return s.handle_executor_get_by_name(req) }
-		'agent.set' { return s.handle_agent_set(req) }
-		'agent.get' { return s.handle_agent_get(req) }
-		'joblog.set' { return s.handle_joblog_set(req) }
-		'signature.set' { return s.handle_signature_set(req) }
+		'job.set' {
+			return s.handle_job_set(req)
+		}
+		'job.get' {
+			return s.handle_job_get(req)
+		}
+		'job.delete' {
+			return s.handle_job_delete(req)
+		}
+		'job.find' {
+			return s.handle_job_find(req)
+		}
+		'executor.set' {
+			return s.handle_executor_set(req)
+		}
+		'executor.get' {
+			return s.handle_executor_get(req)
+		}
+		'executor.get_by_name' {
+			return s.handle_executor_get_by_name(req)
+		}
+		'agent.set' {
+			return s.handle_agent_set(req)
+		}
+		'agent.get' {
+			return s.handle_agent_get(req)
+		}
+		'joblog.set' {
+			return s.handle_joblog_set(req)
+		}
+		'signature.set' {
+			return s.handle_signature_set(req)
+		}
 		else {
 			return RPCResponse{
 				jsonrpc: '2.0'
-				id: req.id
-				error: RPCError{
-					code: -32601
+				id:      req.id
+				error:   RPCError{
+					code:    -32601
 					message: 'Method not found'
 				}
 			}
@@ -104,9 +128,9 @@ fn (mut s Server) handle_request(req RPCRequest) RPCResponse {
 fn (mut s Server) send_error(mut conn net.TcpConn, id int, code int, message string) {
 	response := RPCResponse{
 		jsonrpc: '2.0'
-		id: id
-		error: RPCError{
-			code: code
+		id:      id
+		error:   RPCError{
+			code:    code
 			message: message
 		}
 	}
@@ -121,20 +145,20 @@ fn (mut s Server) handle_job_set(req RPCRequest) RPCResponse {
 	job := job_params['job'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Invalid job parameters'
 			}
 		}
 	}
 
 	// TODO: Implement job creation/update logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: job
+		id:      req.id
+		result:  job
 	}
 }
 
@@ -144,20 +168,20 @@ fn (mut s Server) handle_job_get(req RPCRequest) RPCResponse {
 	id := params['id'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Missing job ID'
 			}
 		}
 	}
 
 	// TODO: Implement job retrieval logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: json.null
+		id:      req.id
+		result:  json.null
 	}
 }
 
@@ -167,20 +191,20 @@ fn (mut s Server) handle_job_delete(req RPCRequest) RPCResponse {
 	id := params['id'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Missing job ID'
 			}
 		}
 	}
 
 	// TODO: Implement job deletion logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: true
+		id:      req.id
+		result:  true
 	}
 }
 
@@ -190,20 +214,20 @@ fn (mut s Server) handle_job_find(req RPCRequest) RPCResponse {
 	search_params := params['params'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Missing search parameters'
 			}
 		}
 	}
 
 	// TODO: Implement job search logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: []json.Any{}
+		id:      req.id
+		result:  []json.Any{}
 	}
 }
 
@@ -214,20 +238,20 @@ fn (mut s Server) handle_executor_set(req RPCRequest) RPCResponse {
 	executor := params['executor'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Invalid executor parameters'
 			}
 		}
 	}
 
 	// TODO: Implement executor creation/update logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: executor
+		id:      req.id
+		result:  executor
 	}
 }
 
@@ -237,20 +261,20 @@ fn (mut s Server) handle_executor_get(req RPCRequest) RPCResponse {
 	id := params['id'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Missing executor ID'
 			}
 		}
 	}
 
 	// TODO: Implement executor retrieval logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: json.null
+		id:      req.id
+		result:  json.null
 	}
 }
 
@@ -260,20 +284,20 @@ fn (mut s Server) handle_executor_get_by_name(req RPCRequest) RPCResponse {
 	name := params['name'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Missing executor name'
 			}
 		}
 	}
 
 	// TODO: Implement executor retrieval by name logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: json.null
+		id:      req.id
+		result:  json.null
 	}
 }
 
@@ -284,20 +308,20 @@ fn (mut s Server) handle_agent_set(req RPCRequest) RPCResponse {
 	agent := params['agent'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Invalid agent parameters'
 			}
 		}
 	}
 
 	// TODO: Implement agent creation/update logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: agent
+		id:      req.id
+		result:  agent
 	}
 }
 
@@ -307,20 +331,20 @@ fn (mut s Server) handle_agent_get(req RPCRequest) RPCResponse {
 	id := params['id'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Missing agent ID'
 			}
 		}
 	}
 
 	// TODO: Implement agent retrieval logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: json.null
+		id:      req.id
+		result:  json.null
 	}
 }
 
@@ -331,20 +355,20 @@ fn (mut s Server) handle_joblog_set(req RPCRequest) RPCResponse {
 	log := params['log'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Invalid job log parameters'
 			}
 		}
 	}
 
 	// TODO: Implement job log creation/update logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: log
+		id:      req.id
+		result:  log
 	}
 }
 
@@ -355,19 +379,19 @@ fn (mut s Server) handle_signature_set(req RPCRequest) RPCResponse {
 	request := params['request'] or {
 		return RPCResponse{
 			jsonrpc: '2.0'
-			id: req.id
-			error: RPCError{
-				code: 400
+			id:      req.id
+			error:   RPCError{
+				code:    400
 				message: 'Invalid signature request parameters'
 			}
 		}
 	}
 
 	// TODO: Implement signature request creation/update logic
-	
+
 	return RPCResponse{
 		jsonrpc: '2.0'
-		id: req.id
-		result: request
+		id:      req.id
+		result:  request
 	}
 }

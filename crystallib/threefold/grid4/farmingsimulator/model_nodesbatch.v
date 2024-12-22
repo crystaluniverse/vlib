@@ -30,7 +30,7 @@ fn (mut nb NodesBatch) calc(month int) !NBCalc {
 
 	power_kwh := nb.node_template.capacity.power * 24 * 30 / 1000 * nb.nrnodes
 	rackspace := nb.node_template.capacity.rackspace * nb.nrnodes
-    _ := ri.simulator.params
+	_ := ri.simulator.params
 	tokens_farmed := ri.token_farming(nb.node_template, month)!
 
 	if month < nb.start_month {

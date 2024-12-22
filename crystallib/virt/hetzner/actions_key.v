@@ -1,4 +1,5 @@
 module hetzner
+
 import freeflowuniverse.crystallib.core.texttools
 
 pub struct SSHKey {
@@ -13,7 +14,12 @@ pub mut:
 
 pub fn (mut h HetznerManager) keys_get() ![]SSHKey {
 	mut conn := h.connection()!
-	return conn.get_json_list_generic[SSHKey](method: .get, prefix:'key', list_dict_key:'key',dataformat: .urlencoded)!
+	return conn.get_json_list_generic[SSHKey](
+		method:        .get
+		prefix:        'key'
+		list_dict_key: 'key'
+		dataformat:    .urlencoded
+	)!
 }
 
 // Get a specific SSH key by fingerprint
@@ -39,7 +45,6 @@ pub fn (mut h HetznerManager) key_exists(name string) bool {
 	return false
 }
 
-
 // Create a new SSH key
 pub fn (mut h HetznerManager) key_create(name string, data string) !SSHKey {
 	name_fixed := texttools.name_fix(name)
@@ -48,25 +53,26 @@ pub fn (mut h HetznerManager) key_create(name string, data string) !SSHKey {
 		return error('SSH key with name "${name_fixed}" already exists')
 	}
 	return conn.post_json_generic[SSHKey](
-		method: .post
-		prefix: 'key'
+		method:     .post
+		prefix:     'key'
 		dataformat: .urlencoded
-		params: {
+		params:     {
 			'name': name_fixed
 			'data': data
-		})!
+		}
+	)!
 }
 
 // Delete an SSH key
 pub fn (mut h HetznerManager) key_delete(name string) ! {
- 	if !h.key_exists(name){
+	if !h.key_exists(name) {
 		return
 	}
-	key:=h.key_get(name)!
+	key := h.key_get(name)!
 	mut conn := h.connection()!
 	conn.delete(
-		method: .delete
-		prefix: 'key/${key.fingerprint}'		
+		method:     .delete
+		prefix:     'key/${key.fingerprint}'
 		dataformat: .urlencoded
 	)!
 }

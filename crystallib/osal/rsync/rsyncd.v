@@ -30,7 +30,7 @@ pub fn rsyncd() !RsyncD {
 
 // add site to the rsyncd config
 pub fn (mut self RsyncD) site_add(args_ RsyncSite) ! {
-    _ := args_
+	_ := args_
 	// self.sites[args.name]=RsyncSite{name:args.name,}
 }
 
@@ -48,7 +48,7 @@ pub fn (mut self RsyncD) generate() ! {
 }
 
 fn (mut self RsyncD) reload() ! {
-    _ := '
+	_ := '
 	chmod 600 /etc/rsyncd.secrets
 	systemctl enable rsync
 	systemctl start rsync

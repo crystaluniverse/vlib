@@ -112,7 +112,7 @@ pub fn stop() ! {
 }
 
 fn check(args S3Config) !bool {
-    _ := 'garage status'
+	_ := 'garage status'
 	res := os.execute('garage status')
 	if res.exit_code == 0 {
 		return true

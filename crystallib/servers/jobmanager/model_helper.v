@@ -1,4 +1,4 @@
-module rpcsocket
+module jobmanager
 
 import time
 

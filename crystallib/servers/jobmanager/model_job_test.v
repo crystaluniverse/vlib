@@ -1,4 +1,4 @@
-module rpcsocket
+module jobmanager
 
 import time
 import freeflowuniverse.crystallib.data.ourtime
@@ -13,23 +13,33 @@ fn test_job_encode_decode() ! {
 	// Create test data
 	now := time.now()
 	mut original_job := Job{
-		id: 1234
-		actor: 'test_actor'
-		action: 'test_action'
-		params: '{"key": "value"}'
-		job_type: 'test_type'
-		create_date: ourtime.OurTime{unixt: now.unix()}
-		schedule_date: ourtime.OurTime{unixt: now.unix() + 3600} // 1 hour later
-		finish_date: ourtime.OurTime{unixt: now.unix() + 7200} // 2 hours later
-		locked_until: ourtime.OurTime{unixt: now.unix() + 300} // 5 minutes later
-		completed: true
-		state: .completed
-		error: ''
-		recurring: '0 0 * * *' // daily at midnight
-		deadline: ourtime.OurTime{unixt: now.unix() + 86400} // 24 hours later
-		signature: 'test_signature'
-		executor: 5678
-		agent: 9012
+		id:            1234
+		actor:         'test_actor'
+		action:        'test_action'
+		params:        '{"key": "value"}'
+		job_type:      'test_type'
+		create_date:   ourtime.OurTime{
+			unixt: now.unix()
+		}
+		schedule_date: ourtime.OurTime{
+			unixt: now.unix() + 3600
+		} // 1 hour later
+		finish_date:   ourtime.OurTime{
+			unixt: now.unix() + 7200
+		} // 2 hours later
+		locked_until:  ourtime.OurTime{
+			unixt: now.unix() + 300
+		} // 5 minutes later
+		completed:     true
+		state:         .completed
+		error:         ''
+		recurring:     '0 0 * * *' // daily at midnight
+		deadline:      ourtime.OurTime{
+			unixt: now.unix() + 86400
+		} // 24 hours later
+		signature:     'test_signature'
+		executor:      5678
+		agent:         9012
 	}
 
 	// Encode to binary
@@ -37,13 +47,17 @@ fn test_job_encode_decode() ! {
 
 	// Decode back to Job
 	mut decoded_job := Job{
-		id: 0
-		actor: ''
-		action: ''
-		job_type: ''
-		create_date: ourtime.OurTime{unixt: 0}
-		schedule_date: ourtime.OurTime{unixt: 0}
-		state: .init
+		id:            0
+		actor:         ''
+		action:        ''
+		job_type:      ''
+		create_date:   ourtime.OurTime{
+			unixt: 0
+		}
+		schedule_date: ourtime.OurTime{
+			unixt: 0
+		}
+		state:         .init
 	}
 	decoded_job.decode(encoded)!
 
@@ -69,18 +83,22 @@ fn test_job_encode_decode() ! {
 
 fn test_job_params() ! {
 	mut job := Job{
-		id: 1
-		actor: 'test'
-		action: 'test'
-		job_type: 'test'
-		create_date: ourtime.OurTime{unixt: time.now().unix()}
-		schedule_date: ourtime.OurTime{unixt: time.now().unix()}
-		state: .init
+		id:            1
+		actor:         'test'
+		action:        'test'
+		job_type:      'test'
+		create_date:   ourtime.OurTime{
+			unixt: time.now().unix()
+		}
+		schedule_date: ourtime.OurTime{
+			unixt: time.now().unix()
+		}
+		state:         .init
 	}
 
 	// Test setting params
 	test_params := TestParams{
-		key: 'test_key'
+		key:   'test_key'
 		value: 42
 	}
 	job.params_set(test_params)!

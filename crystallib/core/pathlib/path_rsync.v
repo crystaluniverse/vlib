@@ -15,7 +15,7 @@ pub mut:
 	ignore_default bool = true // if set will ignore a common set
 	debug          bool = true
 	fast_rsync     bool
-	sshkey string
+	sshkey         string
 }
 
 // flexible tool to sync files from to, does even support ssh .
@@ -102,10 +102,10 @@ pub fn rsync_cmd_options(args_ RsyncArgs) !string {
 	}
 
 	if args.ipaddr_src.len > 0 && args.ipaddr_dst.len == 0 {
-		sshpart, addrpart = rsync_ipaddr_format(ipaddr: args.ipaddr_src,sshkey:args.sshkey)!
+		sshpart, addrpart = rsync_ipaddr_format(ipaddr: args.ipaddr_src, sshkey: args.sshkey)!
 		cmd = '${options} ${delete} ${exclude} ${sshpart} ${addrpart}:${args.source} ${args.dest}'
 	} else if args.ipaddr_dst.len > 0 && args.ipaddr_src.len == 0 {
-		sshpart, addrpart = rsync_ipaddr_format(ipaddr: args.ipaddr_dst,sshkey:args.sshkey)!
+		sshpart, addrpart = rsync_ipaddr_format(ipaddr: args.ipaddr_dst, sshkey: args.sshkey)!
 		cmd = '${options} ${delete} ${exclude} ${sshpart} ${args.source} ${addrpart}:${args.dest}'
 	} else if args.ipaddr_dst.len > 0 && args.ipaddr_src.len > 0 {
 		return error('cannot have source and dest as ssh')
@@ -121,7 +121,7 @@ mut:
 	ipaddr string
 	user   string = 'root'
 	port   int    = 22
-	sshkey string 
+	sshkey string
 }
 
 fn rsync_ipaddr_format(args_ RsyncFormatArgs) !(string, string) {
@@ -140,12 +140,12 @@ fn rsync_ipaddr_format(args_ RsyncFormatArgs) !(string, string) {
 		panic('ip addr cannot be empty')
 	}
 	// console.print_debug("- rsync cmd: ${args.user}@${args.ipaddr}:${args.port}")
-	mut sshkey := ""
-	if args.sshkey.len>0{
-		if ! os.exists(args.sshkey){
+	mut sshkey := ''
+	if args.sshkey.len > 0 {
+		if !os.exists(args.sshkey) {
 			return error("can't find sshkey on path: ${args.sshkey}")
 		}
-		sshkey="-i ${args.sshkey}"
+		sshkey = '-i ${args.sshkey}'
 	}
 	return '-e \'ssh -o StrictHostKeyChecking=no ${sshkey} -p ${args.port}\'', '${args.user}@${args.ipaddr}'
 }

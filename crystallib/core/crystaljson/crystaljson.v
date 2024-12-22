@@ -100,9 +100,6 @@ pub fn json_dict_filter_string(r string, clean bool, include []string, exclude [
 	return res2
 }
 
-
-
-
 // the input is a list of dicts e.g. [{"key":{"name":"kristof@incubaid.com",...},{"key":...}]
 // in this key the key would be key
 // returns list of json2.any
@@ -119,11 +116,11 @@ pub fn json_list_dict_get_any(r string, clean bool, key string) ![]json2.Any {
 	}
 	mut res_list := data_raw.arr()
 	mut res_final := []json2.Any{}
-	for item in res_list{
+	for item in res_list {
 		mut res := item.as_map()
 		if key in res {
-			res_final << res[key] or {panic("bug")}
-		}else{
+			res_final << res[key] or { panic('bug') }
+		} else {
 			return error('Could not find key:${key} in ${res} as part of json_list_dict_get_any')
 		}
 	}

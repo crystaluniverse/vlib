@@ -56,7 +56,7 @@ pub fn install(args_ InstallArgs) ! {
 			return error('unsuported platform, only linux amd64 for now')
 		}
 
-        _ := osal.download(
+		_ := osal.download(
 			url:        url
 			minsize_kb: 15000
 			expand_dir: '/tmp/grafana'

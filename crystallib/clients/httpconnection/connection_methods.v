@@ -20,19 +20,17 @@ import net.http
 import freeflowuniverse.crystallib.core.crystaljson
 import freeflowuniverse.crystallib.ui.console
 
-
 // Build url from Request and httpconnection
 fn (mut h HTTPConnection) url(req Request) string {
 	mut u := '${h.base_url}/${req.prefix.trim('/')}'
 	if req.id.len > 0 {
 		u += '/${req.id}'
 	}
-	if req.params.len > 0 && req.method!=.post{
+	if req.params.len > 0 && req.method != .post {
 		u += '?${http.url_encode_form_data(req.params)}'
 	}
 	return u
 }
-
 
 // Return if request cacheable, depeds on connection cache and request arguments.
 fn (h HTTPConnection) is_cacheable(req Request) bool {
@@ -51,10 +49,10 @@ pub fn (mut h HTTPConnection) send(req_ Request) !Result {
 	mut response := http.Response{}
 	mut err_message := ''
 	mut from_cache := false // used to know if result came from cache
-	mut req:=req_
+	mut req := req_
 
 	is_cacheable := h.is_cacheable(req)
-	//console.print_debug("is cacheable: ${is_cacheable}")
+	// console.print_debug("is cacheable: ${is_cacheable}")
 
 	// 1 - Check cache if enabled try to get result from cache
 	if is_cacheable {
@@ -66,11 +64,10 @@ pub fn (mut h HTTPConnection) send(req_ Request) !Result {
 	// 2 - Check result
 	if result.code in [0, -1] {
 		// 3 - Do request, if needed
-		if req.method ==.post{
-
-			if req.dataformat==.urlencoded && req.data == "" && req.params.len > 0{
+		if req.method == .post {
+			if req.dataformat == .urlencoded && req.data == '' && req.params.len > 0 {
 				req.data = http.url_encode_form_data(req.params)
-			}			
+			}
 		}
 		url := h.url(req)
 
@@ -83,25 +80,25 @@ pub fn (mut h HTTPConnection) send(req_ Request) !Result {
 		// joining the header from the HTTPConnection with the one from Request
 		new_req.header = h.header()
 
-		if new_req.header.contains(http.CommonHeader.content_type){
-			panic("bug: content_type should not be set as part of default header")
+		if new_req.header.contains(http.CommonHeader.content_type) {
+			panic('bug: content_type should not be set as part of default header')
 		}
 
-		match req.dataformat{
-			.json{
-				new_req.header.set(http.CommonHeader.content_type,'application/json')
+		match req.dataformat {
+			.json {
+				new_req.header.set(http.CommonHeader.content_type, 'application/json')
 			}
-			.urlencoded{
-				new_req.header.set(http.CommonHeader.content_type,'application/x-www-form-urlencoded')
+			.urlencoded {
+				new_req.header.set(http.CommonHeader.content_type, 'application/x-www-form-urlencoded')
 			}
-			.multipart_form{
-				new_req.header.set(http.CommonHeader.content_type,'multipart/form-data')
+			.multipart_form {
+				new_req.header.set(http.CommonHeader.content_type, 'multipart/form-data')
 			}
-		}		
+		}
 
 		println(new_req)
 		if req.debug {
-			console.print_debug("http request:\n${new_req.str()}")
+			console.print_debug('http request:\n${new_req.str()}')
 		}
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
@@ -143,14 +140,14 @@ pub fn (mut h HTTPConnection) post_json_str(req_ Request) !string {
 	mut req := req_
 	req.method = .post
 	result := h.send(req)!
-	if result.is_ok(){
-		mut data_:=result.data
+	if result.is_ok() {
+		mut data_ := result.data
 		if req.dict_key.len > 0 {
 			data_ = crystaljson.json_dict_get_string(data_, false, req.dict_key)!
-		}	
+		}
 		return data_
 	}
-	return error("Could not post ${req}\result:\n${result}")
+	return error('Could not post ${req}\result:\n${result}')
 }
 
 // do a request with certain prefix on the already specified url
@@ -171,7 +168,7 @@ pub fn (mut h HTTPConnection) get_json_list(req Request) ![]string {
 		data_ = crystaljson.json_dict_get_string(data_, false, req.dict_key)!
 	}
 	if req.list_dict_key.len > 0 {
-		return crystaljson.json_list_dict_get_string(data_, false, req.list_dict_key)! 
+		return crystaljson.json_list_dict_get_string(data_, false, req.list_dict_key)!
 	}
 	data := crystaljson.json_list(data_, false)
 	return data

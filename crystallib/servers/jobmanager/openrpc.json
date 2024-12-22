@@ -512,6 +512,6 @@
   ],
   "externalDocs": {
     "description": "Find more info here",
-    "url": "https://github.com/freeflowuniverse/crystallib/tree/main/servers/rpcsocket"
+    "url": "https://github.com/freeflowuniverse/crystallib/tree/main/servers/jobmanager"
   }
 }

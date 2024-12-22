@@ -1,31 +1,31 @@
-module rpcsocket
+module jobmanager
 
 import freeflowuniverse.crystallib.data.ourtime
 
 // Params for finding jobs
 pub struct JobFindParams {
 pub mut:
-	id            ?u32
-	actor         ?string
-	action        ?string
-	job_type      ?string
-	completed     ?bool
-	state         ?JobState
-	agent         ?u32
-	executor      ?u32
+	id        ?u32
+	actor     ?string
+	action    ?string
+	job_type  ?string
+	completed ?bool
+	state     ?JobState
+	agent     ?u32
+	executor  ?u32
 }
 
 // Manager for Job objects
 pub struct JobManager {
 mut:
-	jobs map[u32]Job
+	jobs    map[u32]Job
 	last_id u32
 }
 
 // Create a new job manager
 pub fn new_job_manager() JobManager {
 	return JobManager{
-		jobs: map[u32]Job{}
+		jobs:    map[u32]Job{}
 		last_id: 0
 	}
 }
@@ -71,14 +71,14 @@ pub fn (mut m JobManager) delete_all() {
 // Find jobs based on parameters
 pub fn (m JobManager) find(params JobFindParams) []Job {
 	mut result := []Job{}
-	
+
 	for _, job in m.jobs {
 		if !matches_job_params(job, params) {
 			continue
 		}
 		result << job
 	}
-	
+
 	return result
 }
 

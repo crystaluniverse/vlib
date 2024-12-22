@@ -1,28 +1,28 @@
-module rpcsocket
+module jobmanager
 
 import freeflowuniverse.crystallib.core.texttools { name_fix }
 
 // Params for finding executors
 pub struct ExecutorFindParams {
 pub mut:
-	id           ?u32
-	name         ?string
-	state        ?ExecutorState
-	actor_name   ?string  // Find executors that have an actor with this name
+	id         ?u32
+	name       ?string
+	state      ?ExecutorState
+	actor_name ?string // Find executors that have an actor with this name
 }
 
 // Manager for Executor objects
 pub struct ExecutorManager {
 mut:
 	executors map[u32]Executor
-	last_id u32
+	last_id   u32
 }
 
 // Create a new executor manager
 pub fn new_executor_manager() ExecutorManager {
 	return ExecutorManager{
 		executors: map[u32]Executor{}
-		last_id: 0
+		last_id:   0
 	}
 }
 
@@ -77,14 +77,14 @@ pub fn (mut m ExecutorManager) delete_all() {
 // Find executors based on parameters
 pub fn (m ExecutorManager) find(params ExecutorFindParams) []Executor {
 	mut result := []Executor{}
-	
+
 	for _, executor in m.executors {
 		if !matches_executor_params(executor, params) {
 			continue
 		}
 		result << executor
 	}
-	
+
 	return result
 }
 

@@ -39,7 +39,7 @@ pub fn sheet_new(args SheetNewArgs) !&Sheet {
 pub fn sheet_get(name string) !&Sheet {
 	rlock sheets {
 		if name in sheets {
-            return sheets[name] or { return error('Sheet ${name} not found') }
+			return sheets[name] or { return error('Sheet ${name} not found') }
 		}
 	}
 	return error("cann't find sheet:'${name}' in global sheets")

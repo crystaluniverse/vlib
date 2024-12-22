@@ -35,7 +35,7 @@ pub mut:
 // return ssh node (can be used to do actions remotely)
 // will check all available channels till it can ssh into the node
 pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
-    mut b := builder.new()!
+	mut b := builder.new()!
 	start_time := time.now().unix_milli()
 	mut run_time := 0.0
 	for true {

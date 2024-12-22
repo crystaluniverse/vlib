@@ -70,7 +70,9 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 pub fn simulator_get(name string) !&Simulator {
 	rlock farmingsimulators {
 		if name in farmingsimulators {
-            return farmingsimulators[name] or { return error('Farming simulator ${name} not found') }
+			return farmingsimulators[name] or {
+				return error('Farming simulator ${name} not found')
+			}
 		}
 	}
 	return error("cann't find tfgrid gridsimulator:'${name}' in global farmingsimulators")

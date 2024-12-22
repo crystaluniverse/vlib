@@ -3,13 +3,6 @@ module httpconnection
 import net.http
 import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
 
-// fn init_factory() HTTPConnections {
-// 	mut htpc := HTTPConnections{}
-// 	return htpc
-// }
-
-// Singleton creation
-//const factory = init_factory()
 
 @[params]
 pub struct HTTPConnectionArgs {
@@ -21,7 +14,7 @@ pub:
 }
 
 pub fn new(args HTTPConnectionArgs) !&HTTPConnection {
-	//mut f := factory
+	// mut f := factory
 
 	mut header := http.new_header()
 
@@ -41,28 +34,6 @@ pub fn new(args HTTPConnectionArgs) !&HTTPConnection {
 		base_url:       args.url.trim('/')
 	}
 	return &conn
-	// Store new connection
-	// f.connections[args.name] = &conn
 
-	// res := f.connections[args.name] or {
-	// 	panic("couldn't find key '${args.name}' in f.connections")
-	// }
-	// return res
 }
 
-// pub fn get(name string) !&HTTPConnection {
-// 	mut f := factory
-// 	mut r := f.connections[name] or {
-// 		return error('cannot find httpconnection with name ${name} .')
-// 	}
-// 	return r
-// }
-
-// pub fn (mut h HTTPConnection) clone() !&HTTPConnection {
-// 	if h.cache.disable {
-// 		return h
-// 	}
-// 	mut new_conn := h
-// 	new_conn.redis = redisclient.core_get(RedisURL{})!
-// 	return &new_conn
-// }

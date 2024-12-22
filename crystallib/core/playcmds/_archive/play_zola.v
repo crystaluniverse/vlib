@@ -91,7 +91,9 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.post_add(name: name, collection: collection, file: file, pointer: pointer) or { return err }
+			site_.post_add(name: name, collection: collection, file: file, pointer: pointer) or {
+				return err
+			}
 		} else if action.name == 'blog_add' {
 			console.print_debug('website.blog_add')
 			mut p := action.params
@@ -169,7 +171,9 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 				return error("can't find website for news_add, should have been defined before with !!website.define")
 			}
 
-			site_.article_add(name: name, collection: collection, file: file, pointer: pointer) or { return err }
+			site_.article_add(name: name, collection: collection, file: file, pointer: pointer) or {
+				return err
+			}
 		} else if action.name == 'header_add' {
 			console.print_debug('website.header_add')
 			mut p := action.params

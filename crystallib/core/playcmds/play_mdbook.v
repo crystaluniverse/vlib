@@ -107,7 +107,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		printbook := p.get_default_false('printbook')
 		foldlevel := p.get_int_default('foldlevel', 0)!
 		production := p.get_default_false('production')
-        _ := p.get_default_true('reset')
+		_ := p.get_default_true('reset')
 		collections := p.get_list_default('collections', [])!
 
 		if summary_url == '' && summary_path == '' {

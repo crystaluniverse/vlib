@@ -1,28 +1,28 @@
-module rpcsocket
+module jobmanager
 
 import freeflowuniverse.crystallib.data.ourtime
 
 // Params for finding signature requests
 pub struct SignatureRequestFindParams {
 pub mut:
-	id            ?u32
-	job           ?u32
-	pubkey        ?string
-	verified      ?bool
+	id       ?u32
+	job      ?u32
+	pubkey   ?string
+	verified ?bool
 }
 
 // Manager for SignatureRequest objects
 pub struct SignatureRequestManager {
 mut:
 	requests map[u32]SignatureRequest
-	last_id u32
+	last_id  u32
 }
 
 // Create a new signature request manager
 pub fn new_signature_request_manager() SignatureRequestManager {
 	return SignatureRequestManager{
 		requests: map[u32]SignatureRequest{}
-		last_id: 0
+		last_id:  0
 	}
 }
 
@@ -64,14 +64,14 @@ pub fn (mut m SignatureRequestManager) delete_all() {
 // Find signature requests based on parameters
 pub fn (m SignatureRequestManager) find(params SignatureRequestFindParams) []SignatureRequest {
 	mut result := []SignatureRequest{}
-	
+
 	for _, request in m.requests {
 		if !matches_signature_request_params(request, params) {
 			continue
 		}
 		result << request
 	}
-	
+
 	return result
 }
 

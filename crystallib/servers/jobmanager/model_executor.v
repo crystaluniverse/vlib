@@ -1,15 +1,15 @@
-module rpcsocket
+module jobmanager
 
 import freeflowuniverse.crystallib.core.texttools { name_fix }
 import freeflowuniverse.crystallib.data.encoder
 
 pub struct Executor {
 pub mut:
-	id           u32           @[required]
-	name         string        @[required]
-	description  string
-	state        ExecutorState @[required]
-	actors       map[string]&Actor = map[string]&Actor{}
+	id          u32    @[required]
+	name        string @[required]
+	description string
+	state       ExecutorState @[required]
+	actors      map[string]&Actor = map[string]&Actor{}
 }
 
 fn (mut e Executor) cleanup() {
@@ -45,11 +45,11 @@ pub fn (e Executor) get_actor(name string) !&Actor {
 @[heap]
 pub struct Actor {
 pub mut:
-	name         string    @[required]
-	executor     string    @[required] // References Executor.name
-	description  string
+	name        string @[required]
+	executor    string @[required] // References Executor.name
+	description string
 mut:
-	actions      map[string]&Action = map[string]&Action{}
+	actions map[string]&Action = map[string]&Action{}
 }
 
 fn (mut a Actor) cleanup() {
@@ -78,22 +78,22 @@ pub fn (a Actor) get_action(name string) !&Action {
 @[heap]
 pub struct Action {
 pub mut:
-	id           u32      @[required]
-	name         string    @[required]
-	actor        string    @[required]
-	description  string
-	nrok         int       
-	nrfailed     int       
-	code         string
+	id          u32    @[required]
+	name        string @[required]
+	actor       string @[required]
+	description string
+	nrok        int
+	nrfailed    int
+	code        string
 }
 
 // encode encodes the Action struct to binary format
 pub fn (a Action) encode() ![]u8 {
 	mut e := encoder.new()
-	
+
 	// Add version byte (v1)
 	e.add_u8(1)
-	
+
 	// Encode all fields
 	e.add_u32(a.id)
 	e.add_string(a.name)
@@ -102,7 +102,7 @@ pub fn (a Action) encode() ![]u8 {
 	e.add_int(a.nrok)
 	e.add_int(a.nrfailed)
 	e.add_string(a.code)
-	
+
 	return e.data
 }
 
@@ -111,15 +111,15 @@ pub fn (mut a Action) decode(data []u8) ! {
 	if data.len == 0 {
 		return error('empty data')
 	}
-	
+
 	mut d := encoder.decoder_new(data)
-	
+
 	// Read and verify version
 	version := d.get_u8()
 	if version != 1 {
 		return error('unsupported version ${version}')
 	}
-	
+
 	// Decode all fields
 	a.id = d.get_u32()
 	a.name = d.get_string()
@@ -133,15 +133,15 @@ pub fn (mut a Action) decode(data []u8) ! {
 // encode encodes the Actor struct to binary format
 pub fn (a Actor) encode() ![]u8 {
 	mut e := encoder.new()
-	
+
 	// Add version byte (v1)
 	e.add_u8(1)
-	
+
 	// Encode basic fields
 	e.add_string(a.name)
 	e.add_string(a.executor)
 	e.add_string(a.description)
-	
+
 	// Encode actions map
 	e.add_u16(u16(a.actions.len))
 	for key, action in a.actions {
@@ -150,7 +150,7 @@ pub fn (a Actor) encode() ![]u8 {
 		e.add_u16(u16(encoded_action.len))
 		e.data << encoded_action
 	}
-	
+
 	return e.data
 }
 
@@ -159,20 +159,20 @@ pub fn (mut a Actor) decode(data []u8) ! {
 	if data.len == 0 {
 		return error('empty data')
 	}
-	
+
 	mut d := encoder.decoder_new(data)
-	
+
 	// Read and verify version
 	version := d.get_u8()
 	if version != 1 {
 		return error('unsupported version ${version}')
 	}
-	
+
 	// Decode basic fields
 	a.name = d.get_string()
 	a.executor = d.get_string()
 	a.description = d.get_string()
-	
+
 	// Decode actions map
 	actions_len := d.get_u16()
 	for _ in 0 .. actions_len {
@@ -182,10 +182,10 @@ pub fn (mut a Actor) decode(data []u8) ! {
 		for _ in 0 .. action_data_len {
 			action_data << d.get_u8()
 		}
-		
+
 		mut action := &Action{
-			id: 0
-			name: ''
+			id:    0
+			name:  ''
 			actor: ''
 		}
 		action.decode(action_data)!
@@ -196,16 +196,16 @@ pub fn (mut a Actor) decode(data []u8) ! {
 // encode encodes the Executor struct to binary format
 pub fn (e Executor) encode() ![]u8 {
 	mut enc := encoder.new()
-	
+
 	// Add version byte (v1)
 	enc.add_u8(1)
-	
+
 	// Encode basic fields
 	enc.add_u32(e.id)
 	enc.add_string(e.name)
 	enc.add_string(e.description)
 	unsafe { enc.add_u8(u8(e.state)) }
-	
+
 	// Encode actors map
 	enc.add_u16(u16(e.actors.len))
 	for key, actor in e.actors {
@@ -214,7 +214,7 @@ pub fn (e Executor) encode() ![]u8 {
 		enc.add_u16(u16(encoded_actor.len))
 		enc.data << encoded_actor
 	}
-	
+
 	return enc.data
 }
 
@@ -223,21 +223,22 @@ pub fn (mut e Executor) decode(data []u8) ! {
 	if data.len == 0 {
 		return error('empty data')
 	}
-	
+
 	mut d := encoder.decoder_new(data)
-	
+
 	// Read and verify version
 	version := d.get_u8()
 	if version != 1 {
 		return error('unsupported version ${version}')
 	}
-	
+
 	// Decode basic fields
 	e.id = d.get_u32()
 	e.name = d.get_string()
 	e.description = d.get_string()
-	unsafe { e.state = ExecutorState(d.get_u8()) }
-	
+	unsafe {
+		e.state = ExecutorState(d.get_u8())
+	}
 	// Decode actors map
 	actors_len := d.get_u16()
 	for _ in 0 .. actors_len {
@@ -247,9 +248,9 @@ pub fn (mut e Executor) decode(data []u8) ! {
 		for _ in 0 .. actor_data_len {
 			actor_data << d.get_u8()
 		}
-		
+
 		mut actor := &Actor{
-			name: ''
+			name:     ''
 			executor: ''
 		}
 		actor.decode(actor_data)!

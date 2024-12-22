@@ -4,10 +4,8 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.doctree.collection.data
 
-const (
-    err_post_image_required = error('Post must have an image')
-    err_post_page_required = error('post page not attached')
-)
+const err_post_image_required = error('Post must have an image')
+const err_post_page_required = error('post page not attached')
 
 // Blog section for Zola site
 pub struct Blog {

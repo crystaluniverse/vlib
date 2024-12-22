@@ -11,7 +11,7 @@ pub:
 	user        string
 	typ         string @[json: 'type'] // Can be "text", "news", or "image"
 	content     string
-	description string    // Only for image posts, optional
+	description string // Only for image posts, optional
 }
 
 pub fn (feed Feed) html() string {

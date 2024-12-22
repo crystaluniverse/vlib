@@ -8,18 +8,18 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.ipaddress
 import freeflowuniverse.crystallib.ui.console
 import time
-
 import crypto.md5
+
 @[heap]
 pub struct ExecutorSSH {
 pub mut:
-	ipaddr      ipaddress.IPAddress
-	sshkey      string
-	user        string = 'root' // default will be root
-	initialized bool
-	retry       int  = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
-	debug       bool = true
-	checkconnect int  //if set then will test the ssh connection for that timeout
+	ipaddr       ipaddress.IPAddress
+	sshkey       string
+	user         string = 'root' // default will be root
+	initialized  bool
+	retry        int  = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
+	debug        bool = true
+	checkconnect int // if set then will test the ssh connection for that timeout
 }
 
 fn (mut executor ExecutorSSH) init() ! {
@@ -28,7 +28,7 @@ fn (mut executor ExecutorSSH) init() ! {
 		// 	return error('port cannot be 0.\n${executor}')
 		// }
 		// TODO: need to call code from SSHAGENT do not reimplement here, not nicely done
-		//os.execute('pgrep -x ssh-agent || eval `ssh-agent -s`')
+		// os.execute('pgrep -x ssh-agent || eval `ssh-agent -s`')
 
 		// if executor.sshkey != '' {
 		// 	osal.exec(cmd: 'ssh-add ${executor.sshkey}')!
@@ -41,32 +41,31 @@ fn (mut executor ExecutorSSH) init() ! {
 			executor.ipaddr.port = 22
 		}
 
-		if executor.sshkey.len>0{
-			if ! os.exists(executor.sshkey){				
-				mypath:="/tmp/ssh_${md5.hexhash(executor.sshkey)}"
-				os.write_file(mypath,executor.sshkey)!
-				executor.sshkey=mypath
+		if executor.sshkey.len > 0 {
+			if !os.exists(executor.sshkey) {
+				mypath := '/tmp/ssh_${md5.hexhash(executor.sshkey)}'
+				os.write_file(mypath, executor.sshkey)!
+				executor.sshkey = mypath
 			}
 		}
-	
+
 		// TODO: doesn't work with ipv6 after working with ipv4, need better check too, because this slows everything down
 		// cmd := "sh -c 'ssh-keyscan -H ${executor.ipaddr.addr} -p ${executor.ipaddr.port} -t ecdsa-sha2-nistp256 2>/dev/null >> ~/.ssh/known_hosts'"
 		// osal.execute_silent(cmd) or { return error('cannot add the ssh keys to known hosts') }
 
-		if executor.checkconnect>0{
-			end:= time.now().unix() + executor.checkconnect
-			mut now:=i64(0)
-			for{
-				if  now>end{
+		if executor.checkconnect > 0 {
+			end := time.now().unix() + executor.checkconnect
+			mut now := i64(0)
+			for {
+				if now > end {
 					break
 				}
-				if executor.ping()!{
+				if executor.ping()! {
 					executor.initialized = true
 					return
 				}
 				time.sleep(time.second)
 				now = time.now().unix()
-
 			}
 			return error("couldn't establish the ssh connection to ${executor}")
 		}
@@ -91,34 +90,34 @@ pub fn (mut executor ExecutorSSH) exec(args_ ExecArgs) !string {
 	if executor.ipaddr.port > 10 {
 		port = '-p ${executor.ipaddr.port}'
 	}
-	mut sshkey:=""
-	if os.exists(executor.sshkey){
-		sshkey = "-i ${executor.sshkey} "
+	mut sshkey := ''
+	if os.exists(executor.sshkey) {
+		sshkey = '-i ${executor.sshkey} '
 	}
-	
+
 	args.cmd = 'ssh -o StrictHostKeyChecking=no ${sshkey}${executor.user}@${executor.ipaddr.addr} ${port} "${args.cmd}"'
 	res := osal.exec(cmd: args.cmd, stdout: args.stdout, debug: executor.debug)!
 	return res.output
 }
 
-//test if ssh connection works
+// test if ssh connection works
 pub fn (mut executor ExecutorSSH) ping() !bool {
-	mut sshkey:=""
-	if os.exists(executor.sshkey){
-		sshkey = "-i ${executor.sshkey} "
-	}		
+	mut sshkey := ''
+	if os.exists(executor.sshkey) {
+		sshkey = '-i ${executor.sshkey} '
+	}
 	mut port := ''
 	if executor.ipaddr.port > 10 {
 		port = '-p ${executor.ipaddr.port}'
-	}	
+	}
 	cmd := 'ssh -o StrictHostKeyChecking=no -q -o BatchMode=yes ${sshkey} ${executor.user}@${executor.ipaddr.addr} ${port} exit'
 	print(cmd)
-	res:=os.execute(cmd)
-	if res.exit_code==0{
-		println("-> ssh ok")
+	res := os.execute(cmd)
+	if res.exit_code == 0 {
+		println('-> ssh ok')
 		return true
 	}
-	println("-> ssh failed")
+	println('-> ssh failed')
 	return false
 }
 
@@ -128,10 +127,10 @@ pub fn (mut executor ExecutorSSH) exec_interactive(args_ ExecArgs) ! {
 	if executor.ipaddr.port > 10 {
 		port = '-p ${executor.ipaddr.port}'
 	}
-	mut sshkey:=""
-	if os.exists(executor.sshkey){
-		sshkey = "-i ${executor.sshkey} "
-	}	
+	mut sshkey := ''
+	if os.exists(executor.sshkey) {
+		sshkey = '-i ${executor.sshkey} '
+	}
 	args.cmd = 'ssh -tt -o StrictHostKeyChecking=no ${sshkey}${executor.user}@${executor.ipaddr.addr} ${port} "${args.cmd}"'
 	osal.execute_interactive(args.cmd)!
 }
@@ -192,7 +191,7 @@ pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
 		ignore:         args.ignore
 		ignore_default: args.ignore_default
 		stdout:         args.stdout
-		sshkey: 		executor.sshkey
+		sshkey:         executor.sshkey
 	}
 	rsync.rsync(rsargs)!
 }
@@ -242,7 +241,7 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 		ignore_default: args.ignore_default
 		stdout:         args.stdout
 		fast_rsync:     args.fast_rsync
-		sshkey: 		executor.sshkey
+		sshkey:         executor.sshkey
 	}
 	rsync.rsync(rsargs)!
 }

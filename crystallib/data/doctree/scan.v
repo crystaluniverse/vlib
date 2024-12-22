@@ -116,7 +116,7 @@ pub fn (mut tree Tree) scan_concurrent(args_ TreeScannerArgs) ! {
 			continue
 		}
 
-		threads << spawn fn (args collection.CollectionNewArgs) !Collection {
+		threads << spawn fn (args CollectionNewArgs) !Collection {
 			return collection.new(args)!
 		}(
 			name:          col_name

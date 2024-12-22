@@ -60,9 +60,9 @@ fn employee_wiki(p paramsparser.Params, sim BizModel) !string {
 
 	// if true{panic("s")}
 
-    // theme := 'light'
-    // theme := 'dark'  // Removed unused variable
-    mut t := $tmpl('./templates/employee.md')
+	// theme := 'light'
+	// theme := 'dark'  // Removed unused variable
+	mut t := $tmpl('./templates/employee.md')
 	return t
 }
 
@@ -90,9 +90,9 @@ fn department_wiki(p paramsparser.Params, sim BizModel) !string {
 }
 
 fn revenues_wiki(p paramsparser.Params, mut sim BizModel) !string {
-    // mut revs := map[string]string{}  // Removed unused variable
+	// mut revs := map[string]string{}  // Removed unused variable
 
-    // for name,_ in sim.products{
+	// for name,_ in sim.products{
 	// 	myrow:=sim.sheet.row_get('${name}_rev_total') or { panic("bug in revenues_wiki macro") }
 	// 	println(myrow)
 	// }

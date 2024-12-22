@@ -11,6 +11,8 @@ cd ${CRYSTAL_HOME}
 v fmt -w examples
 v fmt -w crystallib
 
+rm -rf docs
+
 cd ${CRYSTAL_HOME}/crystallib
 
 

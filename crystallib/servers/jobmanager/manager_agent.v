@@ -1,28 +1,28 @@
-module rpcsocket
+module jobmanager
 
 import freeflowuniverse.crystallib.data.ourtime
 
 // Params for finding agents
 pub struct AgentFindParams {
 pub mut:
-	id           ?u32
-	name         ?string
-	ipaddr       ?string
-	location     ?string
-	pubkey       ?string
+	id       ?u32
+	name     ?string
+	ipaddr   ?string
+	location ?string
+	pubkey   ?string
 }
 
 // Manager for Agent objects
 pub struct AgentManager {
 mut:
-	agents map[u32]Agent
+	agents  map[u32]Agent
 	last_id u32
 }
 
 // Create a new agent manager
 pub fn new_agent_manager() AgentManager {
 	return AgentManager{
-		agents: map[u32]Agent{}
+		agents:  map[u32]Agent{}
 		last_id: 0
 	}
 }
@@ -65,14 +65,14 @@ pub fn (mut m AgentManager) delete_all() {
 // Find agents based on parameters
 pub fn (m AgentManager) find(params AgentFindParams) []Agent {
 	mut result := []Agent{}
-	
+
 	for _, agent in m.agents {
 		if !matches_agent_params(agent, params) {
 			continue
 		}
 		result << agent
 	}
-	
+
 	return result
 }
 

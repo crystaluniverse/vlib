@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.ui.console
 pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 	mut args := args_
 
-    _ := match args.period_type {
+	_ := match args.period_type {
 		.year { 12 }
 		.month { 1 }
 		.quarter { 3 }

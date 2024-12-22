@@ -40,8 +40,8 @@ pub mut:
 	name        string @[required]
 	vms_count   int = 1    @[required]
 	node_group  string
-	cpu         int  = 4 @[required]
-	mem         int  = 4 @[required]         // in GB
+	cpu         int = 4 @[required]
+	mem         int = 4 @[required]         // in GB
 	public_ip4  bool
 	public_ip6  bool
 	ygg_ip      bool = true

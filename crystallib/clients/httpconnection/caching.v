@@ -2,7 +2,7 @@ module httpconnection
 
 import crypto.md5
 import json
-import net.http { Header, Method }
+import net.http { Method }
 
 // https://cassiomolin.com/2016/09/09/which-http-status-codes-are-cacheable/
 const default_cacheable_codes = [200, 203, 204, 206, 300, 404, 405, 410, 414, 501]
@@ -25,7 +25,6 @@ pub mut:
 	data string
 }
 
-
 // calculate the key for the cache starting from data and url
 fn (mut h HTTPConnection) cache_key(req Request) string {
 	url := h.url(req).split('!')
@@ -45,22 +44,22 @@ fn (mut h HTTPConnection) cache_get(req Request) !Result {
 	key := h.cache_key(req)
 	mut data := h.redis.get(key) or {
 		assert '${err}' == 'none'
-		//console.print_debug("cache get: ${key} not in redis")
+		// console.print_debug("cache get: ${key} not in redis")
 		return Result{
 			code: -1
 		}
 	}
 	if data == '' {
-		//console.print_debug("cache get: ${key} empty data")
+		// console.print_debug("cache get: ${key} empty data")
 		return Result{
 			code: -1
 		}
 	}
 	result := json.decode(Result, data) or {
-		//console.print_debug("cache get: ${key} coud not decode")
+		// console.print_debug("cache get: ${key} coud not decode")
 		return error('failed to decode result with error: ${err}.\ndata:\n${data}')
 	}
-	//console.print_debug("cache get: ${key} ok")
+	// console.print_debug("cache get: ${key} ok")
 	return result
 }
 

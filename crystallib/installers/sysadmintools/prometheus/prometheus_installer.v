@@ -38,7 +38,7 @@ pub fn install_prometheus(args_ InstallArgs) ! {
 			return error('unsported platform, only linux amd64 for now')
 		}
 
-        _ := osal.download(
+		_ := osal.download(
 			url:        url
 			minsize_kb: 100000
 			expand_dir: '/tmp/prometheus'

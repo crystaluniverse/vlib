@@ -6,10 +6,8 @@ import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.data.ourtime
 // import freeflowuniverse.crystallib.core.texttools
 
-const (
-    err_article_image_required = error('Article must have an image')
-    err_article_page_not_found = error('article page not found')
-)
+const err_article_image_required = error('Article must have an image')
+const err_article_page_not_found = error('article page not found')
 
 // News section for Zola site
 pub struct News {

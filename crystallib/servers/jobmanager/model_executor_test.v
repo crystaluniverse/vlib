@@ -1,9 +1,9 @@
-module rpcsocket
+module jobmanager
 
 fn test_executor_creation() {
 	mut executor := Executor{
-		id: 1
-		name: 'test_executor'
+		id:    1
+		name:  'test_executor'
 		state: .init
 	}
 	defer {
@@ -17,8 +17,8 @@ fn test_executor_creation() {
 
 fn test_executor_add_get_actor() ! {
 	mut executor := Executor{
-		id: 1
-		name: 'test_executor'
+		id:    1
+		name:  'test_executor'
 		state: .init
 	}
 	defer {
@@ -26,8 +26,8 @@ fn test_executor_add_get_actor() ! {
 	}
 
 	mut actor := &Actor{
-		name: 'test_actor'
-		executor: 'test_executor'
+		name:        'test_actor'
+		executor:    'test_executor'
 		description: 'Test actor description'
 	}
 
@@ -41,8 +41,8 @@ fn test_executor_add_get_actor() ! {
 
 fn test_executor_duplicate_actor() ! {
 	mut executor := Executor{
-		id: 1
-		name: 'test_executor'
+		id:    1
+		name:  'test_executor'
 		state: .init
 	}
 	defer {
@@ -50,12 +50,12 @@ fn test_executor_duplicate_actor() ! {
 	}
 
 	mut actor1 := &Actor{
-		name: 'test_actor'
+		name:     'test_actor'
 		executor: 'test_executor'
 	}
 
 	mut actor2 := &Actor{
-		name: 'test_actor'
+		name:     'test_actor'
 		executor: 'test_executor'
 	}
 
@@ -67,7 +67,7 @@ fn test_executor_duplicate_actor() ! {
 
 fn test_actor_add_get_action() ! {
 	mut actor := &Actor{
-		name: 'test_actor'
+		name:     'test_actor'
 		executor: 'test_executor'
 	}
 	defer {
@@ -75,9 +75,9 @@ fn test_actor_add_get_action() ! {
 	}
 
 	mut action := &Action{
-		id: 1
-		name: 'test_action'
-		actor: 'test_actor'
+		id:          1
+		name:        'test_action'
+		actor:       'test_actor'
 		description: 'Test action description'
 	}
 
@@ -92,19 +92,19 @@ fn test_actor_add_get_action() ! {
 
 fn test_action_encode_decode() ! {
 	original := Action{
-		id: 1
-		name: 'test_action'
-		actor: 'test_actor'
+		id:          1
+		name:        'test_action'
+		actor:       'test_actor'
 		description: 'Test description'
-		nrok: 5
-		nrfailed: 2
-		code: 'test code'
+		nrok:        5
+		nrfailed:    2
+		code:        'test code'
 	}
 
 	encoded := original.encode()!
 	mut decoded := Action{
-		id: 0
-		name: ''
+		id:    0
+		name:  ''
 		actor: ''
 	}
 	decoded.decode(encoded)!
@@ -120,22 +120,22 @@ fn test_action_encode_decode() ! {
 
 fn test_actor_encode_decode() ! {
 	mut original := Actor{
-		name: 'test_actor'
-		executor: 'test_executor'
+		name:        'test_actor'
+		executor:    'test_executor'
 		description: 'Test description'
 	}
 
 	mut action := &Action{
-		id: 1
-		name: 'test_action'
-		actor: 'test_actor'
+		id:          1
+		name:        'test_action'
+		actor:       'test_actor'
 		description: 'Test action'
 	}
 	original.add_action(action)!
 
 	encoded := original.encode()!
 	mut decoded := Actor{
-		name: ''
+		name:     ''
 		executor: ''
 	}
 	decoded.decode(encoded)!
@@ -153,25 +153,25 @@ fn test_actor_encode_decode() ! {
 
 fn test_executor_encode_decode() ! {
 	mut original := Executor{
-		id: 1
-		name: 'test_executor'
+		id:          1
+		name:        'test_executor'
 		description: 'Test description'
-		state: .running
+		state:       .running
 	}
 	defer {
 		original.cleanup()
 	}
 
 	mut actor := &Actor{
-		name: 'test_actor'
-		executor: 'test_executor'
+		name:        'test_actor'
+		executor:    'test_executor'
 		description: 'Test actor'
 	}
 
 	mut action := &Action{
-		id: 1
-		name: 'test_action'
-		actor: 'test_actor'
+		id:          1
+		name:        'test_action'
+		actor:       'test_actor'
 		description: 'Test action'
 	}
 
@@ -180,8 +180,8 @@ fn test_executor_encode_decode() ! {
 
 	encoded := original.encode()!
 	mut decoded := Executor{
-		id: 0
-		name: ''
+		id:    0
+		name:  ''
 		state: .init
 	}
 	decoded.decode(encoded)!
@@ -204,7 +204,7 @@ fn test_executor_encode_decode() ! {
 
 fn test_invalid_actor_reference() ! {
 	mut actor := &Actor{
-		name: 'test_actor'
+		name:     'test_actor'
 		executor: 'test_executor'
 	}
 	defer {
@@ -212,8 +212,8 @@ fn test_invalid_actor_reference() ! {
 	}
 
 	mut action := &Action{
-		id: 1
-		name: 'test_action'
+		id:    1
+		name:  'test_action'
 		actor: 'different_actor' // Incorrect actor reference
 	}
 
@@ -224,8 +224,8 @@ fn test_invalid_actor_reference() ! {
 
 fn test_get_nonexistent_actor() ! {
 	mut executor := Executor{
-		id: 1
-		name: 'test_executor'
+		id:    1
+		name:  'test_executor'
 		state: .init
 	}
 	defer {
@@ -239,7 +239,7 @@ fn test_get_nonexistent_actor() ! {
 
 fn test_get_nonexistent_action() ! {
 	mut actor := &Actor{
-		name: 'test_actor'
+		name:     'test_actor'
 		executor: 'test_executor'
 	}
 	defer {

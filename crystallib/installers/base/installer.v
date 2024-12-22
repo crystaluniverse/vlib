@@ -49,7 +49,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 		osal.package_install('mc,tmux,git,rsync,curl,screen,wget,git-lfs')!
 		if !osal.cmd_exists('uv') {
-			osal.exec(cmd:'curl -LsSf https://astral.sh/uv/install.sh | sh')!
+			osal.exec(cmd: 'curl -LsSf https://astral.sh/uv/install.sh | sh')!
 		}
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')

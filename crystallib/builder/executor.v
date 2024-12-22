@@ -6,10 +6,10 @@ type Executor = ExecutorLocal | ExecutorSSH
 
 pub struct ExecutorNewArguments {
 pub mut:
-	local  bool // if this set then will always be the local machine
-	ipaddr string
-	user   string = 'root'
-	debug  bool
+	local        bool // if this set then will always be the local machine
+	ipaddr       string
+	user         string = 'root'
+	debug        bool
 	checkconnect int
 }
 
@@ -42,9 +42,9 @@ pub fn executor_new(args_ ExecutorNewArguments) !Executor {
 			return error('can not initialize ip address.\n ${err}')
 		}
 		mut e := ExecutorSSH{
-			ipaddr: ipaddr
-			user:   args.user
-			debug:  args.debug
+			ipaddr:       ipaddr
+			user:         args.user
+			debug:        args.debug
 			checkconnect: args.checkconnect
 		}
 		e.init()!
