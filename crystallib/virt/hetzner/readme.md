@@ -7,6 +7,8 @@ This module provides a V client for interacting with Hetzner's Robot API, allowi
 1. Create an account on [Hetzner Robot](https://robot.hetzner.com/preferences/index)
 2. Configure the client using heroscript:
 ```v
+import freeflowuniverse.crystallib.virt.hetzner
+
 heroscript := "
 !!hetzner.configure
     name:'my_instance'

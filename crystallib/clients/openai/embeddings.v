@@ -49,6 +49,7 @@ pub fn (mut f OpenAIClient[Config]) create_embeddings(args EmbeddingCreateArgs) 
 		user:  args.user
 	}
 	data := json.encode(req)
-	r := f.connection.post_json_str(prefix: 'embeddings', data: data)!
+	mut conn := f.connection()!
+	r := conn.post_json_str(prefix: 'embeddings', data: data)!
 	return json.decode(EmbeddingResponse, r)!
 }

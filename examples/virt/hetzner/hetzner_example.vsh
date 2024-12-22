@@ -1,10 +1,7 @@
-#!/usr/bin/env -S v -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -n -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.builder
-import time
 import os
 
 console.print_header('Hetzner login.')
@@ -62,9 +59,11 @@ mut cl := hetzner.get(name: 'test')!
 
 // get the server in rescue mode, if its already in rescue then will not reboot, but just go there
 // hero_install will make sure we have hero in the rescue server
-mut n := cl.server_rescue_node(
-	name:         'kristof2'
+server := cl.server_rescue_node(
+	name:         'kristof4'
 	wait:         true
 	sshkey_name:  'kristof@incubaid.com'
 	hero_install: true
 )!
+
+println('Server rescue node created: ${server}')

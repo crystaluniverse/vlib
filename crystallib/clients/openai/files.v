@@ -58,7 +58,8 @@ pub fn (mut f OpenAIClient[Config]) upload_file(args FileUploadArgs) !File {
 	req := httpconnection.Request{
 		prefix: 'files'
 	}
-	r := f.connection.post_multi_part(req, form)!
+	mut conn := f.connection()!
+	r := conn.post_multi_part(req, form)!
 	if r.status_code != 200 {
 		return error('got error from server: ${r.body}')
 	}
@@ -67,24 +68,28 @@ pub fn (mut f OpenAIClient[Config]) upload_file(args FileUploadArgs) !File {
 
 // list all files in client org
 pub fn (mut f OpenAIClient[Config]) list_files() !Files {
-	r := f.connection.get(prefix: 'files')!
+	mut conn := f.connection()!
+	r := conn.get(prefix: 'files')!
 	return json.decode(Files, r)!
 }
 
 // deletes a file
 pub fn (mut f OpenAIClient[Config]) delete_file(file_id string) !DeleteResp {
-	r := f.connection.delete(prefix: 'files/' + file_id)!
+	mut conn := f.connection()!
+	r := conn.delete(prefix: 'files/' + file_id)!
 	return json.decode(DeleteResp, r)!
 }
 
 // returns a single file metadata
 pub fn (mut f OpenAIClient[Config]) get_file(file_id string) !File {
-	r := f.connection.get(prefix: 'files/' + file_id)!
+	mut conn := f.connection()!
+	r := conn.get(prefix: 'files/' + file_id)!
 	return json.decode(File, r)!
 }
 
 // returns the content of a specific file
 pub fn (mut f OpenAIClient[Config]) get_file_content(file_id string) !string {
-	r := f.connection.get(prefix: 'files/' + file_id + '/content')!
+	mut conn := f.connection()!
+	r := conn.get(prefix: 'files/' + file_id + '/content')!
 	return r
 }

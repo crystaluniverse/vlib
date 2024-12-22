@@ -23,3 +23,19 @@ pub mut:
 	debug         bool
 	dataformat    DataFormat
 }
+
+
+
+
+// // set a custom hdeader on the request
+// // ```v
+// // import net.http { Header }
+// // header: http.new_header(
+// //     key: .content_type
+// //     value: 'application/json'
+// // )
+// // )!
+// // ```
+// fn (mut r Request) header_set(header Header) {
+// 	r.header = header
+// }

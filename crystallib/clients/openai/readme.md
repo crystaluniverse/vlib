@@ -1,50 +1,54 @@
-# OpenAI
+# OpenAI Client Module
 
-An implementation of an OpenAI client using Vlang.
+This module provides a V client for interacting with OpenAI's API, allowing you to integrate OpenAI's services into your V applications.
 
-## Supported methods
+## Setup
 
-- List available models
-- Chat Completion
-- Translate Audio
-- Transcribe Audio
-- Create image based on prompt
-- Edit an existing image
-- Create variation of an image
+1. Get your API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Configure the client using heroscript:
+
+```v
+heroscript := "
+!!openai.configure
+    name:'default'
+    openaikey:'your-api-key'    // Required: your OpenAI API key
+    description:'My OpenAI API' // Optional
+"
+
+// Apply the configuration (only needs to be done once)
+openai.play(heroscript: heroscript)!
+```
 
 ## Usage
 
-To use the client you need a OpenAi key which can be generated from [here](https://platform.openai.com/account/api-keys).
+### Initialize Client
+```v
+// Get a configured client instance
+mut client := openai.get(name: 'something')!
 
-The key should be exposed in an environment variable as following:
-
-```bash
-export OPENAI_API_KEY=<your-api-key>
+// Or use default instance if name wasn't specified in configuration
+mut client := openai.get()!
 ```
 
-To get a new instance of the client:
+### Examples
+
+> see examples/clients/openai
+
+### Complete Example
+
+Here's a complete example showing common operations:
 
 ```v
+#!/usr/bin/env -S v run
+
 import freeflowuniverse.crystallib.clients.openai
 
-ai_cli := openai.new()!
+fn main() {
+    // Get client instance (uses default if no name specified)
+    mut client := openai.get()!
+    
+    // Your OpenAI API operations here
+    // (Add specific operation examples once implemented)
+}
 ```
 
-Then it is possible to perform all the listed operations:
-
-```v
-// listing models
-models := ai_cli.list_models()!
-
-// creating a new chat completion
-
-mut msg := []op.Message{}
-msg << op.Message{
-    role: op.RoleType.user
-    content: 'Say this is a test!'
-}
-mut msgs := op.Messages{
-    messages: msg
-}
-res := ai_cli.chat_completion(op.ModelType.gpt_3_5_turbo, msgs)!
-```

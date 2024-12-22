@@ -75,6 +75,7 @@ pub fn (mut f OpenAIClient[Config]) create_moderation(input string, model Modera
 		model: moderation_model_str(model)
 	}
 	data := json.encode(req)
-	r := f.connection.post_json_str(prefix: 'moderations', data: data)!
+	mut conn := f.connection()!
+	r := conn.post_json_str(prefix: 'moderations', data: data)!
 	return json.decode(ModerationResponse, r)!
 }

@@ -3,7 +3,6 @@ module gittools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 import os
-import time
 
 // GitRepo holds information about a single Git repository.
 @[heap]

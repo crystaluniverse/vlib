@@ -106,7 +106,8 @@ pub fn (mut f OpenAIClient[Config]) create_image(args ImageCreateArgs) !Images {
 		user:            args.user
 	}
 	data := json.encode(request)
-	r := f.connection.post_json_str(prefix: 'images/generations', data: data)!
+	mut conn := f.connection()!
+	r := conn.post_json_str(prefix: 'images/generations', data: data)!
 	return json.decode(Images, r)!
 }
 
@@ -148,7 +149,8 @@ pub fn (mut f OpenAIClient[Config]) create_edit_image(args ImageEditArgs) !Image
 	req := httpconnection.Request{
 		prefix: 'images/edits'
 	}
-	r := f.connection.post_multi_part(req, form)!
+	mut conn := f.connection()!
+	r := conn.post_multi_part(req, form)!
 	if r.status_code != 200 {
 		return error('got error from server: ${r.body}')
 	}
@@ -181,7 +183,8 @@ pub fn (mut f OpenAIClient[Config]) create_variation_image(args ImageVariationAr
 	req := httpconnection.Request{
 		prefix: 'images/variations'
 	}
-	r := f.connection.post_multi_part(req, form)!
+	mut conn := f.connection()!
+	r := conn.post_multi_part(req, form)!
 	if r.status_code != 200 {
 		return error('got error from server: ${r.body}')
 	}

@@ -102,7 +102,8 @@ fn (mut f OpenAIClient[Config]) create_audio_request(args AudioArgs, endpoint st
 	req := httpconnection.Request{
 		prefix: endpoint
 	}
-	r := f.connection.post_multi_part(req, form)!
+	mut conn := f.connection()!
+	r := conn.post_multi_part(req, form)!
 	if r.status_code != 200 {
 		return error('got error from server: ${r.body}')
 	}
