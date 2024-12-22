@@ -1,0 +1,8 @@
+!!hero_code.generate_play
+    path:'' //if not used then is path where this action is found
+    reset:0 //if set will overwrite the play_$actor_$action_.v
+    actor:'mail'
+    action:''
+    model:"""
+        
+        """

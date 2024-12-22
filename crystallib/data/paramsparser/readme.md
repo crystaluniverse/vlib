@@ -1,8 +1,9 @@
 # ParamsParser Module Documentation
 
-The ParamsParser module provides a powerful way to parse and handle parameter strings in V. It's particularly useful for parsing command-line style arguments and key-value pairs from text.
+The ParamsParser module provides a powerful way to parse and handle parameter strings in V. 
+It's particularly useful for parsing command-line style arguments and key-value pairs from text.
 
-## Basic Usage
+## How to get the paramsparser
 
 ```v
 import freeflowuniverse.crystallib.data.paramsparser
@@ -98,9 +99,8 @@ Each list method has a corresponding `_default` version that accepts a default v
 
 Valid list formats:
 ```v
-users: ["john", "jane", "bob"]
-ids: 1,2,3,4,5
-names: ['John Doe', 'Jane Smith']
+users: "john, jane,bob"
+ids: "1,2,3,4,5"
 ```
 
 ## Working with Arguments
