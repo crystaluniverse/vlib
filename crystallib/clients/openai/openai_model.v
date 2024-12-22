@@ -12,6 +12,7 @@ pub fn heroscript_default() !string {
         name:'openai'
         openaikey:'your-api-key-here'
         description:'OpenAI API Client'
+        url:'' //default is openai endpoint
     "
     return heroscript
 }
@@ -22,6 +23,7 @@ pub mut:
     name        string = 'default'
     openaikey   string @[secret]
     description string
+    url string
     conn        ?&httpconnection.HTTPConnection
 }
 
@@ -30,6 +32,7 @@ fn cfg_play(p paramsparser.Params) ! {
         name: p.get_default('name', 'default')!
         openaikey: p.get('openaikey')!
         description: p.get_default('description', '')!
+        url: p.get_default('url', 'https://api.openai.com/v1')!
     }
     set(mycfg)!
 }     
@@ -44,14 +47,14 @@ pub fn (mut client OpenAIClient) connection() !&httpconnection.HTTPConnection {
 	mut c := client.conn or {
 		mut c2 := httpconnection.new(
 			name:  'openaiclient_${client.name}'
-			url:   'https://api.openai.com/v1'
+			url:   client.url
 			cache: false
 			retry: 0
 		)!
-		c2.basic_auth(h.user, h.password)
 		c2
 	}
-    c.headers['Authorization'] = 'Bearer ${client.openaikey}'
+    c.default_header.set(.authorization, 'Bearer ${client.openaikey}')
+    // see https://modules.vlang.io/net.http.html#CommonHeader
     client.conn = c
     return c
 }

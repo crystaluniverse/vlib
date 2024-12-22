@@ -1,13 +1,13 @@
 
-module hetzner
+module openrouter
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
 
 
 __global (
-    hetzner_global map[string]&HetznerManager
-    hetzner_default string
+    openrouter_global map[string]&OpenRouterClient
+    openrouter_default string
 )
 
 /////////FACTORY
@@ -21,7 +21,7 @@ pub mut:
 fn args_get (args_ ArgsGet) ArgsGet {
     mut args:=args_
     if args.name == ""{
-        args.name = hetzner_default
+        args.name = openrouter_default
     }
     if args.name == ""{
         args.name = "default"
@@ -29,9 +29,9 @@ fn args_get (args_ ArgsGet) ArgsGet {
     return args
 }
 
-pub fn get(args_ ArgsGet) !&HetznerManager  {
+pub fn get(args_ ArgsGet) !&OpenRouterClient  {
     mut args := args_get(args_)
-    if !(args.name in hetzner_global) {
+    if !(args.name in openrouter_global) {
         if ! config_exists(){
             if default{
                 config_save()!
@@ -39,8 +39,8 @@ pub fn get(args_ ArgsGet) !&HetznerManager  {
         }
         config_load()!
     }
-    return hetzner_global[args.name] or { 
-            println(hetzner_global)
+    return openrouter_global[args.name] or { 
+            println(openrouter_global)
             panic("bug in get from factory: ") 
         }
 }
@@ -50,26 +50,26 @@ pub fn get(args_ ArgsGet) !&HetznerManager  {
 fn config_exists(args_ ArgsGet) bool {
     mut args := args_get(args_)
     mut context:=base.context() or { panic("bug") }
-    return context.hero_config_exists("hetzner",args.name)
+    return context.hero_config_exists("openrouter",args.name)
 }
 
 fn config_load(args_ ArgsGet) ! {
     mut args := args_get(args_)
     mut context:=base.context()!
-    mut heroscript := context.hero_config_get("hetzner",args.name)!
+    mut heroscript := context.hero_config_get("openrouter",args.name)!
     play(heroscript:heroscript)!
 }
 
 fn config_save(args_ ArgsGet) ! {
     mut args := args_get(args_)
     mut context:=base.context()!
-    context.hero_config_set("hetzner",args.name,heroscript_default()!)!
+    context.hero_config_set("openrouter",args.name,heroscript_default()!)!
 }
 
 
-fn set(o HetznerManager)! {
+fn set(o OpenRouterClient)! {
     mut o2:=obj_init(o)!
-    hetzner_global["default"] = &o2
+    openrouter_global["default"] = &o2
 }
 
 
@@ -98,7 +98,7 @@ pub fn play(args_ PlayArgs) ! {
         playbook.new(text: args.heroscript)!
     }
     
-    mut install_actions := plbook.find(filter: 'hetzner.configure')!
+    mut install_actions := plbook.find(filter: 'openrouter.configure')!
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
@@ -112,7 +112,7 @@ pub fn play(args_ PlayArgs) ! {
 
 
 
-//switch instance to be used for hetzner
+//switch instance to be used for openrouter
 pub fn switch(name string) {
-    hetzner_default = name
+    openrouter_default = name
 }

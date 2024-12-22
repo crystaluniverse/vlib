@@ -21,12 +21,6 @@ pub struct EmbeddingCreateArgs {
 	user  string
 }
 
-pub struct EmbeddingCreateRequest {
-	input []string
-	model string
-	user  string
-}
-
 pub struct Embedding {
 pub mut:
 	object    string
@@ -43,13 +37,15 @@ pub mut:
 }
 
 pub fn (mut f OpenAIClient[Config]) create_embeddings(args EmbeddingCreateArgs) !EmbeddingResponse {
-	req := EmbeddingCreateRequest{
-		input: args.input
-		model: embedding_model_str(args.model)
-		user:  args.user
-	}
-	data := json.encode(req)
 	mut conn := f.connection()!
-	r := conn.post_json_str(prefix: 'embeddings', data: data)!
-	return json.decode(EmbeddingResponse, r)!
+	return conn.post_json_generic[EmbeddingResponse](
+		method: .post
+		prefix: 'embeddings'
+		params: {
+			'input': args.input.str()
+			'model': embedding_model_str(args.model)
+			'user': args.user
+		}
+		dataformat: .json
+	)!
 }
