@@ -17,10 +17,16 @@
 		},
 		{
 			"path": "../cli"
-		},
-		{
-			"path": "../../../../../private_new/tft-v-code"
 		}
 	],
-	"settings": {}
+	"settings": {},
+	"extensions": {
+		"recommendations": [
+			"vosca.vscode-v-analyzer",
+			"telesoho.vscode-markdown-paste-image",
+			"saoudrizwan.claude-dev",
+			"mhutchie.git-graph",
+			"eamodio.gitlens"
+		]
+	}
 }
