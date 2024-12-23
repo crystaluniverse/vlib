@@ -113,7 +113,7 @@ fn (mut self TFDeployment) set_nodes() ! {
 			}
 			return error('Requested the Grid Proxy and no nodes found.')
 		}
-		idx := rand.u32() % nodes.len
+		idx := rand.u32() % u32(nodes.len)
 		// println('chodes node: ${}')
 		vm.node_id = u32(nodes[idx].node_id)
 	}
