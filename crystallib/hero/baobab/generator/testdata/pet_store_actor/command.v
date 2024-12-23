@@ -73,7 +73,6 @@ module pet_store_actor
 			execute: cmd_create_user_execute
 			description: 'Create a user'
 		}
-	}
 	
 
 		fn cmd_listPets(cmd Command) ! {

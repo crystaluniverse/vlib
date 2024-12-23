@@ -3,7 +3,9 @@ import freeflowuniverse.crystallib.rpc.jsonrpc
 import freeflowuniverse.crystallib.rpc.rpcwebsocket 
 import log 
 
-struct Client {
+
+
+ struct Client {
 
 mut:
 transport jsonrpc.IRpcTransportClient
