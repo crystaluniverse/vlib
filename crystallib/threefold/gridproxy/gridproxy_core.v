@@ -37,7 +37,7 @@ const err_grid_client = 30
 // returns: `Node` or `Error`.
 pub fn (mut c GridProxyClient) get_node_by_id(node_id u64) !Node {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 
 	res := http_client.send(prefix: 'nodes/', id: '${node_id}') or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -65,7 +65,7 @@ pub fn (mut c GridProxyClient) get_node_by_id(node_id u64) !Node {
 // returns: `Node_stats` or `Error`.
 pub fn (mut c GridProxyClient) get_node_stats_by_id(node_id u64) !NodeStats {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 
 	res := http_client.send(prefix: 'nodes/', id: '${node_id}/statistics') or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -93,7 +93,7 @@ pub fn (mut c GridProxyClient) get_node_stats_by_id(node_id u64) !NodeStats {
 // returns: `Node` or `Error`.
 pub fn (mut c GridProxyClient) get_gateway_by_id(node_id u64) !Node {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 
 	res := http_client.send(prefix: 'gateways/', id: '${node_id}') or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -155,7 +155,7 @@ pub fn (mut c GridProxyClient) get_gateway_by_id(node_id u64) !Node {
 // returns: `[]Node` or `Error`.
 pub fn (mut c GridProxyClient) get_nodes(params NodeFilter) ![]Node {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'nodes/', params: params_map) or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -218,7 +218,7 @@ pub fn (mut c GridProxyClient) get_nodes(params NodeFilter) ![]Node {
 // returns: `[]Node` or `Error`.
 pub fn (mut c GridProxyClient) get_gateways(params NodeFilter) ![]Node {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'gateways/', params: params_map) or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -247,7 +247,7 @@ pub fn (mut c GridProxyClient) get_gateways(params NodeFilter) ![]Node {
 // returns: `GridStat` or `Error`.
 pub fn (mut c GridProxyClient) get_stats(filter StatFilter) !GridStat {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 	mut params_map := map[string]string{}
 	params_map['status'] = match filter.status {
 		.all { '' }
@@ -286,7 +286,7 @@ pub fn (mut c GridProxyClient) get_stats(filter StatFilter) !GridStat {
 // returns: `[]Twin` or `Error`.
 pub fn (mut c GridProxyClient) get_twins(params TwinFilter) ![]Twin {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'twins/', params: params_map) or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -327,7 +327,7 @@ pub fn (mut c GridProxyClient) get_twins(params TwinFilter) ![]Twin {
 // * returns: `[]Contract` or `Error`.
 pub fn (mut c GridProxyClient) get_contracts(params ContractFilter) ![]Contract {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'contracts/', params: params_map) or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -350,7 +350,7 @@ pub fn (mut c GridProxyClient) get_contracts(params ContractFilter) ![]Contract 
 
 pub fn (mut c GridProxyClient) get_contract_bill(contract_id u64) ![]Bill {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 
 	res := http_client.send(prefix: 'contracts/', id: '${contract_id}/bills') or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -421,7 +421,7 @@ pub fn (mut c GridProxyClient) get_contract_hourly_bill(contract_id u64) !f64 {
 // returns: `[]Farm` or `Error`.
 pub fn (mut c GridProxyClient) get_farms(params FarmFilter) ![]Farm {
 	// needed to allow to use threads
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 	params_map := params.to_map()
 	res := http_client.send(prefix: 'farms/', params: params_map) or {
 		return error_with_code('http client error: ${err.msg()}', err_http_client)
@@ -446,7 +446,7 @@ pub fn (mut c GridProxyClient) get_farms(params FarmFilter) ![]Farm {
 //
 // returns: bool, `true` if API server is reachable and responding, `false` otherwise
 pub fn (mut c GridProxyClient) is_pingable() !bool {
-	mut http_client := c.http_client.clone()!
+	mut http_client := c.http_client
 	res := http_client.send(prefix: 'ping/') or { return false }
 	if !res.is_ok() {
 		return false

@@ -291,6 +291,7 @@ pub mut:
 	gpu_vendor_id      string
 	gpu_vendor_name    string
 	gpu_available      OptionBool = EmptyOption{}
+	features           []string
 }
 
 // serialize NodeFilter to map
@@ -396,6 +397,9 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 		EmptyOption {}
 		bool {
 			m['ipv4'] = p.ipv4.str()
+			if p.ipv4 == true {
+				m['features'] = 'ipv4'
+			}
 		}
 	}
 	match p.ipv6 {
