@@ -117,7 +117,14 @@ pub fn (mut tree Tree) scan_concurrent(args_ TreeScannerArgs) ! {
 		}
 
 		threads << spawn fn (args CollectionNewArgs) !Collection {
-			return collection.new(args)!
+			mut args_ := collection.CollectionNewArgs{
+				name:          args.name
+				path:          args.path
+				heal:          args.heal
+				load:          args.load
+				fail_on_error: args.fail_on_error
+			}
+			return collection.new(args_)!
 		}(
 			name:          col_name
 			path:          col_path.path
