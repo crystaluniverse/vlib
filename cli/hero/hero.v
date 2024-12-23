@@ -1,7 +1,7 @@
 module main
 
 import os
-import cli { Command, Flag }
+import cli { Command }
 import freeflowuniverse.crystallib.core.herocmds
 import freeflowuniverse.crystallib.hero.publishing
 import freeflowuniverse.crystallib.installers.base as installerbase
@@ -33,13 +33,14 @@ fn do() ! {
 		version:     '1.0.31'
 	}
 
-	cmd.add_flag(Flag{
-		flag:        .string
-		name:        'url'
-		abbrev:      'u'
-		global:      true
-		description: 'url of playbook'
-	})
+	// This flag already exists in the Hero Git command, see crystallib/core/herocmds/git.v
+	// cmd.add_flag(Flag{
+	// 	flag:        .string
+	// 	name:        'url'
+	// 	abbrev:      'u'
+	// 	global:      true
+	// 	description: 'url of playbook'
+	// })
 
 	// herocmds.cmd_run_add_flags(mut cmd)
 
@@ -84,8 +85,8 @@ fn do() ! {
 	// herocmds.cmd_postgres(mut cmd)
 	herocmds.cmd_mdbook(mut cmd)
 	herocmds.cmd_luadns(mut cmd)
-	//herocmds.cmd_caddy(mut cmd)
-	//herocmds.cmd_zola(mut cmd)
+	// herocmds.cmd_caddy(mut cmd)
+	// herocmds.cmd_zola(mut cmd)
 	// herocmds.cmd_juggler(mut cmd)
 	herocmds.cmd_generator(mut cmd)
 	herocmds.cmd_docsorter(mut cmd)
