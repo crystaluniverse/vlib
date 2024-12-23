@@ -21,6 +21,7 @@ pub mut:
 	public_ip4  bool
 	public_ip6  bool
 	planetary   bool
+	size        u64
 	mycelium    ?Mycelium
 	flist       string = 'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist'
 	entrypoint  string = '/sbin/zinit init'

@@ -213,6 +213,7 @@ fn (mut self DeploymentSetup) set_zmachine_workload(vmachine VMachine, public_ip
 				none
 			}
 		}
+		size: vmachine.requirements.size
 		flist: vmachine.requirements.flist
 		entrypoint: vmachine.requirements.entrypoint
 		compute_capacity: grid_models.ComputeCapacity{
