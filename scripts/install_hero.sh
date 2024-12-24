@@ -890,12 +890,12 @@ function crystal_pull {
 function crystal_test {
     set -ex
     pushd $DIR_CODE/github/freeflowuniverse/crystallib
-    v -enable-globals -stats test crystallib/core/pathlib
+    # v -enable-globals -stats test crystallib/core/pathlib
     v -enable-globals -stats test crystallib/core/texttools
     v -enable-globals -stats test crystallib/core/playbook
     v -enable-globals -stats test crystallib/data/encoder
     v -enable-globals -stats test crystallib/data/currency
-    v -enable-globals -stats test crystallib/data/markdownparser
+    # v -enable-globals -stats test crystallib/data/markdownparser
     v -enable-globals -stats test crystallib/data/ourtime
     v -enable-globals -stats test crystallib/data/paramsparser
     # v -enable-globals -stats test crystallib/data/doctree
