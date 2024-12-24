@@ -22,6 +22,7 @@ pub fn (mut gitstructure GitStructure) clone(args GitCloneArgs) !&GitRepo {
 
 	mut repo := gitstructure.repo_new_from_gitlocation(git_location)!
 	repo.status_wanted.url = args.url
+	repo.status_wanted.branch = git_location.branch_or_tag
 
 	if args.sshkey.len > 0 {
 		repo.set_sshkey(args.sshkey)!
@@ -41,6 +42,9 @@ pub fn (mut gitstructure GitStructure) clone(args GitCloneArgs) !&GitRepo {
 	}
 
 	repo.load()!
+	if repo.need_checkout() {
+		repo.checkout()!
+	}
 
 	console.print_green("The repository '${repo.name}' cloned into ${parent_dir}.")
 

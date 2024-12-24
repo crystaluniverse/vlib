@@ -17,6 +17,7 @@ pub mut:
 	name        string
 	description string
 	cpu         int // vcores
+	size        u64
 	memory      int // gbyte
 	public_ip4  bool
 	public_ip6  bool
