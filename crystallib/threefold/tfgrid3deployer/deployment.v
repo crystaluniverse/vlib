@@ -100,7 +100,7 @@ fn (mut self TFDeployment) set_nodes() ! {
 		nodes := filter_nodes(
 			node_ids:  node_ids
 			healthy:   true
-			free_mru:  convert_to_gigabytes(vm.requirements.memory)
+			free_mru:  convert_to_gigabytes(u64(vm.requirements.memory))
 			total_cru: u64(vm.requirements.cpu)
 			free_ips:  if vm.requirements.public_ip4 { u64(1) } else { none }
 			has_ipv6:  if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
@@ -120,7 +120,7 @@ fn (mut self TFDeployment) set_nodes() ! {
 	}
 
 	for mut zdb in self.zdbs {
-		size := convert_to_gigabytes(zdb.requirements.size)
+		size := convert_to_gigabytes(u64(zdb.requirements.size))
 		nodes := filter_nodes(
 			free_sru: size
 			status:   'up'

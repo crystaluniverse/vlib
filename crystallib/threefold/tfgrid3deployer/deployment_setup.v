@@ -122,7 +122,7 @@ fn (mut self DeploymentSetup) setup_zdb_workloads(zdbs []ZDB) ! {
 
 		// Create the Zdb model with the size converted to bytes
 		zdb_model := grid_models.Zdb{
-			size:     convert_to_gigabytes(req.size) // Convert size from MB to bytes
+			size:     convert_to_gigabytes(u64(req.size)) // Convert size from MB to bytes
 			mode:     req.mode
 			public:   req.public
 			password: req.password
@@ -213,12 +213,12 @@ fn (mut self DeploymentSetup) set_zmachine_workload(vmachine VMachine, public_ip
 				none
 			}
 		}
-		size:             convert_to_gigabytes(vmachine.requirements.size)
+		size:             convert_to_gigabytes(u64(vmachine.requirements.size))
 		flist:            vmachine.requirements.flist
 		entrypoint:       vmachine.requirements.entrypoint
 		compute_capacity: grid_models.ComputeCapacity{
 			cpu:    u8(vmachine.requirements.cpu)
-			memory: i64(convert_to_gigabytes(vmachine.requirements.memory))
+			memory: i64(convert_to_gigabytes(u64(vmachine.requirements.memory)))
 		}
 		env:              env_map
 	}.to_workload(
