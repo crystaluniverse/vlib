@@ -49,3 +49,7 @@ pub fn filter_nodes(filter gridproxy_models.NodeFilter) ![]gridproxy_models.Node
 	nodes := gp_client.get_nodes(filter)!
 	return nodes
 }
+
+fn convert_to_gigabytes(bytes u64) u64 {
+	return bytes * 1024 * 1024 * 1024
+}
