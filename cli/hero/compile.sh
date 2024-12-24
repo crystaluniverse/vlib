@@ -19,7 +19,8 @@ else
     #-static  -cc gcc -prod 
     #BELOW WORKS:
     # v -enable-globals -w -cc gcc hero.v
-    v -stats -show-timings -enable-globals -w -prod hero.v
+    #v -stats -show-timings -enable-globals -w -prod hero.v
+    v -stats -show-timings -enable-globals -w hero.v
 fi
 
 
