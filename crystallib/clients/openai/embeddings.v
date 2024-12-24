@@ -39,12 +39,12 @@ pub mut:
 pub fn (mut f OpenAIClient[Config]) create_embeddings(args EmbeddingCreateArgs) !EmbeddingResponse {
 	mut conn := f.connection()!
 	return conn.post_json_generic[EmbeddingResponse](
-		method: .post
-		prefix: 'embeddings'
-		params: {
+		method:     .post
+		prefix:     'embeddings'
+		params:     {
 			'input': args.input.str()
 			'model': embedding_model_str(args.model)
-			'user': args.user
+			'user':  args.user
 		}
 		dataformat: .json
 	)!

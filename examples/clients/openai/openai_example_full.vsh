@@ -1,8 +1,9 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import freeflowuniverse.crystallib.clients.openai as openai
+import freeflowuniverse.crystallib.clients.openai
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
+import os
 
 console.print_header('OPENAI Example.')
 
@@ -21,7 +22,6 @@ heroscript := "
 "
 
 openai.play(heroscript: heroscript)!
-
 
 mut ai_cli := openai.get()!
 

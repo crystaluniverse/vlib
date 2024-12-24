@@ -3,6 +3,7 @@
 import freeflowuniverse.crystallib.clients.openai
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
+import os
 
 console.print_header('OPENAI Example.')
 
@@ -22,13 +23,11 @@ heroscript := "
 
 openai.play(heroscript: heroscript)!
 
-
 mut ai := openai.get()!
 
 models := ai.list_models()!
 
 println(models)
-
 
 // mut msg := []openai.Message{}
 // msg << openai.Message{
@@ -40,5 +39,3 @@ println(models)
 // }
 // res := ai.chat_completion(openai.ModelType.gpt_3_5_turbo, msgs)!
 // print(res)
-
-

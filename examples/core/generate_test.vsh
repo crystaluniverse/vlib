@@ -2,4 +2,7 @@
 
 import freeflowuniverse.crystallib.core.generator.generic
 
-generic.scan(path: '~/code/github/freeflowuniverse/crystallib/examples/core/generatortest', force: true)!
+generic.scan(
+	path:  '~/code/github/freeflowuniverse/crystallib/examples/core/generatortest'
+	force: true
+)!
