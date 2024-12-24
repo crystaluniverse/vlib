@@ -397,9 +397,6 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 		EmptyOption {}
 		bool {
 			m['ipv4'] = p.ipv4.str()
-			if p.ipv4 == true {
-				m['features'] = 'ipv4'
-			}
 		}
 	}
 	match p.ipv6 {
@@ -449,6 +446,9 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 		u64 {
 			m['available_for'] = p.available_for.str()
 		}
+	}
+	if p.features.len > 0 {
+		m['features'] = json.encode(p.features).all_after('[').all_before(']')
 	}
 	if p.farm_ids.len > 0 {
 		m['farm_ids'] = json.encode(p.farm_ids).all_after('[').all_before(']')
