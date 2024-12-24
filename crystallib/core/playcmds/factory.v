@@ -26,7 +26,7 @@ pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
 	// play_caddy(mut plbook)!
 	// play_juggler(mut plbook)!
 	// play_luadns(mut plbook)!
-	hetzner.play(mut plbook)!
+	hetzner.play(plbook: *plbook)!
 	// b2.heroplay(mut plbook)!
 
 	farmingsimulator.play(mut plbook)!

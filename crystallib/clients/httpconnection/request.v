@@ -24,8 +24,47 @@ pub mut:
 	dataformat    DataFormat
 }
 
+/// Creates a new HTTP request with the specified parameters.
+///
+/// This function takes a `Request` object and modifies it based on the provided
+/// data format (`json`, `urlencoded`, or `multipart_form`). If the method is POST,
+/// and the `data` field is empty but `params` is provided, it will encode the `params`
+/// as form data. The corresponding `Content-Type` header is set based on the data format.
+///
+/// # Arguments
+///
+/// - `args`: A `Request` object containing the details of the request (method, data, params, etc.).
+///
+/// # Returns
+///
+/// - A reference to the modified `Request` object.
+pub fn new_request(args_ Request) !&Request {
+	mut args := args_
+	if args.method == .post && args.data == '' && args.params.len > 0 {
+		args.data = http.url_encode_form_data(args.params)
+	}
 
+	mut header := Header{}
 
+	if args_.dataformat == DataFormat.json {
+		header = http.new_header_from_map({
+			http.CommonHeader.content_type: 'application/json'
+		})
+		args.header = header
+	} else if args_.dataformat == DataFormat.urlencoded {
+		header = http.new_header_from_map({
+			http.CommonHeader.content_type: 'application/x-www-form-urlencoded'
+		})
+		args.header = header
+	} else if args_.dataformat == DataFormat.multipart_form {
+		header = http.new_header_from_map({
+			http.CommonHeader.content_type: 'multipart/form-data'
+		})
+		args.header = header
+	}
+
+	return &args
+}
 
 // // set a custom hdeader on the request
 // // ```v

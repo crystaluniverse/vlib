@@ -8,6 +8,7 @@ import encoding.hex
 import x.crypto.chacha20
 import crypto.sha256
 import json
+import rand
 
 struct GridContracts {
 pub mut:
@@ -112,8 +113,9 @@ fn (mut self TFDeployment) set_nodes() ! {
 			}
 			return error('Requested the Grid Proxy and no nodes found.')
 		}
-
-		vm.node_id = u32(nodes[0].node_id)
+		idx := rand.u32() % u32(nodes.len)
+		// println('chodes node: ${}')
+		vm.node_id = u32(nodes[idx].node_id)
 	}
 
 	for mut zdb in self.zdbs {

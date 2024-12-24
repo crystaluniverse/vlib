@@ -93,7 +93,14 @@ pub fn (mut client DaguClient) dags_list() !ListDagsResponse {
 		prefix: 'dags'
 	)!
 
-	request.header.add_custom('x-disable-pagination', 'True')!
+	mut header := client.connection.default_header
+	if request.header != none {
+		header = request.header
+	}
+
+	header.add_custom('x-disable-pagination', 'True')!
+	request.header = header
+
 	request.params['limit'] = '1000'
 	request.params['page'] = '1'
 

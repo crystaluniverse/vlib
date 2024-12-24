@@ -145,7 +145,7 @@ pub fn (mut repo GitRepo) checkout() ! {
 		repo.exec('git checkout tags/${repo.status_wanted.tag}')!
 	}
 	if repo.status_wanted.branch.len > 0 {
-		repo.exec('git checkout ${repo.status_wanted.tag}')!
+		repo.exec('git checkout ${repo.status_wanted.branch}')!
 	}
 }
 
