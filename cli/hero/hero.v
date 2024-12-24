@@ -30,7 +30,7 @@ fn do() ! {
 	mut cmd := Command{
 		name:        'hero'
 		description: 'Your HERO toolset.'
-		version:     '1.0.31'
+		version:     '1.0.32'
 	}
 
 	// This flag already exists in the Hero Git command, see crystallib/core/herocmds/git.v
