@@ -129,5 +129,8 @@ const destination = '${os.dir(@FILE)}/testdata'
 
 fn test_generate_actor_module() {
 	actor_module := generate_actor_module(actor_spec)!
-	actor_module.write(destination, overwrite: true)!
+	actor_module.write(destination, 
+        format: true
+        overwrite: true
+    )!
 }

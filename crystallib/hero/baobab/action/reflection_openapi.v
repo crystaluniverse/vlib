@@ -1,4 +1,4 @@
-module rpc
+module action
 
 import json
 import os
@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.data.jsonschema {Schema}
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.web.openapi {Request}
 
-pub fn openapi_request_to_procedure_call(request Request) ProcedureCall {
+pub fn openapi_request_to_action(request Request) Action {
     // Convert incoming OpenAPI request to a procedure call
     mut params := []string{}
 
@@ -81,7 +81,7 @@ pub fn openapi_request_to_procedure_call(request Request) ProcedureCall {
         params << json.encode(param_map.str())
     }
 
-    call := ProcedureCall{
+    call := Action{
         method: request.operation.operation_id
         params: "[${params.join(',')}]" // Keep as a string since ProcedureCall expects a string
     }

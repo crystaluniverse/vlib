@@ -2,7 +2,7 @@ module actor
 
 import json
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.hero.baobab.rpc { ProcedureCall, ProcedureResponse }
+import freeflowuniverse.crystallib.hero.baobab.action { ProcedureCall, ProcedureResponse }
 
 // Processor struct for managing procedure calls
 pub struct Client {
@@ -45,7 +45,7 @@ pub fn (mut p Client) monologue(call ProcedureCall, params Params) ! {
 }
 
 // Process the procedure call
-pub fn (mut p Client) call(procedure Procedure, params Params) !ProcedureResponse {
+pub fn (mut p Client) call_to_action (action Procedure, params Params) !ProcedureResponse {
 	// Use RedisRpc's `call` to send the call and wait for the response
 	response_data := p.rpc.call(redisclient.RPCArgs{
 		cmd:     call.method

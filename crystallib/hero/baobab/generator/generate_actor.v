@@ -20,6 +20,7 @@ pub fn generate_actor_module(spec ActorSpecification) !Module {
 		generate_actor_test_file(spec)!,
 		generate_handle_file(spec)!,
 		generate_methods_file(spec)!
+		generate_client_file(spec)!
 	]
 
 	mut docs_files := []IFile{}

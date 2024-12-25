@@ -1,4 +1,22 @@
-# ModelGenerator
+# Generator
+
+The Generator synchronizes actor code and specifications, allowing bidirectional transformation between the two.
+
+This a
+
+
+
+## Development Workflow
+
+A sample development workflow using the generator would be like:
+1. generating actor specification from an actor openrpc / openapi specification (see [specification reflection](specification/#reflection))
+2. generating actor code from the actor specification
+3. updating actor code by filling in method prototypes
+4. adding methods to the actor to develop actor further
+5. parsing specification back from actor
+   
+6. regenerating actor from the specification
+this allows for 
 
 - a tool which takes dir as input
     - is just some v files which define models

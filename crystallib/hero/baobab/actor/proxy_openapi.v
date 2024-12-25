@@ -2,7 +2,7 @@ module actor
 
 import veb
 import freeflowuniverse.crystallib.web.openapi { Context, Controller, OpenAPI, Request, Response }
-import freeflowuniverse.crystallib.hero.baobab.rpc { ProcedureError }
+import freeflowuniverse.crystallib.hero.baobab.action { ProcedureError }
 import os
 import time
 import json

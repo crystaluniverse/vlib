@@ -1,9 +1,7 @@
 module pet_store_actor
 
-
-
 import os
-import freeflowuniverse.crystallib.hero.baobab.actor {IActor, RunParams}
+import freeflowuniverse.crystallib.hero.baobab.actor { IActor, RunParams }
 import freeflowuniverse.crystallib.web.openapi
 import time
 
@@ -12,27 +10,25 @@ const openapi_spec_json = os.read_file(openapi_spec_path) or { panic(err) }
 const openapi_specification = openapi.json_decode(openapi_spec_json)!
 
 struct PetStoreActor {
-    actor.Actor
+	actor.Actor
 }
 
 fn new() !PetStoreActor {
-    return PetStoreActor {
-        actor.new('pet_store')
-    }
+	return PetStoreActor{actor.new('pet_store')}
 }
 
 pub fn run() ! {
-    mut a_ := new()!
-    mut a := IActor(a_)
-    a.run()!
+	mut a_ := new()!
+	mut a := IActor(a_)
+	a.run()!
 }
 
 pub fn run_server(params RunParams) ! {
-    mut a := new()!
-    mut server := actor.new_server(
-        redis_url: 'localhost:6379'
-        redis_queue: a.name
-        openapi_spec: openapi_specification
-    )!
-    server.run(params)
+	mut a := new()!
+	mut server := actor.new_server(
+		redis_url:    'localhost:6379'
+		redis_queue:  a.name
+		openapi_spec: openapi_specification
+	)!
+	server.run(params)
 }

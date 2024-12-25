@@ -1,7 +1,7 @@
-module rpc
+module action
 
-// ProcedureError struct for error handling
-pub struct ProcedureError {
+// Error struct for error handling
+pub struct ActionError {
     reason ErrorReason
 }
 
@@ -13,7 +13,7 @@ pub enum ErrorReason {
 	enqueue_failed
 }
 
-pub fn (err ProcedureError) code() int {
+pub fn (err ActionError) code() int {
     return match err.reason {
         .timeout { 408 }                    // HTTP 408 Request Timeout
         .serialization_failed { 500 }       // HTTP 500 Internal Server Error
@@ -22,7 +22,7 @@ pub fn (err ProcedureError) code() int {
     }
 }
 
-pub fn (err ProcedureError) msg() string {
+pub fn (err ActionError) msg() string {
     explanation := match err.reason {
         .timeout { 'The procedure call timed out.' }
         .serialization_failed { 'Failed to serialize the procedure call.' }

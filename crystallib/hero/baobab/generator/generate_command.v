@@ -12,6 +12,15 @@ pub fn generate_command_file(spec ActorSpecification) !VFile {
 	}
 	return VFile {
 		name: 'command'
+		imports: [
+			Import{
+				mod: 'freeflowuniverse.crystallib.ui.console'
+			},
+			Import{
+				mod: 'cli'
+				types: ['Command', 'Flag']
+			}
+		]
 		items: items
 	}
 }
@@ -33,7 +42,7 @@ pub fn generate_cmd_function(spec ActorSpecification) string {
 		method_cmds << generate_method_cmd(method)
 	}
 
-	cmd_function += method_cmds.join_lines()
+	cmd_function += '${method_cmds.join_lines()}}'
 
 	return cmd_function
 }
@@ -55,10 +64,16 @@ pub fn generate_method_cmd_function(actor_name string, method ActorMethod) strin
 	mut routes := []string{}
 
 	actor_name_snake := texttools.name_fix_snake(actor_name)
+	method_name_snake := texttools.name_fix_snake(method.name)
+	
+	method_call := if method.func.result.typ.symbol == '' {
+		'${actor_name_snake}.${method_name_snake}()!'
+	} else {
+		'result := ${actor_name_snake}.${method_name_snake}()!'
+	}
 	return '
-		fn cmd_${method.name}(cmd Command) ! {
-			result := ${actor_name_snake}.${method.name}()!
-			console.print_stdout(result.str())
+		fn cmd_${method_name_snake}(cmd Command) ! {
+			${method_call}
 		}
 	'
 }
