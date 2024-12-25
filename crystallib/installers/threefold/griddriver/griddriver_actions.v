@@ -41,26 +41,20 @@ fn build() ! {
 	url := 'https://github.com/threefoldtech/web3gw/tree/development_integration/griddriver'
 
 	mut repo := gs.get_repo(
-		url:   url
+		url: url
 		reset: true
-		pull:  true
+		pull: true
 	)!
 
 	mut path := repo.get_path()!
 	path = '${path}/griddriver'
 
-	cmd := '
-	set -ex
-	cd ${path}
-	go env -w CGO_ENABLED="0"
-	go build -ldflags="-X \'main.version=$(git describe --tags --abbrev=0)\'" -o /tmp/griddriver .
-	echo build ok
-	'
-	osal.execute_stdout(cmd)!
-	osal.cmd_add(
-		cmdname: 'griddriver'
-		source:  '/tmp/griddriver'
-	)!
+	cmd := '/bin/bash -c "cd ${path} && . ${path}/build.sh"'
+	res := os.execute(cmd)
+	if res.exit_code != 0 {
+		return error('failed to build: ${res.output}')
+	}
+
 	console.print_header('build griddriver OK')
 }
 

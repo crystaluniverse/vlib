@@ -51,7 +51,7 @@ fn install() ! {
 
 	// the downloader is cool, it will check the download succeeds and also check the minimum size
 	_ = osal.download(
-		url:        url
+		url: url
 		minsize_kb: 40000
 		expand_dir: expand_dir
 	)!
@@ -59,15 +59,7 @@ fn install() ! {
 	go_dest := '${osal.usr_local_path()!}/go'
 	os.mv('${expand_dir}/go', go_dest)!
 	os.rmdir_all(expand_dir)!
-
 	osal.profile_path_add_remove(paths2add: '${go_dest}/bin')!
-	paths := osal.profile_paths_preferred()!
-	for p in paths {
-		res := os.execute('source ${p}')
-		if res.exit_code != 0 {
-			return error(res.output)
-		}
-	}
 }
 
 fn build() ! {
