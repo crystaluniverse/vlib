@@ -63,7 +63,8 @@ pub fn (mut f OpenAIClient[Config]) chat_completion(model_type ModelType, msgs M
 		m.messages << mr
 	}
 	data := json.encode(m)
-	r := f.connection.post_json_str(prefix: 'chat/completions', data: data)!
+	mut conn := f.connection()!
+	r := conn.post_json_str(prefix: 'chat/completions', data: data)!
 
 	res := json.decode(ChatCompletion, r)!
 	return res

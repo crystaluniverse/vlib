@@ -14,8 +14,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     #v -enable-globals -w -n -prod -parallel-cc hero.v
     v -enable-globals -w -n -prod hero.v
 else
-    v -cg -enable-globals -parallel-cc -w -n hero.v
-    #v -cg -enable-globals -w -cflags -static -cc gcc hero.v
+    #v -cg -enable-globals -parallel-cc -w -n hero.v
+    #v -cg -enable-globals -w -no-skip-unused -cflags -static  hero.v
+    #-static  -cc gcc -prod 
+    #BELOW WORKS:
+    # v -enable-globals -w -cc gcc hero.v
+    #v -stats -show-timings -enable-globals -w -prod hero.v
+    v -stats -show-timings -enable-globals -w hero.v
 fi
 
 

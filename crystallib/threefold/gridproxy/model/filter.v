@@ -291,6 +291,7 @@ pub mut:
 	gpu_vendor_id      string
 	gpu_vendor_name    string
 	gpu_available      OptionBool = EmptyOption{}
+	features           []string
 }
 
 // serialize NodeFilter to map
@@ -445,6 +446,9 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 		u64 {
 			m['available_for'] = p.available_for.str()
 		}
+	}
+	if p.features.len > 0 {
+		m['features'] = json.encode(p.features).all_after('[').all_before(']')
 	}
 	if p.farm_ids.len > 0 {
 		m['farm_ids'] = json.encode(p.farm_ids).all_after('[').all_before(']')

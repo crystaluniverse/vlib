@@ -2,7 +2,6 @@ module hetzner
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.ui.console
 
 __global (
 	hetzner_global  map[string]&HetznerManager
@@ -14,7 +13,7 @@ __global (
 @[params]
 pub struct ArgsGet {
 pub mut:
-	name string
+	name string = 'default'
 }
 
 fn args_get(args_ ArgsGet) ArgsGet {
@@ -31,18 +30,16 @@ fn args_get(args_ ArgsGet) ArgsGet {
 pub fn get(args_ ArgsGet) !&HetznerManager {
 	mut args := args_get(args_)
 	if args.name !in hetzner_global {
-		if args.name == 'default' {
-			if !config_exists(args) {
-				if default {
-					config_save(args)!
-				}
+		if !config_exists() {
+			if default {
+				config_save()!
 			}
-			config_load(args)!
 		}
+		config_load()!
 	}
 	return hetzner_global[args.name] or {
 		println(hetzner_global)
-		panic('could not get config for hetzner with name:${args.name}')
+		panic('bug in get from factory: ')
 	}
 }
 
@@ -67,16 +64,21 @@ fn config_save(args_ ArgsGet) ! {
 
 fn set(o HetznerManager) ! {
 	mut o2 := obj_init(o)!
-	hetzner_global[o.name] = &o2
-	hetzner_default = o.name
+	hetzner_global['default'] = &o2
 }
 
 @[params]
 pub struct PlayArgs {
 pub mut:
+	name       string = 'default'
 	heroscript string // if filled in then plbook will be made out of it
 	plbook     ?playbook.PlayBook
 	reset      bool
+	start      bool
+	stop       bool
+	restart    bool
+	delete     bool
+	configure  bool // make sure there is at least one installed
 }
 
 pub fn play(args_ PlayArgs) ! {
@@ -92,7 +94,6 @@ pub fn play(args_ PlayArgs) ! {
 		for install_action in install_actions {
 			mut p := install_action.params
 			mycfg := cfg_play(p)!
-			console.print_debug('install action hetzner.configure\n${mycfg}')
 			set(mycfg)!
 		}
 	}

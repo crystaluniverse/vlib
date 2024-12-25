@@ -1,0 +1,11 @@
+diff --git a/root/code/github/freeflowuniverse/crystallib/aiprompts/prompt_tests/test.v b/root/code/github/freeflowuniverse/crystallib/aiprompts/prompt_tests/test.v
+--- a/root/code/github/freeflowuniverse/crystallib/aiprompts/prompt_tests/test.v
++++ b/root/code/github/freeflowuniverse/crystallib/aiprompts/prompt_tests/test2.v
+@@ -45,7 +45,7 @@ pub fn play_meilisearchserver(mut plbook playbook.PlayBook) ! {
+         actions := plbook.find(filter: 'meilisearchserver.')!
+         for action in actions {
+-            if action.name_ == "configure" {
++            if action.name == "configure" {
+                 mut p := action.params
+                 mut obj := MeilisearchServer{
+                     name: p.get_default('name', 'default')!,

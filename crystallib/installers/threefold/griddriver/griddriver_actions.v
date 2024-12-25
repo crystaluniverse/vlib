@@ -38,13 +38,16 @@ fn build() ! {
 	installer.install()!
 
 	mut gs := gittools.get()!
+	url := 'https://github.com/threefoldtech/web3gw/tree/development_integration/griddriver'
+
 	mut repo := gs.get_repo(
-		url:   'https://github.com/threefoldtech/web3gw/tree/development_integration/griddriver'
+		url:   url
 		reset: true
 		pull:  true
 	)!
 
 	mut path := repo.get_path()!
+	path = '${path}/griddriver'
 
 	cmd := '
 	set -ex

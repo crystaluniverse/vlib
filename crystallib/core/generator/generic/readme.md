@@ -38,6 +38,18 @@ there will be a ```.heroscript``` in the director you want to generate for, the 
   default:1              //can we create a default when the factory is used
   reset:0                 // regenerate all, dangerous !!!
 
+//or for a play 
+
+!!hero_code.generate_play
+  path:'' //if not used then is path where this action is found
+  reset:0 //if set will overwrite the play_$actor_$action_.v
+  actor:'mail'
+  action:''
+  model:"""
+    
+    """             
+
+
 ```
 
 needs to be put as .heroscript in the directories which we want to generate

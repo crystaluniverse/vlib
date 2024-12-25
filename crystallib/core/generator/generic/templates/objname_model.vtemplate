@@ -35,23 +35,6 @@ pub fn heroscript_default() !string {
 
         "
 
-//     mail_from := os.getenv_opt('MAIL_FROM') or {'info@@example.com'}
-//     mail_password := os.getenv_opt('MAIL_PASSWORD') or {'secretpassword'}
-//     mail_port := (os.getenv_opt('MAIL_PORT') or {"587"}).int()
-//     mail_server := os.getenv_opt('MAIL_SERVER') or {'smtp-relay.brevo.com'}
-//     mail_username := os.getenv_opt('MAIL_USERNAME') or {'kristof@@incubaid.com'}  
-//
-//     heroscript:="
-//     !!mailclient.configure name:'default'
-//         mail_from: '??{mail_from}'
-//         mail_password: '??{mail_password}'
-//         mail_port: ??{mail_port}
-//         mail_server: '??{mail_server}'
-//         mail_username: '??{mail_username}'
-//
-//     "
-//
-
 @end
 
     return heroscript

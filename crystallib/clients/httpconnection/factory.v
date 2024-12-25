@@ -3,7 +3,6 @@ module httpconnection
 import net.http
 import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
 
-
 @[params]
 pub struct HTTPConnectionArgs {
 pub:
@@ -34,6 +33,4 @@ pub fn new(args HTTPConnectionArgs) !&HTTPConnection {
 		base_url:       args.url.trim('/')
 	}
 	return &conn
-
 }
-

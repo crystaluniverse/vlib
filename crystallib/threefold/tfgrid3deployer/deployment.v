@@ -8,6 +8,7 @@ import encoding.hex
 import x.crypto.chacha20
 import crypto.sha256
 import json
+import rand
 
 struct GridContracts {
 pub mut:
@@ -99,11 +100,12 @@ fn (mut self TFDeployment) set_nodes() ! {
 		nodes := filter_nodes(
 			node_ids:  node_ids
 			healthy:   true
-			free_mru:  u64(vm.requirements.memory) * 1024 * 1024 * 1024
+			free_mru:  convert_to_gigabytes(u64(vm.requirements.memory))
 			total_cru: u64(vm.requirements.cpu)
 			free_ips:  if vm.requirements.public_ip4 { u64(1) } else { none }
 			has_ipv6:  if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
 			status:    'up'
+			features:  if vm.requirements.public_ip4 { [] } else { ['zmachine'] }
 		)!
 
 		if nodes.len == 0 {
@@ -112,12 +114,13 @@ fn (mut self TFDeployment) set_nodes() ! {
 			}
 			return error('Requested the Grid Proxy and no nodes found.')
 		}
-
-		vm.node_id = u32(nodes[0].node_id)
+		idx := rand.u32() % u32(nodes.len)
+		// println('chodes node: ${}')
+		vm.node_id = u32(nodes[idx].node_id)
 	}
 
 	for mut zdb in self.zdbs {
-		size := u64(zdb.requirements.size) * 1024 * 1024 * 1024
+		size := convert_to_gigabytes(u64(zdb.requirements.size))
 		nodes := filter_nodes(
 			free_sru: size
 			status:   'up'
@@ -134,10 +137,11 @@ fn (mut self TFDeployment) set_nodes() ! {
 
 	for mut webname in self.webnames {
 		nodes := filter_nodes(
-			domain:  true
-			status:  'up'
-			healthy: true
-			node_id: webname.requirements.node_id
+			domain:   true
+			status:   'up'
+			healthy:  true
+			node_id:  webname.requirements.node_id
+			features: ['zmachine']
 		)!
 
 		if nodes.len == 0 {

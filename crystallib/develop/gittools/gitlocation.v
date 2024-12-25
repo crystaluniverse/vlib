@@ -59,24 +59,47 @@ pub fn (mut gs GitStructure) gitlocation_from_url(url string) !GitLocation {
 	mut branch_or_tag := ''
 
 	// Deal with path and anchor
-	if parts.len > 4 {
-		path = parts[4..].join('/')
-		if path.contains('#') {
-			parts2 := path.split('#')
-			if parts2.len == 2 {
-				path = parts2[0]
-				anchor = parts2[1]
-			} else {
-				return error("git: url badly formatted, more than 1 '#' in ${url}")
+	// if parts.len > 4 {
+	// 	path = parts[4..].join('/')
+	// 	if path.contains('#') {
+	// 		parts2 := path.split('#')
+	// 		if parts2.len == 2 {
+	// 			path = parts2[0]
+	// 			anchor = parts2[1]
+	// 		} else {
+	// 			return error("git: url badly formatted, more than 1 '#' in ${url}")
+	// 		}
+	// 	}
+	// }
+
+	// Extract branch if available
+	for i := 0; i < parts.len; i++ {
+		if parts[i] == 'refs' || parts[i] == 'tree' {
+			if i + 1 < parts.len {
+				branch_or_tag = parts[i + 1]
 			}
+			if i + 2 < parts.len {
+				path = parts[(i + 2)..].join('/')
+			}
+			break
 		}
 	}
 
-	// Extract branch if available
-	if parts.len > 3 {
-		branch_or_tag = parts[3]
-		parts[2] = parts[2].replace('.git', '')
+	// Deal with path and anchor
+	if path.contains('#') {
+		parts2 := path.split('#')
+		if parts2.len == 2 {
+			path = parts2[0]
+			anchor = parts2[1]
+		} else {
+			return error("git: url badly formatted, more than 1 '#' in ${url}")
+		}
 	}
+
+	// if parts.len > 3 {
+	// 	branch_or_tag = parts[3]
+	// 	parts[2] = parts[2].replace('.git', '')
+	// }
 
 	// Validate parts
 	if parts.len < 3 {

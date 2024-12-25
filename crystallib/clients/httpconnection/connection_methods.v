@@ -205,7 +205,7 @@ pub fn (mut h HTTPConnection) delete(req_ Request) !string {
 pub fn (mut h HTTPConnection) post_multi_part(req Request, form http.PostMultipartFormConfig) !http.Response {
 	mut req_form := form
 	mut header := h.header()
-	header.set(http.CommonHeader.content_type, 'multipart/form-data')
+	header.set(.content_type, 'multipart/form-data')
 	req_form.header = header
 	url := h.url(req)
 	return http.post_multipart_form(url, req_form)!

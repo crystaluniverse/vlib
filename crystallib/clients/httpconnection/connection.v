@@ -19,4 +19,3 @@ fn (mut h HTTPConnection) header(req Request) Header {
 
 	return h.default_header.join(header)
 }
-
