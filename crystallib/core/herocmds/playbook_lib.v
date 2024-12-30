@@ -104,7 +104,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 	})
 }
 
-// returns the path of the fetched repo
+// returns the path of the fetched repo url
 pub fn plbook_code_get(cmd Command) !string {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
@@ -119,8 +119,6 @@ pub fn plbook_code_get(cmd Command) !string {
 
 	if coderoot.len > 0 {
 		base.context_new(coderoot: coderoot)!
-
-		// panic('coderoot >0 not supported yet, not imeplemented.')
 	}
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
@@ -133,19 +131,19 @@ pub fn plbook_code_get(cmd Command) !string {
 			pull: pull
 			reset: reset
 			url: url
-			reload: true
+			// QUESTION: why should reload be default true?
+			// reload: true
 		)!
 
-		path = repo.get_path()!
+		path = repo.get_path_of_url(url)!
 	}
 
 	return path
 }
 
 // same as session_run_get but will also run the playbook
-fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
+pub fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
 	path := plbook_code_get(cmd)!
-
 	if path.len == 0 {
 		return error(cmd.help_message())
 	}

@@ -1,8 +1,8 @@
 module stellar
 
 pub struct Links {
-pub mut:	
-	self        Link
+pub mut:
+	self         Link
 	transactions Link
 	operations   Link
 	payments     Link
@@ -13,28 +13,28 @@ pub mut:
 }
 
 pub struct Link {
-pub mut:	
+pub mut:
 	href      string
 	templated bool
 }
 
 pub struct Thresholds {
-pub mut:	
+pub mut:
 	low_threshold  int
 	med_threshold  int
 	high_threshold int
 }
 
 pub struct Flags {
-pub mut:	
-	auth_required           bool
-	auth_revocable          bool
-	auth_immutable          bool
-	auth_clawback_enabled   bool
+pub mut:
+	auth_required         bool
+	auth_revocable        bool
+	auth_immutable        bool
+	auth_clawback_enabled bool
 }
 
 pub struct Balance {
-	pub mut:
+pub mut:
 	balance                               string
 	limit                                 string
 	buying_liabilities                    string
@@ -57,21 +57,84 @@ pub mut:
 @[heap]
 pub struct StellarAccount {
 pub mut:
-	links                 Links
-	id                    string
-	account_id            string
-	sequence              string
-	sequence_ledger       int
-	sequence_time         string
-	subentry_count        int
-	last_modified_ledger  int
-	last_modified_time    string
-	thresholds            Thresholds
-	flags                 Flags
-	balances              []Balance
-	signers               []Signer
-	data                  map[string]string
-	num_sponsoring        int
-	num_sponsored         int
-	paging_token          string
+	links                Links
+	id                   string
+	account_id           string
+	sequence             string
+	sequence_ledger      int
+	sequence_time        string
+	subentry_count       int
+	last_modified_ledger int
+	last_modified_time   string
+	thresholds           Thresholds
+	flags                Flags
+	balances             []Balance
+	signers              []Signer
+	data                 map[string]string
+	num_sponsoring       int
+	num_sponsored        int
+	paging_token         string
+}
+
+pub struct TransactionInfo {
+pub:
+	links    RootLinks @[json: '_links']
+	embedded Embedded  @[json: '_embedded']
+}
+
+pub struct RootLinks {
+pub:
+	self Link
+	next Link
+	prev Link
+}
+
+pub struct Embedded {
+pub:
+	records []TransactionRecord
+}
+
+pub struct TransactionRecord {
+pub:
+	links                   RecordLinks @[json: '_links']
+	id                      string
+	paging_token            string
+	successful              bool
+	hash                    string
+	ledger                  int
+	created_at              string
+	source_account          string
+	source_account_sequence string
+	fee_account             string
+	fee_charged             string
+	max_fee                 string
+	operation_count         int
+	envelope_xdr            string
+	result_xdr              string
+	fee_meta_xdr            string
+	memo_type               string
+	signatures              []string
+	preconditions           Preconditions
+}
+
+pub struct RecordLinks {
+pub:
+	self        Link
+	account     Link
+	ledger      Link
+	operations  Link
+	effects     Link
+	precedes    Link
+	succeeds    Link
+	transaction Link
+}
+
+pub struct Preconditions {
+pub:
+	timebounds PreConditionTimeBounds
+}
+
+pub struct PreConditionTimeBounds {
+pub:
+	min_time string
 }

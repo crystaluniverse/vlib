@@ -182,7 +182,7 @@ pub fn (param Param) vgen() string {
 	if param.mutable {
 		vstr = 'mut ${vstr}'
 	}
-	return '(${vstr})'
+	return '${vstr}'
 }
 
 // vgen_function generates a function statement for a function

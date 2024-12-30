@@ -1,5 +1,6 @@
 module doctree
 
+import freeflowuniverse.crystallib.data.doctree.collection { Collection }
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
@@ -26,10 +27,17 @@ pub fn (mut tree Tree) process_actions_and_macros() ! {
 	playmacros.play_actions(mut plbook)!
 
 	// now get specific actions which need to return content
-	for _, mut collection in tree.collections {
-		for _, mut page in collection.pages {
-			page.process_macros()! // calls play_macro in playmacros...
-		}
+	mut ths := []thread !{}
+	for _, mut col in tree.collections {
+		ths << spawn fn (mut col Collection) ! {
+			for _, mut page in col.pages {
+				page.process_macros()! // calls play_macro in playmacros...
+			}
+		}(mut col)
+	}
+
+	for th in ths {
+		th.wait()!
 	}
 }
 

@@ -179,27 +179,27 @@ fn (mut db OurDB) get_prev_pos_(location Location) !Location {
 	return db.lookup.location_new(prev_bytes)!
 }
 
-// // delete zeros out the record at specified location
-// fn (mut db OurDB) delete_(x u32, location Location) ! {
-// 	if location.position == 0 {
-// 		return error('Record not found')
-// 	}
+// delete zeros out the record at specified location
+fn (mut db OurDB) delete_(x u32, location Location) ! {
+	if location.position == 0 {
+		return error('Record not found')
+	}
 
-// 	// Seek to position
-// 	db.file.seek(i64(location.position), .start)!
+	// Seek to position
+	db.file.seek(i64(location.position), .start)!
 
-// 	// Read size first
-// 	size_bytes := db.file.read_bytes(2)
-// 	size := u16(size_bytes[0]) | (u16(size_bytes[1]) << 8)
+	// Read size first
+	size_bytes := db.file.read_bytes(2)
+	size := u16(size_bytes[0]) | (u16(size_bytes[1]) << 8)
 
-// 	// Write zeros for the entire record (header + data)
-// 	zeros := []u8{len: int(size) + header_size, init: 0}
-// 	db.file.seek(i64(location.position), .start)!
-// 	db.file.write(zeros)!
+	// Write zeros for the entire record (header + data)
+	zeros := []u8{len: int(size) + header_size, init: 0}
+	db.file.seek(i64(location.position), .start)!
+	db.file.write(zeros)!
 
-// 	// Clear lookup entry
-// 	db.lookup.delete(x)!
-// }
+	// Clear lookup entry
+	db.lookup.delete(x)!
+}
 
 // condense removes empty records and updates positions
 fn (mut db OurDB) condense() ! {

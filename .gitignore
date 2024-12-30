@@ -24,6 +24,6 @@ zdb-index
 dump.rdb
 output/
 *.db
+.stellar
 vdocs/
 data.ms/
-

@@ -10,14 +10,14 @@ const export_expected_dir = '${test_dir}/export_expected'
 
 fn testsuite_begin() {
 	pathlib.get_dir(
-		path: export_dir
+		path:  export_dir
 		empty: true
 	)!
 }
 
 fn testsuite_end() {
 	pathlib.get_dir(
-		path: export_dir
+		path:  export_dir
 		empty: true
 	)!
 }

@@ -47,7 +47,7 @@ pub fn new(args_ TreeArgsGet) !&Tree {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 	mut t := Tree{
-		name: args.name
+		name:          args.name
 		fail_on_error: args.fail_on_error
 	}
 	tree_set(t)

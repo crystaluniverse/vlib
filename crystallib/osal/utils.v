@@ -27,7 +27,7 @@ pub fn memdb_exists(key string) bool {
 }
 
 // Returns a logger object and allows you to specify via environment argument OSAL_LOG_LEVEL the debug level
-pub fn get_logger() log.Logger {
+pub fn get_logger() log.Log {
 	log_level := env_get_default('OSAL_LOG_LEVEL', 'info')
 	mut logger := &log.Log{}
 	logger.set_level(match log_level.to_lower() {
@@ -37,5 +37,5 @@ pub fn get_logger() log.Logger {
 		'error' { .error }
 		else { .info }
 	})
-	return logger
+	return *logger
 }

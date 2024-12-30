@@ -5,11 +5,16 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.data.doctree.pointer
 
 // Note: doc should not get reparsed after invoking this method
-pub fn (mut page Page) process_links(paths map[string]string) ![]string {
+pub fn (page Page) process_links(paths map[string]string) ![]string {
 	mut not_found := map[string]bool{}
-	mut doc := page.doc()!
+	mut doc := page.doc_immute()!
 	for mut element in doc.children_recursive() {
 		if mut element is elements.Link {
+			if element.cat == .html || (element.cat == .anchor && element.url == '') {
+				// is external link or same page anchor, nothing to process
+				// maybe in the future check if exists
+				continue
+			}
 			mut name := texttools.name_fix_keepext(element.filename)
 			mut site := texttools.name_fix(element.site)
 			if site == '' {

@@ -35,15 +35,15 @@ pub:
 	collection_path pathlib.Path
 	pathrel         string
 	path            pathlib.Path
-	collection_name string       @[required]
+	collection_name string @[required]
 }
 
 pub fn new_file(args NewFileArgs) !File {
 	mut f := File{
-		name: args.name
-		path: args.path
+		name:            args.name
+		path:            args.path
 		collection_path: args.collection_path
-		pathrel: args.pathrel
+		pathrel:         args.pathrel
 		collection_name: args.collection_name
 	}
 
@@ -93,9 +93,22 @@ fn (mut file File) exists() !bool {
 	return file.path.exists()
 }
 
-pub fn (mut file File) copy(dest string) ! {
+pub fn (file_ File) copy(dest string) ! {
+	mut file := file_
 	mut dest2 := pathlib.get(dest)
 	file.path.copy(dest: dest2.path, rsync: false) or {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')
+	}
+}
+
+pub struct ExportParams {
+pub:
+	reset bool // whether the export will overwrite
+}
+
+pub fn (file File) export(dest string, params ExportParams) ! {
+	d := '${dest}/${file.name}.${file.ext}'
+	if params.reset || !os.exists(d) {
+		file.copy(d)!
 	}
 }

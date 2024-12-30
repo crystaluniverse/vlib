@@ -1,0 +1,39 @@
+{
+    "name": "Crystallib Development",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "workspaceFolder": "/root/code/github/freeflowuniverse/crystallib",
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "configureZshAsDefaultShell": true,
+            "installOhMyZsh": true,
+            "upgradePackages": true
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vosca.vscode-v-analyzer",
+                "saoudrizwan.claude-dev",
+                "ms-vscode.vscode-typescript-next",
+                "mhutchie.git-graph"
+            ]
+        }
+    },
+    "initializeCommand":"./.devcontainer/check.sh",
+    "privileged":true,
+    "mounts": [
+        "source=${localEnv:HOME}/code,target=/root/code,type=bind,consistency=cached"
+    ],
+    "forwardPorts": [3000, 6379],
+    "portsAttributes": {
+        "3000": {
+            "label": "Hello Remote World",
+            "onAutoForward": "notify"
+        }
+    },    
+    "postStartCommand": "/root/code/github/freeflowuniverse/crystallib/install.sh",
+    "remoteUser": "root"
+}

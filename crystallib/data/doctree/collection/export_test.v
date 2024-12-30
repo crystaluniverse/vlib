@@ -10,14 +10,14 @@ const export_expected_dir = '${test_dir}/export_expected'
 
 fn testsuite_begin() {
 	pathlib.get_dir(
-		path: export_dir
+		path:  export_dir
 		empty: true
 	)!
 }
 
 fn testsuite_end() {
 	pathlib.get_dir(
-		path: export_dir
+		path:  export_dir
 		empty: true
 	)!
 }
@@ -32,7 +32,7 @@ fn test_export() {
 	path_dest := pathlib.get_dir(path: '${export_dir}/src', create: true)!
 	col.export(
 		destination: path_dest
-		file_paths: {
+		file_paths:  {
 			'col2:file3.md': 'col2/file3.md'
 		}
 	)!

@@ -1,6 +1,8 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.data.doctree.collection { Collection }
+import freeflowuniverse.crystallib.data.doctree.collection.data
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools.regext
 
@@ -12,6 +14,7 @@ pub mut:
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
 	toreplace      string
+	concurrent     bool = true
 }
 
 // export all collections to chosen directory .
@@ -33,19 +36,37 @@ pub fn (mut tree Tree) export(args TreeExportArgs) ! {
 	tree.process_defs()!
 	tree.process_includes()!
 	tree.process_actions_and_macros()! // process other actions and macros
-
-	file_paths := tree.generate_paths()!
+	tree.process_links()!
 
 	console.print_green('exporting collections')
-	for _, mut collection in tree.collections {
-		collection.export(
-			destination: dest_path
-			file_paths: file_paths
-			reset: args.reset
-			keep_structure: args.keep_structure
-			exclude_errors: args.exclude_errors
-			replacer: tree.replacer
-		)!
+
+	if args.concurrent {
+		mut ths := []thread !{}
+		for _, col in tree.collections {
+			ths << spawn fn (col Collection, dest_path pathlib.Path, file_paths map[string]string, args TreeExportArgs) ! {
+				col.export(
+					destination:    dest_path
+					reset:          args.reset
+					keep_structure: args.keep_structure
+					exclude_errors: args.exclude_errors
+					// TODO: replacer: tree.replacer
+				)!
+			}(col, dest_path, file_paths, args)
+		}
+		for th in ths {
+			th.wait() or { panic(err) }
+		}
+	} else {
+		for _, mut col in tree.collections {
+			col.export(
+				destination:    dest_path
+				file_paths:     file_paths
+				reset:          args.reset
+				keep_structure: args.keep_structure
+				exclude_errors: args.exclude_errors
+				replacer:       tree.replacer
+			)!
+		}
 	}
 }
 

@@ -63,40 +63,12 @@ pub fn (self Context) guid() string {
 	return '${self.id()}:${self.name()}'
 }
 
-//////DATA
-
-// pub fn (mut self Context) str() string {
-// 	return self.heroscript() or { "BUG: can't represent the object properly, I try raw" }
-// }
-
-// fn (mut self Context) str2() string {
-// 	panic("implement")
-// 	//return 'cid:${self.cid} name:${self.name}'
-// }
-
-// pub fn (mut self Context) heroscript() !string {
-// 	panic("implement")
-// 	mut out := '!!core.context_define ${self.str2()}\n'
-// 	mut p:=self.params()!
-// 	if !p.empty() {
-// 		out += '\n!!core.params_context_set'
-// 		out += texttools.indent(p.heroscript(), '    ') + '\n'
-// 	}
-// 	// if self.snippets.len > 0 {
-// 	// 	for key, snippet in self.snippets {
-// 	// 		out += '\n!!core.snippet guid:${self.guid()} name:${key}'
-// 	// 		out += texttools.indent(snippet.heroscript(),"    ") + '\n'
-// 	// 	}
-// 	// }
-// 	return out
-// }
-
 pub fn (mut self Context) redis() !&redisclient.Redis {
 	mut r2 := self.redis_ or {
 		mut r := redisclient.core_get()!
 		if self.config.id > 0 {
 			// make sure we are on the right db
-			r.selectdb(self.config.id)!
+			r.selectdb(int(self.config.id))!
 		}
 		self.redis_ = &r
 		&r
@@ -177,40 +149,6 @@ pub fn (mut self Context) hero_config_get(cat string, name string) !string {
 	return config_file.read()!
 }
 
-/////////////PRIVKEY
-
-// pub fn (mut self Context) privkey_new() !&secp256k1.Secp256k1 {
-// 	mypk := secp256k1.new()!
-// 	return self.privkey_set(mypk.private_key_hex())!
-// }
-
-// pub fn (mut self Context) privkey_set(keyhex string) !&secp256k1.Secp256k1 {
-// 	privkeyencr := self.secret_encrypt(keyhex)!
-// 	self.config.priv_key = privkeyencr
-// 	// self.save()!
-// 	return self.privkey()
-// }
-
-// // get the private key
-// pub fn (mut self Context) privkey() !&secp256k1.Secp256k1 {
-// 	mut mypk := self.priv_key_ or {
-// 		mut r := self.redis()!
-// 		mut key := r.get('context:privkey') or { '' }
-// 		if key == '' {
-// 			return error("can't find priv key for context:${self.config.id}")
-// 		}
-// 		key = self.secret_decrypt(key)!
-// 		mut mypk := secp256k1.new(
-// 			privhex: key
-// 		)!
-// 		self.priv_key_ = &mypk
-// 		&mypk
-// 	}
-
-// 	return mypk
-// }
-
-// will use our secret as configured for the hero to encrypt, uses base64
 pub fn (mut self Context) secret_encrypt(txt string) !string {
 	return aes_symmetric.encrypt_str(txt, self.secret_get()!)
 }
@@ -231,8 +169,6 @@ pub fn (mut self Context) secret_get() !string {
 	}
 	return secret
 }
-
-/////////////SECRET MANAGEMENT
 
 // show a UI in console to configure the secret
 pub fn (mut self Context) secret_configure() ! {

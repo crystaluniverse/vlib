@@ -6,13 +6,25 @@ import os
 pub struct Module {
 pub mut:
 	name       string
-	files      []CodeFile
-	misc_files []File
-	// model   CodeFile
-	// methods CodeFile
+	files      []IFile
+	folders    []IFolder
+	// model   VFile
+	// methods VFile
 }
 
-pub fn (mod Module) write_v(path string, options WriteOptions) ! {
+pub fn new_module(mod Module) Module {
+	return Module {
+		...mod
+		files: mod.files.map(
+			if it is VFile {
+				IFile(VFile{...it, mod: mod.name})
+			} else {it}
+		)
+	}
+}
+
+
+pub fn (mod Module) write(path string, options WriteOptions) ! {
 	mut module_dir := pathlib.get_dir(
 		path: '${path}/${mod.name}'
 		empty: options.overwrite
@@ -23,11 +35,11 @@ pub fn (mod Module) write_v(path string, options WriteOptions) ! {
 	}
 
 	for file in mod.files {
-		file.write_v(module_dir.path, options)!
+		file.write(module_dir.path, options)!
 	}
-	for file in mod.misc_files {
-		file.write(module_dir.path)!
-	}
+	// for file in mod.misc_files {
+	// 	file.write(module_dir.path)!
+	// }
 
 	if options.format {
 		os.execute('v fmt -w ${module_dir.path}')

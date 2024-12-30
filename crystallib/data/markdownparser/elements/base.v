@@ -134,7 +134,9 @@ pub fn (self DocBase) children() []Element {
 pub fn (mut self DocBase) process_children() !int {
 	mut changes := 0
 	for mut element in self.children {
-		changes += element.process()!
+		changes += element.process() or {
+			return error('Failed to process child ${element.type_name}\n${err}')
+		}
 	}
 	return changes
 }

@@ -1,11 +1,11 @@
 module openrpc
 
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, CustomCode, Function, Result, Struct, parse_import }
+import freeflowuniverse.crystallib.core.codemodel { VFile, CodeItem, CustomCode, Function, Result, Struct, parse_import }
 import freeflowuniverse.crystallib.rpc.jsonrpc
 import freeflowuniverse.crystallib.core.texttools
 import rand
 
-pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !CodeFile {
+pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !VFile {
 	name := texttools.name_fix(o.info.title)
 	mut code := []CodeItem{}
 
@@ -16,7 +16,7 @@ pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]
 		parse_import('import freeflowuniverse.crystallib.core.texttools'),
 	]
 
-	mut file := CodeFile{
+	mut file := VFile{
 		name: 'handler'
 		mod: name
 		imports: imports
@@ -32,7 +32,7 @@ pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]
 	return file
 }
 
-pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !CodeFile {
+pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !VFile {
 	name := texttools.name_fix(o.info.title)
 
 	handler_name := texttools.name_fix_pascal_to_snake(receiver.name)
@@ -82,7 +82,7 @@ pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[st
 
 	imports := parse_import('freeflowuniverse.crystallib.rpc.jsonrpc {new_jsonrpcrequest, jsonrpcresponse_decode, jsonrpcerror_decode}')
 
-	mut file := CodeFile{
+	mut file := VFile{
 		name: 'handler_test'
 		mod: name
 		imports: [imports]

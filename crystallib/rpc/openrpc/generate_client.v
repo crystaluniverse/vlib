@@ -1,12 +1,12 @@
 module openrpc
 
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, CustomCode, Function, Struct, parse_function }
+import freeflowuniverse.crystallib.core.codemodel { VFile, CodeItem, CustomCode, Function, Struct, parse_function }
 import freeflowuniverse.crystallib.data.jsonschema
 import freeflowuniverse.crystallib.rpc.jsonrpc
 import freeflowuniverse.crystallib.core.texttools
 
 // generate_structs geenrates struct codes for schemas defined in an openrpc document
-pub fn (o OpenRPC) generate_client_file(object_map map[string]Struct) !CodeFile {
+pub fn (o OpenRPC) generate_client_file(object_map map[string]Struct) !VFile {
 	name := texttools.name_fix(o.info.title)
 	client_struct_name := '${o.info.title}Client'
 	client_struct := jsonrpc.generate_client_struct(client_struct_name)
@@ -19,7 +19,7 @@ pub fn (o OpenRPC) generate_client_file(object_map map[string]Struct) !CodeFile 
 		codemodel.parse_import('freeflowuniverse.crystallib.rpc.rpcwebsocket'),
 		codemodel.parse_import('log')]
 	code << methods.map(CodeItem(it))
-	mut file := CodeFile{
+	mut file := VFile{
 		name: 'client'
 		mod: name
 		imports: imports
@@ -63,7 +63,7 @@ pub fn (cd ContentDescriptorRef) to_result() !codemodel.Result {
 }
 
 // generate_structs generates struct codes for schemas defined in an openrpc document
-pub fn (o OpenRPC) generate_client_test_file(methods_map map[string]Function, object_map map[string]Struct) !CodeFile {
+pub fn (o OpenRPC) generate_client_test_file(methods_map map[string]Function, object_map map[string]Struct) !VFile {
 	name := texttools.name_fix(o.info.title)
 	// client_struct_name := '${o.info.title}Client'
 	// client_struct := jsonrpc.generate_client_struct(client_struct_name)
@@ -84,7 +84,7 @@ pub fn (o OpenRPC) generate_client_test_file(methods_map map[string]Function, ob
 		func.body = "mut client := new_ws_client(address:'ws://127.0.0.1:\${port}')!\n${func_call}"
 		code << func
 	}
-	mut file := CodeFile{
+	mut file := VFile{
 		name: 'client_test'
 		mod: name
 		imports: [

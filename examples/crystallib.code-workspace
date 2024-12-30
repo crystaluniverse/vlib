@@ -4,26 +4,17 @@
 			"path": "../crystallib"
 		},
 		{
-			"path": "."
-		},
-		{
 			"path": "../aiprompts"
 		},
 		{
 			"path": "../cli/hero"
 		},
 		{
-			"path": "../vscodeplugin"
-		},
-		{
 			"path": "../scripts"
 		},
 		{
-			"path": "../research"
-		},
-		{
-			"path": "../tools"
-		},
+			"path": "../examples"
+		},		
 		{
 			"path": "../cli"
 		}

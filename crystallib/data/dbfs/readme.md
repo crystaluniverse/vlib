@@ -13,7 +13,7 @@ The algo's used have been optimized for scalability and human readability, the i
 
 > TODO: fix, we refactored
 
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 
 mut dbcollection := get(context: 'test', secret: '123456')!
 
@@ -42,7 +42,7 @@ e.g. ideal for config sessions (which are done on context level)
 
 > TODO: fix, we refactored
 
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.data.dbfs
 
 mut dbcollection := get(context: 'test', secret: '123456')!
 

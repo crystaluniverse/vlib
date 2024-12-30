@@ -29,10 +29,8 @@ fn (mut app App) auth_middleware(mut ctx vweb.Context) bool {
 		return false
 	}
 
-	username := split_credentials[0]
 	hashed_pass := split_credentials[1]
-
-	if app.user_db[username] != hashed_pass {
+	if app.password != hashed_pass {
 		ctx.set_status(401, 'Unauthorized')
 		ctx.add_header('WWW-Authenticate', 'Basic realm="WebDAV Server"')
 		ctx.send_response_to_client('', '')

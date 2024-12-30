@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "/root/code/github/freeflowuniverse/crystallib/crystallib"
+		},
+		{
+			"path": "/root/code/github/freeflowuniverse/crystallib/aiprompts"
+		},
+		{
+			"path": "/root/code/github/freeflowuniverse/crystallib/scripts"
+		},
+		{
+			"path": "/root/code/github/freeflowuniverse/crystallib/examples"
+		},		
+		{
+			"path": "/root/code/github/freeflowuniverse/crystallib/cli"
+		}
+	],
+	"settings": {}
+}

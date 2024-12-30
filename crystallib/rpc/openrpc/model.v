@@ -151,9 +151,10 @@ type ErrorRef = Error | Reference
 // TODO: handle any type for data field
 // Defines an application level error.
 pub struct Error {
+pub:
 	code    int    // A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.
 	message string // A String providing a short description of the error. The message SHOULD be limited to a concise single sentence.
-	data    string // A Primitive or Structured value that contains additional information about the error. This may be omitted. The value of this member is defined by the Server (e.g. detailed error information, nested errors etc.).
+	data    SchemaRef // A Primitive or Structured value that contains additional information about the error. This may be omitted. The value of this member is defined by the Server (e.g. detailed error information, nested errors etc.).
 }
 
 // TODO: enforce regex requirements
