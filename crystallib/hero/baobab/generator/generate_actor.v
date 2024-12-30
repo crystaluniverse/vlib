@@ -7,11 +7,17 @@ import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements { Header }
 import freeflowuniverse.crystallib.rpc.openrpc
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.hero.baobab.specification {ActorMethod, ActorSpecification}
+import freeflowuniverse.crystallib.hero.baobab.specification {ActorMethod, ActorSpecification, ActorInterface}
 import os
 import json
 
-pub fn generate_actor_module(spec ActorSpecification) !Module {
+@[params]
+pub struct Params {
+pub:
+	interfaces []ActorInterface // the interfaces to be supported
+}
+
+pub fn generate_actor_module(spec ActorSpecification, params Params) !Module {
 	mut files := []IFile{}
 	
 	files = [
@@ -26,7 +32,7 @@ pub fn generate_actor_module(spec ActorSpecification) !Module {
 	mut docs_files := []IFile{}
 
 	// generate code files for supported interfaces
-	for iface in spec.interfaces {
+	for iface in params.interfaces {
 		match iface {
 			.openrpc {
 				// convert actor spec to openrpc spec

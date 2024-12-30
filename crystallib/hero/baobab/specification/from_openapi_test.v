@@ -1,5 +1,7 @@
 module specification
 
+import freeflowuniverse.crystallib.core.codemodel { Struct, Function }
+import freeflowuniverse.crystallib.rpc.openrpc { ContentDescriptor, Error }
 import freeflowuniverse.crystallib.web.openapi { OpenAPI, Info, ServerSpec, Components, Operation, PathItem, PathRef }
 import freeflowuniverse.crystallib.data.jsonschema {Schema, Reference, SchemaRef}
 
@@ -350,7 +352,216 @@ const openapi_spec = openapi.OpenAPI{
 }
 }
 
+const actor_spec = specification.ActorSpecification{
+    name: 'Pet Store API'
+    description: 'A sample API for a pet store'
+    interfaces: [.openapi]
+    methods: [
+        specification.ActorMethod{
+            name: 'listPets'
+            summary: 'List all pets'
+            parameters: [
+                openrpc.ContentDescriptor{
+                    name: 'limit'
+                    summary: 'Maximum number of pets to return'
+                    description: 'Maximum number of pets to return'
+                    schema: jsonschema.SchemaRef(jsonschema.Schema{
+                        typ: 'integer'
+                        format: 'int32'
+                    })
+                }
+            ]
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+                schema: jsonschema.SchemaRef(jsonschema.Reference{
+                    ref: '#/components/schemas/Pets'
+                })
+            }
+            errors: [
+                openrpc.Error{
+                    code: 400
+                    message: 'Invalid request'
+                }
+            ]
+        },
+        specification.ActorMethod{
+            name: 'createPet'
+            summary: 'Create a new pet'
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+            }
+            errors: [
+                openrpc.Error{
+                    code: 400
+                    message: 'Invalid input'
+                }
+            ]
+        },
+        specification.ActorMethod{
+            name: 'getPet'
+            summary: 'Get a pet by ID'
+            parameters: [
+                openrpc.ContentDescriptor{
+                    name: 'petId'
+                    summary: 'ID of the pet to retrieve'
+                    description: 'ID of the pet to retrieve'
+                    schema: jsonschema.SchemaRef(jsonschema.Schema{
+                        typ: 'integer'
+                        format: 'int64'
+                    })
+                }
+            ]
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+                schema: jsonschema.SchemaRef(jsonschema.Reference{
+                    ref: '#/components/schemas/Pet'
+                })
+            }
+            errors: [
+                openrpc.Error{
+                    code: 404
+                    message: 'Pet not found'
+                }
+            ]
+        },
+        specification.ActorMethod{
+            name: 'deletePet'
+            summary: 'Delete a pet by ID'
+            parameters: [
+                openrpc.ContentDescriptor{
+                    name: 'petId'
+                    summary: 'ID of the pet to delete'
+                    description: 'ID of the pet to delete'
+                    schema: jsonschema.SchemaRef(jsonschema.Schema{
+                        typ: 'integer'
+                        format: 'int64'
+                    })
+                }
+            ]
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+            }
+            errors: [
+                openrpc.Error{
+                    code: 404
+                    message: 'Pet not found'
+                }
+            ]
+        },
+        specification.ActorMethod{
+            name: 'listOrders'
+            summary: 'List all orders'
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+                schema: jsonschema.SchemaRef(jsonschema.Schema{
+                    typ: 'array'
+                    items: jsonschema.Items(jsonschema.SchemaRef(jsonschema.Reference{
+                        ref: '#/components/schemas/Order'
+                    }))
+                })
+            }
+        },
+        specification.ActorMethod{
+            name: 'getOrder'
+            summary: 'Get an order by ID'
+            parameters: [
+                openrpc.ContentDescriptor{
+                    name: 'orderId'
+                    summary: 'ID of the order to retrieve'
+                    description: 'ID of the order to retrieve'
+                    schema: jsonschema.SchemaRef(jsonschema.Schema{
+                        typ: 'integer'
+                        format: 'int64'
+                    })
+                }
+            ]
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+                schema: jsonschema.SchemaRef(jsonschema.Reference{
+                    ref: '#/components/schemas/Order'
+                })
+            }
+            errors: [
+                openrpc.Error{
+                    code: 404
+                    message: 'Order not found'
+                }
+            ]
+        },
+        specification.ActorMethod{
+            name: 'deleteOrder'
+            summary: 'Delete an order by ID'
+            parameters: [
+                openrpc.ContentDescriptor{
+                    name: 'orderId'
+                    summary: 'ID of the order to delete'
+                    description: 'ID of the order to delete'
+                    schema: jsonschema.SchemaRef(jsonschema.Schema{
+                        typ: 'integer'
+                        format: 'int64'
+                    })
+                }
+            ]
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+            }
+            errors: [
+                openrpc.Error{
+                    code: 404
+                    message: 'Order not found'
+                }
+            ]
+        },
+        specification.ActorMethod{
+            name: 'createUser'
+            summary: 'Create a user'
+            result: openrpc.ContentDescriptor{
+                name: 'result'
+                description: 'The response of the operation.'
+            }
+        }
+    ]
+    objects: [
+        specification.BaseObject{
+            structure: codemodel.Struct{
+                name: 'Pet'
+            }
+        },
+        specification.BaseObject{
+            structure: codemodel.Struct{
+                name: 'NewPet'
+            }
+        },
+        specification.BaseObject{
+            structure: codemodel.Struct{
+                name: 'Pets'
+            }
+        },
+        specification.BaseObject{
+            structure: codemodel.Struct{
+                name: 'Order'
+            }
+        },
+        specification.BaseObject{
+            structure: codemodel.Struct{
+                name: 'User'
+            }
+        },
+        specification.BaseObject{
+            structure: codemodel.Struct{
+                name: 'NewUser'
+            }
+        }
+    ]
+}
+
 pub fn test_from_openapi() ! {
-	actor_spec := from_openapi(openapi_spec)!
-	panic(actor_spec)
+	assert from_openapi(openapi_spec)! == actor_spec
 }

@@ -1,0 +1,132 @@
+{
+    "openrpc": "1.0.0",
+    "info": {
+      "title": "PetStore API",
+      "version": "1.0.0"
+    },
+    "methods": [
+      {
+        "name": "petstore_client.GetPets",
+        "description": "finds pets in the system that the user has access to by tags and within a limit",
+        "params": [
+          {
+            "name": "tags",
+            "description": "tags to filter by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "description": "maximum number of results to return",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "result": {
+          "name": "pet_list",
+          "description": "all pets from the system, that mathes the tags",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Pet"
+          }
+        }
+      },
+      {
+        "name": "petstore_client.CreatePet",
+        "description": "creates a new pet in the store. Duplicates are allowed.",
+        "params": [
+          {
+            "name": "new_pet",
+            "description": "Pet to add to the store.",
+            "schema": {
+              "$ref": "#\/components\/schemas\/NewPet"
+            }
+          }
+        ],
+        "result": {
+          "name": "pet",
+          "description": "the newly created pet",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Pet"
+          }
+        }
+      },
+      {
+        "name": "petstore_client.GetPetById",
+        "description": "gets a pet based on a single ID, if the user has access to the pet",
+        "params": [
+          {
+            "name": "id",
+            "description": "ID of pet to fetch",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "result": {
+          "name": "pet",
+          "description": "pet response",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Pet"
+          }
+        }
+      },
+      {
+        "name": "petstore_client.DeletePetById",
+        "description": "deletes a single pet based on the ID supplied",
+        "params": [
+          {
+            "name": "id",
+            "description": "ID of pet to delete",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "result": {
+          "name": "pet",
+          "description": "pet deleted",
+          "schema": {
+            "type": "null"
+          }
+        }
+      }
+    ],
+    "components": {
+      "schemas": {
+        "NewPet": {
+          "title": "NewPet",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            }
+          }
+        },
+        "Pet": {
+          "title": "Pet",
+          "description": "a pet struct that represents a pet",
+          "properties": {
+            "name": {
+              "description": "name of the pet",
+              "type": "string"
+            },
+            "tag": {
+              "description": "a tag of the pet, helps finding pet",
+              "type": "string"
+            },
+            "id": {
+              "description": "unique indentifier",
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }

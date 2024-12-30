@@ -1,6 +1,8 @@
 module specification
 
 import freeflowuniverse.crystallib.core.codemodel { Struct, Function }
+import freeflowuniverse.crystallib.data.jsonschema { Schema }
+import freeflowuniverse.crystallib.rpc.openrpc {ContentDescriptor, Error}
 
 pub struct ActorSpecification {
 pub mut:
@@ -23,7 +25,10 @@ pub struct ActorMethod {
 pub:
 	name        string   @[omitempty]
 	description string   @[omitempty]
-	func        Function @[omitempty]
+	summary 	string
+	parameters 	[]ContentDescriptor
+	result 		ContentDescriptor
+	errors 		[]Error
 }
 
 pub struct BaseObject {
